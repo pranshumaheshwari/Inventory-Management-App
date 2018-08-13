@@ -1,0 +1,24 @@
+<% include partials/header.ejs %>
+<br>
+<h1 align="center">Reports</h1>
+<div class="container jumbotron">
+	<form action="/report" method="post">
+		<fieldset>
+			<legend>Select Type Of Report</legend>
+			<select name="by">
+				<option value="" hidden selected>Select an option</option>
+				<option value="Name">By Description</option>
+				<option value="PO">By PO Number</option>
+				<option value="input">Input</option>
+				<option value="output">Output</option>
+				<option value="less">Shortage</option>
+				<option value="more">Excess</option>
+			</select>
+			<button type="submit" class="btn btn-success">Submit!!</button>
+		</fieldset>
+		
+	</form>
+</div>
+
+
+<% include partials/footer.ejs %>

@@ -1,0 +1,73 @@
+<% include partials/header.ejs %>
+<div class="container jumbotron">
+	<h1 align="center">Update Delete Raw Material</h1>
+	<br>
+	<form action="/inventory/<%= raw_material.code %>/update" method="post" onsubmit="return confirm('Are you sure you want to update this Raw Material?');">
+		<div class="row">
+			<div class="col-md-8">
+				<label for="raw_material[name]">Description</label>
+				<input type="text" name="raw_material[name]" value="<%= raw_material.name %>" id="raw_material[name]" class="form-control" required>
+			</div>
+			<div class="col-md-4">
+				<label for="raw_material[code]">Part Number</label>
+				<input type="text" name="raw_material[code]" value="<%= raw_material.code %>" id="raw_material[code]" class="form-control" required>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-8">
+				<label>DTPL Part Number: <input type="text" name="raw_material[DTPL_code]" class="form-control" required value="<%= raw_material.DTPL_code %>"></label>
+			</div>
+			<div class="col-md-4">
+				<label for="raw_material[unit]">Unit</label>
+				<input type="text" name="raw_material[unit]" value="<%= raw_material.unit %>" id="raw_material[unit]" class="form-control" required>
+			</div>
+		</div>
+		<br>
+		<div class="row">
+			<div class="col-md-4">
+				<label for="raw_material[stock]">Current Stock</label>
+				<input type="number" name="raw_material[stock]" required id="raw_material[stock]" value="<%= raw_material.stock %>" class="form-control">
+			</div>
+			<div class="col-md-4">
+				<label>Line Stock: <input type="number" name="raw_material[line_stock]" value="<%= raw_material.line_stock %>" required class="form-control"></label>
+			</div>
+			<div class="col-md-4">
+				<label for="raw_material[category]">Category</label>
+				<select name="raw_material[category]" id="raw_material[category]" required class="form-control">
+					<option value="<%= raw_material.category %>" hidden selected><%= raw_material.category %></option>
+					<option value="Coil">Coil</option>
+					<option value="Conector">Conector</option>
+					<option value="Consumables">Consumables</option>
+					<option value="Fuse">Fuse</option>
+					<option value="Grommet">Grommet</option>
+					<option value="Misc.">Misc.</option>
+					<option value="Sleeve">Sleeve</option>
+					<option value="Sticker">Sticker</option>
+					<option value="Tape">Tape</option>
+					<option value="Terminal">Terminal</option>
+					<option value="Wire">Wire</option>
+				</select>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col">
+				<label>Price: <input type="text" name="raw_material[price]" value="<%= raw_material.price %>" class="form-control" required></label>
+			</div>
+			<div class="col">
+				<label>Supplier:<select name="raw_material[supplier_code]" class="form-control">
+					<option value="<%= raw_material.supplier_code %>" hidden selected required><%= raw_material.supplier_code %></option>
+					<% for(var i=0;i<supplier_code.length;i++){ %>
+						<option value="<%= supplier_code[i].code %>"><%= supplier_code[i].code %></option>
+					<% } %>
+				</select></label>
+			</div>
+		</div>
+		<button type="submit" class="btn btn-success">Update</button>
+		<a href="/inventory/<%= raw_material.code %>/requirement" class="btn btn-dark" style="float:right;">Requirements</a>
+	</form>
+	<br><br>
+	<form action="/inventory/<%= raw_material.code %>/delete" method="post">
+		<button type="submit" class="btn btn-danger" style='align:right' onclick="return confirm('Are you sure you want to delete this Raw Material?');">Delete</button>
+	</form>
+</div>
+<% include partials/footer.ejs %>
