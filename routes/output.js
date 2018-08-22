@@ -50,7 +50,7 @@ app.post("/output",function(req,res){
 				if(i === quantity.length)
 					i = 0;
 				var finalStock = raw_material[0].stock - output[i].quantity;
-				var line_stock = raw_material[0].line_stock + output[i].quantity;
+				var line_stock = parseFloat(raw_material[0].line_stock) + parseFloat(output[i].quantity);
 				var q = "UPDATE raw_material SET stock = " + finalStock + ",line_stock = " + line_stock + " WHERE code = '" + output[i].raw_material_code + "'";
 				con.query(q,function(err){
 					if(err)

@@ -97,7 +97,7 @@ app.post("/report/name",function(req,res){
 								}
 								check = new Date(check.getTime() + (24*60*60*1000));
 							}
-							res.render("reports_with_data",{input_output:input_output,raw_material:raw_material,openingStock:openingStock,closingStock:closingStock,from:req.body.from,to:req.body.to}); 
+							res.render("reports_with_data",{input_output:input_output,raw_material:raw_material,openingStock:openingStock,closingStock:closingStock,from:req.body.from,to:req.body.to,total_in:0,total_out:0}); 
 						}	
 					});
 				}

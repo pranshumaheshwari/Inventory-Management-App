@@ -51,14 +51,14 @@
 				<tr>
 					<% if(input_output[i].PO_code){ %>
 						<td>Invoice Number: <%= input_output[i].invoice_no %></td>
-						<td><%= input_output[i].quantity %></td>
+						<td><%= input_output[i].quantity %><span style="display:none"><% total_in += input_output[i].quantity %></span></td>
 						<td></td>
 						<td><%= input_output[i].date.toISOString().substring(0,10) %></td>
 						<td><% openingStock += input_output[i].quantity %><%= openingStock %></td>
 					<% } else { %>
 						<td>Slip Number: <%= input_output[i].slip_no %></td>
 						<td></td>
-						<td><%= input_output[i].quantity %></td>
+						<td><%= input_output[i].quantity %><span style="display:none"><% total_out += input_output[i].quantity %></span></td>
 						<td><%= input_output[i].date.toISOString().substring(0,10) %></td>
 						<td><% openingStock -= input_output[i].quantity %><%= openingStock %></td>
 					<% } %>
@@ -66,8 +66,8 @@
 			<% } %>
 			<tr>
 				<td></td>
-				<td></td>
-				<td></td>
+				<td>Total: <%= total_in %></td>
+				<td>Total: <%= total_out %></td>
 				<td>To: <%= to %></td>
 				<td>Closing: <%= closingStock %></td>
 			</tr>
