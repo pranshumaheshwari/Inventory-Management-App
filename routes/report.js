@@ -158,7 +158,7 @@ app.get("/report/output",function(req,res){
 });
 
 app.get("/report/shortage",function(req,res){
-	var q = "SELECT * FROM raw_material WHERE (stock+line_stock)<0.25*monthly_requirement ORDER BY code";
+	var q = "SELECT * FROM raw_material WHERE stock<0.25*monthly_requirement ORDER BY code";
 	var raw = [];
 	con.query(q,function(err,raw){
 		if(err)
@@ -170,7 +170,7 @@ app.get("/report/shortage",function(req,res){
 });
 
 app.get("/report/excess",function(req,res){
-	var q = "SELECT * FROM raw_material WHERE (stock+line_stock)>monthly_requirement ORDER BY code";
+	var q = "SELECT * FROM raw_material WHERE stock>monthly_requirement ORDER BY code";
 	var raw = [];
 	con.query(q,function(err,raw){
 		if(err)
