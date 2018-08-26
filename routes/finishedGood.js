@@ -2,18 +2,18 @@ var express 	   = require('express'),
 	mysql 	  	   = require('mysql'),
 	bodyParser 	   = require('body-parser'),
 	methodOverride = require('method-override'),
-	app      	   = express.Router();      
+	app      	   = express.Router();
 
 var con = mysql.createConnection({
 	host: "localhost",
   	user: "root",
-  	password: "",
+  	password: "Pranshu@511",
   	database: "Store"
 });
 
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true, parameterLimit: 1000000}));
 app.use(methodOverride("_method"));
-app.use(express.static( __dirname + "/public")); 
+app.use(express.static( __dirname + "/public"));
 
 app.get("/BOM",function(req,res){
 	var q = "SELECT * FROM finished_goods ORDER BY category";
@@ -101,8 +101,8 @@ app.post("/BOM",function(req,res){
 														if(err)
 															res.render("error");
 													});
-												} 
-											}	
+												}
+											}
 										});
 										setTimeout(function(){
 											q = "SELECT * FROM raw_material ORDER BY supplier_code ";
@@ -118,7 +118,7 @@ app.post("/BOM",function(req,res){
 											}
 											res.render("BOM_manual",{raw_materials:r,w:w,mock:false});
 											});
-										},3000);	
+										},3000);
 									},3000);
 								}
 							}
@@ -134,7 +134,7 @@ app.get("/finished_good",function(req,res){
 	var q = "SELECT * FROM finished_goods ORDER BY category";
 	con.query(q,function(err,finished_goods){
 		if(err)
-			res.render("error");
+			throw err;
 		else {
 			res.render("finished_good",{finished_goods:finished_goods});
 		}
@@ -213,7 +213,7 @@ app.get("/finished_good/:code",function(req,res){
 					con.query(q,function(err,raw){
 						if(err)
 							res.render("error");
-						else 
+						else
 							res.render("update_delete_finished_good",{finished_good:finished_good[0],raw_materials:raw_materials,raw:raw});
 					});
 				}
@@ -228,7 +228,7 @@ app.get("/finished_good/:code/new",function(req,res){
 		if(err)
 			res.render("error");
 		else
-			res.render("new_raw_finished_good",{raw:raw,code:req.params.code});			
+			res.render("new_raw_finished_good",{raw:raw,code:req.params.code});
 	});
 });
 

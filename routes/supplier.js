@@ -2,7 +2,7 @@ var express 	   = require('express'),
 	mysql 	  	   = require('mysql'),
 	bodyParser 	   = require('body-parser'),
 	methodOverride = require('method-override'),
-	app      	   = express.Router();      
+	app      	   = express.Router();
 
 var con = mysql.createConnection({
 	host: "localhost",

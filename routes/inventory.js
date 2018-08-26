@@ -2,12 +2,12 @@ var express 	   = require('express'),
 	mysql 	  	   = require('mysql'),
 	bodyParser 	   = require('body-parser'),
 	methodOverride = require('method-override'),
-	app      	   = express.Router();      
+	app      	   = express.Router();
 
 var con = mysql.createConnection({
-	host: "localhost",
+		host: "localhost",
   	user: "root",
-  	password: "",
+  	password: "Pranshu@511",
   	database: "Store"
 });
 
@@ -19,7 +19,7 @@ app.get("/inventory",function(req,res){
 	var q = "SELECT * FROM raw_material ORDER BY code";
 	con.query(q,function(err,raw_materials){
 		if(err){
-			res.render("error");
+			throw err;
 		} else {
 			res.render("inventory",{raw_materials:raw_materials,totalPrice:0,stock:0});
 		}

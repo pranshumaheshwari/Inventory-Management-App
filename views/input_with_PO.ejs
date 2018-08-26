@@ -29,14 +29,14 @@
 					<% for(var i=0;i<raw_materials.length;i++){ %>
 						<option value="<%= raw_materials[i].quantity %>"><%= raw_materials[i].quantity %></option>
 					<% } %>
-				</select>	
+				</select>
 			</div>
 			<div class="col-md-2">
 				<label>Price: <select id="price" class="form-control-plaintext">
 					<option value=""></option>
-					<% for(var i=0;i<price.length;i++) { %>
-						<option value="<%= price[i] %>"><%= price[i] %></option>
-					<% } %>			
+					<% for(var i=0;i<raw_materials.length;i++) { %>
+						<option value="<%= raw_materials[i].price %>"><%= raw_materials[i].price %></option>
+					<% } %>
 				</select></label>
 			</div>
 		</div>

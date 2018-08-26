@@ -5,18 +5,27 @@
 	<form action="/report" method="post">
 		<fieldset>
 			<legend>Select Type Of Report</legend>
-			<select name="by">
-				<option value="" hidden selected>Select an option</option>
-				<option value="Name">By Description</option>
-				<option value="PO">By PO Number</option>
-				<option value="input">Input</option>
-				<option value="output">Output</option>
-				<option value="less">Shortage</option>
-				<option value="more">Excess</option>
-			</select>
-			<button type="submit" class="btn btn-success">Submit!!</button>
+			<div class="row">
+				<div class="col-md-3">
+					<select name="by" class="form-control">
+						<option value="" hidden selected>Select an option</option>
+						<optgroup label="Raw Material">
+							<option value="Name">By Description</option>
+							<option value="PO">By PO Number</option>
+							<option value="input">Input</option>
+							<option value="output">Output</option>
+							<option value="less">Shortage</option>
+							<option value="more">Excess</option>
+						</optgroup>
+						<optgroup label="Finished Goods">
+							<option value="Production">Production</option>
+							<option vlaue="Dispatch">Dispatch</option>
+						</optgroup>
+					</select>
+				</div>
+				<button type="submit" class="btn btn-success">Submit!!</button>
+			</div>
 		</fieldset>
-		
 	</form>
 </div>
 

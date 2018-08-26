@@ -2,18 +2,18 @@ var express 	   = require('express'),
 	mysql 	  	   = require('mysql'),
 	bodyParser 	   = require('body-parser'),
 	methodOverride = require('method-override'),
-	app      	   = express.Router();      
+	app      	   = express.Router();
 
 var con = mysql.createConnection({
 	host: "localhost",
   	user: "root",
-  	password: "",
+  	password: "Pranshu@511",
   	database: "Store"
 });
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(methodOverride("_method"));
-app.use(express.static( __dirname + "/public"));    
+app.use(express.static( __dirname + "/public"));
 
 app.get("/report",function(req,res){
 	res.render("reports");
@@ -33,6 +33,117 @@ app.post("/report",function(req,res){
 		res.redirect("/report/shortage");
 	else if (by === 'more')
 		res.redirect("/report/excess");
+	else if (by === 'Production')
+		res.redirect("/report/production");
+	else if (by === 'Dispatch')
+		res.redirect("/report/dispatch");
+});
+
+app.get("/report/production",function (req,res) {
+	var q = "SELECT name,code FROM finished_goods ORDER BY code";
+	con.query(q,function (err,finished_goods) {
+		if(err)
+			res.render("error");
+		else {
+			res.render("report_P-D",{type:"production",finished_goods:finished_goods});
+		}
+	});
+});
+
+app.post("/report/production",function(req,res){
+	var from = req.body.from;
+	var to = req.body.to;
+	var finished_good_code = req.body.name;
+	var currentStock,totalExchange,closingStock,openingStock,finished_good;
+	var q = "SELECT * FROM finished_goods WHERE code ='" + finished_good_code + "'";
+	con.query(q,function(err,Finished_good){
+		if(err)
+			res.render("error");
+		else {
+			Finished_good = Finished_good[0];
+			currentStock = Finished_good.stock;
+			finished_good = Finished_good;
+		}
+	});
+	q = "SELECT SUM(quantity) AS sum FROM production WHERE date >=" + from + " AND date <=" + to;
+	con.query(q,function(err,sum){
+		if(err)
+			res.render("error");
+		else {
+			totalExchange = sum.sum ;
+		}
+	});
+	q = "SELECT SUM(quantity) AS sum FROM production WHERE date >=" + to;
+	con.query(q,function(err,sum){
+		if(err)
+			res.render("error");
+		else {
+			closingStock = currentStock - sum.sum;
+		}
+	});
+	openingStock = closingStock - totalExchange;
+	q = "SELECT * FROM production WHERE FG_code ='" + finished_good_code + "' AND date >=" + from + " AND date >=" + to + " ORDER by date DESC";
+	con.query(q,function(err,finished_goods){
+		if(err)
+			res.render("error");
+		else {
+			res.render("report_pd",{finished_goods:finished_goods,openingStock:openingStock,closingStock:closingStock,to:to,from:from,finished_good:finished_good});
+		}
+	});
+});
+
+app.get("/report/dispatch",function(req,res){
+	var q = "SELECT name,code FROM finished_goods ORDER BY code";
+	con.query(q,function (err,finished_goods) {
+		if(err)
+			res.render("error");
+		else {
+			console.log(finished_goods);
+			res.render("report_P-D",{type:"dispatch",finished_goods:finished_goods});
+		}
+	});
+});
+
+app.post("/report/dispatch",function(req,res){
+	var from = req.body.from;
+	var to = req.body.to;
+	var finished_good_code = req.body.name;
+	var currentStock,totalExchange,closingStock,openingStock,finished_good;
+	var q = "SELECT * FROM finished_goods WHERE code ='" + finished_good_code + "'";
+	con.query(q,function(err,Finished_good){
+		if(err)
+			res.render("error");
+		else {
+			Finished_good = Finished_good[0];
+			currentStock = Finished_good.stock;
+			finished_good = Finished_good;
+		}
+	});
+	q = "SELECT SUM(quantity) AS sum FROM dispatch WHERE date >=" + from + " AND date <=" + to;
+	con.query(q,function(err,sum){
+		if(err)
+			res.render("error");
+		else {
+			totalExchange = sum.sum ;
+		}
+	});
+	q = "SELECT SUM(quantity) AS sum FROM dispatch WHERE date >=" + to;
+	con.query(q,function(err,sum){
+		if(err)
+			res.render("error");
+		else {
+			closingStock = currentStock + sum.sum;
+		}
+	});
+	openingStock = closingStock + totalExchange;
+	q = "SELECT * FROM dispatch WHERE FG_code ='" + finished_good_code + "' AND date >=" + from + " AND date >=" + to + " ORDER by date DESC";
+	con.query(q,function(err,finished_goods){
+		if(err)
+			res.render("error");
+		else {
+			res.render("report_pd",{finished_goods:finished_goods,openingStock:openingStock,closingStock:closingStock,to:to,from:from,finished_good:finished_good});
+		}
+	});
 });
 
 app.get("/report/name",function(req,res){
@@ -97,8 +208,8 @@ app.post("/report/name",function(req,res){
 								}
 								check = new Date(check.getTime() + (24*60*60*1000));
 							}
-							res.render("reports_with_data",{input_output:input_output,raw_material:raw_material,openingStock:openingStock,closingStock:closingStock,from:req.body.from,to:req.body.to,total_in:0,total_out:0}); 
-						}	
+							res.render("reports_with_data",{input_output:input_output,raw_material:raw_material,openingStock:openingStock,closingStock:closingStock,from:req.body.from,to:req.body.to,total_in:0,total_out:0});
+						}
 					});
 				}
 			});

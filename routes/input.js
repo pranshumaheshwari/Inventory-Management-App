@@ -2,7 +2,7 @@ var express 	   = require('express'),
 	mysql 	  	   = require('mysql'),
 	bodyParser 	   = require('body-parser'),
 	methodOverride = require('method-override'),
-	app      	   = express.Router();      
+	app      	   = express.Router();
 
 var con = mysql.createConnection({
 	host: "localhost",
@@ -13,7 +13,7 @@ var con = mysql.createConnection({
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(methodOverride("_method"));
-app.use(express.static( __dirname + "/public"));     
+app.use(express.static( __dirname + "/public"));
 
 app.get("/input",function(req,res){
 	var q = "SELECT * FROM PO";
@@ -33,29 +33,12 @@ app.get("/input",function(req,res){
 });
 
 app.post("/input",function(req,res){
-	var q = 'SELECT * FROM PO_detail WHERE PO_code = "' + req.body.PO + '"';
+	var q = 'SELECT P.*,r.price FROM (SELECT * FROM PO_detail WHERE  PO_code = "' + req.body.PO + '") AS P INNER JOIN raw_material AS r ON P.raw_desc = r.name';
 	con.query(q,function(err,raw_materials){
 		if(err)
 			res.render("error");
 		else {
-			var price = [];
-			console.log(raw_materials);
-			for(var i=0;i<raw_materials.length;i++){
-				q = "SELECT price FROM raw_material WHERE name='" + raw_materials[i].raw_desc + "'";
-				con.query(q,function(err,Price){
-					if(err)
-						res.render("error");
-					else {
-						if(i === raw_materials.length)
-							i = 0;
-						price.push(Price[0].price);
-						i++;
-					}
-				});
-			}
-			setTimeout(function(){
-				res.render("input_with_PO",{raw_materials : raw_materials,price:price});
-			},2000);
+			res.render("input_with_PO",{raw_materials : raw_materials});
 		}
 	});
 });
@@ -173,7 +156,7 @@ app.post("/input/update",function(req,res){
 				con.query(q,function(err){
 					if(err)
 						throw err;
-				}); 
+				});
 			}
 		});
 		res.redirect("/input");
