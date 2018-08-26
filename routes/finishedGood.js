@@ -267,7 +267,7 @@ app.post("/finished_good/dispatch",function(req,res){
 		});
 		var dis = {
 			invoice_no: invoice,
-			finished_good_code: product[i],
+			FG_code: product[i],
 			quantity: quantity[i]
 		}
 		q = "INSERT INTO dispatch SET ?";
@@ -282,52 +282,39 @@ app.post("/finished_good/dispatch",function(req,res){
 app.post("/finished_good/create",function(req,res){
 	var code = req.body.finished_goods_code;
 	var quantity = req.body.quantity;
-	var obj = {};
 	for(var i=0;i<code.length;i++){
-		var q = "SELECT stock FROM finished_goods WHERE code ='" + code[i] + "'";
-		con.query(q,function(err,stock){
+		var raw_materials = [];
+		var q = "UPDATE finished_goods SET stock = stock + " + quantity[i] + " WHERE code ='" + code[i] + "'";
+		con.query(q,function(err){
+			if(err)
+				res.render("error");
+		});
+		var obj = {
+			FFG_code: code[i],
+			quantity: quantity[i]
+		};
+		q = "INSERT INTO production SET ?";
+		con.query(q,obj,function(err){
+			if(err)
+				res.render("error");
+		});
+		q = "SELECT raw_material_code,quantity FROM finished_goods_detail WHERE code = '" + code[i] + "'";
+		con.query(q,function(err,raw){
 			if(err)
 				res.render("error");
 			else {
-				if(i === code.length)
-					i = 0;
-				obj[code[i]] = quantity[i];
-				var finalStock = parseInt(stock[0].stock) + parseInt(quantity[i]);
-				q = "UPDATE finished_goods SET stock =" + finalStock + " WHERE code ='" + code[i] + "'";
-				con.query(q,function(err){
-					if(err)
-						throw err;
-				});
-				q = "SELECT * FROM finished_goods_detail WHERE code ='" + code[i] + "'";
-				con.query(q,function(err,raw_materials){
-					if(err)
-						res.render("error");
-					else {
-						for(var j=0;j<raw_materials.length;j++){
-							q = "SELECT line_stock FROM raw_material WHERE code ='" + raw_materials[j].raw_material_code + "'";
-							con.query(q,function(err,line_stock){
-								if(err)
-									res.render("error");
-								else {
-									if(j === raw_materials.length)
-										j = 0;
-									var finalStock = (line_stock[0].line_stock) - (obj[raw_materials[j].code]) * (raw_materials[j].quantity);
-									q = "UPDATE raw_material SET line_stock =" + finalStock + " WHERE code ='" + raw_materials[j].raw_material_code + "'";
-									con.query(q,function(err){
-										if(err)
-											throw err;
-									});
-									j++;
-								}
-							});
-						}
-					}
-				});
-				i++;
+				raw_material = raw;
 			}
 		});
+		for(var j=0;j<raw_material.length;j++){
+			q = "UPDATE raw_material SET line_stock = line_stock - (" + quantity[i] + " * " + raw_material[j].quantity + ") WHERE code ='" + raw_material[j].raw_material_code + "'";
+			con.query(q,function(err){
+				if(err)
+					res.render("error");
+			});
+		}
 	}
-	res.redirect("/finished_good");
+	res.redirect("/finished_good/create");
 });
 
 app.post("/finished_good/mock",function(req,res){
