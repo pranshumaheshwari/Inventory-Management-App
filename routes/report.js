@@ -37,6 +37,26 @@ app.post("/report",function(req,res){
 		res.redirect("/report/production");
 	else if (by === 'Dispatch')
 		res.redirect("/report/dispatch");
+	else if(by === 'Date')
+		res.redirect("/report/date");
+});
+
+app.get("/report/date",function(req,res){
+	res.render("report_FG-date");
+});
+
+app.post("/report/date",function(req,res){
+	var type = req.body.type;
+	var to = req.body.to;
+	var from = req.body.from;
+	var q = "SELECT * FROM " + type + " WHERE date >= " + from + " AND date <= " + to + " ORDER BY date DESC";
+	con.query(q,function(err,finished_goods){
+		if(err)
+			res.render("error");
+		else {
+			res.render("report_FG-date_data",{finished_goods:finished_goods,type:type,from:from,to:to});
+		}
+	});
 });
 
 app.get("/report/production",function (req,res) {
