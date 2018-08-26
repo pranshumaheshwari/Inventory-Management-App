@@ -204,7 +204,7 @@ app.get("/finished_good/:code",function(req,res){
 		if(err)
 			res.render("error");
 		else {
-			q = "SELECT * FROM finished_goods_detail WHERE code='" + code + "'";
+			q = "SELECT * FROM finished_goods_detail WHERE code='" + code + "' ORDER BY raw_material_code";
 			con.query(q,function(err,raw_materials){
 				if(err)
 					res.render("error");
@@ -218,6 +218,24 @@ app.get("/finished_good/:code",function(req,res){
 					});
 				}
 			});
+		}
+	});
+});
+
+app.get("/finished_good/BOM/:code",function(req,res){
+	var code = req.params.code,Name;
+	var q = "SELECT name FROM finished_goods WHERE code ='" + code + "'";
+	con.query(q,function(err,name){
+		if(err)
+			res.render("error");
+		Name = name[0].name;
+	});
+	var q = "SELECT f.*,r.name FROM (SELECT * FROM finished_goods_detail WHERE code='" + code + "') AS f INNER JOIN raw_material AS r ON r.code = f.raw_material_code ORDER BY f.raw_material_code";
+	con.query(q,function(err,raw_materials){
+		if(err)
+			res.render("error");
+		else {
+			res.render("FG_BOM",{raw_materials:raw_materials,name:Name,code:code});
 		}
 	});
 });
