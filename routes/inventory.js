@@ -53,7 +53,7 @@ app.get("/inventory/:code",function(req,res){
 });
 
 app.get("/inventory/:code/requirement",function(req,res){
-	var q = "SELECT * FROM finished_goods_detail WHERE raw_material_code ='" + req.params.code + "'";
+	var q = "SELECT Q.*,finished_goods.name FROM (SELECT * FROM finished_goods_detail WHERE raw_material_code ='" + req.params.code + "') AS Q INNER JOIN finished_goods ON Q.code = finished_goods.code";
 	con.query(q,function(err,finished_goods){
 		if(err)
 			res.render("error");
