@@ -48,8 +48,9 @@
 					<th><strong>DTPL Part Number</strong></th>
 					<th><strong>Store Stock</strong></th>
 					<th><strong>Line Stock</strong></th>
-					<th><strong>Total Stock</strong></th>		
+					<th><strong>Total Stock</strong></th>
 					<th><strong>Unit</strong></th>
+					<th style="display:none;"><strong>Supplier</strong></th>
 					<th><strong>Price</strong></th>
 					<th><strong>Value</strong></th>
 					<th>#</th>
@@ -72,6 +73,7 @@
 							<td><%= raw_materials[i].line_stock %></td>
 							<td><%= stock %></td>
 							<td><%= raw_materials[i].unit %></td>
+							<td style="display:none;"><%= raw_materials[i].supplier %></td>
 							<td><%= raw_materials[i].price %></td>
 							<td><%= Math.round(raw_materials[i].price * (raw_materials[i].stock + raw_materials[i].line_stock) *100)/100 %></td>
 							<input type="hidden" name="" value="<%= totalPrice += Math.round(raw_materials[i].price * stock *100)/100 %>">
