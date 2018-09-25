@@ -6,7 +6,7 @@
 	<form action="/output" method="post" class="form" id="form" onsubmit="return confirm('Do you want to submit?');">
 		<div class="row">
 			<div class="col-md-6">
-				<label>Slip Number: <input type="text" name="slip_no" required id="slip_no" class="form-control"></label>
+				<label>Slip Number: <input type="text" name="slip_no" required id="slip_no" class="form-control" id='slip'></label>
 			</div>
 		</div>
 		<div class="row">
@@ -71,3 +71,14 @@
 		}
 	}
 </script>
+<script>
+	var socket = io();
+	$('#slip_no').change(function(){
+		socket.emit('slip_no',$('#slip_no').val());
+		socket.on('return_slip',function(val){
+			if(val === true)
+				alert("Slip already exists!");
+		});
+	});
+</script>
+<% include partials/footer.ejs %>

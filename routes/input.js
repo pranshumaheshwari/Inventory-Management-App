@@ -2,6 +2,7 @@ var express 	   = require('express'),
 	mysql 	  	   = require('mysql'),
 	bodyParser 	   = require('body-parser'),
 	methodOverride = require('method-override'),
+	logger		   = require('../config/winston')
 	app      	   = express.Router();
 
 var con = mysql.createConnection({
@@ -43,7 +44,7 @@ app.post("/input",function(req,res){
 	});
 });
 
-app.post("/input/update",function(req,res){
+app.post("/input/update",async function(req,res){
 	var raw_desc = req.body.raw_desc;
 	var DTPL_code = req.body.DTPL_code;
 	var quantity = req.body.Quantity;
@@ -55,21 +56,35 @@ app.post("/input/update",function(req,res){
 		I[raw_desc[p]] = [DTPL_code[p],quantity[p],invoice[p]];
 	}
 	for(var j=0;j<raw_desc.length;j++){
-		q = 'SELECT * FROM raw_material WHERE name ="' + raw_desc[j] + '"';
-		con.query(q,function(err,raw_material){
-			if(err)
-				throw err;
-			else {
-				if(j === raw_desc.length)
-					j = 0;
-				var currentStock = raw_material[0].stock;
-				var finalStock = parseInt(currentStock,10) + parseInt(quantity[j],10);
-				q = 'UPDATE raw_material SET stock = ' + finalStock + ' WHERE name = "' + raw_desc[j] + '"';
-				con.query(q,function(err){
-					if(err)
-						throw err;
+		q = 'UPDATE raw_material SET stock = stock + '+ quantity[j] + ' WHERE name ="' + raw_desc[j] + '"';
+		await con.query(q,function(err){
+			if(err){
+				logger.error({
+					level: 'error',
+					message: {
+						where: 'UPDATE raw_material stock',
+						what: {
+							PO_code: PO_code,
+							desc: raw_desc[j],
+							quantity: quantity[j]
+						},
+						time: Date.now()
+					}
 				});
-				j++;
+				throw err;
+			} else {
+				logger.info({
+					level: 'info',
+					message: {
+						where: 'UPDATE raw_material stock',
+						what: {
+							PO_code: PO_code,
+							desc: raw_desc[j],
+							quantity: quantity[j]
+						},
+						time: Date.now()
+					}
+				});
 			}
 		});
 	}
@@ -85,8 +100,34 @@ app.post("/input/update",function(req,res){
 				var finalRemaining = currentRemaining - quantity[i];
 				q = 'UPDATE PO_detail SET quantity = ' + finalRemaining + ' WHERE PO_code = "' + PO_code + '" AND raw_desc = "' + raw_desc[i] + '" AND DTPL_code ="' + DTPL_code[i] + '"';
 				con.query(q,function(err){
-					if(err)
+					if(err){
+						logger.error({
+							level: 'error',
+							message: {
+								where: 'UPDATE PO_detail quantity',
+								what: {
+									PO_code: PO_code,
+									desc: raw_desc[i],
+									quantity: quantity[i]
+							},
+							time: Date.now()
+							} 
+						});
 						throw err;
+					} else {
+						logger.info({
+							level: 'info',
+							message: {
+								where: 'UPDATE PO_deatil quantity',
+								what: {
+									PO_code: PO_code,
+									desc: raw_desc[i],
+									quantity: quantity[i]
+								},
+								time: Date.now()
+							}
+						});
+					}
 				});
 				i++;
 			}
@@ -102,8 +143,26 @@ app.post("/input/update",function(req,res){
 			quantity: I[desc][1]
 		};
 		con.query(q,input,function(err){
-			if(err)
+			if(err){
+				logger.error({
+					level: 'error',
+					message: {
+						where: 'INSERT INTO input',
+						what: input,
+						time: Date.now()
+					}
+				});
 				throw err;
+			} else {
+				logger.info({
+					level: 'info',
+					message: {
+						where: 'INSERT INTO input',
+						what: input,
+						time: Date.now()
+					}
+				});
+			}
 		});
 	}
 	// for(var i=0;i<raw_desc.length;i++){

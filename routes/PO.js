@@ -2,7 +2,7 @@ var express 	   = require('express'),
 	mysql 	  	   = require('mysql'),
 	bodyParser 	   = require('body-parser'),
 	methodOverride = require('method-override'),
-	app      	   = express.Router();      
+	app      	   = express.Router();
 
 var con = mysql.createConnection({
 	host: "localhost",
@@ -13,7 +13,7 @@ var con = mysql.createConnection({
 
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true, parameterLimit: 1000000}));
 app.use(methodOverride("_method"));
-app.use(express.static( __dirname + "/public"));  
+app.use(express.static( __dirname + "/public"));
 
 app.get("/PO",function(req,res){
 	var q = "SELECT * FROM PO";
@@ -61,7 +61,7 @@ app.get("/PO/:code",function(req,res){
 		}
 	});
 });
-	
+
 app.get("/PO/:code/delete",function(req,res){
 	q = 'DELETE FROM PO_detail WHERE PO_code = "' + req.params.code + '"';
 	con.query(q,function(err){
@@ -87,7 +87,7 @@ app.get("/PO/:code/new",function(req,res){
 				if(err)
 					res.render("error");
 				else {
-					res.render("add_new_PO",{raw_materials:raw_materials,PO:req.params.code,date:date[0].date});					
+					res.render("add_new_PO",{raw_materials:raw_materials,PO:req.params.code,date:date[0].date});
 				}
 			});
 		}
@@ -112,6 +112,10 @@ app.get("/PO/:code/:raw_code/delete",function(req,res){
 			res.redirect("/PO/" + req.params.code);
 		}
 	});
+});
+
+app.post("/PO/export",function(req,res){
+	res.render("export",{data:req.body,mock:false});
 });
 
 app.post("/PO/new",function(req,res){
@@ -216,7 +220,7 @@ app.post("/PO/:code/new",function(req,res){
 
 app.post("/PO/generate",function(req,res){
 	var POFull = req.body.PO;
-	var Supplier = req.body.supplier; 
+	var Supplier = req.body.supplier;
 	var PO = [], supplier = [];
 	var raw = req.body.raw_name;
 	var DTPL_code = req.body.DTPL_code;

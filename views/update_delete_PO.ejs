@@ -25,8 +25,8 @@
 							</datalist>
 					</div>
 					<div class="col-md-4">
-						<label for="quantity">Remaining Quantity</label>
-						<input type="number" name="PO_quantity[<%= j %>]" value="<%= foundRaw[j].quantity %>" id="quantity" class="form-control">
+						<label for="quantity">PO Quantity</label>
+						<input type="number" name="PO_quantity[<%= j %>]" value="<%= foundRaw[j].initial_quantity %>" id="quantity" class="form-control">
 					</div>
 					<div class="col-md-2">
 						<a href="/PO/<%= foundRaw[0].PO_code %>/<%= foundRaw[j].raw_desc %>/delete" title="">Delete</a>
@@ -34,7 +34,6 @@
 				</div>
 			<% } %>
 			<br>
-			<button type="submit" class="btn btn-success">Update!!</button>
 			<a href="/PO/<%= foundRaw[0].PO_code %>/new" class="btn btn-dark">Add New Raw Material</a>
 			<a href="/PO/<%= foundRaw[0].PO_code %>/close" class="btn btn-danger" style="float:right">Close this PO</a>
 		</form>

@@ -70,8 +70,8 @@
 							<td><%= raw_materials[i].code %></td>
 							<td><%= raw_materials[i].DTPL_code %></td>
 							<td><%= raw_materials[i].stock %></td>
-							<td><%= raw_materials[i].line_stock %></td>
-							<td><%= stock %></td>
+							<td><%= Math.round(raw_materials[i].line_stock*100)/100 %></td>
+							<td><%= Math.round(stock*100)/100 %></td>
 							<td><%= raw_materials[i].unit %></td>
 							<td style="display:none;"><%= raw_materials[i].supplier %></td>
 							<td><%= raw_materials[i].price %></td>

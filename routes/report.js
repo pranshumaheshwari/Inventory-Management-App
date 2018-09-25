@@ -7,7 +7,7 @@ var express 	   = require('express'),
 var con = mysql.createConnection({
 	host: "localhost",
   	user: "root",
-  	password: "Pranshu@511",
+  	password: "",
   	database: "Store"
 });
 
@@ -39,6 +39,76 @@ app.post("/report",function(req,res){
 		res.redirect("/report/dispatch");
 	else if(by === 'Date')
 		res.redirect("/report/date");
+	else if(by === 'FGName')
+		res.redirect("/report/FG_Name")
+});
+
+app.get("/report/FG_Name",function(req,res){
+	var q = "SELECT name,code FROM finished_goods ORDER BY code";
+	con.query(q,function (err,finished_goods) {
+		if(err)
+			res.render("error");
+		else {
+			res.render("report_P-D",{type:"FG_Name",finished_goods:finished_goods});
+		}
+	});
+});
+
+app.post("/report/FG_Name",async function(req,res){
+	var from = req.body.from;
+	var to = req.body.to;
+	var finished_good_code = req.body.name;
+	var currentStock,totalExchange,closingStock,openingStock,finished_good;
+	var q = "SELECT * FROM finished_goods WHERE code ='" + finished_good_code + "'";
+	await con.query(q,function(err,Finished_good){
+		if(err)
+			res.render("error");
+		else {
+			Finished_good = Finished_good[0];
+			currentStock = Finished_good.stock;
+			finished_good = Finished_good;
+		}
+	});
+	setTimeout(async function(){
+		q = "SELECT SUM(quantity) AS sum FROM production WHERE date >='" + from + "' AND date <='" + to + "' AND FG_code ='" + finished_good_code + "' ";
+		q += "UNION SELECT SUM(quantity) AS sum FROM dispatch WHERE date >='" + from + "' AND date <='" + to + "' AND FG_code ='" + finished_good_code + "'";
+		await con.query(q,function(err,sum){
+			if(err)
+				throw err;
+			else {
+				totalExchange = sum[0].sum - sum[1].sum;
+			}
+		});
+		setTimeout(async function(){
+			q = "SELECT SUM(quantity) AS sum FROM production WHERE date >='" + to + "' AND FG_code ='" + finished_good_code + "' ";
+			q += "UNION SELECT SUM(quantity) AS sum FROM dispatch WHERE date >='" + to + "' AND FG_code ='" + finished_good_code + "'";
+			await con.query(q,function(err,sum){
+				if(err)
+					throw err;
+				else {
+					closingStock = currentStock + sum[1].sum - sum[0].sum;
+				}
+			});
+			setTimeout(async function(){
+				openingStock = closingStock + totalExchange;
+				q = "SELECT *,'p' AS type FROM production WHERE FG_code ='" + finished_good_code + "' AND date >='" + from + "' AND date <='" + to + "' ORDER by date ";
+				q += "UNION SELECT *,'d' AS type FROM dispatch WHERE FG_code ='" + finished_good_code + "' AND date >='" + from + "' AND date <='" + to + "' ORDER by date";
+				await con.query(q,async function(err,finished_goods){
+					if(err)
+						throw err;
+					else {
+						finished_goods.sort(await function(a,b){
+							var Dateto = a.date.split("-"), Datefrom = b.date.split("-");
+							var dateA = new Date(Dateto[0],parseInt(Dateto[1])-1,Dateto[2]);
+							var dateB = new Date(Datefrom[0],parseInt(Datefrom[1])-1,Datefrom[2]);
+    						return dateA-dateB;
+						});
+						res.render("report_pd",{finished_goods:finished_goods,openingStock:openingStock,closingStock:closingStock,to:to,from:from,finished_good:finished_good,t:'FGName',totalExchange:totalExchange});
+					}
+				});
+			},100);
+		},100);
+	},100);
 });
 
 app.get("/report/date",function(req,res){
@@ -49,7 +119,7 @@ app.post("/report/date",function(req,res){
 	var type = req.body.type;
 	var to = req.body.to;
 	var from = req.body.from;
-	var q = "SELECT * FROM " + type + " WHERE date >= " + from + " AND date <= " + to + " ORDER BY date DESC";
+	var q = "SELECT * FROM " + type + " WHERE date >= '" + from + "' AND date <= '" + to + "' ORDER BY date";
 	con.query(q,function(err,finished_goods){
 		if(err)
 			res.render("error");
@@ -70,46 +140,45 @@ app.get("/report/production",function (req,res) {
 	});
 });
 
-app.post("/report/production",function(req,res){
+app.post("/report/production",async function(req,res){
 	var from = req.body.from;
 	var to = req.body.to;
 	var finished_good_code = req.body.name;
-	var currentStock,totalExchange,closingStock,openingStock,finished_good;
+	var totalExchange,finished_good;
 	var q = "SELECT * FROM finished_goods WHERE code ='" + finished_good_code + "'";
-	con.query(q,function(err,Finished_good){
+	await con.query(q,await function(err,Finished_good){
 		if(err)
-			res.render("error");
+			throw err;
 		else {
 			Finished_good = Finished_good[0];
 			currentStock = Finished_good.stock;
 			finished_good = Finished_good;
 		}
 	});
-	q = "SELECT SUM(quantity) AS sum FROM production WHERE date >=" + from + " AND date <=" + to;
-	con.query(q,function(err,sum){
-		if(err)
-			res.render("error");
-		else {
-			totalExchange = sum.sum ;
-		}
-	});
-	q = "SELECT SUM(quantity) AS sum FROM production WHERE date >=" + to;
-	con.query(q,function(err,sum){
-		if(err)
-			res.render("error");
-		else {
-			closingStock = currentStock - sum.sum;
-		}
-	});
-	openingStock = closingStock - totalExchange;
-	q = "SELECT * FROM production WHERE FG_code ='" + finished_good_code + "' AND date >=" + from + " AND date >=" + to + " ORDER by date DESC";
-	con.query(q,function(err,finished_goods){
-		if(err)
-			res.render("error");
-		else {
-			res.render("report_pd",{finished_goods:finished_goods,openingStock:openingStock,closingStock:closingStock,to:to,from:from,finished_good:finished_good});
-		}
-	});
+	setTimeout(async function(){
+		q = "SELECT SUM(quantity) AS sum FROM production WHERE date >='" + from + "' AND date <='" + to + "' AND FG_code ='" + finished_good_code + "'";
+		await con.query(q,await function(err,sum){
+			if(err)
+				throw err;
+			else {
+				sum = sum[0];
+				if(sum.sum)
+					totalExchange = sum.sum;
+				else
+					totalExchange = 0;
+			}
+		});
+		setTimeout(async function(){				
+			q = "SELECT * FROM production WHERE FG_code ='" + finished_good_code + "' AND date >='" + from + "' AND date <='" + to + "' ORDER by date";
+			await con.query(q,await function(err,finished_goods){
+				if(err)
+					throw err;
+				else {
+					res.render("report_pd",{t:'production',finished_goods:finished_goods,openingStock:0,closingStock:0,to:to,from:from,finished_good:finished_good,totalExchange:totalExchange});
+				}
+			});
+		},100);
+	},100);
 });
 
 app.get("/report/dispatch",function(req,res){
@@ -118,19 +187,18 @@ app.get("/report/dispatch",function(req,res){
 		if(err)
 			res.render("error");
 		else {
-			console.log(finished_goods);
 			res.render("report_P-D",{type:"dispatch",finished_goods:finished_goods});
 		}
 	});
 });
 
-app.post("/report/dispatch",function(req,res){
+app.post("/report/dispatch",async function(req,res){
 	var from = req.body.from;
 	var to = req.body.to;
 	var finished_good_code = req.body.name;
-	var currentStock,totalExchange,closingStock,openingStock,finished_good;
+	var totalExchange,finished_good;
 	var q = "SELECT * FROM finished_goods WHERE code ='" + finished_good_code + "'";
-	con.query(q,function(err,Finished_good){
+	await con.query(q,function(err,Finished_good){
 		if(err)
 			res.render("error");
 		else {
@@ -139,31 +207,30 @@ app.post("/report/dispatch",function(req,res){
 			finished_good = Finished_good;
 		}
 	});
-	q = "SELECT SUM(quantity) AS sum FROM dispatch WHERE date >=" + from + " AND date <=" + to;
-	con.query(q,function(err,sum){
-		if(err)
-			res.render("error");
-		else {
-			totalExchange = sum.sum ;
-		}
-	});
-	q = "SELECT SUM(quantity) AS sum FROM dispatch WHERE date >=" + to;
-	con.query(q,function(err,sum){
-		if(err)
-			res.render("error");
-		else {
-			closingStock = currentStock + sum.sum;
-		}
-	});
-	openingStock = closingStock + totalExchange;
-	q = "SELECT * FROM dispatch WHERE FG_code ='" + finished_good_code + "' AND date >=" + from + " AND date >=" + to + " ORDER by date DESC";
-	con.query(q,function(err,finished_goods){
-		if(err)
-			res.render("error");
-		else {
-			res.render("report_pd",{finished_goods:finished_goods,openingStock:openingStock,closingStock:closingStock,to:to,from:from,finished_good:finished_good});
-		}
-	});
+	setTimeout(async function(){
+		q = "SELECT SUM(quantity) AS sum FROM dispatch WHERE date >='" + from + "' AND date <='" + to + "' AND FG_code ='" + finished_good_code + "'";
+		await con.query(q,function(err,sum){
+			if(err)
+				res.render("error");
+			else {
+				sum = sum[0];
+				if(sum.sum)
+					totalExchange = sum.sum;
+				else
+					totalExchange = 0;
+			}
+		});
+		setTimeout(async function(){
+			q = "SELECT * FROM dispatch WHERE FG_code ='" + finished_good_code + "' AND date >='" + from + "' AND date <='" + to + "' ORDER by date";
+			await con.query(q,function(err,finished_goods){
+				if(err)
+					res.render("error");
+				else {
+					res.render("report_pd",{finished_goods:finished_goods,openingStock:0,closingStock:0,to:to,from:from,finished_good:finished_good,t:'dispatch',totalExchange:totalExchange});
+				}
+			});
+		},100);
+	},100);
 });
 
 app.get("/report/name",function(req,res){
@@ -182,7 +249,7 @@ app.post("/report/name",function(req,res){
 	var q = "SELECT * FROM raw_material WHERE code = '" + raw[0] + "'";
 	con.query(q,function(err,raw_materials){
 		if(err)
-			res.render("error");
+			throw err;
 		else {
 			var raw_material = raw_materials[0];
 			var Dateto = req.body.to.split("-"), Datefrom = req.body.from.split("-");
@@ -193,12 +260,12 @@ app.post("/report/name",function(req,res){
 			q = "SELECT * FROM input WHERE DTPL_code ='" + raw[1] + "'AND raw_desc='" + raw[2] + "' ORDER BY date";
 			con.query(q,function(err,inputs){
 				if(err)
-					res.render("error");
+					throw err;
 				else {
 					q = "SELECT * FROM output WHERE raw_material_code ='" + raw_material.code + "' ORDER BY date";
 					con.query(q,function(err,outputs){
 						if(err)
-							res.render("error");
+							throw err;
 						else {
 							closingStock = currentStock;
 							for(var i=0;i<inputs.length;i++){
@@ -249,23 +316,12 @@ app.get("/report/PO",function(req,res){
 });
 
 app.post("/report/PO",function(req,res){
-	var q = "SELECT * FROM PO WHERE code ='" + req.body.PO.code + "'";
+	var q = 'SELECT p.*,i.sum FROM PO_detail AS p LEFT OUTER JOIN (SELECT SUM(quantity) AS sum,PO_code,raw_desc FROM input WHERE PO_code = "' + req.body.PO.code + '" GROUP BY raw_desc) AS i ON p.PO_code = i.PO_code AND p.raw_desc = i.raw_desc WHERE p.PO_code = "' + req.body.PO.code + '"';
 	con.query(q,function(err,PO){
 		if(err)
 			res.render("error");
-		else {
-			q = "SELECT * FROM PO_detail WHERE PO_code ='" + req.body.PO.code + "'";
-			con.query(q,function(err,POs){
-				if(err)
-					throw err;
-				q = "SELECT * FROM supplier WHERE code ='" + PO[0].supplier_code + "'";
-				con.query(q,function(err,supplier){
-					if(err)
-						throw err;
-					res.render("report_with_data",{POs:POs,PO:PO[0],supplier:supplier[0]});
-				});
-			});
-		}
+		else
+			res.render("report_with_data",{POs:PO});
 	});
 });
 
@@ -317,10 +373,14 @@ app.post("/report/:type",function(req,res){
 	var to = new Date(Dateto[0],parseInt(Dateto[1])-1,parseInt(Dateto[2])+1);
 	var from = new Date(Datefrom[0],parseInt(Datefrom[1])-1,parseInt(Datefrom[2]));
 	var i_o = [];
-	var q = "SELECT * FROM " + req.params.type + " ORDER BY date DESC";
+	var q;
+	if(req.params.type === "input")
+		q = "SELECT i.*,r.code FROM input AS i INNER JOIN raw_material AS r ON r.name = i.raw_desc ORDER BY date DESC";
+	else
+		q = "SELECT * FROM output ORDER BY date DESC"
 	con.query(q,function(err,i_os){
 		if(err)
-			res.render("error");
+			throw err;
 		else {
 			for(var i=0;i<i_os.length;i++){
 				if(i_os[i].date >= from && i_os[i].date <= to)

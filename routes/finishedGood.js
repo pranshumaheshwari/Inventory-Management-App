@@ -7,7 +7,7 @@ var express 	   = require('express'),
 var con = mysql.createConnection({
 	host: "localhost",
   	user: "root",
-  	password: "Pranshu@511",
+  	password: "",
   	database: "Store"
 });
 
@@ -230,12 +230,12 @@ app.get("/finished_good/BOM/:code",function(req,res){
 			res.render("error");
 		Name = name[0].name;
 	});
-	var q = "SELECT f.*,r.name FROM (SELECT * FROM finished_goods_detail WHERE code='" + code + "') AS f INNER JOIN raw_material AS r ON r.code = f.raw_material_code ORDER BY f.raw_material_code";
+	var q = "SELECT f.*,r.name,r.stock FROM (SELECT * FROM finished_goods_detail WHERE code='" + code + "') AS f INNER JOIN raw_material AS r ON r.code = f.raw_material_code ORDER BY f.raw_material_code";
 	con.query(q,function(err,raw_materials){
 		if(err)
 			res.render("error");
 		else {
-			res.render("FG_BOM",{raw_materials:raw_materials,name:Name,code:code});
+			res.render("FG_BOM",{raw_materials:raw_materials,code:code,name:Name});
 		}
 	});
 });
@@ -265,7 +265,7 @@ app.get("/finished_good/:code/delete",function(req,res){
 });
 
 app.get("/finished_good/:code/:raw/delete",function(req,res){
-	var q = "DELETE FROM finished_goods_detail WHERE code='" + req.params.code + "' AND raw_material_code='" + req.params.raw + "'";
+	var q = "DELETE FROM finished_goods_detail WHERE code='" + req.params.code + "' AND raw_material_code='" + req.params.raw + "' LIMIT 1";
 	con.query(q,function(err){
 		if(err)
 			res.render("error");
@@ -308,7 +308,7 @@ app.post("/finished_good/create",function(req,res){
 				res.render("error");
 		});
 		var obj = {
-			FFG_code: code[i],
+			FG_code: code[i],
 			quantity: quantity[i]
 		};
 		q = "INSERT INTO production SET ?";
@@ -324,7 +324,7 @@ app.post("/finished_good/create",function(req,res){
 				raw_material = raw;
 			}
 		});
-		for(var j=0;j<raw_material.length;j++){
+		for(var j=0;j<raw_materials.length;j++){
 			q = "UPDATE raw_material SET line_stock = line_stock - (" + quantity[i] + " * " + raw_material[j].quantity + ") WHERE code ='" + raw_material[j].raw_material_code + "'";
 			con.query(q,function(err){
 				if(err)
@@ -369,14 +369,14 @@ app.post("/finished_good/mock",function(req,res){
 								});
 								if(i === finishedGoods.length-1){
 									setTimeout(function(){
-										q = "SELECT * FROM raw_material ORDER BY supplier_code ";
+										q = "SELECT * FROM raw_material ORDER BY supplier_code";
 										con.query(q,function(err,raw_materials){
 										if(err)
-											res.render("error");
+											throw err;
 										var w;
 										var r = [];
 										for(var p=0;p<raw_materials.length;p++){
-											if(raw_quantity[raw_materials[p].code] > 0){
+											if(raw_quantity[raw_materials[p].code]){
 												r.push(raw_materials[p]);
 											}
 										}

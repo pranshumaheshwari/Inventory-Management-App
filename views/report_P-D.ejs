@@ -1,6 +1,6 @@
  <% include partials/header.ejs %>
 <br><br>
-<h1 align="center"><% if(type === "production"){ %>Production<% } else {%>Dispatch<%}%> Report</h1>
+<h1 align="center"><% if(type === "production"){ %>Production<% } else if(type === 'dispatch') {%>Dispatch<%} else {%>By Description<% } %> Report</h1>
 <div class="container jumbotron">
   <form action="/report/<%=type%>" method="post">
       <div class="row">

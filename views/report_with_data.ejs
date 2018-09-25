@@ -2,27 +2,27 @@
 <br>
 <h1 align="center">Report By PO</h1>
 <div class="container">
-	<form action="/report/PO/<%= PO.code %>" method="get">
+	<form action="/report/PO" method="get">
 		<div class="jumbotron">
 			<div class="row">
 				<div class="col-md-6">
-					<label>PO Number: <input type="text" value="<%= PO.code %>" class="form-control-plaintext"></label>
+					<label>PO Number: <input type="text" value="<%= POs[0].PO_code %>" class="form-control-plaintext"></label>
 				</div>
-				<div class="col-md-6">
-					<label>Date: <input type="text" value="<%= PO.date.toISOString().substring(0,10) %>" class="form-control-plaintext"></label>
-				</div>
+				<!-- <div class="col-md-6">
+					<label>Date: <input type="text" value="" class="form-control-plaintext"></label>
+				</div> -->
 			</div>
-			<div class="row">
+			<!-- <div class="row">
 				<div class="col-md-4">
-					<label>Supplier Name: <input type="text" value="<%= supplier.name %>" class="form-control-plaintext"></label>
+					<label>Supplier Name: <input type="text" value="" class="form-control-plaintext"></label>
 				</div>
 				<div class="col-md-4">
-					<label>Supplier Code: <input type="text" value="<%= supplier.code %>" class="form-control-plaintext"></label>
+					<label>Supplier Code: <input type="text" value="" class="form-control-plaintext"></label>
 				</div>
 				<div class="col-md-4">
-					<label>Status: <input type="text" value="<%= PO.pending %>" class="form-control-plaintext"></label>
+					<label>Status: <input type="text" value="" class="form-control-plaintext"></label>
 				</div>
-			</div>
+			</div> -->
 		</div>
 		<br>
 		<table class="table table-striped table-bordered table-hover">
@@ -41,8 +41,8 @@
 						<td><%= POs[i].DTPL_code %></td>
 						<td><%= POs[i].raw_desc %></td>
 						<td><%= POs[i].initial_quantity %></td>
-						<td><%= POs[i].initial_quantity - POs[i].quantity %></td>
-						<td><%= POs[i].quantity %></td>
+						<td><%= POs[i].sum %></td>
+						<td><%= POs[i].initial_quantity - POs[i].sum %></td>
 					</tr>
 				<% } %>
 			</tbody>

@@ -1,0 +1,1125 @@
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DI-001"},"time":1536831601282}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DI-001"},"time":1536831601402}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DI-001","invoice_no":"14222","raw_desc":"BLADE FUSE 10A","DTPL_code":"24111002-21","quantity":"259000"},"time":1536831601534}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DI-001","invoice_no":"14222","raw_desc":"BLADE FUSE 10A","DTPL_code":"24111002-21","quantity":"259000"},"time":1536831601634}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DI-001"},"time":1536831601758}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DI-001"},"time":1536831601902}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"ACW-001"},"time":1536831676433}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"ACW-001","invoice_no":"3266","raw_desc":"ACW 0.50 RED","DTPL_code":"ACW 0.5 R","quantity":"10000"},"time":1536831676536}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"ACW-001"},"time":1536831676660}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII-001"},"time":1536831750972}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII-001","invoice_no":"3263","raw_desc":"TERMINAL 110 SRS 2.8 X 0.5 LF TT-1628","DTPL_code":"70101001-00","quantity":"80000"},"time":1536831751084}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII-001"},"time":1536831751228}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1536833519526}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1536833519645}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1536833519765}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1536833519865}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1536833519965}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1536833520033}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1536833520165}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1536833520265}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1536833520385}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1536833520533}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1536833520649}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1536833520765}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1536833520877}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1536833520977}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3259","raw_desc":"FLRY-B 0.50 RED-BLUE","DTPL_code":"FLRY-B 0.50 R-L","quantity":"1800"},"time":1536833521165}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3259","raw_desc":"FLRY-B 0.50 RED-BLUE","DTPL_code":"FLRY-B 0.50 R-L","quantity":"1800"},"time":1536833521233}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3259","raw_desc":"FLRY-B 0.50 RED-BLUE","DTPL_code":"FLRY-B 0.50 R-L","quantity":"1800"},"time":1536833521333}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3259","raw_desc":"FLRY-B 0.50 RED-BLUE","DTPL_code":"FLRY-B 0.50 R-L","quantity":"1800"},"time":1536833521477}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3259","raw_desc":"FLRY-B 0.50 RED-BLUE","DTPL_code":"FLRY-B 0.50 R-L","quantity":"1800"},"time":1536833521565}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3259","raw_desc":"FLRY-B 0.50 RED-BLUE","DTPL_code":"FLRY-B 0.50 R-L","quantity":"1800"},"time":1536833521641}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3259","raw_desc":"FLRY-B 0.50 RED-BLUE","DTPL_code":"FLRY-B 0.50 R-L","quantity":"1800"},"time":1536833521721}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3259","raw_desc":"FLRY-B 0.50 RED-BLUE","DTPL_code":"FLRY-B 0.50 R-L","quantity":"1800"},"time":1536833521809}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3259","raw_desc":"FLRY-B 0.50 RED-BLUE","DTPL_code":"FLRY-B 0.50 R-L","quantity":"1800"},"time":1536833521865}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3259","raw_desc":"FLRY-B 0.50 RED-BLUE","DTPL_code":"FLRY-B 0.50 R-L","quantity":"1800"},"time":1536833521929}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3259","raw_desc":"FLRY-B 0.50 RED-BLUE","DTPL_code":"FLRY-B 0.50 R-L","quantity":"1800"},"time":1536833522021}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3259","raw_desc":"FLRY-B 0.50 RED-BLUE","DTPL_code":"FLRY-B 0.50 R-L","quantity":"1800"},"time":1536833522153}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3259","raw_desc":"FLRY-B 0.50 RED-BLUE","DTPL_code":"FLRY-B 0.50 R-L","quantity":"1800"},"time":1536833522221}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3259","raw_desc":"FLRY-B 0.50 RED-BLUE","DTPL_code":"FLRY-B 0.50 R-L","quantity":"1800"},"time":1536833522296}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1536833522428}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1536833522596}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1536833522799}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1536833522878}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1536833522946}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1536833523012}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1536833523122}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1536833523230}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1536833523330}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1536833523430}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1536833523554}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1536833523780}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1536833523962}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1536833524054}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-001"},"time":1536833647400}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-001"},"time":1536833647504}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-001"},"time":1536833647600}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-001"},"time":1536833647712}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-001"},"time":1536833647844}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-001"},"time":1536833647996}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Besmak-001","invoice_no":"215125","raw_desc":"9MK 110 PA 66 STD GREEN","DTPL_code":"40101012-30","quantity":"3500"},"time":1536833648140}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Besmak-001","invoice_no":"215125","raw_desc":"9MK 110 PA 66 STD GREEN","DTPL_code":"40101012-30","quantity":"3500"},"time":1536833648292}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Besmak-001","invoice_no":"215125","raw_desc":"9MK 110 PA 66 STD GREEN","DTPL_code":"40101012-30","quantity":"3500"},"time":1536833648468}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Besmak-001","invoice_no":"215125","raw_desc":"9MK 110 PA 66 STD GREEN","DTPL_code":"40101012-30","quantity":"3500"},"time":1536833648568}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Besmak-001","invoice_no":"215125","raw_desc":"9MK 110 PA 66 STD GREEN","DTPL_code":"40101012-30","quantity":"3500"},"time":1536833648644}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Besmak-001","invoice_no":"215125","raw_desc":"9MK 110 PA 66 STD GREEN","DTPL_code":"40101012-30","quantity":"3500"},"time":1536833648728}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-001"},"time":1536833648912}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-001"},"time":1536833649044}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-001"},"time":1536833649154}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-001"},"time":1536833649349}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-001"},"time":1536833649802}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-001"},"time":1536833649922}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-001"},"time":1536833728191}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-001"},"time":1536833728291}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-001"},"time":1536833728379}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Besmak-001","invoice_no":"215126","raw_desc":"9MK 110 PA 66 STD GREEN","DTPL_code":"40101012-30","quantity":"5500"},"time":1536833728479}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Besmak-001","invoice_no":"215126","raw_desc":"9MK 110 PA 66 STD GREEN","DTPL_code":"40101012-30","quantity":"5500"},"time":1536833728579}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Besmak-001","invoice_no":"215126","raw_desc":"9MK 110 PA 66 STD GREEN","DTPL_code":"40101012-30","quantity":"5500"},"time":1536833728659}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-001"},"time":1536833728799}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-001"},"time":1536833728926}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-001"},"time":1536833729046}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-001"},"time":1536833938599}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-001"},"time":1536833938711}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-001"},"time":1536833938831}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-001"},"time":1536833938899}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-001"},"time":1536833938963}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-001"},"time":1536833939075}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Besmak-001","invoice_no":"215127","raw_desc":"6FK 250 FHCL PA 66 BLACK","DTPL_code":"40112009-10","quantity":"300"},"time":1536833939187}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Besmak-001","invoice_no":"215127","raw_desc":"6FK 250 FHCL PA 66 BLACK","DTPL_code":"40112009-10","quantity":"300"},"time":1536833939287}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Besmak-001","invoice_no":"215127","raw_desc":"6FK 250 FHCL PA 66 BLACK","DTPL_code":"40112009-10","quantity":"300"},"time":1536833939355}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Besmak-001","invoice_no":"215127","raw_desc":"6FK 250 FHCL PA 66 BLACK","DTPL_code":"40112009-10","quantity":"300"},"time":1536833939443}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Besmak-001","invoice_no":"215127","raw_desc":"6FK 250 FHCL PA 66 BLACK","DTPL_code":"40112009-10","quantity":"300"},"time":1536833939511}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Besmak-001","invoice_no":"215127","raw_desc":"6FK 250 FHCL PA 66 BLACK","DTPL_code":"40112009-10","quantity":"300"},"time":1536833939587}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-001"},"time":1536833939699}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-001"},"time":1536833939835}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-001"},"time":1536833939955}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-001"},"time":1536833940080}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-001"},"time":1536833940186}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-001"},"time":1536833940310}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-002"},"time":1536833959501}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Besmak-002","invoice_no":"","raw_desc":"1MK 350 MH RIB PA66 NATURAL","DTPL_code":"40092002-00","quantity":"1500"},"time":1536833959609}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-002"},"time":1536833959709}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-001"},"time":1536833992699}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Besmak-001","invoice_no":"215128","raw_desc":"6FK 121 PA66  NATURAL","DTPL_code":"40101009-00","quantity":"1300"},"time":1536833992775}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-001"},"time":1536833992875}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1536834016922}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3308","raw_desc":"FLRY-B 1.00 YELLOW","DTPL_code":"FLRY-B 1.00 Y","quantity":"300"},"time":1536834017034}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1536834017214}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Pushpam YS-001"},"time":1536834133930}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Pushpam YS-001","invoice_no":"526","raw_desc":"WIRE SEAL SS 1.5- YELLOW","DTPL_code":"51000012-61","quantity":"10000"},"time":1536834134058}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Pushpam YS-001"},"time":1536834134158}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1536834251771}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1536834251875}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1536834251971}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1536834252063}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7287","raw_desc":"PULSAR COIL ASSLY -K1K2 NEW UG4 208520353 (KIRDAK)","DTPL_code":"12200043-11","quantity":"1200"},"time":1536834252151}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7287","raw_desc":"PULSAR COIL ASSLY -K1K2 NEW UG4 208520353 (KIRDAK)","DTPL_code":"12200043-11","quantity":"1200"},"time":1536834252247}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7287","raw_desc":"PULSAR COIL ASSLY -K1K2 NEW UG4 208520353 (KIRDAK)","DTPL_code":"12200043-11","quantity":"1200"},"time":1536834252351}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7287","raw_desc":"PULSAR COIL ASSLY -K1K2 NEW UG4 208520353 (KIRDAK)","DTPL_code":"12200043-11","quantity":"1200"},"time":1536834252495}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1536834252687}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1536834252823}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1536834252942}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1536834253020}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1536834337319}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7283","raw_desc":"PULSAR COIL D110  0220820804 (KIRDAK)","DTPL_code":"","quantity":"14"},"time":1536834337395}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1536834337475}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTP-001"},"time":1536837134042}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTP-001"},"time":1536837134157}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTP-001"},"time":1536837134245}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTP-001"},"time":1536837134301}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTP-001"},"time":1536837134389}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTP-001"},"time":1536837134481}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTP-001"},"time":1536837134569}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTP-001"},"time":1536837134657}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTP-001","invoice_no":"P5539","raw_desc":"TERMINAL TT-1917","DTPL_code":"70051007-10","quantity":"15000"},"time":1536837134757}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTP-001","invoice_no":"P5539","raw_desc":"TERMINAL TT-1917","DTPL_code":"70051007-10","quantity":"15000"},"time":1536837134869}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTP-001","invoice_no":"P5539","raw_desc":"TERMINAL TT-1917","DTPL_code":"70051007-10","quantity":"15000"},"time":1536837134913}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTP-001","invoice_no":"P5539","raw_desc":"TERMINAL TT-1917","DTPL_code":"70051007-10","quantity":"15000"},"time":1536837134957}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTP-001","invoice_no":"P5539","raw_desc":"TERMINAL TT-1917","DTPL_code":"70051007-10","quantity":"15000"},"time":1536837135001}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTP-001","invoice_no":"P5539","raw_desc":"TERMINAL TT-1917","DTPL_code":"70051007-10","quantity":"15000"},"time":1536837135117}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTP-001","invoice_no":"P5539","raw_desc":"TERMINAL TT-1917","DTPL_code":"70051007-10","quantity":"15000"},"time":1536837135177}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTP-001","invoice_no":"P5539","raw_desc":"TERMINAL TT-1917","DTPL_code":"70051007-10","quantity":"15000"},"time":1536837135269}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTP-001"},"time":1536837135385}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTP-001"},"time":1536837135493}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTP-001"},"time":1536837135633}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTP-001"},"time":1536837135737}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTP-001"},"time":1536837135829}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTP-001"},"time":1536837135925}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTP-001"},"time":1536837136029}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTP-001"},"time":1536837136136}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTP-001"},"time":1536837248696}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTP-001"},"time":1536837248796}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTP-001","invoice_no":"P5539","raw_desc":"FUSE BOX 2P WITH SPARE FUSE (TTP-2868)","DTPL_code":"41010021-10","quantity":"600"},"time":1536837248896}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTP-001","invoice_no":"P5539","raw_desc":"FUSE BOX 2P WITH SPARE FUSE (TTP-2868)","DTPL_code":"41010021-10","quantity":"600"},"time":1536837248984}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTP-001"},"time":1536837249072}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTP-001"},"time":1536837249196}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Vijay-001"},"time":1536837439436}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Vijay-001","invoice_no":"2210","raw_desc":"GROMMET FOR TWIN FUSE BOX SITH SPARE","DTPL_code":"58110104-10","quantity":"5000"},"time":1536837439532}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Vijay-001"},"time":1536837439620}}
+{"level":"info","message":"Working!!!"}
+{"level":"error","message":"Working!!!"}
+{"level":"info","message":"Working!!!"}
+{"level":"error","message":"Working!!!"}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DI-001"},"time":1536904965535}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DI-001"},"time":1536904965627}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DI-001"},"time":1536904965731}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DI-001","invoice_no":"14325","raw_desc":"GROMMET G 4 Hole GREY 0214640649","DTPL_code":"58110197-70","quantity":"4500"},"time":1536904965843}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DI-001","invoice_no":"14325","raw_desc":"GROMMET G 4 Hole GREY 0214640649","DTPL_code":"58110197-70","quantity":"4500"},"time":1536904965931}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DI-001","invoice_no":"14325","raw_desc":"GROMMET G 4 Hole GREY 0214640649","DTPL_code":"58110197-70","quantity":"4500"},"time":1536904965975}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DI-001"},"time":1536904966067}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DI-001"},"time":1536904966175}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DI-001"},"time":1536904966283}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Shreeraj-001"},"time":1536905013707}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Shreeraj-001","invoice_no":"0162","raw_desc":"5 WAY INDICATOR ASSY AA201171","DTPL_code":"12200033-11","quantity":"600"},"time":1536905013855}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Shreeraj-001"},"time":1536905014019}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Shreeraj-001"},"time":1536905063466}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Shreeraj-001","invoice_no":"0162","raw_desc":"5 WAY INDICATOR ASSY  AS 201051 ","DTPL_code":"","quantity":"1500"},"time":1536905063578}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Shreeraj-001"},"time":1536905063678}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Tri TT1945-001"},"time":1536905164377}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Tri TT1945-001","invoice_no":"0829","raw_desc":"TERMINAL LA 206 (2.0~4.0 CSA)","DTPL_code":"78102061-00","quantity":"1000"},"time":1536905164457}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Tri TT1945-001"},"time":1536905164525}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1536905357457}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1536905357549}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1536905357641}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1536905357729}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1536905357809}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1536905357885}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7339","raw_desc":"PULSAR COIL ASSLY-AP FACE LIFT 0213220503 (KIRDAK)","DTPL_code":"12200075-11","quantity":"100"},"time":1536905357985}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7339","raw_desc":"PULSAR COIL ASSLY-AP FACE LIFT 0213220503 (KIRDAK)","DTPL_code":"12200075-11","quantity":"100"},"time":1536905358073}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7339","raw_desc":"PULSAR COIL ASSLY-AP FACE LIFT 0213220503 (KIRDAK)","DTPL_code":"12200075-11","quantity":"100"},"time":1536905358117}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7339","raw_desc":"PULSAR COIL ASSLY-AP FACE LIFT 0213220503 (KIRDAK)","DTPL_code":"12200075-11","quantity":"100"},"time":1536905358173}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7339","raw_desc":"PULSAR COIL ASSLY-AP FACE LIFT 0213220503 (KIRDAK)","DTPL_code":"12200075-11","quantity":"100"},"time":1536905358261}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7339","raw_desc":"PULSAR COIL ASSLY-AP FACE LIFT 0213220503 (KIRDAK)","DTPL_code":"12200075-11","quantity":"100"},"time":1536905358353}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1536905358457}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1536905358561}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1536905358641}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1536905358736}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1536905358830}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1536905358899}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-002"},"time":1536905407289}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-002","invoice_no":"7345","raw_desc":"PULSAR COIL COIL 556 (KIRDAK)","DTPL_code":"12200119-11","quantity":"1800"},"time":1536905407373}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-002"},"time":1536905407465}}
+{"level":"info","message":"Working!!!"}
+{"level":"error","message":"Working!!!"}
+{"level":"info","message":"Working!!!"}
+{"level":"error","message":"Working!!!"}
+{"level":"info","message":"Working!!!"}
+{"level":"error","message":"Working!!!"}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Uravi-001"},"time":1536923933213}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Uravi-001","invoice_no":"02393","raw_desc":"LAMP 12V 2W (WEDGE)","DTPL_code":"12200038-11","quantity":"10000"},"time":1536923933317}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Uravi-001"},"time":1536923933397}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DIII-001"},"time":1536924032064}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DIII-001"},"time":1536924032149}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DIII-001","invoice_no":"16949","raw_desc":"PVC ADH TAPE 18X25-YELLOW","DTPL_code":"61010001-60","quantity":"108"},"time":1536924032230}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DIII-001","invoice_no":"16949","raw_desc":"PVC ADH TAPE 18X25-YELLOW","DTPL_code":"61010001-60","quantity":"108"},"time":1536924032319}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DIII-001"},"time":1536924032426}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DIII-001"},"time":1536924032527}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTV-001"},"time":1536924164723}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTV-001"},"time":1536924164819}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTV-001","invoice_no":"09712","raw_desc":"TTP 38 FN6BLK","DTPL_code":"40111102-10","quantity":"6500"},"time":1536924164911}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTV-001","invoice_no":"09712","raw_desc":"TTP 38 FN6BLK","DTPL_code":"40111102-10","quantity":"6500"},"time":1536924164999}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTV-001"},"time":1536924165101}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTV-001"},"time":1536924165194}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Viscon-001"},"time":1536924270002}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Viscon-001"},"time":1536924270110}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Viscon-001","invoice_no":"3261","raw_desc":"CAP RED OF HT COIL TRML 6.3D DS ","DTPL_code":"46093014-20","quantity":"5000"},"time":1536924270192}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Viscon-001","invoice_no":"3261","raw_desc":"CAP RED OF HT COIL TRML 6.3D DS ","DTPL_code":"46093014-20","quantity":"5000"},"time":1536924270269}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Viscon-001"},"time":1536924270366}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Viscon-001"},"time":1536924270449}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"ACW-001"},"time":1536926286837}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"ACW-001","invoice_no":"3267","raw_desc":"ACW 1.50 YELLOW","DTPL_code":"ACW 1.50 Y","quantity":"4000"},"time":1536926286936}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"ACW-001"},"time":1536926287037}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII-001"},"time":1536926401433}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII-001"},"time":1536926401516}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII-001"},"time":1536926401595}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII-001","invoice_no":"3262","raw_desc":"FBPOX CVR 12P PRINTED BLK","DTPL_code":"41072006-11","quantity":"5000"},"time":1536926401671}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII-001","invoice_no":"3262","raw_desc":"FBPOX CVR 12P PRINTED BLK","DTPL_code":"41072006-11","quantity":"5000"},"time":1536926401739}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII-001"},"time":1536926401817}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII-001"},"time":1536926401911}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII-001"},"time":1536926401914}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII-001"},"time":1536926466831}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII-001","invoice_no":"3322","raw_desc":"TERMINAL LA 206 (2.0~4.0 CSA)","DTPL_code":"78102061-00","quantity":"10000"},"time":1536926466917}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII-001"},"time":1536926466989}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1536926510014}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1536926510098}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3323","raw_desc":"AV 0.50 LIGHT GREEN","DTPL_code":"AV 0.50 LG","quantity":"4000"},"time":1536926510252}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3323","raw_desc":"AV 0.50 LIGHT GREEN","DTPL_code":"AV 0.50 LG","quantity":"4000"},"time":1536926510363}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1536926510477}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1536926510575}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1536993789313}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1536993789453}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1536993789541}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1536993789573}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1536993789666}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1536993789740}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1536993789832}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7412","raw_desc":"PULSAR COIL ASSLY PLATINA UPGRADE 0209620387 (KIRDAK)","DTPL_code":"12200041-11","quantity":"1600"},"time":1536993789996}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7412","raw_desc":"PULSAR COIL ASSLY PLATINA UPGRADE 0209620387 (KIRDAK)","DTPL_code":"12200041-11","quantity":"1600"},"time":1536993790072}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7412","raw_desc":"PULSAR COIL ASSLY PLATINA UPGRADE 0209620387 (KIRDAK)","DTPL_code":"12200041-11","quantity":"1600"},"time":1536993790140}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7412","raw_desc":"PULSAR COIL ASSLY PLATINA UPGRADE 0209620387 (KIRDAK)","DTPL_code":"12200041-11","quantity":"1600"},"time":1536993790208}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7412","raw_desc":"PULSAR COIL ASSLY PLATINA UPGRADE 0209620387 (KIRDAK)","DTPL_code":"12200041-11","quantity":"1600"},"time":1536993790240}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7412","raw_desc":"PULSAR COIL ASSLY PLATINA UPGRADE 0209620387 (KIRDAK)","DTPL_code":"12200041-11","quantity":"1600"},"time":1536993790284}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1536993790460}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1536993790544}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1536993790620}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1536993790687}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1536993790765}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1536993790843}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1536993790920}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-002"},"time":1536993931171}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-002","invoice_no":"4709","raw_desc":"PULSAR COIL COIL 556 (KIRDAK)","DTPL_code":"12200119-11","quantity":"200"},"time":1536993931255}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-002"},"time":1536993931355}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1536994068205}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7414","raw_desc":"PULSAR COIL ASSLY -K1K2 NEW UG4 208520353 (KIRDAK)","DTPL_code":"12200043-11","quantity":"800"},"time":1536994068337}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1536994068425}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTV-001"},"time":1536994433714}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTV-001"},"time":1536994433878}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTV-001","invoice_no":"09776","raw_desc":"TTP 32 FN6N","DTPL_code":"40000312-00","quantity":"11500"},"time":1536994433978}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTV-001"},"time":1536994434077}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTV-001"},"time":1536994434181}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTV-001"},"time":1537000267589}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTV-001"},"time":1537000267693}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTV-001"},"time":1537000267865}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTV-001"},"time":1537000267993}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTV-001"},"time":1537000268085}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTV-001"},"time":1537000268141}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTV-001"},"time":1537000268241}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTV-001"},"time":1537000268361}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTV-001"},"time":1537000268461}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTV-001"},"time":1537000268560}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTV-001","invoice_no":"09893","raw_desc":"TERMINAL 6.3 FL  TT1970","DTPL_code":"70111001-00","quantity":"40000"},"time":1537000268660}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTV-001","invoice_no":"09893","raw_desc":"TERMINAL 6.3 FL  TT1970","DTPL_code":"70111001-00","quantity":"40000"},"time":1537000268748}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTV-001","invoice_no":"09893","raw_desc":"TERMINAL 6.3 FL  TT1970","DTPL_code":"70111001-00","quantity":"40000"},"time":1537000268828}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTV-001","invoice_no":"09893","raw_desc":"TERMINAL 6.3 FL  TT1970","DTPL_code":"70111001-00","quantity":"40000"},"time":1537000268896}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTV-001","invoice_no":"09893","raw_desc":"TERMINAL 6.3 FL  TT1970","DTPL_code":"70111001-00","quantity":"40000"},"time":1537000268996}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTV-001","invoice_no":"09893","raw_desc":"TERMINAL 6.3 FL  TT1970","DTPL_code":"70111001-00","quantity":"40000"},"time":1537000269072}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTV-001","invoice_no":"09893","raw_desc":"TERMINAL 6.3 FL  TT1970","DTPL_code":"70111001-00","quantity":"40000"},"time":1537000269140}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTV-001","invoice_no":"09893","raw_desc":"TERMINAL 6.3 FL  TT1970","DTPL_code":"70111001-00","quantity":"40000"},"time":1537000269196}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTV-001","invoice_no":"09893","raw_desc":"TERMINAL 6.3 FL  TT1970","DTPL_code":"70111001-00","quantity":"40000"},"time":1537000269284}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTV-001","invoice_no":"09893","raw_desc":"TERMINAL 6.3 FL  TT1970","DTPL_code":"70111001-00","quantity":"40000"},"time":1537000269340}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTV-001"},"time":1537000269456}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTV-001"},"time":1537000269540}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTV-001"},"time":1537000269640}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTV-001"},"time":1537000269728}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTV-001"},"time":1537000269811}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTV-001"},"time":1537000269904}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTV-001"},"time":1537000270063}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTV-001"},"time":1537000270207}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTV-001"},"time":1537000270422}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTV-001"},"time":1537000270575}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTV-001"},"time":1537000471541}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTV-001"},"time":1537000471645}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTV-001"},"time":1537000471733}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTV-001"},"time":1537000471821}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTV-001","invoice_no":"09892","raw_desc":"TERMINAL 187 SRS SLOT F (CSA 0.5-1.5)TT-1965","DTPL_code":"70083003-00","quantity":"16000"},"time":1537000471933}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTV-001","invoice_no":"09892","raw_desc":"TERMINAL 187 SRS SLOT F (CSA 0.5-1.5)TT-1965","DTPL_code":"70083003-00","quantity":"16000"},"time":1537000472021}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTV-001","invoice_no":"09892","raw_desc":"TERMINAL 187 SRS SLOT F (CSA 0.5-1.5)TT-1965","DTPL_code":"70083003-00","quantity":"16000"},"time":1537000472089}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTV-001","invoice_no":"09892","raw_desc":"TERMINAL 187 SRS SLOT F (CSA 0.5-1.5)TT-1965","DTPL_code":"70083003-00","quantity":"16000"},"time":1537000472157}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTV-001"},"time":1537000472253}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTV-001"},"time":1537000472325}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTV-001"},"time":1537000472413}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTV-001"},"time":1537000472505}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Nandhini-001"},"time":1537000572942}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Nandhini-001"},"time":1537000573072}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Nandhini-001"},"time":1537000573156}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Nandhini-001"},"time":1537000573244}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Nandhini-001"},"time":1537000573344}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Nandhini-001","invoice_no":"0164","raw_desc":"Dummy Seal Black","DTPL_code":"51020001-10","quantity":"50000"},"time":1537000573456}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Nandhini-001","invoice_no":"0164","raw_desc":"Dummy Seal Black","DTPL_code":"51020001-10","quantity":"50000"},"time":1537000573532}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Nandhini-001","invoice_no":"0164","raw_desc":"Dummy Seal Black","DTPL_code":"51020001-10","quantity":"50000"},"time":1537000573624}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Nandhini-001","invoice_no":"0164","raw_desc":"Dummy Seal Black","DTPL_code":"51020001-10","quantity":"50000"},"time":1537000573680}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Nandhini-001","invoice_no":"0164","raw_desc":"Dummy Seal Black","DTPL_code":"51020001-10","quantity":"50000"},"time":1537000573744}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Nandhini-001"},"time":1537000573848}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Nandhini-001"},"time":1537000573940}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Nandhini-001"},"time":1537000574012}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Nandhini-001"},"time":1537000574112}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Nandhini-001"},"time":1537000574187}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII-001"},"time":1537001044583}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII-001"},"time":1537001044699}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII-001"},"time":1537001044791}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII-001"},"time":1537001044899}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII-001"},"time":1537001044999}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII-001","invoice_no":"3350","raw_desc":"TERMINAL 110 SRS 2.8 X 0.5 LF TT-1628","DTPL_code":"70101001-00","quantity":"100000"},"time":1537001045099}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII-001","invoice_no":"3350","raw_desc":"TERMINAL 110 SRS 2.8 X 0.5 LF TT-1628","DTPL_code":"70101001-00","quantity":"100000"},"time":1537001045255}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII-001","invoice_no":"3350","raw_desc":"TERMINAL 110 SRS 2.8 X 0.5 LF TT-1628","DTPL_code":"70101001-00","quantity":"100000"},"time":1537001045355}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII-001","invoice_no":"3350","raw_desc":"TERMINAL 110 SRS 2.8 X 0.5 LF TT-1628","DTPL_code":"70101001-00","quantity":"100000"},"time":1537001045423}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII-001","invoice_no":"3350","raw_desc":"TERMINAL 110 SRS 2.8 X 0.5 LF TT-1628","DTPL_code":"70101001-00","quantity":"100000"},"time":1537001045487}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII-001"},"time":1537001045627}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII-001"},"time":1537001045723}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII-001"},"time":1537001045811}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII-001"},"time":1537001045902}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII-001"},"time":1537001046011}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"ACW-001"},"time":1537001123146}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"ACW-001"},"time":1537001123298}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"ACW-001","invoice_no":"3354","raw_desc":"ACW 1.50 YELLOW","DTPL_code":"ACW 1.50 Y","quantity":"4000"},"time":1537001123414}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"ACW-001","invoice_no":"3354","raw_desc":"ACW 1.50 YELLOW","DTPL_code":"ACW 1.50 Y","quantity":"4000"},"time":1537001123502}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"ACW-001"},"time":1537001123602}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"ACW-001"},"time":1537001123670}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537001347985}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537001348077}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537001348173}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537001348261}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537001348329}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537001348383}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537001348475}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537001348575}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537001348663}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537001348751}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3348","raw_desc":"RED 2.0MM AVSS","DTPL_code":"AVSS 2.0MM R","quantity":"2000"},"time":1537001348887}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3348","raw_desc":"RED 2.0MM AVSS","DTPL_code":"AVSS 2.0MM R","quantity":"2000"},"time":1537001348991}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3348","raw_desc":"RED 2.0MM AVSS","DTPL_code":"AVSS 2.0MM R","quantity":"2000"},"time":1537001349087}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3348","raw_desc":"RED 2.0MM AVSS","DTPL_code":"AVSS 2.0MM R","quantity":"2000"},"time":1537001349187}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3348","raw_desc":"RED 2.0MM AVSS","DTPL_code":"AVSS 2.0MM R","quantity":"2000"},"time":1537001349294}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3348","raw_desc":"RED 2.0MM AVSS","DTPL_code":"AVSS 2.0MM R","quantity":"2000"},"time":1537001349382}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3348","raw_desc":"RED 2.0MM AVSS","DTPL_code":"AVSS 2.0MM R","quantity":"2000"},"time":1537001349462}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3348","raw_desc":"RED 2.0MM AVSS","DTPL_code":"AVSS 2.0MM R","quantity":"2000"},"time":1537001349518}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3348","raw_desc":"RED 2.0MM AVSS","DTPL_code":"AVSS 2.0MM R","quantity":"2000"},"time":1537001349574}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3348","raw_desc":"RED 2.0MM AVSS","DTPL_code":"AVSS 2.0MM R","quantity":"2000"},"time":1537001349630}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537001349742}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537001349834}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537001349918}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537001349974}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537001350050}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537001350154}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537001350287}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537001350470}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537001350642}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537001350798}}
+{"level":"info","message":{"where":"INSERT INTO output","what":{"slip_no":"3104","raw_material_code":"TR-033","quantity":"12000"},"time":1537075536809}}
+{"level":"info","message":{"where":"UPDATE raw_material stock && line_stock","what":{"slip_no":"3104","raw_material_code":"TR-033","quantity":"12000"},"time":1537075536913}}
+{"level":"info","message":{"where":"INSERT INTO output","what":{"slip_no":"3108","raw_material_code":"ST-007","quantity":"40"},"time":1537075629283}}
+{"level":"info","message":{"where":"UPDATE raw_material stock && line_stock","what":{"slip_no":"3108","raw_material_code":"ST-007","quantity":"40"},"time":1537075629363}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Vijay-001"},"time":1537161672843}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Vijay-001"},"time":1537161672971}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Vijay-001","invoice_no":"2222","raw_desc":"CX201015 HOLDER FOR FUSE BOX","DTPL_code":"58110005-10","quantity":"2000"},"time":1537161673071}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Vijay-001","invoice_no":"2222","raw_desc":"CX201015 HOLDER FOR FUSE BOX","DTPL_code":"58110005-10","quantity":"2000"},"time":1537161673151}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Vijay-001"},"time":1537161673247}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Vijay-001"},"time":1537161673371}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII-001"},"time":1537161702668}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII-001","invoice_no":"3357","raw_desc":"DIODE ASSY.FOR INDICATOR","DTPL_code":"12200013-41","quantity":"500"},"time":1537161702772}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII-001"},"time":1537161702872}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTV-001"},"time":1537175450662}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTV-001","invoice_no":"09937","raw_desc":"CONNE 250 SRS 1 PF POS LOC-BLK TTP- 1904","DTPL_code":"40113001-10","quantity":"20000"},"time":1537175450815}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTV-001"},"time":1537175450907}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Priya-001"},"time":1537175543023}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Priya-001","invoice_no":"0389","raw_desc":"CONNECTOR COVR 40x90-BLK CDCPC 8 PRIYA","DTPL_code":"46214002-10P","quantity":"5000"},"time":1537175543149}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Priya-001"},"time":1537175543247}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Shreeraj-001"},"time":1537175596307}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Shreeraj-001"},"time":1537175596445}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Shreeraj-001","invoice_no":"0163","raw_desc":"5 WAY INDICATOR ASSY  AS 201051 ","DTPL_code":"","quantity":"2000"},"time":1537175596573}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Shreeraj-001","invoice_no":"0163","raw_desc":"5 WAY INDICATOR ASSY  AS 201051 ","DTPL_code":"","quantity":"2000"},"time":1537175596661}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Shreeraj-001"},"time":1537175596752}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Shreeraj-001"},"time":1537175596840}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kiran-001"},"time":1537175679098}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kiran-001","invoice_no":"1757","raw_desc":"VFG TUBE 4MM BLACK","DTPL_code":"81040400-10","quantity":"2000"},"time":1537175679195}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kiran-001"},"time":1537175679292}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"PuneM-001"},"time":1537175797162}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"PuneM-001"},"time":1537175797300}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"PuneM-001"},"time":1537175797411}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"PuneM-001"},"time":1537175797499}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"PuneM-001","invoice_no":"181919838","raw_desc":"FUSE BOX COVER STICKER AN201012","DTPL_code":"66000034-10","quantity":"2000"},"time":1537175797609}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"PuneM-001","invoice_no":"181919838","raw_desc":"FUSE BOX COVER STICKER AN201012","DTPL_code":"66000034-10","quantity":"2000"},"time":1537175797699}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"PuneM-001","invoice_no":"181919838","raw_desc":"FUSE BOX COVER STICKER AN201012","DTPL_code":"66000034-10","quantity":"2000"},"time":1537175797765}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"PuneM-001","invoice_no":"181919838","raw_desc":"FUSE BOX COVER STICKER AN201012","DTPL_code":"66000034-10","quantity":"2000"},"time":1537175797831}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"PuneM-001"},"time":1537175797928}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"PuneM-001"},"time":1537175798012}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"PuneM-001"},"time":1537175798111}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"PuneM-001"},"time":1537175798221}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1537175980171}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1537175980305}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1537175980396}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1537175980480}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1537175980569}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1537175980658}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1537175980747}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7474","raw_desc":"PULSAR COIL ASSY-BROWN (B104D-SS) 0216220609 (KIRDAK)","DTPL_code":"12200120-51","quantity":"1400"},"time":1537175980847}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7474","raw_desc":"PULSAR COIL ASSY-BROWN (B104D-SS) 0216220609 (KIRDAK)","DTPL_code":"12200120-51","quantity":"1400"},"time":1537175980934}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7474","raw_desc":"PULSAR COIL ASSY-BROWN (B104D-SS) 0216220609 (KIRDAK)","DTPL_code":"12200120-51","quantity":"1400"},"time":1537175981013}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7474","raw_desc":"PULSAR COIL ASSY-BROWN (B104D-SS) 0216220609 (KIRDAK)","DTPL_code":"12200120-51","quantity":"1400"},"time":1537175981090}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7474","raw_desc":"PULSAR COIL ASSY-BROWN (B104D-SS) 0216220609 (KIRDAK)","DTPL_code":"12200120-51","quantity":"1400"},"time":1537175981157}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7474","raw_desc":"PULSAR COIL ASSY-BROWN (B104D-SS) 0216220609 (KIRDAK)","DTPL_code":"12200120-51","quantity":"1400"},"time":1537175981224}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7474","raw_desc":"PULSAR COIL ASSY-BROWN (B104D-SS) 0216220609 (KIRDAK)","DTPL_code":"12200120-51","quantity":"1400"},"time":1537175981291}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1537175981403}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1537175981516}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1537175981614}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1537175981679}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1537175981773}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1537175981867}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1537175982003}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Vin-001"},"time":1537176044560}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Vin-001"},"time":1537176044656}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Vin-001","invoice_no":"0166","raw_desc":"LCB-1 BOOTS","DTPL_code":"46211005-00","quantity":"58000"},"time":1537176044769}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Vin-001","invoice_no":"0166","raw_desc":"LCB-1 BOOTS","DTPL_code":"46211005-00","quantity":"58000"},"time":1537176044859}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Vin-001"},"time":1537176045008}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Vin-001"},"time":1537176045079}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Vin-001"},"time":1537176155805}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Vin-001","invoice_no":"0166","raw_desc":"DF -250A CAPL-PVC 25 X 27 TR BLUE","DTPL_code":"46211027-00","quantity":"4000"},"time":1537176155872}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Vin-001"},"time":1537176155974}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Vijay-001"},"time":1537184219113}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Vijay-001"},"time":1537184219217}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Vijay-001","invoice_no":"2233","raw_desc":"CX201015 HOLDER FOR FUSE BOX","DTPL_code":"58110005-10","quantity":"2000"},"time":1537184219304}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Vijay-001","invoice_no":"2233","raw_desc":"CX201015 HOLDER FOR FUSE BOX","DTPL_code":"58110005-10","quantity":"2000"},"time":1537184219382}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Vijay-001"},"time":1537184219490}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Vijay-001"},"time":1537184219584}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537185391992}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537185392084}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537185392171}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537185392251}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537185392327}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537185392415}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537185392515}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537185392559}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537185392591}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3361","raw_desc":"RED 2.0MM AVSS","DTPL_code":"AVSS 2.0MM R","quantity":"2000"},"time":1537185392671}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3361","raw_desc":"RED 2.0MM AVSS","DTPL_code":"AVSS 2.0MM R","quantity":"2000"},"time":1537185392747}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3361","raw_desc":"RED 2.0MM AVSS","DTPL_code":"AVSS 2.0MM R","quantity":"2000"},"time":1537185392803}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3361","raw_desc":"RED 2.0MM AVSS","DTPL_code":"AVSS 2.0MM R","quantity":"2000"},"time":1537185392847}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3361","raw_desc":"RED 2.0MM AVSS","DTPL_code":"AVSS 2.0MM R","quantity":"2000"},"time":1537185392891}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3361","raw_desc":"RED 2.0MM AVSS","DTPL_code":"AVSS 2.0MM R","quantity":"2000"},"time":1537185392947}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3361","raw_desc":"RED 2.0MM AVSS","DTPL_code":"AVSS 2.0MM R","quantity":"2000"},"time":1537185393003}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3361","raw_desc":"RED 2.0MM AVSS","DTPL_code":"AVSS 2.0MM R","quantity":"2000"},"time":1537185393047}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3361","raw_desc":"RED 2.0MM AVSS","DTPL_code":"AVSS 2.0MM R","quantity":"2000"},"time":1537185393139}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537185393323}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537185393443}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537185393527}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537185393615}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537185393683}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537185393759}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537185393836}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537185393908}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537185393970}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DI-001"},"time":1537185456031}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DI-001"},"time":1537185456127}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DI-001"},"time":1537185456207}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DI-001","invoice_no":"14598","raw_desc":"3PLY DUPX BOX 65X65X38MM-GREEN  / 61031096","DTPL_code":"53110070-30","quantity":"6000"},"time":1537185456283}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DI-001","invoice_no":"14598","raw_desc":"3PLY DUPX BOX 65X65X38MM-GREEN  / 61031096","DTPL_code":"53110070-30","quantity":"6000"},"time":1537185456363}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DI-001","invoice_no":"14598","raw_desc":"3PLY DUPX BOX 65X65X38MM-GREEN  / 61031096","DTPL_code":"53110070-30","quantity":"6000"},"time":1537185456451}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DI-001"},"time":1537185456539}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DI-001"},"time":1537185456627}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DI-001"},"time":1537185456715}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII-001"},"time":1537185513896}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII-001"},"time":1537185513980}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII-001","invoice_no":"3380","raw_desc":"TERMINAL 110 SRS 2.8 X 0.5 LF TT-1628","DTPL_code":"70101001-00","quantity":"100000"},"time":1537185514076}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII-001","invoice_no":"3380","raw_desc":"TERMINAL 110 SRS 2.8 X 0.5 LF TT-1628","DTPL_code":"70101001-00","quantity":"100000"},"time":1537185514152}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII-001"},"time":1537185514240}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII-001"},"time":1537185514308}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Del-001"},"time":1537328140785}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Del-001"},"time":1537328140909}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Del-001"},"time":1537328141013}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Del-001","invoice_no":"18007433","raw_desc":"CONDUT TUBE B-5 S PP","DTPL_code":"86000500-10","quantity":"6000"},"time":1537328141113}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Del-001","invoice_no":"18007433","raw_desc":"CONDUT TUBE B-5 S PP","DTPL_code":"86000500-10","quantity":"6000"},"time":1537328141201}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Del-001","invoice_no":"18007433","raw_desc":"CONDUT TUBE B-5 S PP","DTPL_code":"86000500-10","quantity":"6000"},"time":1537328141293}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Del-001"},"time":1537328141417}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Del-001"},"time":1537328141509}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Del-001"},"time":1537328141593}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1537328320356}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1537328320452}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1537328320540}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1537328320628}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1537328320716}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7536","raw_desc":"PULSAR COIL JC/K4  0208820395 (KIRDAK)","DTPL_code":"12200050-11","quantity":"350"},"time":1537328320807}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7536","raw_desc":"PULSAR COIL JC/K4  0208820395 (KIRDAK)","DTPL_code":"12200050-11","quantity":"350"},"time":1537328320895}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7536","raw_desc":"PULSAR COIL JC/K4  0208820395 (KIRDAK)","DTPL_code":"12200050-11","quantity":"350"},"time":1537328320995}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7536","raw_desc":"PULSAR COIL JC/K4  0208820395 (KIRDAK)","DTPL_code":"12200050-11","quantity":"350"},"time":1537328321051}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7536","raw_desc":"PULSAR COIL JC/K4  0208820395 (KIRDAK)","DTPL_code":"12200050-11","quantity":"350"},"time":1537328321151}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1537328321347}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1537328321531}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1537328321745}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1537328321888}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1537328321985}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Priya-001"},"time":1537328363876}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Priya-001","invoice_no":"0392","raw_desc":"CONNECTOR COVR 40x90-BLK CDCPC 8 PRIYA","DTPL_code":"46214002-10P","quantity":"3000"},"time":1537328364052}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Priya-001"},"time":1537328364172}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"PuneM-001"},"time":1537328425103}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"PuneM-001"},"time":1537328425203}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"PuneM-001","invoice_no":"181920180","raw_desc":"FUSE BOX COVER STICKER AL201082","DTPL_code":"66000036-10","quantity":"8000"},"time":1537328425307}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"PuneM-001","invoice_no":"181920180","raw_desc":"FUSE BOX COVER STICKER AL201082","DTPL_code":"66000036-10","quantity":"8000"},"time":1537328425450}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"PuneM-001"},"time":1537328425590}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"PuneM-001"},"time":1537328425694}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII-001"},"time":1537328472644}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII-001"},"time":1537328472740}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII-001","invoice_no":"3405","raw_desc":"FBPOX CVR 12P PRINTED BLK","DTPL_code":"41072006-11","quantity":"5000"},"time":1537328472844}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII-001","invoice_no":"3405","raw_desc":"FBPOX CVR 12P PRINTED BLK","DTPL_code":"41072006-11","quantity":"5000"},"time":1537328472932}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII-001"},"time":1537328473055}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII-001"},"time":1537328473107}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DIII-001"},"time":1537328541737}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DIII-001"},"time":1537328541829}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DIII-001","invoice_no":"17276","raw_desc":"WIRE SEAL SS 1.5- YELLOW","DTPL_code":"51000012-61","quantity":"80000"},"time":1537328541909}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DIII-001","invoice_no":"17276","raw_desc":"WIRE SEAL SS 1.5- YELLOW","DTPL_code":"51000012-61","quantity":"80000"},"time":1537328541997}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DIII-001"},"time":1537328542109}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DIII-001"},"time":1537328542213}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Sar-001"},"time":1537328609649}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Sar-001"},"time":1537328609801}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Sar-001"},"time":1537328609889}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Sar-001","invoice_no":"763","raw_desc":"STICKER C.O  1185","DTPL_code":"","quantity":"16620"},"time":1537328609981}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Sar-001","invoice_no":"763","raw_desc":"STICKER C.O  1185","DTPL_code":"","quantity":"16620"},"time":1537328610069}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Sar-001","invoice_no":"763","raw_desc":"STICKER C.O  1185","DTPL_code":"","quantity":"16620"},"time":1537328610125}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Sar-001"},"time":1537328610213}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Sar-001"},"time":1537328610313}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Sar-001"},"time":1537328610425}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537328640756}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3410","raw_desc":"RED 2.0MM AVSS","DTPL_code":"AVSS 2.0MM R","quantity":"3000"},"time":1537328640892}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537328641024}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Chitra-001"},"time":1537343024797}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Chitra-001","invoice_no":"0345","raw_desc":"BULB HOLDER GREY","DTPL_code":"","quantity":"100000"},"time":1537343024909}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Chitra-001"},"time":1537343025001}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-001"},"time":1537343157522}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-001"},"time":1537343157622}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-001"},"time":1537343157710}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-001"},"time":1537343157802}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Besmak-001","invoice_no":"215275","raw_desc":"9FK 121 PA66 NATURAL","DTPL_code":"40101011-00","quantity":"2400"},"time":1537343157910}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Besmak-001","invoice_no":"215275","raw_desc":"9FK 121 PA66 NATURAL","DTPL_code":"40101011-00","quantity":"2400"},"time":1537343157990}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Besmak-001","invoice_no":"215275","raw_desc":"9FK 121 PA66 NATURAL","DTPL_code":"40101011-00","quantity":"2400"},"time":1537343158034}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Besmak-001","invoice_no":"215275","raw_desc":"9FK 121 PA66 NATURAL","DTPL_code":"40101011-00","quantity":"2400"},"time":1537343158122}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-001"},"time":1537343158218}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-001"},"time":1537343158302}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-001"},"time":1537343158402}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-001"},"time":1537343158466}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-001"},"time":1537343264167}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-001"},"time":1537343264283}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Besmak-001","invoice_no":"215279","raw_desc":"6FK 121 PA66  NATURAL","DTPL_code":"40101009-00","quantity":"14500"},"time":1537343264367}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Besmak-001","invoice_no":"215279","raw_desc":"6FK 121 PA66  NATURAL","DTPL_code":"40101009-00","quantity":"14500"},"time":1537343264459}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-001"},"time":1537343264547}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-001"},"time":1537343264671}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-001"},"time":1537343604012}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-001"},"time":1537343604104}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-001"},"time":1537343604212}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-001"},"time":1537343604298}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-001"},"time":1537343604430}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-001"},"time":1537343604526}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Besmak-001","invoice_no":"215277","raw_desc":"5FK 250FHCL RELAY PA66 BLACK( GPT CONNECTOR)","DTPL_code":"40111103-10","quantity":"4400"},"time":1537343604654}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Besmak-001","invoice_no":"215277","raw_desc":"5FK 250FHCL RELAY PA66 BLACK( GPT CONNECTOR)","DTPL_code":"40111103-10","quantity":"4400"},"time":1537343604746}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Besmak-001","invoice_no":"215277","raw_desc":"5FK 250FHCL RELAY PA66 BLACK( GPT CONNECTOR)","DTPL_code":"40111103-10","quantity":"4400"},"time":1537343604810}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Besmak-001","invoice_no":"215277","raw_desc":"5FK 250FHCL RELAY PA66 BLACK( GPT CONNECTOR)","DTPL_code":"40111103-10","quantity":"4400"},"time":1537343604866}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Besmak-001","invoice_no":"215277","raw_desc":"5FK 250FHCL RELAY PA66 BLACK( GPT CONNECTOR)","DTPL_code":"40111103-10","quantity":"4400"},"time":1537343604910}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Besmak-001","invoice_no":"215277","raw_desc":"5FK 250FHCL RELAY PA66 BLACK( GPT CONNECTOR)","DTPL_code":"40111103-10","quantity":"4400"},"time":1537343604966}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-001"},"time":1537343605090}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-001"},"time":1537343605182}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-001"},"time":1537343605278}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-001"},"time":1537343605358}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-001"},"time":1537343605420}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-001"},"time":1537343605499}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-002"},"time":1537343747269}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-002"},"time":1537343747361}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-002"},"time":1537343747481}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Besmak-002","invoice_no":"215278","raw_desc":"3FK 110 PA66 NATURAL","DTPL_code":"40101005-00","quantity":"1000"},"time":1537343747569}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Besmak-002","invoice_no":"215278","raw_desc":"3FK 110 PA66 NATURAL","DTPL_code":"40101005-00","quantity":"1000"},"time":1537343747657}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Besmak-002","invoice_no":"215278","raw_desc":"3FK 110 PA66 NATURAL","DTPL_code":"40101005-00","quantity":"1000"},"time":1537343747713}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-002"},"time":1537343747817}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-002"},"time":1537343747897}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-002"},"time":1537343747981}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTP-001"},"time":1537343998977}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTP-001"},"time":1537343999073}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTP-001","invoice_no":"P5848","raw_desc":"FBPOX CVR 12P PRINTED BLK","DTPL_code":"41072006-11","quantity":"3200"},"time":1537343999173}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTP-001","invoice_no":"P5848","raw_desc":"FBPOX CVR 12P PRINTED BLK","DTPL_code":"41072006-11","quantity":"3200"},"time":1537343999261}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTP-001"},"time":1537343999341}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTP-001"},"time":1537343999405}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTV-001"},"time":1537344059027}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTV-001"},"time":1537344059119}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTV-001"},"time":1537344059207}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTV-001","invoice_no":"10038","raw_desc":"TERMINAL W/P 090 FEMALE TT-1891 (TT VASAI)","DTPL_code":"72122001-10","quantity":"294000"},"time":1537344059287}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTV-001","invoice_no":"10038","raw_desc":"TERMINAL W/P 090 FEMALE TT-1891 (TT VASAI)","DTPL_code":"72122001-10","quantity":"294000"},"time":1537344059375}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTV-001","invoice_no":"10038","raw_desc":"TERMINAL W/P 090 FEMALE TT-1891 (TT VASAI)","DTPL_code":"72122001-10","quantity":"294000"},"time":1537344059419}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTV-001"},"time":1537344059503}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTV-001"},"time":1537344059598}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTV-001"},"time":1537344059654}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1537344200090}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1537344200194}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1537344200278}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1537344200366}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1537344200458}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7609","raw_desc":"PULSAR COIL JC/K4  0208820395 (KIRDAK)","DTPL_code":"12200050-11","quantity":"800"},"time":1537344200554}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7609","raw_desc":"PULSAR COIL JC/K4  0208820395 (KIRDAK)","DTPL_code":"12200050-11","quantity":"800"},"time":1537344200646}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7609","raw_desc":"PULSAR COIL JC/K4  0208820395 (KIRDAK)","DTPL_code":"12200050-11","quantity":"800"},"time":1537344200734}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7609","raw_desc":"PULSAR COIL JC/K4  0208820395 (KIRDAK)","DTPL_code":"12200050-11","quantity":"800"},"time":1537344200790}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7609","raw_desc":"PULSAR COIL JC/K4  0208820395 (KIRDAK)","DTPL_code":"12200050-11","quantity":"800"},"time":1537344200878}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1537344200982}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1537344201074}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1537344201166}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1537344201274}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1537344201336}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Suniti-001"},"time":1537350374983}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Suniti-001"},"time":1537350375079}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Suniti-001"},"time":1537350375175}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Suniti-001","invoice_no":"5867","raw_desc":"PULSAR COIL AVANGER 204 (SUNITI)","DTPL_code":"12200070-11","quantity":"350"},"time":1537350375287}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Suniti-001","invoice_no":"5867","raw_desc":"PULSAR COIL AVANGER 204 (SUNITI)","DTPL_code":"12200070-11","quantity":"350"},"time":1537350375375}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Suniti-001"},"time":1537350375467}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Suniti-001"},"time":1537350375559}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Suniti-001"},"time":1537350375663}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537350565164}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537350565280}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537350565380}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537350565472}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537350565588}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537350565700}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537350565788}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537350565924}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3438","raw_desc":"IS 2465 1.00 RED-WHITE","DTPL_code":"IS 2465 1.00 R-W","quantity":"3000"},"time":1537350566068}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3438","raw_desc":"IS 2465 1.00 RED-WHITE","DTPL_code":"IS 2465 1.00 R-W","quantity":"3000"},"time":1537350566260}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3438","raw_desc":"IS 2465 1.00 RED-WHITE","DTPL_code":"IS 2465 1.00 R-W","quantity":"3000"},"time":1537350566600}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3438","raw_desc":"IS 2465 1.00 RED-WHITE","DTPL_code":"IS 2465 1.00 R-W","quantity":"3000"},"time":1537350566692}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3438","raw_desc":"IS 2465 1.00 RED-WHITE","DTPL_code":"IS 2465 1.00 R-W","quantity":"3000"},"time":1537350566779}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3438","raw_desc":"IS 2465 1.00 RED-WHITE","DTPL_code":"IS 2465 1.00 R-W","quantity":"3000"},"time":1537350566891}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3438","raw_desc":"IS 2465 1.00 RED-WHITE","DTPL_code":"IS 2465 1.00 R-W","quantity":"3000"},"time":1537350566999}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3438","raw_desc":"IS 2465 1.00 RED-WHITE","DTPL_code":"IS 2465 1.00 R-W","quantity":"3000"},"time":1537350567167}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537350567779}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537350567855}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537350567967}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537350568077}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537350568180}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537350568450}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537350568676}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537350568801}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DI-001"},"time":1537350610016}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DI-001"},"time":1537350610112}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DI-001","invoice_no":"14854","raw_desc":"5PLY COR BOX 480X320X330MM-GOLD/ 61020511","DTPL_code":"53110048-60","quantity":"100"},"time":1537350610212}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DI-001","invoice_no":"14854","raw_desc":"5PLY COR BOX 480X320X330MM-GOLD/ 61020511","DTPL_code":"53110048-60","quantity":"100"},"time":1537350610268}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DI-001"},"time":1537350610356}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DI-001"},"time":1537350610488}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Sar-001"},"time":1537355584797}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Sar-001","invoice_no":"0768","raw_desc":"FUSE BOX COVER STICKER AN201012","DTPL_code":"66000034-10","quantity":"230"},"time":1537355584909}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Sar-001"},"time":1537355585029}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Sar-001"},"time":1537355621770}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Sar-001","invoice_no":"0768","raw_desc":"STICKER 10A","DTPL_code":"66000079-10","quantity":"18720"},"time":1537355621866}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Sar-001"},"time":1537355621954}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Sar-001"},"time":1537355812892}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Sar-001"},"time":1537355812996}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Sar-001"},"time":1537355813092}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Sar-001","invoice_no":"0768","raw_desc":"FUSE BOX COVER STICKER AA201185","DTPL_code":"66000049-10","quantity":"1020"},"time":1537355813200}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Sar-001","invoice_no":"0768","raw_desc":"FUSE BOX COVER STICKER AA201185","DTPL_code":"66000049-10","quantity":"1020"},"time":1537355813292}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Sar-001"},"time":1537355813424}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Sar-001"},"time":1537355813524}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Sar-001"},"time":1537355813640}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Suniti-001"},"time":1537429267894}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Suniti-001","invoice_no":"5866","raw_desc":"PULSAR COIL 491 (MODIFIED) (SUNITI)","DTPL_code":"12200071-11","quantity":"1000"},"time":1537429268022}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Suniti-001"},"time":1537429268134}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Parekh-001"},"time":1537432907953}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Parekh-001"},"time":1537432908057}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Parekh-001"},"time":1537432908145}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Parekh-001"},"time":1537432908233}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Parekh-001"},"time":1537432908289}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Parekh-001"},"time":1537432908377}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Parekh-001"},"time":1537432908469}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Parekh-001"},"time":1537432908553}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Parekh-001"},"time":1537432908645}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Parekh-001"},"time":1537432908733}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Parekh-001"},"time":1537432908821}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Parekh-001"},"time":1537432908909}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Parekh-001","invoice_no":"0190","raw_desc":"PVC SLEEVE 14X15MM GREY","DTPL_code":"81011415-70","quantity":"600"},"time":1537432909009}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Parekh-001","invoice_no":"0190","raw_desc":"PVC SLEEVE 14X15MM GREY","DTPL_code":"81011415-70","quantity":"600"},"time":1537432909121}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Parekh-001","invoice_no":"0190","raw_desc":"PVC SLEEVE 14X15MM GREY","DTPL_code":"81011415-70","quantity":"600"},"time":1537432909177}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Parekh-001","invoice_no":"0190","raw_desc":"PVC SLEEVE 14X15MM GREY","DTPL_code":"81011415-70","quantity":"600"},"time":1537432909221}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Parekh-001","invoice_no":"0190","raw_desc":"PVC SLEEVE 14X15MM GREY","DTPL_code":"81011415-70","quantity":"600"},"time":1537432909265}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Parekh-001","invoice_no":"0190","raw_desc":"PVC SLEEVE 14X15MM GREY","DTPL_code":"81011415-70","quantity":"600"},"time":1537432909321}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Parekh-001","invoice_no":"0190","raw_desc":"PVC SLEEVE 14X15MM GREY","DTPL_code":"81011415-70","quantity":"600"},"time":1537432909365}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Parekh-001","invoice_no":"0190","raw_desc":"PVC SLEEVE 14X15MM GREY","DTPL_code":"81011415-70","quantity":"600"},"time":1537432909453}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Parekh-001","invoice_no":"0190","raw_desc":"PVC SLEEVE 14X15MM GREY","DTPL_code":"81011415-70","quantity":"600"},"time":1537432909521}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Parekh-001","invoice_no":"0190","raw_desc":"PVC SLEEVE 14X15MM GREY","DTPL_code":"81011415-70","quantity":"600"},"time":1537432909609}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Parekh-001","invoice_no":"0190","raw_desc":"PVC SLEEVE 14X15MM GREY","DTPL_code":"81011415-70","quantity":"600"},"time":1537432909701}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Parekh-001","invoice_no":"0190","raw_desc":"PVC SLEEVE 14X15MM GREY","DTPL_code":"81011415-70","quantity":"600"},"time":1537432909765}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Parekh-001"},"time":1537432909857}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Parekh-001"},"time":1537432909949}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Parekh-001"},"time":1537432910033}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Parekh-001"},"time":1537432910121}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Parekh-001"},"time":1537432910213}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Parekh-001"},"time":1537432910301}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Parekh-001"},"time":1537432910365}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Parekh-001"},"time":1537432910456}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Parekh-001"},"time":1537432910568}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Parekh-001"},"time":1537432910750}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Parekh-001"},"time":1537432910853}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Parekh-001"},"time":1537432910957}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Parekh-001"},"time":1537433121265}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Parekh-001"},"time":1537433121361}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Parekh-001"},"time":1537433121497}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Parekh-001","invoice_no":"0190","raw_desc":"PVC SLEEVE 14X15MM RED","DTPL_code":"81011415-20","quantity":"100"},"time":1537433121605}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Parekh-001","invoice_no":"0190","raw_desc":"PVC SLEEVE 14X15MM RED","DTPL_code":"81011415-20","quantity":"100"},"time":1537433121805}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Parekh-001","invoice_no":"0190","raw_desc":"PVC SLEEVE 14X15MM RED","DTPL_code":"81011415-20","quantity":"100"},"time":1537433121982}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Parekh-001"},"time":1537433122166}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Parekh-001"},"time":1537433122306}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Parekh-001"},"time":1537433122393}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DI-001"},"time":1537433160406}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DI-001","invoice_no":"14876","raw_desc":"GROMMET M (4 HOLE) 0212540566","DTPL_code":"58110150-10","quantity":"5000"},"time":1537433160494}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DI-001"},"time":1537433160586}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Priya-001"},"time":1537433233548}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Priya-001","invoice_no":"0402","raw_desc":"CONNECTOR COVR 40x90-BLK CDCPC 8 PRIYA","DTPL_code":"46214002-10P","quantity":"3000"},"time":1537433233628}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Priya-001"},"time":1537433233732}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1537433400647}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1537433400830}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1537433400982}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7668","raw_desc":"PULSAR COIL D110  0220820804 (KIRDAK)","DTPL_code":"","quantity":"1400"},"time":1537433401302}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7668","raw_desc":"PULSAR COIL D110  0220820804 (KIRDAK)","DTPL_code":"","quantity":"1400"},"time":1537433401447}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7668","raw_desc":"PULSAR COIL D110  0220820804 (KIRDAK)","DTPL_code":"","quantity":"1400"},"time":1537433401670}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1537433401881}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1537433402086}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1537433402260}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-002"},"time":1537433451711}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-002"},"time":1537433451806}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-002","invoice_no":"7670","raw_desc":"PULSAR COIL AVANGER  021120444 (KIRDAK)","DTPL_code":"","quantity":"1700"},"time":1537433451925}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-002","invoice_no":"7670","raw_desc":"PULSAR COIL AVANGER  021120444 (KIRDAK)","DTPL_code":"","quantity":"1700"},"time":1537433452047}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-002"},"time":1537433452244}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-002"},"time":1537433452361}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Suniti-001"},"time":1537433605205}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Suniti-001","invoice_no":"5897","raw_desc":"PULSAR COIL AVANGER 204 (SUNITI)","DTPL_code":"12200070-11","quantity":"800"},"time":1537433605286}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Suniti-001"},"time":1537433605356}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Vijay-001"},"time":1537444171659}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Vijay-001"},"time":1537444171755}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Vijay-001","invoice_no":"2274","raw_desc":"CX201015 HOLDER FOR FUSE BOX","DTPL_code":"58110005-10","quantity":"1000"},"time":1537444171851}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Vijay-001","invoice_no":"2274","raw_desc":"CX201015 HOLDER FOR FUSE BOX","DTPL_code":"58110005-10","quantity":"1000"},"time":1537444171927}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Vijay-001"},"time":1537444172019}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Vijay-001"},"time":1537444172107}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Uravi-001"},"time":1537444226828}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Uravi-001","invoice_no":"02631","raw_desc":"LAMP 12V 2W (WEDGE)","DTPL_code":"12200038-11","quantity":"10000"},"time":1537444226908}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Uravi-001"},"time":1537444227016}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537444319283}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537444319331}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3482","raw_desc":"AVSS 2.00 RED-ORANGE","DTPL_code":"AVSS 2.00 R-O","quantity":"2500"},"time":1537444319419}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3482","raw_desc":"AVSS 2.00 RED-ORANGE","DTPL_code":"AVSS 2.00 R-O","quantity":"2500"},"time":1537444319511}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537444319591}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537444319663}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"ACW-001"},"time":1537444378291}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"ACW-001"},"time":1537444378387}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"ACW-001","invoice_no":"3451","raw_desc":"ACW 1.50 YELLOW","DTPL_code":"ACW 1.50 Y","quantity":"12000"},"time":1537444378511}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"ACW-001","invoice_no":"3451","raw_desc":"ACW 1.50 YELLOW","DTPL_code":"ACW 1.50 Y","quantity":"12000"},"time":1537444378599}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"ACW-001"},"time":1537444378767}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"ACW-001"},"time":1537444378855}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII-001"},"time":1537444418656}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII-001"},"time":1537444418756}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII-001","invoice_no":"3458","raw_desc":"FBPOX CVR 12P PRINTED BLK","DTPL_code":"41072006-11","quantity":"3000"},"time":1537444418856}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII-001","invoice_no":"3458","raw_desc":"FBPOX CVR 12P PRINTED BLK","DTPL_code":"41072006-11","quantity":"3000"},"time":1537444418946}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII-001"},"time":1537444419014}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII-001"},"time":1537444419078}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DI-001"},"time":1537444541711}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DI-001"},"time":1537444541827}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DI-001"},"time":1537444541915}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DI-001","invoice_no":"14938","raw_desc":"CABLE TIE CV 2.5X100MM NATURAL","DTPL_code":"47010002-00","quantity":"24000"},"time":1537444541995}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DI-001","invoice_no":"14938","raw_desc":"CABLE TIE CV 2.5X100MM NATURAL","DTPL_code":"47010002-00","quantity":"24000"},"time":1537444542083}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DI-001","invoice_no":"14938","raw_desc":"CABLE TIE CV 2.5X100MM NATURAL","DTPL_code":"47010002-00","quantity":"24000"},"time":1537444542127}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DI-001"},"time":1537444542207}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DI-001"},"time":1537444542263}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DI-001"},"time":1537444542327}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DI-002"},"time":1537444585842}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DI-002"},"time":1537444585938}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DI-002","invoice_no":"14938","raw_desc":"TAPE PVC ADHESIVE 18X25 BLUE","DTPL_code":"61010001-40","quantity":"100"},"time":1537444586018}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DI-002","invoice_no":"14938","raw_desc":"TAPE PVC ADHESIVE 18X25 BLUE","DTPL_code":"61010001-40","quantity":"100"},"time":1537444586106}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DI-002"},"time":1537444586194}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DI-002"},"time":1537444586286}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-001"},"time":1537507630610}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Besmak-001","invoice_no":"215367","raw_desc":"3MK 250 MH PA66 NATURAL","DTPL_code":"40111004-00","quantity":"20500"},"time":1537507630790}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-001"},"time":1537507630874}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DI-001"},"time":1537507672980}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DI-001"},"time":1537507673136}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DI-001","invoice_no":"15038","raw_desc":"GROMMET M (4 HOLE) 0212540566","DTPL_code":"58110150-10","quantity":"5000"},"time":1537507673268}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DI-001","invoice_no":"15038","raw_desc":"GROMMET M (4 HOLE) 0212540566","DTPL_code":"58110150-10","quantity":"5000"},"time":1537507673360}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DI-001"},"time":1537507673492}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DI-001"},"time":1537507673584}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DIII-001"},"time":1537507695007}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DIII-001","invoice_no":"17548","raw_desc":"FUSE BOX 12P 6FUSES WITH INTEGRET COVER","DTPL_code":"41071013-10","quantity":"2750"},"time":1537507695127}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DIII-001"},"time":1537507695315}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1537512685428}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1537512685532}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1537512685644}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1537512685712}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7733","raw_desc":"PULSAR COIL ASSY-BROWN (B104D-SS) 0216220609 (KIRDAK)","DTPL_code":"12200120-51","quantity":"800"},"time":1537512685800}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7733","raw_desc":"PULSAR COIL ASSY-BROWN (B104D-SS) 0216220609 (KIRDAK)","DTPL_code":"12200120-51","quantity":"800"},"time":1537512685888}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7733","raw_desc":"PULSAR COIL ASSY-BROWN (B104D-SS) 0216220609 (KIRDAK)","DTPL_code":"12200120-51","quantity":"800"},"time":1537512685956}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7733","raw_desc":"PULSAR COIL ASSY-BROWN (B104D-SS) 0216220609 (KIRDAK)","DTPL_code":"12200120-51","quantity":"800"},"time":1537512686024}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1537512686108}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1537512686244}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1537512686392}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1537512686472}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-002"},"time":1537512710825}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-002","invoice_no":"7732","raw_desc":"PULSAR COIL AVANGER  021120444 (KIRDAK)","DTPL_code":"","quantity":"300"},"time":1537512710933}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-002"},"time":1537512711037}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Del-001"},"time":1537512852338}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Del-001","invoice_no":"18007627","raw_desc":"CONDUT TUBE B-10 S PP","DTPL_code":"86001000-10","quantity":"5400"},"time":1537512852450}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Del-001"},"time":1537512852542}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kiran-001"},"time":1537514154735}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kiran-001"},"time":1537514154843}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kiran-001","invoice_no":"1836","raw_desc":"VFG TUBE 4MM BLACK","DTPL_code":"81040400-10","quantity":"2000"},"time":1537514154955}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kiran-001","invoice_no":"1836","raw_desc":"VFG TUBE 4MM BLACK","DTPL_code":"81040400-10","quantity":"2000"},"time":1537514155011}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kiran-001"},"time":1537514155089}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kiran-001"},"time":1537514155177}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DIII-001"},"time":1537522280304}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DIII-001","invoice_no":"17518","raw_desc":"BLADE FUSE 10A","DTPL_code":"24111002-21","quantity":"40000"},"time":1537522280496}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DIII-001"},"time":1537522280632}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII-001"},"time":1537522339888}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII-001"},"time":1537522339984}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII-001","invoice_no":"3432","raw_desc":"TERMINAL FUSE TT1868 TC (DTPL 102)","DTPL_code":"71071001-10D","quantity":"10000"},"time":1537522340088}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII-001","invoice_no":"3432","raw_desc":"TERMINAL FUSE TT1868 TC (DTPL 102)","DTPL_code":"71071001-10D","quantity":"10000"},"time":1537522340180}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII-001"},"time":1537522340288}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII-001"},"time":1537522340368}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537522728331}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537522728427}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537522728523}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537522728623}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537522728727}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537522728823}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537522728955}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537522729011}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537522729067}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537522729167}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537522729255}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537522729343}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537522729435}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537522729523}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537522729575}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537522729679}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"17640","raw_desc":"FLRY-B 1.00 VIOLET","DTPL_code":"FLRY-B 1.00 V","quantity":"1000"},"time":1537522729767}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"17640","raw_desc":"FLRY-B 1.00 VIOLET","DTPL_code":"FLRY-B 1.00 V","quantity":"1000"},"time":1537522729855}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"17640","raw_desc":"FLRY-B 1.00 VIOLET","DTPL_code":"FLRY-B 1.00 V","quantity":"1000"},"time":1537522729911}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"17640","raw_desc":"FLRY-B 1.00 VIOLET","DTPL_code":"FLRY-B 1.00 V","quantity":"1000"},"time":1537522729955}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"17640","raw_desc":"FLRY-B 1.00 VIOLET","DTPL_code":"FLRY-B 1.00 V","quantity":"1000"},"time":1537522730011}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"17640","raw_desc":"FLRY-B 1.00 VIOLET","DTPL_code":"FLRY-B 1.00 V","quantity":"1000"},"time":1537522730067}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"17640","raw_desc":"FLRY-B 1.00 VIOLET","DTPL_code":"FLRY-B 1.00 V","quantity":"1000"},"time":1537522730111}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"17640","raw_desc":"FLRY-B 1.00 VIOLET","DTPL_code":"FLRY-B 1.00 V","quantity":"1000"},"time":1537522730187}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"17640","raw_desc":"FLRY-B 1.00 VIOLET","DTPL_code":"FLRY-B 1.00 V","quantity":"1000"},"time":1537522730243}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"17640","raw_desc":"FLRY-B 1.00 VIOLET","DTPL_code":"FLRY-B 1.00 V","quantity":"1000"},"time":1537522730323}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"17640","raw_desc":"FLRY-B 1.00 VIOLET","DTPL_code":"FLRY-B 1.00 V","quantity":"1000"},"time":1537522730399}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"17640","raw_desc":"FLRY-B 1.00 VIOLET","DTPL_code":"FLRY-B 1.00 V","quantity":"1000"},"time":1537522730455}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"17640","raw_desc":"FLRY-B 1.00 VIOLET","DTPL_code":"FLRY-B 1.00 V","quantity":"1000"},"time":1537522730498}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"17640","raw_desc":"FLRY-B 1.00 VIOLET","DTPL_code":"FLRY-B 1.00 V","quantity":"1000"},"time":1537522730578}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"17640","raw_desc":"FLRY-B 1.00 VIOLET","DTPL_code":"FLRY-B 1.00 V","quantity":"1000"},"time":1537522730622}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"17640","raw_desc":"FLRY-B 1.00 VIOLET","DTPL_code":"FLRY-B 1.00 V","quantity":"1000"},"time":1537522730710}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537522730898}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537522731014}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537522731066}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537522731163}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537522731257}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537522731366}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537522731454}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537522731576}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537522731724}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537522731892}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537522731988}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537522732076}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537522732168}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537522732276}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537522732356}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537522732444}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII-001"},"time":1537607402333}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII-001"},"time":1537607402493}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII-001"},"time":1537607402609}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII-001","invoice_no":"3511","raw_desc":"FBPOX CVR 12P PRINTED BLK","DTPL_code":"41072006-11","quantity":"5000"},"time":1537607402709}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII-001","invoice_no":"3511","raw_desc":"FBPOX CVR 12P PRINTED BLK","DTPL_code":"41072006-11","quantity":"5000"},"time":1537607402801}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII-001","invoice_no":"3511","raw_desc":"FBPOX CVR 12P PRINTED BLK","DTPL_code":"41072006-11","quantity":"5000"},"time":1537607402889}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII-001"},"time":1537607402993}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII-001"},"time":1537607403137}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII-001"},"time":1537607403293}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"ACW-001"},"time":1537607442726}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"ACW-001","invoice_no":"3509","raw_desc":"ACW 0.50 BLUE -WHITE","DTPL_code":"ACW 0.5 L-W","quantity":"10430"},"time":1537607442846}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"ACW-001"},"time":1537607442938}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537607476457}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3512","raw_desc":"FLRY-B 1.00 VIOLET","DTPL_code":"FLRY-B 1.00 V","quantity":"10000"},"time":1537607476545}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537607476681}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Suniti-001"},"time":1537607559721}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Suniti-001"},"time":1537607559861}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Suniti-001"},"time":1537607559957}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Suniti-001","invoice_no":"5945","raw_desc":"PULSAR COIL AVANGER 204 (SUNITI)","DTPL_code":"12200070-11","quantity":"485"},"time":1537607560069}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Suniti-001","invoice_no":"5945","raw_desc":"PULSAR COIL AVANGER 204 (SUNITI)","DTPL_code":"12200070-11","quantity":"485"},"time":1537607560157}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Suniti-001","invoice_no":"5945","raw_desc":"PULSAR COIL AVANGER 204 (SUNITI)","DTPL_code":"12200070-11","quantity":"485"},"time":1537607560225}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Suniti-001"},"time":1537607560337}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Suniti-001"},"time":1537607560461}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Suniti-001"},"time":1537607560561}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Priya-001"},"time":1537612834939}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Priya-001","invoice_no":"0411","raw_desc":"CONNECTOR COVR 40x90-BLK CDCPC 8 PRIYA","DTPL_code":"46214002-10P","quantity":"3000"},"time":1537612835035}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Priya-001"},"time":1537612835147}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Vijay-001"},"time":1537612891045}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Vijay-001","invoice_no":"2286","raw_desc":"GROMMET FOR TWIN FUSE BOX SITH SPARE","DTPL_code":"58110104-10","quantity":"7500"},"time":1537612891148}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Vijay-001"},"time":1537612891260}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1537612998964}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1537612999060}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1537612999152}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1537612999264}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7813","raw_desc":"PULSAR COIL ASSLY-AP FACE LIFT 0213220503 (KIRDAK)","DTPL_code":"12200075-11","quantity":"1600"},"time":1537612999372}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7813","raw_desc":"PULSAR COIL ASSLY-AP FACE LIFT 0213220503 (KIRDAK)","DTPL_code":"12200075-11","quantity":"1600"},"time":1537612999464}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7813","raw_desc":"PULSAR COIL ASSLY-AP FACE LIFT 0213220503 (KIRDAK)","DTPL_code":"12200075-11","quantity":"1600"},"time":1537612999528}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7813","raw_desc":"PULSAR COIL ASSLY-AP FACE LIFT 0213220503 (KIRDAK)","DTPL_code":"12200075-11","quantity":"1600"},"time":1537612999620}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1537612999744}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1537612999896}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1537613000012}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1537613000241}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-002"},"time":1537613024376}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-002","invoice_no":"7812","raw_desc":"PULSAR COIL COIL 556 (KIRDAK)","DTPL_code":"12200119-11","quantity":"410"},"time":1537613024484}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-002"},"time":1537613024616}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTP-001"},"time":1537762019683}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTP-001"},"time":1537762019855}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTP-001"},"time":1537762019955}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTP-001"},"time":1537762020043}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTP-001"},"time":1537762020167}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTP-001"},"time":1537762020267}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTP-001","invoice_no":"P5778","raw_desc":"TERMINAL 312 SRS F (CSA 0.5-0.75) TT-1755","DTPL_code":"71081001-00","quantity":"10000"},"time":1537762020367}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTP-001","invoice_no":"P5778","raw_desc":"TERMINAL 312 SRS F (CSA 0.5-0.75) TT-1755","DTPL_code":"71081001-00","quantity":"10000"},"time":1537762020455}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTP-001","invoice_no":"P5778","raw_desc":"TERMINAL 312 SRS F (CSA 0.5-0.75) TT-1755","DTPL_code":"71081001-00","quantity":"10000"},"time":1537762020523}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTP-001","invoice_no":"P5778","raw_desc":"TERMINAL 312 SRS F (CSA 0.5-0.75) TT-1755","DTPL_code":"71081001-00","quantity":"10000"},"time":1537762020587}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTP-001","invoice_no":"P5778","raw_desc":"TERMINAL 312 SRS F (CSA 0.5-0.75) TT-1755","DTPL_code":"71081001-00","quantity":"10000"},"time":1537762020675}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTP-001","invoice_no":"P5778","raw_desc":"TERMINAL 312 SRS F (CSA 0.5-0.75) TT-1755","DTPL_code":"71081001-00","quantity":"10000"},"time":1537762020767}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTP-001"},"time":1537762020867}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTP-001"},"time":1537762020935}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTP-001"},"time":1537762021011}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTP-001"},"time":1537762021099}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTP-001"},"time":1537762021197}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTP-001"},"time":1537762021291}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTV-001"},"time":1537762070475}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTV-001","invoice_no":"09970","raw_desc":"TERMINAL 6.3 FL  TT1970","DTPL_code":"70111001-00","quantity":"75000"},"time":1537762070623}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTV-001"},"time":1537762070727}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Nandhini-001"},"time":1537848073797}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Nandhini-001"},"time":1537848073959}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Nandhini-001"},"time":1537848074057}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Nandhini-001"},"time":1537848074216}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Nandhini-001"},"time":1537848074364}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Nandhini-001","invoice_no":"0165","raw_desc":"GROMMET 438","DTPL_code":"","quantity":"1000"},"time":1537848074523}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Nandhini-001","invoice_no":"0165","raw_desc":"GROMMET 438","DTPL_code":"","quantity":"1000"},"time":1537848074612}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Nandhini-001","invoice_no":"0165","raw_desc":"GROMMET 438","DTPL_code":"","quantity":"1000"},"time":1537848074689}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Nandhini-001","invoice_no":"0165","raw_desc":"GROMMET 438","DTPL_code":"","quantity":"1000"},"time":1537848074767}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Nandhini-001","invoice_no":"0165","raw_desc":"GROMMET 438","DTPL_code":"","quantity":"1000"},"time":1537848074855}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Nandhini-001"},"time":1537848074952}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Nandhini-001"},"time":1537848075060}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Nandhini-001"},"time":1537848075178}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Nandhini-001"},"time":1537848075268}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Nandhini-001"},"time":1537848075357}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DI-001"},"time":1537848128661}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DI-001","invoice_no":"15236","raw_desc":"GROMMET G (4 HOLE) 544","DTPL_code":"58110108-10","quantity":"500"},"time":1537848128756}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DI-001"},"time":1537848128915}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTP-001"},"time":1537848205790}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTP-001","invoice_no":"P5992","raw_desc":"TTP 1868 P","DTPL_code":"41071004-10","quantity":"5100"},"time":1537848205893}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTP-001"},"time":1537848205984}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-001"},"time":1537848422638}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-001"},"time":1537848422754}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-001"},"time":1537848422879}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-001"},"time":1537848422984}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-001"},"time":1537848423090}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-001"},"time":1537848423179}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-001"},"time":1537848423268}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-001"},"time":1537848423346}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Besmak-001","invoice_no":"215464","raw_desc":"6FK 121 PA66  NATURAL","DTPL_code":"40101009-00","quantity":"1000"},"time":1537848423434}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Besmak-001","invoice_no":"215464","raw_desc":"6FK 121 PA66  NATURAL","DTPL_code":"40101009-00","quantity":"1000"},"time":1537848423523}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Besmak-001","invoice_no":"215464","raw_desc":"6FK 121 PA66  NATURAL","DTPL_code":"40101009-00","quantity":"1000"},"time":1537848423591}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Besmak-001","invoice_no":"215464","raw_desc":"6FK 121 PA66  NATURAL","DTPL_code":"40101009-00","quantity":"1000"},"time":1537848423657}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Besmak-001","invoice_no":"215464","raw_desc":"6FK 121 PA66  NATURAL","DTPL_code":"40101009-00","quantity":"1000"},"time":1537848423734}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Besmak-001","invoice_no":"215464","raw_desc":"6FK 121 PA66  NATURAL","DTPL_code":"40101009-00","quantity":"1000"},"time":1537848423800}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-001"},"time":1537848423916}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-001"},"time":1537848424010}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-001"},"time":1537848424113}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-001"},"time":1537848424206}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-001"},"time":1537848424302}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-001"},"time":1537848424424}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-001"},"time":1537848424501}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-001"},"time":1537848424598}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-001"},"time":1537848704891}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Besmak-001"},"time":1537848704985}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Besmak-001","invoice_no":"215461","raw_desc":"3MK 250 MH PA66 NATURAL","DTPL_code":"40111004-00","quantity":"19400"},"time":1537848705086}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Besmak-001","invoice_no":"215461","raw_desc":"3MK 250 MH PA66 NATURAL","DTPL_code":"40111004-00","quantity":"19400"},"time":1537848705246}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-001"},"time":1537848705376}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Besmak-001"},"time":1537848705443}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537848814208}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537848814323}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3549","raw_desc":"FLRY-B 2.50 RED-WHITE","DTPL_code":"FLRY-B 2.50 R-W","quantity":"2000"},"time":1537848814424}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3549","raw_desc":"FLRY-B 2.50 RED-WHITE","DTPL_code":"FLRY-B 2.50 R-W","quantity":"2000"},"time":1537848814514}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537848814607}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537848814790}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DI-001"},"time":1537848864976}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DI-001","invoice_no":"15238","raw_desc":"5PLY DUPX BOX 98X98X113-GREEN / 61031078","DTPL_code":"53110064-30","quantity":"6000"},"time":1537848865282}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DI-001"},"time":1537848865476}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII Cable-001"},"time":1537848925337}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII Cable-001","invoice_no":"3528","raw_desc":"IS 2465 1.00 RED-WHITE","DTPL_code":"IS 2465 1.00 R-W","quantity":"13110"},"time":1537848925437}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII Cable-001"},"time":1537848925539}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII-001"},"time":1537849017502}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DII-001"},"time":1537849017652}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII-001","invoice_no":"3529","raw_desc":"RUBBER GROMMET","DTPL_code":"RML204107202","quantity":"50000"},"time":1537849017762}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DII-001","invoice_no":"3529","raw_desc":"RUBBER GROMMET","DTPL_code":"RML204107202","quantity":"50000"},"time":1537849017925}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII-001"},"time":1537849018103}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DII-001"},"time":1537849018196}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Shreeraj-001"},"time":1537849070701}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Shreeraj-001"},"time":1537849070798}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Shreeraj-001","invoice_no":"0171","raw_desc":"5 WAY INDICATOR ASSY  AS 201051 ","DTPL_code":"","quantity":"400"},"time":1537849070897}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Shreeraj-001","invoice_no":"0171","raw_desc":"5 WAY INDICATOR ASSY  AS 201051 ","DTPL_code":"","quantity":"400"},"time":1537849070975}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Shreeraj-001"},"time":1537849071120}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Shreeraj-001"},"time":1537849071187}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Uravi-001"},"time":1537849176268}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Uravi-001","invoice_no":"02714","raw_desc":"LAMP 12V 2W (WEDGE)","DTPL_code":"12200038-11","quantity":"20000"},"time":1537849176357}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Uravi-001"},"time":1537849176445}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1537849602912}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1537849603000}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1537849603092}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1537849603148}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-001"},"time":1537849603236}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7876","raw_desc":"PULSAR COIL ASSLY PLATINA UPGRADE 0209620387 (KIRDAK)","DTPL_code":"12200041-11","quantity":"400"},"time":1537849603324}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7876","raw_desc":"PULSAR COIL ASSLY PLATINA UPGRADE 0209620387 (KIRDAK)","DTPL_code":"12200041-11","quantity":"400"},"time":1537849603412}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7876","raw_desc":"PULSAR COIL ASSLY PLATINA UPGRADE 0209620387 (KIRDAK)","DTPL_code":"12200041-11","quantity":"400"},"time":1537849603524}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7876","raw_desc":"PULSAR COIL ASSLY PLATINA UPGRADE 0209620387 (KIRDAK)","DTPL_code":"12200041-11","quantity":"400"},"time":1537849603580}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-001","invoice_no":"7876","raw_desc":"PULSAR COIL ASSLY PLATINA UPGRADE 0209620387 (KIRDAK)","DTPL_code":"12200041-11","quantity":"400"},"time":1537849603624}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1537849603692}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1537849603803}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1537849603911}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1537849604003}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-001"},"time":1537849604147}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kirdak-002"},"time":1537849637404}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kirdak-002","invoice_no":"7874","raw_desc":"PULSAR COIL COIL 556 (KIRDAK)","DTPL_code":"12200119-11","quantity":"1600"},"time":1537849637536}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kirdak-002"},"time":1537849637672}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Sunita-001"},"time":1537849762231}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Sunita-001","invoice_no":"1542","raw_desc":"HEAT SHRINKABLE SLEEVE 6.0 MM (L=40MM)","DTPL_code":"82300600-10","quantity":"4460"},"time":1537849762363}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Sunita-001"},"time":1537849762483}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTV-001"},"time":1537854883956}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTV-001","invoice_no":"9722","raw_desc":"TERMINAL FUSE TT-1868 TC (TT VASAI)","DTPL_code":"71071001-10T","quantity":"80000"},"time":1537854884128}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTV-001"},"time":1537854884352}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"TTV-001"},"time":1537855613508}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"TTV-001","invoice_no":"09644","raw_desc":"TERMINAL W/P 090 FEMALE TT-1891 (TT VASAI)","DTPL_code":"72122001-10","quantity":"17500"},"time":1537855613628}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"TTV-001"},"time":1537855613764}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DI-001"},"time":1537865794568}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DI-001"},"time":1537865794716}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DI-001"},"time":1537865794792}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DI-001"},"time":1537865794880}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DI-001"},"time":1537865794972}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DI-001"},"time":1537865795060}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DI-001","invoice_no":"15339","raw_desc":"GROMMET G (4 HOLE) 544","DTPL_code":"58110108-10","quantity":"1500"},"time":1537865795160}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DI-001","invoice_no":"15339","raw_desc":"GROMMET G (4 HOLE) 544","DTPL_code":"58110108-10","quantity":"1500"},"time":1537865795247}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DI-001","invoice_no":"15339","raw_desc":"GROMMET G (4 HOLE) 544","DTPL_code":"58110108-10","quantity":"1500"},"time":1537865795291}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DI-001","invoice_no":"15339","raw_desc":"GROMMET G (4 HOLE) 544","DTPL_code":"58110108-10","quantity":"1500"},"time":1537865795335}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DI-001","invoice_no":"15339","raw_desc":"GROMMET G (4 HOLE) 544","DTPL_code":"58110108-10","quantity":"1500"},"time":1537865795391}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DI-001"},"time":1537865795491}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DI-001"},"time":1537865795587}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DI-001"},"time":1537865795683}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DI-001"},"time":1537865795783}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DI-001"},"time":1537865795871}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DI-001"},"time":1537865795959}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"DI-001"},"time":1537867597712}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"DI-001","invoice_no":"15267","raw_desc":"GROMMET M (4 HOLE) 0212540566","DTPL_code":"58110150-10","quantity":"2500"},"time":1537867598131}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"DI-001"},"time":1537867598602}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Vijay-001"},"time":1537867737811}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Vijay-001","invoice_no":"2306","raw_desc":"GROMMET FOR TWIN FUSE BOX SITH SPARE","DTPL_code":"58110104-10","quantity":"4000"},"time":1537867737910}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Vijay-001"},"time":1537867738015}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Shreeraj-001"},"time":1537867792624}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Shreeraj-001"},"time":1537867792798}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Shreeraj-001","invoice_no":"0175","raw_desc":"5 WAY INDICATOR ASSY  AS 201051 ","DTPL_code":"","quantity":"500"},"time":1537867792891}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Shreeraj-001","invoice_no":"0175","raw_desc":"5 WAY INDICATOR ASSY  AS 201051 ","DTPL_code":"","quantity":"500"},"time":1537867792991}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Shreeraj-001"},"time":1537867793079}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Shreeraj-001"},"time":1537867793180}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Suniti-001"},"time":1537867867119}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Suniti-001"},"time":1537867867212}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Suniti-001","invoice_no":"6009","raw_desc":"PULSAR COIL AVANGER 204 (SUNITI)","DTPL_code":"12200070-11","quantity":"770"},"time":1537867867348}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Suniti-001","invoice_no":"6009","raw_desc":"PULSAR COIL AVANGER 204 (SUNITI)","DTPL_code":"12200070-11","quantity":"770"},"time":1537867867437}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Suniti-001"},"time":1537867867594}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Suniti-001"},"time":1537867867702}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Priya-001"},"time":1537867965031}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Priya-001","invoice_no":"0417","raw_desc":"CONNECTOR COVR 40x90-BLK CDCPC 8 PRIYA","DTPL_code":"46214002-10P","quantity":"2000"},"time":1537867965118}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Priya-001"},"time":1537867965263}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kiran-001"},"time":1537869168467}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kiran-001"},"time":1537869168570}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kiran-001"},"time":1537869168647}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Kiran-001"},"time":1537869168747}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kiran-001","invoice_no":"1857","raw_desc":"VFG TUBE 6MM BLACK","DTPL_code":"81040600-10","quantity":"500"},"time":1537869168835}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kiran-001","invoice_no":"1857","raw_desc":"VFG TUBE 6MM BLACK","DTPL_code":"81040600-10","quantity":"500"},"time":1537869168935}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kiran-001","invoice_no":"1857","raw_desc":"VFG TUBE 6MM BLACK","DTPL_code":"81040600-10","quantity":"500"},"time":1537869169080}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Kiran-001","invoice_no":"1857","raw_desc":"VFG TUBE 6MM BLACK","DTPL_code":"81040600-10","quantity":"500"},"time":1537869169168}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kiran-001"},"time":1537869169257}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kiran-001"},"time":1537869169371}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kiran-001"},"time":1537869169502}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Kiran-001"},"time":1537869169636}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Viscon-001"},"time":1537873245896}}
+{"level":"info","message":{"where":"UPDATE raw_material stock","what":{"PO_code":"Viscon-001"},"time":1537873246100}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Viscon-001","invoice_no":"3430","raw_desc":"CAP RED OF HT COIL TRML 6.3D DS ","DTPL_code":"46093014-20","quantity":"15000"},"time":1537873246260}}
+{"level":"info","message":{"where":"INSERT INTO input","what":{"PO_code":"Viscon-001","invoice_no":"3430","raw_desc":"CAP RED OF HT COIL TRML 6.3D DS ","DTPL_code":"46093014-20","quantity":"15000"},"time":1537873246347}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Viscon-001"},"time":1537873246507}}
+{"level":"info","message":{"where":"UPDATE PO_deatil quantity","what":{"PO_code":"Viscon-001"},"time":1537873246579}}

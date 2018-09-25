@@ -33,5 +33,6 @@ CREATE TABLE production(
 CREATE TABLE dispatch(
 	FG_code VARCHAR(50),
 	date DATETIME DEFAULT CURRENT_TIMESTAMP,
-	quantity INT
+	quantity INT,
+	invoice_no VARCHAR(15)
 );

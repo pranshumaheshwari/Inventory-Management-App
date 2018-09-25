@@ -58,4 +58,7 @@
 	<a href="/finished_good/mock" class="btn btn-secondary" style="position:relative;float:center;left:650px">Mock Schedule<a>
 	<a href="/finished_good/new" class="btn btn-dark" style="float:right;bottom:10px;">New Finished Good </a>
 </div>
+<script>
+	new TableExport(document.getElementsByTagName("table"),{bootstrap:false,headers:true,formats:['csv','xls','xlsx'],ignoreCols:[0,7]});
+</script>
 <% include partials/footer.ejs %>
