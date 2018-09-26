@@ -58,7 +58,7 @@ app.post("/report/FG_Name",async function(req,res){
 	var from = req.body.from;
 	var to = req.body.to;
 	var finished_good_code = req.body.name;
-	var currentStock,totalExchange,closingStock,openingStock,finished_good;
+	var currentStock,totalExchange,closingStock,openingStock,finished_good,finished_goods;
 	var q = "SELECT * FROM finished_goods WHERE code ='" + finished_good_code + "'";
 	await con.query(q,function(err,Finished_good){
 		if(err)
@@ -70,8 +70,8 @@ app.post("/report/FG_Name",async function(req,res){
 		}
 	});
 	setTimeout(async function(){
-		q = "SELECT SUM(quantity) AS sum FROM production WHERE date >='" + from + "' AND date <='" + to + "' AND FG_code ='" + finished_good_code + "' ";
-		q += "UNION SELECT SUM(quantity) AS sum FROM dispatch WHERE date >='" + from + "' AND date <='" + to + "' AND FG_code ='" + finished_good_code + "'";
+		q = "SELECT SUM(quantity) AS sum FROM production WHERE date >='" + from + "' AND date <='" + to + "' + INTERVAL 1 DAY AND FG_code ='" + finished_good_code + "' ";
+		q += "UNION SELECT SUM(quantity) AS sum FROM dispatch WHERE date >='" + from + "' AND date <='" + to + "' + INTERVAL 1 DAY AND FG_code ='" + finished_good_code + "'";
 		await con.query(q,function(err,sum){
 			if(err)
 				throw err;
@@ -80,32 +80,52 @@ app.post("/report/FG_Name",async function(req,res){
 			}
 		});
 		setTimeout(async function(){
-			q = "SELECT SUM(quantity) AS sum FROM production WHERE date >='" + to + "' AND FG_code ='" + finished_good_code + "' ";
-			q += "UNION SELECT SUM(quantity) AS sum FROM dispatch WHERE date >='" + to + "' AND FG_code ='" + finished_good_code + "'";
+			q = "SELECT SUM(quantity) AS sum FROM production WHERE date >'" + to + "' + INTERVAL 1 DAY AND FG_code ='" + finished_good_code + "' ";
+			q += "UNION SELECT SUM(quantity) AS sum FROM dispatch WHERE date >'" + to + "' + INTERVAL 1 DAY AND FG_code ='" + finished_good_code + "'";
 			await con.query(q,function(err,sum){
 				if(err)
 					throw err;
 				else {
-					closingStock = currentStock + sum[1].sum - sum[0].sum;
+					console.log(sum);
+					if(!sum[0].sum){
+						closingStock = currentStock;
+					}
+					else if(!sum[1].sum){
+						sum[1].sum = 0;
+						closingStock = currentStock + sum[1].sum - sum[0].sum;
+					} else {
+						closingStock = currentStock + sum[1].sum - sum[0].sum;
+					}
+					console.log(closingStock);
 				}
 			});
 			setTimeout(async function(){
-				openingStock = closingStock + totalExchange;
-				q = "SELECT *,'p' AS type FROM production WHERE FG_code ='" + finished_good_code + "' AND date >='" + from + "' AND date <='" + to + "' ORDER by date ";
-				q += "UNION SELECT *,'d' AS type FROM dispatch WHERE FG_code ='" + finished_good_code + "' AND date >='" + from + "' AND date <='" + to + "' ORDER by date";
-				await con.query(q,async function(err,finished_goods){
+				openingStock = closingStock - totalExchange;
+				q = "SELECT * ,'p' AS type FROM production WHERE FG_code ='" + finished_good_code + "' AND date >='" + from + "' AND date <='" + to + "' + INTERVAL 1 DAY ORDER by date ";
+				await con.query(q,async function(err,fg){
 					if(err)
 						throw err;
-					else {
-						finished_goods.sort(await function(a,b){
-							var Dateto = a.date.split("-"), Datefrom = b.date.split("-");
-							var dateA = new Date(Dateto[0],parseInt(Dateto[1])-1,Dateto[2]);
-							var dateB = new Date(Datefrom[0],parseInt(Datefrom[1])-1,Datefrom[2]);
-    						return dateA-dateB;
-						});
-						res.render("report_pd",{finished_goods:finished_goods,openingStock:openingStock,closingStock:closingStock,to:to,from:from,finished_good:finished_good,t:'FGName',totalExchange:totalExchange});
-					}
+					else 
+						finished_goods = fg;
 				});
+				setTimeout(async function(){
+					q = "SELECT * FROM dispatch WHERE FG_code ='" + finished_good_code + "' AND date >='" + from + "' AND date <='" + to + "' + INTERVAL 1 DAY ORDER by date"
+					await con.query(q,async function(err,fg){
+						if(err)
+							throw err;
+						else{
+							finished_goods.push(...fg);
+						}
+					});
+				},100);
+				setTimeout(async function(){
+					await finished_goods.sort(function(a,b){
+						var dateA = new Date(a.date);
+						var dateB = new Date(b.date);
+	    				return dateA-dateB;
+					});
+					res.render("report_pd",{finished_goods:finished_goods,openingStock:openingStock,closingStock:closingStock,to:to,from:from,finished_good:finished_good,t:'FGName',totalExchange:totalExchange});
+				},300);
 			},100);
 		},100);
 	},100);

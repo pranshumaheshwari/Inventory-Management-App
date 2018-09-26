@@ -38,7 +38,8 @@
       <th>Date</th>
     <% } else { %>
       <th>#</th>
-      <th>Quantity</th>
+      <th>Production Quantity</th>
+      <th>Dispatch Quantity</th>
       <th>Date</th>
       <th>Stock</th>
     <% } %>
@@ -78,6 +79,7 @@
         <tr>
           <td></td>
           <td></td>
+          <td></td>
           <td>From: <%= from %></td>
           <td>Opening Stock: <%= openingStock %></td>
         </tr>
@@ -89,14 +91,26 @@
                 <%= openingStock -= finished_goods[i].quantity %>
               <% } %>
             </span>
-            <tr>
+            <% if(finished_goods[i].type === 'p') { %>
+              <tr>
+                <td><%= i+1 %></td>
+                <td><%= finished_goods[i].quantity %></td>
+                <td></td>
+                <td><%= finished_goods[i].date %></td>
+                <td><%= openingStock %></td>
+              </tr>
+            <% } else { %>
+              <tr>
               <td><%= i+1 %></td>
-              <td><%= finished_goods[i].quantity %></td>
-              <td><%= finished_goods[i].date %></td>
-              <td><%= openingStock %></td>
-            </tr>
+                <td></td>
+                <td><%= finished_goods[i].quantity %></td>
+                <td><%= finished_goods[i].date %></td>
+                <td><%= openingStock %></td>
+              </tr>
+            <% } %>
           <% } %>
         <tr>
+          <td></td>
           <td></td>
           <td></td>
           <td>To: <%= to %></td>
