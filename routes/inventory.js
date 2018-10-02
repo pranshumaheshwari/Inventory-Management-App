@@ -2,8 +2,10 @@ var express 	   						 = require('express'),
 	{selectQuery, insertQuery} = require('../config/query.js')
 	bodyParser 	   						 = require('body-parser'),
 	methodOverride 						 = require('method-override'),
-	logger		  	 						 = require('../config/winston')
+	logger		  	 						 = require('../config/winston-inventory')
 	app      	   							 = express.Router();
+
+//=======================================================================================
 
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true, parameterLimit: 1000000}));
 app.use(methodOverride("_method"));
@@ -21,11 +23,9 @@ app.get("/inventory",async function(req,res){
 						})
 						.catch(err => {
 							logger.error({
-								level: 'error',
-								message: {
-									where: `/inventory GET ${ q }`,
+									error: err,
+									where: `GET ${ req.url } ${ q }`,
 									time: Date.now().toString()
-								}
 							});
 							res.render('error',{error: err})
 						});
@@ -38,6 +38,11 @@ app.get("/inventory/new",async function(req,res){
 							res.render("new_raw_material",{supplier_code:supplier_code});
 						})
 						.catch(err => {
+							logger.error({
+									error: err,
+									where: `GET ${ req.url } ${ q }`,
+									time: Date.now().toString()
+							});
 							res.render('error',{error: err});
 						});
 });
@@ -52,10 +57,20 @@ app.get("/inventory/:code",async function(req,res){
 													res.render("update_delete_raw_material",{raw_material:raw_material[0],supplier_code:supplier_code});
 												})
 												.catch(err => {
+													logger.error({
+															error: err,
+															where: `GET ${ req.url } ${ q }`,
+															time: Date.now().toString()
+													});
 													res.render('error',{error: err});
 												});
 						})
 						.catch(err => {
+							logger.error({
+									error: err,
+									where: `GET ${ req.url } ${ q }`,
+									time: Date.now().toString()
+							});
 							res.render('error',{error: err});
 						});
 });
@@ -67,6 +82,11 @@ app.get("/inventory/:code/requirement",async function(req,res){
 							res.render("raw_material_requirement",{finished_goods:finished_goods,raw:req.params.code});
 						})
 						.catch(err => {
+							logger.error({
+									error: err,
+									where: `GET ${ req.url } ${ q }`,
+									time: Date.now().toString()
+							});
 							res.render('error',{error: err});
 						});
 });
@@ -82,6 +102,11 @@ app.post("/inventory/search/category",async function(req,res){
 							res.render("inventory",{raw_materials:raw_materials,totalPrice:0});
 						})
 						.catch(err => {
+							logger.error({
+									error: err,
+									where: `POST ${ req.url } ${ q }`,
+									time: Date.now().toString()
+							});
 							res.render('error',{error: err});
 						});
 });
@@ -93,6 +118,11 @@ app.post("/inventory/search/name",async function(req,res){
 							res.render("inventory",{raw_materials:raw_material,totalPrice:0});
 						})
 						.catch(err => {
+							logger.error({
+									error: err,
+									where: `POST ${ req.url } ${ q }`,
+									time: Date.now().toString()
+							});
 							res.render('error',{error: err});
 						});
 });
@@ -101,9 +131,18 @@ app.post("/inventory/new",async function(req,res){
 	var q = "INSERT INTO raw_material SET ?";
 	insertQuery(q, req.body.raw_material)
 						.then(result => {
+							logger.info({
+								where: `POST ${ req.url } ${ q }`,
+								what: req.body.raw_material
+							});
 							res.redirect("/inventory");
 						})
 						.catch(err => {
+							logger.error({
+									error: err,
+									where: `POST ${ req.url } ${ q }`,
+									time: Date.now().toString()
+							});
 							res.render('error',{error: err});
 						});
 });
@@ -116,9 +155,18 @@ app.put("/inventory/:code",async function(req,res){
 	var q = 'UPDATE raw_material SET ? WHERE code = "' + req.params.code + '"';
 	insertQuery(q, req.body.raw_material)
 						.then(result => {
+							logger.info({
+								where: `PUT ${ req.url } ${ q }`,
+								what: req.body.raw_material
+							});
 							res.redirect("/inventory");
 						})
 						.catch(err => {
+							logger.error({
+									error: err,
+									where: `PUT ${ req.url } ${ q }`,
+									time: Date.now().toString()
+							});
 							res.render('error',{error: err});
 						});
 });
@@ -131,11 +179,22 @@ app.delete("/inventory/:code",async function(req,res){
 	var q = 'DELETE FROM raw_material WHERE code = "' + req.params.code + '"';
 	selectQuery(q)
 						.then(raw_material => {
+							logger.info({
+								where: `DELETE ${ req.url } ${ q }`,
+								what: `Code: ${ req.params.code }`
+							});
 							res.redirect("/inventory");
 						})
 						.catch(err => {
+							logger.error({
+									error: err,
+									where: `DELETE ${ req.url } ${ q }`,
+									time: Date.now().toString()
+							});
 							res.render('error',{error: err});
 						});
 });
+
+//=======================================================================================
 
 module.exports = app;
