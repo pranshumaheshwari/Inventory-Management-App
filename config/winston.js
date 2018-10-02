@@ -10,14 +10,4 @@ const logger = createLogger({
   ]
 });
 
-// logger.log({
-//   level: 'info',
-//   message: 'Working'
-// });
-
 module.exports = logger;
-// module.exports.stream = {
-//   write: function(message, encoding){
-//     logger.info(message);
-//   }
-// };

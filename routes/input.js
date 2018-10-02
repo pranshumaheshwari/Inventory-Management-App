@@ -2,8 +2,8 @@ var express 	   = require('express'),
 	mysql 	  	   = require('mysql'),
 	bodyParser 	   = require('body-parser'),
 	methodOverride = require('method-override'),
-	logger		   = require('../config/winston')
-	app      	   = express.Router();
+	logger		  	 = require('../config/winston'),
+	app      	  	 = express.Router();
 
 var con = mysql.createConnection({
 	host: "localhost",
@@ -111,7 +111,7 @@ app.post("/input/update",async function(req,res){
 									quantity: quantity[i]
 							},
 							time: Date.now()
-							} 
+							}
 						});
 						throw err;
 					} else {

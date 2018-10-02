@@ -2,11 +2,16 @@ var express 	   						 = require('express'),
 	{selectQuery, insertQuery} = require('../config/query.js')
 	bodyParser 	   						 = require('body-parser'),
 	methodOverride 						 = require('method-override'),
+	logger		  	 						 = require('../config/winston')
 	app      	   							 = express.Router();
 
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true, parameterLimit: 1000000}));
 app.use(methodOverride("_method"));
 app.use(express.static( __dirname + "/public"));
+
+//=======================================================================================
+//																		GET
+//=======================================================================================
 
 app.get("/inventory",async function(req,res){
 	var q = "SELECT * FROM raw_material ORDER BY code";
@@ -15,7 +20,14 @@ app.get("/inventory",async function(req,res){
 							res.render("inventory",{raw_materials:raw_materials,totalPrice:0,stock:0});
 						})
 						.catch(err => {
-							res.render('error',{error: err});
+							logger.error({
+								level: 'error',
+								message: {
+									where: `/inventory GET ${ q }`,
+									time: Date.now().toString()
+								}
+							});
+							res.render('error',{error: err})
 						});
 });
 
@@ -59,6 +71,10 @@ app.get("/inventory/:code/requirement",async function(req,res){
 						});
 });
 
+//=======================================================================================
+//																		POST
+//=======================================================================================
+
 app.post("/inventory/search/category",async function(req,res){
 	var q = "SELECT * FROM raw_material WHERE category = '" + req.body.category + "' ORDER BY code";
 	selectQuery(q)
@@ -92,7 +108,11 @@ app.post("/inventory/new",async function(req,res){
 						});
 });
 
-app.post("/inventory/:code/update",async function(req,res){
+//=======================================================================================
+//																		PUT
+//=======================================================================================
+
+app.put("/inventory/:code",async function(req,res){
 	var q = 'UPDATE raw_material SET ? WHERE code = "' + req.params.code + '"';
 	insertQuery(q, req.body.raw_material)
 						.then(result => {
@@ -103,7 +123,11 @@ app.post("/inventory/:code/update",async function(req,res){
 						});
 });
 
-app.post("/inventory/:code/delete",async function(req,res){
+//=======================================================================================
+//																		DELETE
+//=======================================================================================
+
+app.delete("/inventory/:code",async function(req,res){
 	var q = 'DELETE FROM raw_material WHERE code = "' + req.params.code + '"';
 	selectQuery(q)
 						.then(raw_material => {
