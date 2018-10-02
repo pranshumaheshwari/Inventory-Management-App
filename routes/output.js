@@ -3,7 +3,7 @@ var express 	   = require('express'),
 	bodyParser 	   = require('body-parser'),
 	methodOverride = require('method-override'),
 	logger    	   = require('../config/winston'),
-	app      	   = express.Router();
+	app      		   = express.Router();
 
 var con = mysql.createConnection({
 	host: "localhost",
@@ -14,7 +14,7 @@ var con = mysql.createConnection({
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(methodOverride("_method"));
-app.use(express.static( __dirname + "/public"));  
+app.use(express.static( __dirname + "/public"));
 
 app.get("/output",function(req,res){
 	var q = "SELECT * FROM raw_material";
@@ -100,7 +100,7 @@ app.post("/output",function(req,res){
 					}
 				});
 			}
-		}); 
+		});
 	}
 	res.redirect("/output");
 });
