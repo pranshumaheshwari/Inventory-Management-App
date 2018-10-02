@@ -105,7 +105,7 @@ app.post("/report/FG_Name",async function(req,res){
 				await con.query(q,async function(err,fg){
 					if(err)
 						throw err;
-					else 
+					else
 						finished_goods = fg;
 				});
 				setTimeout(async function(){
@@ -188,7 +188,7 @@ app.post("/report/production",async function(req,res){
 					totalExchange = 0;
 			}
 		});
-		setTimeout(async function(){				
+		setTimeout(async function(){
 			q = "SELECT * FROM production WHERE FG_code ='" + finished_good_code + "' AND date >='" + from + "' AND date <='" + to + "' ORDER by date";
 			await con.query(q,await function(err,finished_goods){
 				if(err)
