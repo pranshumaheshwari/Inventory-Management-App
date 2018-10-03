@@ -1,5 +1,5 @@
 var express 	   							 = require('express'),
-		{selectQuery, insertQuery} = require('../config/query.js')
+		{selectQuery, insertQuery} = require('../config/query.js'),
 		bodyParser 	   						 = require('body-parser'),
 		methodOverride  					 = require('method-override'),
 		logger    	    					 = require('../config/winston').output,

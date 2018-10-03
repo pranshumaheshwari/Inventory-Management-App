@@ -1,5 +1,5 @@
 var express 	   						 = require('express'),
-		{selectQuery, insertQuery} = require('../config/query.js')
+		{selectQuery, insertQuery} = require('../config/query.js'),
 		bodyParser 	   						 = require('body-parser'),
 		methodOverride 						 = require('method-override'),
 		logger		  	 						 = require('../config/winston').inventory,
@@ -180,7 +180,7 @@ app.put("/inventory/:code",async function(req,res){
 app.delete("/inventory/:code",async function(req,res){
 	var q = '${ req.method } FROM raw_material WHERE code = "' + req.params.code + '"';
 	selectQuery(q)
-						.then(raw_material => {
+						.then(result => {
 							logger.info({
 								where: `${ req.method } ${ req.url } ${ q }`,
 								what: `Code: ${ req.params.code }`,
