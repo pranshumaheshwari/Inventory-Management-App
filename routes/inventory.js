@@ -1,4 +1,4 @@
-var express 	   						 = require('express'),
+var express 	   						 	 = require('express'),
 		{selectQuery, insertQuery} = require('../config/query.js'),
 		bodyParser 	   						 = require('body-parser'),
 		methodOverride 						 = require('method-override'),
