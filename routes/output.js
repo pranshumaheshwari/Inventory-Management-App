@@ -1,106 +1,81 @@
-var express 	   = require('express'),
-	mysql 	  	   = require('mysql'),
-	bodyParser 	   = require('body-parser'),
-	methodOverride = require('method-override'),
-	logger    	   = require('../config/winston'),
-	app      		   = express.Router();
+var express 	   							 = require('express'),
+		{selectQuery, insertQuery} = require('../config/query.js')
+		bodyParser 	   						 = require('body-parser'),
+		methodOverride  					 = require('method-override'),
+		logger    	    					 = require('../config/winston').output,
+		app      		    					 = express.Router();
 
-var con = mysql.createConnection({
-	host: "localhost",
-  	user: "root",
-  	password: "",
-  	database: "Store"
-});
+//=======================================================================================
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(methodOverride("_method"));
 app.use(express.static( __dirname + "/public"));
 
+//=======================================================================================
+//																		GET
+//=======================================================================================
+
 app.get("/output",function(req,res){
 	var q = "SELECT * FROM raw_material";
-	con.query(q,function(err,raw_materials){
-		if(err)
-			res.render("error");
-		else {
-				res.render("output",{raw_materials:raw_materials});
-		}
-	});
+	selectQuery(q)
+						.then(raw_materials => {
+							res.render("output",{raw_materials:raw_materials});
+						})
+						.catch(err => {
+							logger.error({
+									error: err,
+									where: `${ req.method } ${ req.url } ${ q }`,
+									time: Date.now().toString()
+							});
+							res.render('error',{error: err})
+						});
 });
 
-//----------------------------------------
+//=======================================================================================
+//																		POST
+//=======================================================================================
+
 app.post("/output",function(req,res){
-	var product_code = req.body.product_code;
-	var slip_no = req.body.slip_no[0];
-	var quantity = req.body.Quantity;
-	for(var i=0;i<product_code.length;i++){
-		var o = {
-			slip_no: slip_no,
-			raw_material_code: product_code[i],
-			quantity: quantity[i]
+	for(var i=0;i<req.body.product_code.length;i++){
+		let o = {
+			slip_no: req.body.slip_no[0],
+			raw_material_code: req.body.product_code[i],
+			quantity: req.body.Quantity[i]
 		}
 		var q = "INSERT INTO output SET ?";
-		con.query(q,o,function(err){
-			if(err){
-				logger.error({
-					level: 'error',
-					message: {
-						where: "INSERT INTO output",
-						err: err,
-						time: Date.now()
-					}
-				});
-				res.render("error");
-			} else {
-				logger.info({
-					level: 'info',
-					message: {
-						where: "INSERT INTO output",
-						what: o,
-						time: Date.now()
-					}
-				});
-			}
-		});
-		// q = "SELECT * FROM raw_material WHERE code = '" + output[i].raw_material_code + "'";
-		// con.query(q,function(err,raw_material){
-		// 	if(err)
-		// 		res.render("error");
-		// 	else {
-		// 		if(i === quantity.length)
-		// 			i = 0;
-		// 		var finalStock = raw_material[0].stock - output[i].quantity;
-		// 		var line_stock = parseFloat(raw_material[0].line_stock) + parseFloat(output[i].quantity);
-		// 		var q = "UPDATE raw_material SET stock = " + finalStock + ",line_stock = " + line_stock + " WHERE code = '" + output[i].raw_material_code + "'";
-		// 		con.query(q,function(err){
-		// 			if(err)
-		// 				res.render("error");
-		// 		});
-		// 		i++;
-		// 	}
-		// });
-		q = "UPDATE raw_material SET stock = stock - " + o.quantity + ", line_stock = line_stock + " + o.quantity + " WHERE code = '" + o.raw_material_code + "'";
-		con.query(q,function(err){
-			if(err){
-				logger.error({
-					level: 'error',
-					message: {
-						where: "UPDATE raw_material stock && line_stock",
-						err: err,
-						time: Date.now()
-					}
-				});
-				throw err;
-			} else {
-				logger.info({
-					level: 'info',
-					message: {
-						where: "UPDATE raw_material stock && line_stock",
-						what: o,
-						time: Date.now()
-					}
-				});
-			}
-		});
+		insertQuery(q, o)
+							.then(result => {
+								logger.info({
+									where: `${ req.method } ${ req.url } ${ q }`,
+									what: o,
+									time: Date.now().toString()
+								});
+								q = "UPDATE raw_material SET stock = stock - " + o.quantity + ", line_stock = line_stock + " + o.quantity + " WHERE code = '" + o.raw_material_code + "'";
+								selectQuery(q)
+													.then(raw_materials => {
+														logger.info({
+															where: `${ req.method } ${ req.url } ${ q }`,
+															what: o,
+															time: Date.now().toString()
+														});
+													})
+													.catch(err => {
+														logger.error({
+																error: err,
+																where: `${ req.method } ${ req.url } ${ q }`,
+																time: Date.now().toString()
+														});
+														res.render('error',{error: err})
+													});
+							})
+							.catch(err => {
+								logger.error({
+										error: err,
+										where: `${ req.method } ${ req.url } ${ q }`,
+										time: Date.now().toString()
+								});
+								res.render('error',{error: err});
+							});
 	}
 	res.redirect("/output");
 });

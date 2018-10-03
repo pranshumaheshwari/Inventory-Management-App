@@ -1,9 +1,9 @@
 var express 	   						 = require('express'),
-	{selectQuery, insertQuery} = require('../config/query.js')
-	bodyParser 	   						 = require('body-parser'),
-	methodOverride 						 = require('method-override'),
-	logger		  	 						 = require('../config/winston').inventory,
-	app      	   							 = express.Router();
+		{selectQuery, insertQuery} = require('../config/query.js')
+		bodyParser 	   						 = require('body-parser'),
+		methodOverride 						 = require('method-override'),
+		logger		  	 						 = require('../config/winston').inventory,
+		app      	   							 = express.Router();
 
 //=======================================================================================
 
@@ -24,7 +24,7 @@ app.get("/inventory",async function(req,res){
 						.catch(err => {
 							logger.error({
 									error: err,
-									where: `GET ${ req.url } ${ q }`,
+									where: `${ req.method } ${ req.url } ${ q }`,
 									time: Date.now().toString()
 							});
 							res.render('error',{error: err})
@@ -40,7 +40,7 @@ app.get("/inventory/new",async function(req,res){
 						.catch(err => {
 							logger.error({
 									error: err,
-									where: `GET ${ req.url } ${ q }`,
+									where: `${ req.method } ${ req.url } ${ q }`,
 									time: Date.now().toString()
 							});
 							res.render('error',{error: err});
@@ -59,7 +59,7 @@ app.get("/inventory/:code",async function(req,res){
 												.catch(err => {
 													logger.error({
 															error: err,
-															where: `GET ${ req.url } ${ q }`,
+															where: `${ req.method } ${ req.url } ${ q }`,
 															time: Date.now().toString()
 													});
 													res.render('error',{error: err});
@@ -68,7 +68,7 @@ app.get("/inventory/:code",async function(req,res){
 						.catch(err => {
 							logger.error({
 									error: err,
-									where: `GET ${ req.url } ${ q }`,
+									where: `${ req.method } ${ req.url } ${ q }`,
 									time: Date.now().toString()
 							});
 							res.render('error',{error: err});
@@ -84,7 +84,7 @@ app.get("/inventory/:code/requirement",async function(req,res){
 						.catch(err => {
 							logger.error({
 									error: err,
-									where: `GET ${ req.url } ${ q }`,
+									where: `${ req.method } ${ req.url } ${ q }`,
 									time: Date.now().toString()
 							});
 							res.render('error',{error: err});
@@ -104,7 +104,7 @@ app.post("/inventory/search/category",async function(req,res){
 						.catch(err => {
 							logger.error({
 									error: err,
-									where: `POST ${ req.url } ${ q }`,
+									where: `${ req.method } ${ req.url } ${ q }`,
 									time: Date.now().toString()
 							});
 							res.render('error',{error: err});
@@ -120,7 +120,7 @@ app.post("/inventory/search/name",async function(req,res){
 						.catch(err => {
 							logger.error({
 									error: err,
-									where: `POST ${ req.url } ${ q }`,
+									where: `${ req.method } ${ req.url } ${ q }`,
 									time: Date.now().toString()
 							});
 							res.render('error',{error: err});
@@ -132,15 +132,16 @@ app.post("/inventory/new",async function(req,res){
 	insertQuery(q, req.body.raw_material)
 						.then(result => {
 							logger.info({
-								where: `POST ${ req.url } ${ q }`,
-								what: req.body.raw_material
+								where: `${ req.method } ${ req.url } ${ q }`,
+								what: req.body.raw_material,
+								time: Date.now().toString()
 							});
 							res.redirect("/inventory");
 						})
 						.catch(err => {
 							logger.error({
 									error: err,
-									where: `POST ${ req.url } ${ q }`,
+									where: `${ req.method } ${ req.url } ${ q }`,
 									time: Date.now().toString()
 							});
 							res.render('error',{error: err});
@@ -156,15 +157,16 @@ app.put("/inventory/:code",async function(req,res){
 	insertQuery(q, req.body.raw_material)
 						.then(result => {
 							logger.info({
-								where: `PUT ${ req.url } ${ q }`,
-								what: req.body.raw_material
+								where: `${ req.method } ${ req.url } ${ q }`,
+								what: req.body.raw_material,
+								time: Date.now().toString()
 							});
 							res.redirect("/inventory");
 						})
 						.catch(err => {
 							logger.error({
 									error: err,
-									where: `PUT ${ req.url } ${ q }`,
+									where: `${ req.method } ${ req.url } ${ q }`,
 									time: Date.now().toString()
 							});
 							res.render('error',{error: err});
@@ -176,19 +178,20 @@ app.put("/inventory/:code",async function(req,res){
 //=======================================================================================
 
 app.delete("/inventory/:code",async function(req,res){
-	var q = 'DELETE FROM raw_material WHERE code = "' + req.params.code + '"';
+	var q = '${ req.method } FROM raw_material WHERE code = "' + req.params.code + '"';
 	selectQuery(q)
 						.then(raw_material => {
 							logger.info({
-								where: `DELETE ${ req.url } ${ q }`,
-								what: `Code: ${ req.params.code }`
+								where: `${ req.method } ${ req.url } ${ q }`,
+								what: `Code: ${ req.params.code }`,
+								time: Date.now().toString()
 							});
 							res.redirect("/inventory");
 						})
 						.catch(err => {
 							logger.error({
 									error: err,
-									where: `DELETE ${ req.url } ${ q }`,
+									where: `${ req.method } ${ req.url } ${ q }`,
 									time: Date.now().toString()
 							});
 							res.render('error',{error: err});
