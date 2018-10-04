@@ -39,7 +39,9 @@
 				<% } %>
 			</tbody>
 		</table>
-		<button type="submit" class="btn btn-success">Export</button>
+		<% if(!mock) {%>
+			<button type="submit" class="btn btn-success">Export</button>
+		<% } %>
 	</form>
 </div>
 <script type="text/javascript">

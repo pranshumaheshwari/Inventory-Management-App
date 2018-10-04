@@ -219,6 +219,7 @@ app.post("/PO/:code/new",function(req,res){
 });
 
 app.post("/PO/generate",function(req,res){
+	// ADD RAW_MATERIAL MONTHLY REQUIREMENT
 	var POFull = req.body.PO;
 	var Supplier = req.body.supplier;
 	var PO = [], supplier = [];

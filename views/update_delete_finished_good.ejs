@@ -2,7 +2,7 @@
 <br>
 <h1 align="center">Edit Finished Good Detais</h1>
 <div class="container">
-	<form action="/finished_good/<%= finished_good.code %>/update" method="post">
+	<form action="/finished_good/<%= finished_good.code %>?_method=PUT" method="POST">
 	<div class="jumbotron">
 		<div class="row">
 			<div class="col-md-6">
@@ -64,7 +64,9 @@
 	<button type="submit" class="btn btn-success">Update!!</button>
 	<a href="/finished_good/<%= finished_good.code %>/new" style="float:right;" class="btn btn-primary">Add New Raw Material</a>
 	<br><br><br>
-	<a href="/finished_good/<%= finished_good.code %>/delete" class="btn btn-danger">Delete</a>
+	</form>
+	<form action="/finished_good/<%= finished_good.code %>?_method=DELETE" method="POST">
+		<button type="submit" class="btn btn-danger">Delete</button>
 	</form>
 </div>
 <% include partials/footer.ejs %>
