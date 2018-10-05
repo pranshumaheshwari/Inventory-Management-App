@@ -17,102 +17,173 @@ app.use(express.static( __dirname + "/public"));
 
 app.get("/PO",function(req,res){
 	var q = "SELECT * FROM PO";
-	con.query(q,function(err,POs){
-		if(err){
-			res.render("error");
-		} else {
-			res.render("PO",{POs:POs});
-		}
-	});
+	selectQuery(q)
+						.then(POs => {
+							res.render("PO",{POs:POs});
+						})
+						.catch(err => {
+							logger.error({
+									error: err,
+									where: `${ req.method } ${ req.url } ${ q }`,
+									time: Date.now().toString()
+							});
+							res.render('error',{error: err})
+						});
 });
 
 app.get("/PO/new",function(req,res){
 	var q = "SELECT * FROM raw_material";
-	con.query(q,function(err,raw_materials){
-		if(err){
-			res.render("error");
-		} else {
-			var q = "SELECT * FROM supplier";
-			con.query(q,function(err,suppliers){
-				if(err){
-					res.render("error");
-				} else {
-					res.render("new_PO",{suppliers:suppliers,raw_materials:raw_materials});
-				}
-			});
-			}
-	});
+	selectQuery(q)
+						.then(async(raw_materials) => {
+							q = "SELECT * FROM supplier";
+							await selectQuery(q)
+												.then(suppliers => {
+													res.render("new_PO",{suppliers:suppliers,raw_materials:raw_materials});
+												})
+												.catch(err => {
+													logger.error({
+															error: err,
+															where: `${ req.method } ${ req.url } ${ q }`,
+															time: Date.now().toString()
+													});
+													res.render('error',{error: err})
+												});
+						})
+						.catch(err => {
+							logger.error({
+									error: err,
+									where: `${ req.method } ${ req.url } ${ q }`,
+									time: Date.now().toString()
+							});
+							res.render('error',{error: err})
+						});
 });
 
 app.get("/PO/:code",function(req,res){
 	var q = "SELECT * FROM PO_detail WHERE PO_code = '" + req.params.code + "'";
-	con.query(q,function(err,foundRaw){
-		if(err)
-			res.render("error");
-		else {
-			q = "SELECT * FROM raw_material ORDER BY code"
-			con.query(q,function(err,raw_materials){
-				if(err)
-					res.render("error");
-				else {
-					res.render("update_delete_PO",{raw_materials:raw_materials,foundRaw:foundRaw});
-				}
-			});
-		}
-	});
+	selectQuery(q)
+						.then(foundRaw => {
+							q = "SELECT * FROM raw_material ORDER BY code";
+							selectQuery(q)
+												.then(raw_materials => {
+													res.render("update_delete_PO",{raw_materials:raw_materials,foundRaw:foundRaw});
+												})
+												.catch(err => {
+													logger.error({
+															error: err,
+															where: `${ req.method } ${ req.url } ${ q }`,
+															time: Date.now().toString()
+													});
+													res.render('error',{error: err})
+												});
+						})
+						.catch(err => {
+							logger.error({
+									error: err,
+									where: `${ req.method } ${ req.url } ${ q }`,
+									time: Date.now().toString()
+							});
+							res.render('error',{error: err})
+						});
 });
 
 app.get("/PO/:code/delete",function(req,res){
-	q = 'DELETE FROM PO_detail WHERE PO_code = "' + req.params.code + '"';
-	con.query(q,function(err){
-		if(err)
-			res.render("error");
-	});
-	var q = 'DELETE FROM PO WHERE code = "' + req.params.code + '"';
-	con.query(q,function(err){
-		if(err)
-			res.render("error");
-	});
-	res.redirect("/PO");
+	var q = 'DELETE FROM PO_detail WHERE PO_code = "' + req.params.code + '"';
+	selectQuery(q)
+						.then(result => {})
+						.then( _ => {
+							q = 'DELETE FROM PO WHERE code = "' + req.params.code + '"';
+							selectQuery(q)
+												.then(result => {})
+												.catch(err => {
+													logger.error({
+															error: err,
+															where: `${ req.method } ${ req.url } ${ q }`,
+															time: Date.now().toString()
+													});
+													res.render('error',{error: err})
+												});
+						})
+						.then( _ => {
+							res.redirect("/PO");
+						})
+						.catch(err => {
+							logger.error({
+									error: err,
+									where: `${ req.method } ${ req.url } ${ q }`,
+									time: Date.now().toString()
+							});
+							res.render('error',{error: err})
+						});
 });
 
 app.get("/PO/:code/new",function(req,res){
 	var q = "SELECT * FROM raw_material ORDER BY name";
-	con.query(q,function(err,raw_materials){
-		if(err)
-			res.render("error");
-		else {
-			q = "SELECT date FROM PO WHERE code ='" + req.params.code + "'";
-			con.query(q,function(err,date){
-				if(err)
-					res.render("error");
-				else {
-					res.render("add_new_PO",{raw_materials:raw_materials,PO:req.params.code,date:date[0].date});
-				}
-			});
-		}
-	});
+	selectQuery(q)
+						.then(raw_materials => {
+							q = "SELECT date FROM PO WHERE code ='" + req.params.code + "'";
+							selectQuery(q)
+												.then(date => {
+													res.render("add_new_PO",{raw_materials:raw_materials,PO:req.params.code,date:date[0].date});
+												})
+												.catch(err => {
+													logger.error({
+															error: err,
+															where: `${ req.method } ${ req.url } ${ q }`,
+															time: Date.now().toString()
+													});
+													res.render('error',{error: err})
+												});
+						})
+						.catch(err => {
+							logger.error({
+									error: err,
+									where: `${ req.method } ${ req.url } ${ q }`,
+									time: Date.now().toString()
+							});
+							res.render('error',{error: err})
+						});
 });
 
 app.get("/PO/:code/close",function(req,res){
 	var q = "UPDATE PO SET pending = 'Closed' WHERE code='" + req.params.code + "'";
-	con.query(q,function(err){
-		if(err)
-			res.render("error");
-		res.redirect("/PO");
-	});
+	selectQuery(q)
+						.then(result => {
+							logger.info({
+									where: `${ req.method } ${ req.url } ${ q }`,
+									time: Date.now().toString()
+							});
+							res.redirect("/PO");
+						})
+						.catch(err => {
+							logger.error({
+									error: err,
+									where: `${ req.method } ${ req.url } ${ q }`,
+									time: Date.now().toString()
+							});
+							res.render('error',{error: err})
+						});
 });
 
 app.get("/PO/:code/:raw_code/delete",function(req,res){
 	var q = "DELETE FROM PO_detail WHERE PO_code ='" + req.params.code + "' AND raw_desc ='" + req.params.raw_code + "'";
-	con.query(q,function(err){
-		if(err)
-			res.render("error");
-		else {
-			res.redirect("/PO/" + req.params.code);
-		}
+	selectQuery(q)
+						.then(result => {
+							logger.info({
+									where: `${ req.method } ${ req.url } ${ q }`,
+									time: Date.now().toString()
+							});
+							res.redirect("/PO/" + req.params.code);
+						})
+						.catch(err => {
+							logger.error({
+									error: err,
+									where: `${ req.method } ${ req.url } ${ q }`,
+									time: Date.now().toString()
+							});
+							res.render('error',{error: err})
+						});
 	});
-});
 
 //=======================================================================================
 //																		POST
@@ -122,7 +193,7 @@ app.post("/PO/export",function(req,res){
 	res.render("export",{data:req.body,mock:false});
 });
 
-app.post("/PO/new",function(req,res){
+app.post("/PO/new",async function(req,res){
 	var q = "INSERT INTO PO SET ?",
 		PO_no = req.body.PO.code,
 		supplier_code = req.body.PO.supplier_code.split(","),
@@ -140,36 +211,64 @@ app.post("/PO/new",function(req,res){
 		date: date,
 		pending: "Open"
 	}
-	con.query(q,PO,function(err){
-		if(err)
-			res.render("error");
-	});
-	setTimeout(function(){},1000);
-	q = "INSERT INTO PO_detail SET ?";
-	var PO_obj;
-	for(var i=0; i<quantity.length; i++){
-		let ii = i;
-		PO_obj = {
-			PO_code: PO_no,
-			date: date,
-			quantity: quantity[ii],
-			initial_quantity: quantity[ii],
-			DTPL_code: product_DTPL_code[ii],
-			raw_desc: product_name[ii],
-			no: ii
-		};
-		con.query(q,PO_obj,function(err){
-			if(err)
-				res.render("error");
-		});
-	};
-	res.redirect("/PO");
+	await insertQuery(q, PO)
+						.then(result => {
+							logger.info({
+								where: `${ req.method } ${ req.url } ${ q }`,
+								what: PO,
+								time: Date.now().toString()
+							});
+						})
+						.then(async _ => {
+							q = "INSERT INTO PO_detail SET ?";
+							var PO_obj;
+							for(var i=0; i<quantity.length; i++){
+								let ii = i;
+								PO_obj = {
+									PO_code: PO_no,
+									date: date,
+									quantity: quantity[ii],
+									initial_quantity: quantity[ii],
+									DTPL_code: product_DTPL_code[ii],
+									raw_desc: product_name[ii],
+									no: ii
+								};
+								await insertQuery(q, PO_obj)
+													.then(result => {
+														logger.info({
+															where: `${ req.method } ${ req.url } ${ q }`,
+															what: PO_obj,
+															time: Date.now().toString()
+														});
+													})
+													.catch(err => {
+														logger.error({
+																error: err,
+																where: `${ req.method } ${ req.url } ${ q }`,
+																time: Date.now().toString()
+														});
+														res.render('error',{error: err});
+													});
+							}
+						})
+						.then( _ => {
+							res.redirect("/PO");
+						})
+						.catch(err => {
+							logger.error({
+									error: err,
+									where: `${ req.method } ${ req.url } ${ q }`,
+									time: Date.now().toString()
+							});
+							res.render('error',{error: err});
+						});
 });
 
-app.post("/PO/:code/update",function(req,res){
+app.post("/PO/:code/update",async function(req,res){
 	var raw = req.body.PO_code;
 	var PO_no = req.body.PO_no;
 	var date = req.body.PO_date;
+	var q;
 	for(var i=0;i<raw.length;i++){
 		q = "UPDATE PO_detail SET ? WHERE PO_code ='" + PO_no + "' AND no = " + i;
 		var PO = {
@@ -180,50 +279,77 @@ app.post("/PO/:code/update",function(req,res){
 			quantity: req.body.PO_quantity[i],
 			no: i
 		}
-		con.query(q,PO,function(err){
-			if(err)
-				res.render("error");
-		});
+		await insertQuery(q, PO)
+							.then(result => {
+								logger.info({
+									where: `${ req.method } ${ req.url } ${ q }`,
+									what: PO,
+									time: Date.now().toString()
+								});
+							})
+							.catch(err => {
+								logger.error({
+										error: err,
+										where: `${ req.method } ${ req.url } ${ q }`,
+										time: Date.now().toString()
+								});
+								res.render('error',{error: err});
+							});
 	}
 	res.redirect("/PO");
 });
 
-app.post("/PO/:code/new",function(req,res){
+app.post("/PO/:code/new",async function(req,res){
 	var q = "SELECT COUNT(*)  AS count FROM PO_detail WHERE PO_code = '" + req.params.code + "'";
 	var no;
-	con.query(q,function(err,coun){
-		if(err)
-			throw err;
-		else {
-			no = coun[0].count;
-		}
-	});
-	setTimeout(function(){
-		q = "INSERT INTO PO_detail SET ?";
-		var quantity = req.body.quantity;
-		var raw = req.body.raw.split("$");
-		var PO = {
-			PO_code: req.body.PO_no,
-			date: req.body.date,
-			raw_desc: raw[0],
-			DTPL_code: raw[1],
-			quantity: quantity,
-			initial_quantity: quantity,
-			no: no
-		}
-		console.log(PO);
-		con.query(q,PO,function(err){
-			if(err)
-				throw err;
-			else {
-				res.redirect("/PO/"+req.params.code);
-			}
-		});
-	},2000);
+	selectQuery(q)
+						.then(coun => {
+							no = coun[0].count;
+						})
+						.then(async _ => {
+							q = "INSERT INTO PO_detail SET ?";
+							var quantity = req.body.quantity;
+							var raw = req.body.raw.split("$");
+							var PO = {
+								PO_code: req.body.PO_no,
+								date: req.body.date,
+								raw_desc: raw[0],
+								DTPL_code: raw[1],
+								quantity: quantity,
+								initial_quantity: quantity,
+								no: no
+							}
+							await insertQuery(q, PO)
+												.then(result => {
+													logger.info({
+														where: `${ req.method } ${ req.url } ${ q }`,
+														what: PO,
+														time: Date.now().toString()
+													});
+												})
+												.catch(err => {
+													logger.error({
+															error: err,
+															where: `${ req.method } ${ req.url } ${ q }`,
+															time: Date.now().toString()
+													});
+													res.render('error',{error: err});
+												});
+						})
+						.then( _ => {
+							res.redirect("/PO/"+req.params.code);
+						})
+						.catch(err => {
+							logger.error({
+									error: err,
+									where: `${ req.method } ${ req.url } ${ q }`,
+									time: Date.now().toString()
+							});
+							res.render('error',{error: err})
+						});
 });
 
-app.post("/PO/generate",function(req,res){
-	// ADD RAW_MATERIAL MONTHLY REQUIREMENT
+app.post("/PO/generate",async function(req,res){
 	var POFull = req.body.PO;
 	var Supplier = req.body.supplier;
 	var PO = [], supplier = [];
@@ -254,10 +380,38 @@ app.post("/PO/generate",function(req,res){
 			no: z,
 			DTPL_code: DTPL_code[k]
 		}
-		con.query(q,po,function(err){
-			if(err)
-				res.render("error");
-		});
+		await insertQuery(q, po)
+							.then(result => {
+								logger.info({
+									where: `${ req.method } ${ req.url } ${ q }`,
+									what: po,
+									time: Date.now().toString()
+								});
+							})
+							.catch(err => {
+								logger.error({
+										error: err,
+										where: `${ req.method } ${ req.url } ${ q }`,
+										time: Date.now().toString()
+								});
+								res.render('error',{error: err});
+							});
+		q = `UPDATE raw_material SET monthly_requirement = ${ quantity[k] } WHERE name = ${ raw[k] }`;
+		await selectQuery(q)
+									.then(result => {
+										logger.info({
+											where: `${ req.method } ${ req.url } ${ q }`,
+											time: Date.now().toString()
+										});
+									})
+									.catch(err => {
+										logger.error({
+												error: err,
+												where: `${ req.method } ${ req.url } ${ q }`,
+												time: Date.now().toString()
+										});
+										res.render('error',{error: err});
+									});
 	}
 	for(var k=0;k<PO.length;k++){
 		q = "INSERT INTO PO SET ?";
@@ -267,14 +421,24 @@ app.post("/PO/generate",function(req,res){
 			date: new Date().toISOString().substring(0,10),
 			pending: "Open"
 		}
-		con.query(q,po,function(err){
-			if(err)
-				res.render("error");
-		});
+		await insertQuery(q, po)
+							.then(result => {
+								logger.info({
+									where: `${ req.method } ${ req.url } ${ q }`,
+									what: po,
+									time: Date.now().toString()
+								});
+							})
+							.catch(err => {
+								logger.error({
+										error: err,
+										where: `${ req.method } ${ req.url } ${ q }`,
+										time: Date.now().toString()
+								});
+								res.render('error',{error: err});
+							});
 	}
-	setTimeout(function(){
-		res.redirect("/PO");
-	},1000);
+	res.redirect("/PO");
 });
 
 module.exports = app;
