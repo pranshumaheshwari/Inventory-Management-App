@@ -220,21 +220,7 @@ app.get("/finished_good/:code/new",function(req,res){
 //																		POST
 //=======================================================================================
 
-// NOT WORKING!!!
 app.post("/BOM",async function(req,res){
-	// var q = "UPDATE raw_material SET monthly_requirement = 0";
-	// selectQuery(q)
-	// 					.then(result => {
-	// 						res.render("new_raw_finished_good",{raw:raw,code:req.params.code});
-	// 					})
-	// 					.catch(err => {
-	// 						logger.error({
-	// 								error: err,
-	// 								where: `${ req.method } ${ req.url } ${ q }`,
-	// 								time: Date.now().toString()
-	// 						});
-	// 						res.render('error',{error: err})
-	// 					});
 	var raw_quantity = {};
 	const caclulateRequirement = async(i) => {
 		var q = "SELECT * FROM finished_goods_detail WHERE code='" + req.body.finished_code[i] + "'";
@@ -255,25 +241,18 @@ app.post("/BOM",async function(req,res){
 							});
 	}
 	var q = "SELECT * FROM raw_material";
-	selectQuery(q)
-						.then(raw_materials => {
+	await selectQuery(q)
+						.then(async raw_materials => {
 							for(var k=0;k<raw_materials.length;k++){
 								raw_quantity[raw_materials[k].code] = 0;
 							}
 							for(var i=0;i<req.body.finished_code.length;i++){
+								if(req.body.quantity[i] === '' || req.body.quantity[i] === 0)
+									continue;
 								var q = "UPDATE finished_goods SET quantity ='" + req.body.quantity[i] + "' WHERE code ='" + req.body.finished_code[i] + "'";
-								selectQuery(q)
+								await selectQuery(q)
 													.then(async(result) => {
-														try {
 															await caclulateRequirement(i);
-														} catch (err) {
-															logger.error({
-																	error: err,
-																	where: `${ req.method } ${ req.url } ${ q }`,
-																	time: Date.now().toString()
-															});
-															res.render('error',{error: err})
-														}
 													})
 													.catch(err => {
 														logger.error({
@@ -285,12 +264,13 @@ app.post("/BOM",async function(req,res){
 													});
 							}
 							q = "SELECT * FROM raw_material ORDER BY supplier_code ";
-							selectQuery(q)
+							await selectQuery(q)
 												.then(async(raw_materials) => {
 													await raw_materials.forEach(raw => {
 														raw.monthly_requirement = raw_quantity[raw.code];
 													});
 													let r = raw_materials.filter(raw => raw.monthly_requirement > 0 );
+													console.log(r.length);
 													res.render("BOM_manual",{raw_materials:r,w:0,mock:false});
 												})
 												.catch(err => {
@@ -310,73 +290,6 @@ app.post("/BOM",async function(req,res){
 							});
 							res.render('error',{error: err})
 						});
-	// q = "SELECT * FROM raw_material";
-	// con.query(q,function(err,raw_materials){
-	// 	if(err)
-	// 		res.render("error");
-	// 	else {
-	// 		for(var k=0;k<raw_materials.length;k++){
-	// 			raw_quantity[raw_materials[k].code] = 0;
-	// 			if(k === raw_materials.length - 1){
-	// 				q = "SELECT * FROM finished_goods ORDER BY code";
-	// 				con.query(q,function(err,finishedGoods){
-	// 					if(err)
-	// 						res.render("error");
-	// 					else {
-	// 						for(var i=0;i<finishedGoods.length;i++){
-	// 							q = "SELECT * FROM finished_goods_detail WHERE code='" + finishedGoods[i].code + "'";
-	// 							con.query(q,function(err,raw_materials){
-	// 								if(err)
-	// 									res.render("error");
-	// 								else {
-	// 									if(i === finishedGoods.length)
-	// 										i = 0;
-	// 									for(var j=0;j<raw_materials.length;j++){
-	// 										var raw_q = finishedGoods[i].quantity * raw_materials[j].quantity;
-	// 										raw_quantity[raw_materials[j].raw_material_code] += raw_q;
-	// 									}
-	// 									i++;
-	// 								}
-	// 							});
-	// 							if(i === finishedGoods.length-1){
-	// 								setTimeout(function(){
-	// 									q = "SELECT * FROM raw_material";
-	// 									con.query(q,function(err,raw_materials){
-	// 										if(err)
-	// 											res.render("error");
-	// 										else {
-	// 											for(var i=0;i<raw_materials.length;i++){
-	// 												q = "UPDATE raw_material SET monthly_requirement = '" + raw_quantity[raw_materials[i].code] + "' WHERE code='" + raw_materials[i].code + "'";
-	// 												con.query(q,function(err){
-	// 													if(err)
-	// 														res.render("error");
-	// 												});
-	// 											}
-	// 										}
-	// 									});
-	// 									setTimeout(function(){
-	// 										q = "SELECT * FROM raw_material ORDER BY supplier_code ";
-	// 										con.query(q,function(err,raw_materials){
-	// 										if(err)
-	// 											res.render("error");
-	// 										var r = [];
-	// 										for(var p=0;p<raw_materials.length;p++){
-	// 											if(raw_materials[p].monthly_requirement > 0){
-	// 												r.push(raw_materials[p]);
-	// 											}
-	// 										}
-	// 										res.render("BOM_manual",{raw_materials:r,w:0,mock:false});
-	// 										});
-	// 									},3000);
-	// 								},3000);
-	// 							}
-	// 						}
-	// 					}
-	// 				});
-	// 			}
-	// 		}
-	// 	}
-	// });
 });
 
 app.post("/finished_good/dispatch",function(req,res){

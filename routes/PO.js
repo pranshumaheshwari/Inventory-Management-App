@@ -396,7 +396,7 @@ app.post("/PO/generate",async function(req,res){
 								});
 								res.render('error',{error: err});
 							});
-		q = `UPDATE raw_material SET monthly_requirement = ${ quantity[k] } WHERE name = ${ raw[k] }`;
+		q = `UPDATE raw_material SET monthly_requirement = ${ quantity[k] } WHERE name = '${ raw[k] }'`;
 		await selectQuery(q)
 									.then(result => {
 										logger.info({
