@@ -8,7 +8,9 @@ CREATE TABLE PO_detail(
 	PO_code INT NOT NULL,
 	date DATETIME NOT NULL,
 	quantity DOUBLE NOT NULL,
-	raw_material_code VARCHAR(10),
+	no INT,
+	raw_desc VARCHAR(100),
+	DTPL_code VARCHAR(25),
 	initial_quantity DOUBLE NOT NULL
 );
 CREATE TABLE input(
