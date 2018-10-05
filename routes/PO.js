@@ -1,19 +1,19 @@
-var express 	   = require('express'),
-	mysql 	  	   = require('mysql'),
-	bodyParser 	   = require('body-parser'),
-	methodOverride = require('method-override'),
-	app      	   = express.Router();
+var express 	   						 	 = require('express'),
+		{selectQuery, insertQuery} = require('../config/query.js'),
+		bodyParser 	   						 = require('body-parser'),
+		methodOverride 						 = require('method-override'),
+		logger		  	 						 = require('../config/winston').PO,
+		app      	   							 = express.Router();
 
-var con = mysql.createConnection({
-	host: "localhost",
-  	user: "root",
-  	password: "",
-  	database: "Store"
-});
+//=======================================================================================
 
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true, parameterLimit: 1000000}));
 app.use(methodOverride("_method"));
 app.use(express.static( __dirname + "/public"));
+
+//=======================================================================================
+//																		GET
+//=======================================================================================
 
 app.get("/PO",function(req,res){
 	var q = "SELECT * FROM PO";
@@ -113,6 +113,10 @@ app.get("/PO/:code/:raw_code/delete",function(req,res){
 		}
 	});
 });
+
+//=======================================================================================
+//																		POST
+//=======================================================================================
 
 app.post("/PO/export",function(req,res){
 	res.render("export",{data:req.body,mock:false});
