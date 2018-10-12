@@ -15,9 +15,9 @@ app.use(express.static( __dirname + "/public"));
 //																		GET
 //=======================================================================================
 
-app.get("/input",function(req,res){
+app.get("/input",async function(req,res){
 	var q = "SELECT * FROM PO";
-	selectQuery(q)
+	await selectQuery(q)
 						.then(POs => {
 							POs = POs.filter(PO => PO.pending === 'Open');
 							res.render("input",{POs:POs});
@@ -36,9 +36,9 @@ app.get("/input",function(req,res){
 //																		POST
 //=======================================================================================
 
-app.post("/input",function(req,res){
+app.post("/input",async function(req,res){
 	var q = 'SELECT P.*,r.price FROM (SELECT * FROM PO_detail WHERE  PO_code = "' + req.body.PO + '") AS P INNER JOIN raw_material AS r ON P.raw_desc = r.name';
-	selectQuery(q)
+	await selectQuery(q)
 						.then(POs => {
 							res.render("input_with_PO",{raw_materials : raw_materials});
 						})
@@ -60,15 +60,15 @@ app.post("/input/update",async function(req,res){
 	var invoice = req.body.invoice_no;
 	for(var i=0;i<raw_desc.length;i++){
 		let q = 'UPDATE raw_material SET stock = stock + ' + quantity[i] + ' WHERE name ="' + raw_desc[i] + '"';
-		selectQuery(q)
-							.then(result => {
+		await selectQuery(q)
+							.then(async result => {
 								logger.info({
 									where: `${ req.method } ${ req.url } ${ q }`,
 									time: Date.now().toString()
 								});
 								q = 'UPDATE PO_detail SET quantity = quantity - ' + quantity[i] + ' WHERE PO_code = "' + PO_code + '" AND raw_desc = "' + raw_desc[i] + '" AND DTPL_code ="' + DTPL_code[i] + '"';
-								selectQuery(q)
-													.then(result => {
+								await selectQuery(q)
+													.then(async result => {
 														logger.info({
 															where: `${ req.method } ${ req.url } ${ q }`,
 															time: Date.now().toString()
@@ -81,7 +81,7 @@ app.post("/input/update",async function(req,res){
 															DTPL_code: DTPL_code[i],
 															quantity: quantity[i]
 														};
-														insertQuery(q, input)
+														await insertQuery(q, input)
 																			.then(result => {
 																				logger.info({
 																					where: `${ req.method } ${ req.url } ${ q }`,
@@ -117,7 +117,7 @@ app.post("/input/update",async function(req,res){
 							});
 	}
 	// let q = 'SELECT * FROM PO_detail WHERE PO_code ="' + PO_code + '"';
-	// con.query(q,function(err,raw_materials){
+	// con.query(q,async function(err,raw_materials){
 	// 	var isFinished = true;
 	// 	for(var i=0;i<raw_materials.length;i++){
 	// 		if(raw_materials[i].quantity > 0)
@@ -125,7 +125,7 @@ app.post("/input/update",async function(req,res){
 	// 	}
 	// 	if(isFinished){
 	// 		q = 'UPDATE PO SET pending = "Closed" WHERE code = "' + PO_code + '"';
-	// 		con.query(q,function(err){
+	// 		con.query(q,async function(err){
 	// 			if(err)
 	// 				throw err;
 	// 		});
