@@ -66,7 +66,7 @@ app.post("/output",async function(req,res){
 									what: o,
 									time: Date.now().toString()
 								});
-								q = "UPDATE raw_material SET stock = stock - " + o.quantity + ", line_stock = line_stock + " + o.quantity + " WHERE code = '" + o.raw_material_code + "'";
+								q = "UPDATE raw_material SET stock = (stock - " + o.quantity + "), line_stock = (line_stock + " + o.quantity + ") WHERE code = '" + o.raw_material_code + "'";
 								await selectQuery(q)
 													.then(result => {
 														logger.info({
@@ -105,7 +105,7 @@ app.delete("/output/:slip_no", async (req,res) => {
 	await selectQuery(q)
 						.then(async raw_materials => {
 							await raw_materials.forEach(async raw_material => {
-								q = `UPDATE raw_material SET stock = stock + ${ raw_material.quantity }, line_stock = line_stock - ${ raw_material.quantity } WHERE code = '${ raw_material.raw_material_code }'`;
+								q = `UPDATE raw_material SET stock = (stock + ${ raw_material.quantity }), line_stock = (line_stock - ${ raw_material.quantity }) WHERE code = '${ raw_material.raw_material_code }'`;
 								await selectQuery(q)
 													.then(result => {
 														logger.info({
