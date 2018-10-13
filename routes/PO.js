@@ -87,36 +87,6 @@ app.get("/PO/:code",async function(req,res){
 						});
 });
 
-app.get("/PO/:code/delete",async function(req,res){
-	var q = 'DELETE FROM PO_detail WHERE PO_code = "' + req.params.code + '"';
-	await selectQuery(q)
-						.then(result => {})
-						.then( _ => {
-							q = 'DELETE FROM PO WHERE code = "' + req.params.code + '"';
-							selectQuery(q)
-												.then(result => {})
-												.catch(err => {
-													logger.error({
-															error: err,
-															where: `${ req.method } ${ req.url } ${ q }`,
-															time: Date.now().toString()
-													});
-													res.render('error',{error: err})
-												});
-						})
-						.then( _ => {
-							res.redirect("/PO");
-						})
-						.catch(err => {
-							logger.error({
-									error: err,
-									where: `${ req.method } ${ req.url } ${ q }`,
-									time: Date.now().toString()
-							});
-							res.render('error',{error: err})
-						});
-});
-
 app.get("/PO/:code/new",async function(req,res){
 	var q = "SELECT * FROM raw_material ORDER BY name";
 	await selectQuery(q)
@@ -264,41 +234,6 @@ app.post("/PO/new",async function(req,res){
 						});
 });
 
-app.post("/PO/:code/update",async function(req,res){
-	var raw = req.body.PO_code;
-	var PO_no = req.body.PO_no;
-	var date = req.body.PO_date;
-	var q;
-	for(var i=0;i<raw.length;i++){
-		q = "UPDATE PO_detail SET ? WHERE PO_code ='" + PO_no + "' AND no = " + i;
-		var PO = {
-			PO_code: PO_no,
-			date: date,
-			raw_desc: raw[i].split("$")[0],
-			DTPL_code: raw[i].split("$")[1],
-			quantity: req.body.PO_quantity[i],
-			no: i
-		}
-		await insertQuery(q, PO)
-							.then(result => {
-								logger.info({
-									where: `${ req.method } ${ req.url } ${ q }`,
-									what: PO,
-									time: Date.now().toString()
-								});
-							})
-							.catch(err => {
-								logger.error({
-										error: err,
-										where: `${ req.method } ${ req.url } ${ q }`,
-										time: Date.now().toString()
-								});
-								res.render('error',{error: err});
-							});
-	}
-	res.redirect("/PO");
-});
-
 app.post("/PO/:code/new",async function(req,res){
 	var q = "SELECT COUNT(*)  AS count FROM PO_detail WHERE PO_code = '" + req.params.code + "'";
 	var no;
@@ -440,5 +375,96 @@ app.post("/PO/generate",async function(req,res){
 	}
 	res.redirect("/PO");
 });
+
+//=======================================================================================
+//																		PUT
+//=======================================================================================
+
+app.put("/PO/:code",async function(req,res){
+	var raw = req.body.PO_code;
+	var PO_no = req.body.PO_no;
+	var date = req.body.PO_date;
+	var q = `DELETE FROM PO_detail WHERE PO_code = '${ PO_no }'`;
+	await selectQuery(q)
+						.then(result => {
+							logger.info({
+									where: `${ req.method } ${ req.url } ${ q }`,
+									time: Date.now().toString()
+							});
+						})
+						.catch(err => {
+							logger.error({
+									error: err,
+									where: `${ req.method } ${ req.url } ${ q }`,
+									time: Date.now().toString()
+							});
+							res.render('error',{error: err})
+						});
+	for(var i=0;i<raw.length;i++){
+		q = "INSERT INTO PO_detail SET ?";
+		var PO = {
+			PO_code: PO_no,
+			date: date,
+			raw_desc: raw[i].split("$")[0],
+			DTPL_code: raw[i].split("$")[1],
+			quantity: req.body.PO_quantity[i],
+			initial_quantity: req.body.PO_quantity[i],
+			no: i
+		}
+		await insertQuery(q, PO)
+							.then(result => {
+								logger.info({
+									where: `${ req.method } ${ req.url } ${ q }`,
+									what: PO,
+									time: Date.now().toString()
+								});
+							})
+							.catch(err => {
+								logger.error({
+										error: err,
+										where: `${ req.method } ${ req.url } ${ q }`,
+										time: Date.now().toString()
+								});
+								res.render('error',{error: err});
+							});
+	}
+	res.redirect("/PO");
+});
+
+//=======================================================================================
+//																		DELETE
+//=======================================================================================
+
+app.delete("/PO/:code",async function(req,res){
+	var q = 'DELETE FROM PO_detail WHERE PO_code = "' + req.params.code + '"';
+	await selectQuery(q)
+						.then(result => {})
+						.then(async _ => {
+							q = 'DELETE FROM PO WHERE code = "' + req.params.code + '"';
+							await selectQuery(q)
+												.then(result => {})
+												.catch(err => {
+													logger.error({
+															error: err,
+															where: `${ req.method } ${ req.url } ${ q }`,
+															time: Date.now().toString()
+													});
+													res.render('error',{error: err})
+												});
+						})
+						.then( _ => {
+							res.redirect("/PO");
+						})
+						.catch(err => {
+							logger.error({
+									error: err,
+									where: `${ req.method } ${ req.url } ${ q }`,
+									time: Date.now().toString()
+							});
+							res.render('error',{error: err})
+						});
+});
+
+//=======================================================================================
 
 module.exports = app;
