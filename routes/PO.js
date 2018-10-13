@@ -15,9 +15,9 @@ app.use(express.static( __dirname + "/public"));
 //																		GET
 //=======================================================================================
 
-app.get("/PO",function(req,res){
+app.get("/PO",async function(req,res){
 	var q = "SELECT * FROM PO";
-	selectQuery(q)
+	await selectQuery(q)
 						.then(POs => {
 							res.render("PO",{POs:POs});
 						})
@@ -31,10 +31,10 @@ app.get("/PO",function(req,res){
 						});
 });
 
-app.get("/PO/new",function(req,res){
+app.get("/PO/new",async function(req,res){
 	var q = "SELECT * FROM raw_material";
-	selectQuery(q)
-						.then(async(raw_materials) => {
+	await selectQuery(q)
+						.then(async raw_materials => {
 							q = "SELECT * FROM supplier";
 							await selectQuery(q)
 												.then(suppliers => {
@@ -59,12 +59,12 @@ app.get("/PO/new",function(req,res){
 						});
 });
 
-app.get("/PO/:code",function(req,res){
+app.get("/PO/:code",async function(req,res){
 	var q = "SELECT * FROM PO_detail WHERE PO_code = '" + req.params.code + "'";
-	selectQuery(q)
-						.then(foundRaw => {
+	await selectQuery(q)
+						.then(async foundRaw => {
 							q = "SELECT * FROM raw_material ORDER BY code";
-							selectQuery(q)
+							await selectQuery(q)
 												.then(raw_materials => {
 													res.render("update_delete_PO",{raw_materials:raw_materials,foundRaw:foundRaw});
 												})
@@ -87,9 +87,9 @@ app.get("/PO/:code",function(req,res){
 						});
 });
 
-app.get("/PO/:code/delete",function(req,res){
+app.get("/PO/:code/delete",async function(req,res){
 	var q = 'DELETE FROM PO_detail WHERE PO_code = "' + req.params.code + '"';
-	selectQuery(q)
+	await selectQuery(q)
 						.then(result => {})
 						.then( _ => {
 							q = 'DELETE FROM PO WHERE code = "' + req.params.code + '"';
@@ -117,12 +117,12 @@ app.get("/PO/:code/delete",function(req,res){
 						});
 });
 
-app.get("/PO/:code/new",function(req,res){
+app.get("/PO/:code/new",async function(req,res){
 	var q = "SELECT * FROM raw_material ORDER BY name";
-	selectQuery(q)
-						.then(raw_materials => {
+	await selectQuery(q)
+						.then(async raw_materials => {
 							q = "SELECT date FROM PO WHERE code ='" + req.params.code + "'";
-							selectQuery(q)
+							await selectQuery(q)
 												.then(date => {
 													res.render("add_new_PO",{raw_materials:raw_materials,PO:req.params.code,date:date[0].date});
 												})
@@ -145,9 +145,9 @@ app.get("/PO/:code/new",function(req,res){
 						});
 });
 
-app.get("/PO/:code/close",function(req,res){
+app.get("/PO/:code/close",async function(req,res){
 	var q = "UPDATE PO SET pending = 'Closed' WHERE code='" + req.params.code + "'";
-	selectQuery(q)
+	await selectQuery(q)
 						.then(result => {
 							logger.info({
 									where: `${ req.method } ${ req.url } ${ q }`,
@@ -165,9 +165,9 @@ app.get("/PO/:code/close",function(req,res){
 						});
 });
 
-app.get("/PO/:code/:raw_code/delete",function(req,res){
+app.get("/PO/:code/:raw_code/delete",async function(req,res){
 	var q = "DELETE FROM PO_detail WHERE PO_code ='" + req.params.code + "' AND raw_desc ='" + req.params.raw_code + "'";
-	selectQuery(q)
+	await selectQuery(q)
 						.then(result => {
 							logger.info({
 									where: `${ req.method } ${ req.url } ${ q }`,
@@ -189,7 +189,7 @@ app.get("/PO/:code/:raw_code/delete",function(req,res){
 //																		POST
 //=======================================================================================
 
-app.post("/PO/export",function(req,res){
+app.post("/PO/export",async function(req,res){
 	res.render("export",{data:req.body,mock:false});
 });
 
@@ -302,7 +302,7 @@ app.post("/PO/:code/update",async function(req,res){
 app.post("/PO/:code/new",async function(req,res){
 	var q = "SELECT COUNT(*)  AS count FROM PO_detail WHERE PO_code = '" + req.params.code + "'";
 	var no;
-	selectQuery(q)
+	await selectQuery(q)
 						.then(coun => {
 							no = coun[0].count;
 						})

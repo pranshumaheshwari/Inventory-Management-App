@@ -12,7 +12,7 @@
     <tbody>
       <% for(var i=0;i<raw_materials.length;i++){ %>
         <tr>
-          <form action="/output/<%= raw_materials[0].slip_no %>/<%= raw_materials[i].raw_material_code %>?_method=DELETE" method="POST">
+          <form action="/output/<%= raw_materials[i].slip_no %>/<%= raw_materials[i].raw_material_code %>?_method=DELETE" method="POST">
             <td><%= raw_materials[i].slip_no %></td>
             <td><%= raw_materials[i].raw_material_code %></td>
             <td><%= raw_materials[i].quantity %></td>

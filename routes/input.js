@@ -32,6 +32,22 @@ app.get("/input",async function(req,res){
 						});
 });
 
+app.get("/input/:invoice_no",async (req, res) => {
+	let q = `SELECT * FROM input WHERE invoice_no = '${ req.params.invoice_no }'`;
+	await selectQuery(q)
+						.then(raw_materials => {
+							res.render("update_delete_input",{raw_materials:raw_materials});
+						})
+						.catch(err => {
+							logger.error({
+									error: err,
+									where: `${ req.method } ${ req.url } ${ q }`,
+									time: Date.now().toString()
+							});
+							res.render('error',{error: err})
+						});
+});
+
 //=======================================================================================
 //																		POST
 //=======================================================================================
@@ -39,7 +55,7 @@ app.get("/input",async function(req,res){
 app.post("/input",async function(req,res){
 	var q = 'SELECT P.*,r.price FROM (SELECT * FROM PO_detail WHERE  PO_code = "' + req.body.PO + '") AS P INNER JOIN raw_material AS r ON P.raw_desc = r.name';
 	await selectQuery(q)
-						.then(POs => {
+						.then(raw_materials => {
 							res.render("input_with_PO",{raw_materials : raw_materials});
 						})
 						.catch(err => {
@@ -133,5 +149,119 @@ app.post("/input/update",async function(req,res){
 	// });
 	res.redirect("/input");
 });
+
+//=======================================================================================
+//																		DELETE
+//=======================================================================================
+
+app.delete("/input/:invoice_no",async (req, res) => {
+	let q = `SELECT * FROM input WHERE invoice_no = '${ req.params.invoice_no }'`;
+	await selectQuery(q)
+						.then(async raw_materials => {
+							await raw_materials.forEach(async raw_material => {
+								q = `UPDATE raw_material SET stock = stock - ${ raw_material.quantity } WHERE name = '${ raw_material.raw_desc }'`;
+								await selectQuery(q)
+													.then(result => {
+														logger.info({
+																where: `${ req.method } ${ req.url } ${ q }`,
+																time: Date.now().toString()
+														});
+													})
+													.catch(err => {
+														logger.error({
+																error: err,
+																where: `${ req.method } ${ req.url } ${ q }`,
+																time: Date.now().toString()
+														});
+														res.render('error',{error: err})
+													});
+							});
+						})
+						.then(async _ => {
+							q = `DELETE FROM input WHERE invoice_no = '${ req.params.invoice_no }'`;
+							await selectQuery(q)
+												.then(result => {
+													logger.info({
+															where: `${ req.method } ${ req.url } ${ q }`,
+															time: Date.now().toString()
+													});
+												})
+												.catch(err => {
+													logger.error({
+															error: err,
+															where: `${ req.method } ${ req.url } ${ q }`,
+															time: Date.now().toString()
+													});
+													res.render('error',{error: err})
+												});
+						})
+						.then(_ => {
+							res.redirect("/");
+						})
+						.catch(err => {
+							logger.error({
+									error: err,
+									where: `${ req.method } ${ req.url } ${ q }`,
+									time: Date.now().toString()
+							});
+							res.render('error',{error: err})
+						});
+});
+
+app.delete("/input/:invoice_no/:raw_desc",async (req, res) => {
+	let q = `SELECT * FROM input WHERE invoice_no = '${ req.params.invoice_no }' AND raw_desc = '${ req.params.raw_desc }'`;
+	await selectQuery(q)
+						.then(async raw_materials => {
+							await raw_materials.forEach(async raw_material => {
+								q = `UPDATE raw_material SET stock = stock - ${ raw_material.quantity } WHERE name = '${ raw_material.raw_desc }'`;
+								await selectQuery(q)
+													.then(result => {
+														logger.info({
+																where: `${ req.method } ${ req.url } ${ q }`,
+																time: Date.now().toString()
+														});
+													})
+													.catch(err => {
+														logger.error({
+																error: err,
+																where: `${ req.method } ${ req.url } ${ q }`,
+																time: Date.now().toString()
+														});
+														res.render('error',{error: err})
+													});
+							});
+						})
+						.then(async _ => {
+							q = `DELETE FROM input WHERE invoice_no = '${ req.params.invoice_no }' AND raw_desc = '${ req.params.raw_desc }'`;
+							await selectQuery(q)
+												.then(result => {
+													logger.info({
+															where: `${ req.method } ${ req.url } ${ q }`,
+															time: Date.now().toString()
+													});
+												})
+												.catch(err => {
+													logger.error({
+															error: err,
+															where: `${ req.method } ${ req.url } ${ q }`,
+															time: Date.now().toString()
+													});
+													res.render('error',{error: err})
+												});
+						})
+						.then(_ => {
+							res.redirect(`/input/${ req.params.invoice_no }`);
+						})
+						.catch(err => {
+							logger.error({
+									error: err,
+									where: `${ req.method } ${ req.url } ${ q }`,
+									time: Date.now().toString()
+							});
+							res.render('error',{error: err})
+						});
+});
+
+//=======================================================================================
 
 module.exports = app;
