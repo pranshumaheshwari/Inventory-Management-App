@@ -131,6 +131,22 @@ app.get("/finished_good/dispatch",async function(req,res){
 						});
 });
 
+app.get("/finished_good/dispatch/:invoice_no",async function(req,res){
+	var q = `SELECT * FROM dispatch WHERE invoice_no = '${ req.params.invoice_no }'`;
+	await selectQuery(q)
+						.then(finished_goods => {
+							res.render("update_delete_dispatch",{finished_goods:finished_goods});
+						})
+						.catch(err => {
+							logger.error({
+									error: err,
+									where: `${ req.method } ${ req.url } ${ q }`,
+									time: Date.now().toString()
+							});
+							res.render('error',{error: err})
+						});
+});
+
 app.get("/finished_good/:code",async function(req,res){
 	var q = "SELECT * FROM finished_goods WHERE code='" + req.params.code + "'";
 	await selectQuery(q)
@@ -293,7 +309,7 @@ app.post("/BOM",async function(req,res){
 });
 
 app.post("/finished_good/dispatch",async function(req,res){
-	for(var i=0;i<product.length;i++){
+	for(var i=0;i<req.body.product.length;i++){
 		var q = "UPDATE finished_goods SET stock = stock - " + req.body.quantity[i] + " WHERE code ='" + req.body.product[i] + "'";
 		await selectQuery(q)
 							.then(async result => {
@@ -616,6 +632,58 @@ app.put("/finished_good/:code",async function(req,res){
 //=======================================================================================
 //																		DELETE
 //=======================================================================================
+
+app.delete("/finished_good/dispatch/:invoice_no/:code",async (req,res) => {
+	let q = `SELECT * FROM dispatch WHERE invoice_no = '${ req.params.invoice_no }' AND FG_code = '${ req.params.code }'`;
+	let finished_good = await selectQuery(q)
+																		.catch(err => {
+																			logger.error({
+																					error: err,
+																					where: `${ req.method } ${ req.url } ${ q }`,
+																					time: Date.now().toString()
+																			});
+																			res.render('error',{error: err})
+																		});
+	q = `UPDATE finished_goods SET stock = stock + ${ finished_good.quantity } WHERE code = '${ req.params.code }'`;
+	await selectQuery(q)
+								.then(result => {
+									res.redirect(`/finished_good/dispatch/${req.params.invoice_no}`);
+								})
+								.catch(err => {
+									logger.error({
+											error: err,
+											where: `${ req.method } ${ req.url } ${ q }`,
+											time: Date.now().toString()
+									});
+									res.render('error',{error: err})
+								});
+});
+
+app.delete("/finished_good/dispatch/:invoice_no",async (req,res) => {
+	let q = `SELECT * FROM dispatch WHERE invoice_no = '${ req.params.invoice_no }'`;
+	let finished_goods = await selectQuery(q)
+																		.catch(err => {
+																			logger.error({
+																					error: err,
+																					where: `${ req.method } ${ req.url } ${ q }`,
+																					time: Date.now().toString()
+																			});
+																			res.render('error',{error: err})
+																		});
+	await finished_goods.forEach(async finished_good => {
+		q = `UPDATE finished_goods SET stock = stock + ${ finished_good.quantity } WHERE code = '${ finished_good.FG_code }'`;
+		await selectQuery(q)
+									.catch(err => {
+										logger.error({
+												error: err,
+												where: `${ req.method } ${ req.url } ${ q }`,
+												time: Date.now().toString()
+										});
+										res.render('error',{error: err})
+									});
+	});
+	res.redirect(`/finished_good/dispatch`);
+});
 
 app.delete("/finished_good/:code",async function(req,res){
 	var q = "DELETE FROM finished_goods WHERE code='" + req.params.code + "'";
