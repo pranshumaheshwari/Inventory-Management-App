@@ -342,11 +342,11 @@ app.post("/finished_good/create",async function(req,res){
 									quantity: req.body.quantity[i]
 								};
 								q = "INSERT INTO production SET ?";
-								await insertQuery(q, dis)
+								await insertQuery(q, obj)
 													.then(result => {
 														logger.info({
 															where: `${ req.method } ${ req.url } ${ q }`,
-															what: dis,
+															what: obj,
 															time: Date.now().toString()
 														});
 													})
@@ -438,7 +438,7 @@ app.post("/finished_good/mock",async function(req,res){
 													await raw_materials.forEach(raw => {
 														raw.monthly_requirement = raw_quantity[raw.code];
 													});
-													let r = raw_materials.filter(raw => raw.monthly_requirement > 0 );
+													let r = raw_materials.filter(raw => raw.monthly_requirement >= 0 );
 													res.render("BOM_manual",{raw_materials:r,w:0,mock:true,raw_quantity:raw_quantity});
 												})
 												.catch(err => {

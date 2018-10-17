@@ -163,6 +163,10 @@ app.post("/PO/export",async function(req,res){
 	res.render("export",{data:req.body,mock:false});
 });
 
+app.post("/PO/export/mock",async function(req,res){
+	res.render("export",{data:req.body,mock:true});
+});
+
 app.post("/PO/new",async function(req,res){
 	var q = "INSERT INTO PO SET ?",
 		PO_no = req.body.PO.code,

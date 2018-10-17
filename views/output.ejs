@@ -54,7 +54,7 @@
 		var product_name = product[0];
 		var product_code = product[1];
 		var quantity = document.getElementById("quantity").value;
-		
+
 		socket.emit("check-stock",product_name);
 		socket.on("return-check-stock", stock => {
 			var q = $("#quantity").val();
@@ -62,7 +62,7 @@
 				$("#alert-div").html(`<div class='alert alert-danger' id='alert'>Quantity is greater than the stock cannot output!</div>`);
 				setTimeout(_ => {
 					$("#alert").remove();
-				} ,5000);
+				} ,8000);
 			} else {
 
 				if(document.getElementById("form").elements[1].value){
@@ -100,8 +100,12 @@
 	$('#slip_no').change(function(){
 		socket.emit('slip_no',$('#slip_no').val());
 		socket.on('return_slip',function(val){
-			if(val === true)
-				alert("Slip already exists!");
+			if(val === true){
+				$("#alert-div").html(`<div class='alert alert-danger' id='alert'>Slip already exists.</div>`);
+				setTimeout(_ => {
+					$("#alert").remove();
+				} ,8000);
+			}
 		});
 	});
 </script>

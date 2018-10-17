@@ -367,37 +367,36 @@ app.get("/report",function(req,res){
 		var to = new Date(Dateto[0],parseInt(Dateto[1])-1,Dateto[2]);
 		var from = new Date(Datefrom[0],parseInt(Datefrom[1])-1,Datefrom[2]);
 		var input_output = [], openingStock, closingStock, raw_material, inputs, outputs;
-		var currentStock = raw_material.stock;
+		var currentStock;
 		var q = "SELECT * FROM raw_material WHERE code = '" + raw[0] + "'";
 		await selectQuery(q)
-							.then(raw_materials => {
+							.then(async raw_materials => {
 								raw_material = raw_materials[0];
-								q = "SELECT * FROM input WHERE DTPL_code ='" + raw[1] + "'AND raw_desc='" + raw[2] + "' ORDER BY date";
-								inputs = selectQuery(q)
-													.then(inputs => inputs )
-													.catch(err => {
-														logger.error({
-																error: err,
-																where: `${ req.method } ${ req.url } ${ q }`,
-																time: Date.now().toString()
-														});
-														res.render('error',{error: err})
-													});
+								currentStock = raw_material.stock;
+								q = "SELECT * FROM input WHERE DTPL_code ='" + raw[1] + "' AND raw_desc='" + raw[2] + "' ORDER BY date";
+								inputs = await selectQuery(q)
+																			.catch(err => {
+																				logger.error({
+																						error: err,
+																						where: `${ req.method } ${ req.url } ${ q }`,
+																						time: Date.now().toString()
+																				});
+																				res.render('error',{error: err})
+																			});
 							})
-							.then( _ => {
+							.then(async _ => {
 								q = "SELECT * FROM output WHERE raw_material_code ='" + raw_material.code + "' ORDER BY date";
-								outputs = selectQuery(q)
-													.then(outputs => outputs )
-													.catch(err => {
-														logger.error({
-																error: err,
-																where: `${ req.method } ${ req.url } ${ q }`,
-																time: Date.now().toString()
-														});
-														res.render('error',{error: err})
-													});
+								outputs = await selectQuery(q)
+																				.catch(err => {
+																					logger.error({
+																							error: err,
+																							where: `${ req.method } ${ req.url } ${ q }`,
+																							time: Date.now().toString()
+																					});
+																					res.render('error',{error: err})
+																				});
 							})
-							.then( _ => {
+							.then(async _ => {
 								closingStock = currentStock;
 								for(var i=0;i<inputs.length;i++){
 									if(inputs[i].date > new Date(to.getTime() + (24*60*60*1000))){

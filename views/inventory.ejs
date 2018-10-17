@@ -73,7 +73,7 @@
 							<td><%= Math.round(raw_materials[i].line_stock*100)/100 %></td>
 							<td><%= Math.round(stock*100)/100 %></td>
 							<td><%= raw_materials[i].unit %></td>
-							<td style="display:none;"><%= raw_materials[i].supplier %></td>
+							<td style="display:none;"><%= raw_materials[i].supplier_code %></td>
 							<td><%= raw_materials[i].price %></td>
 							<td><%= Math.round(raw_materials[i].price * (raw_materials[i].stock + raw_materials[i].line_stock) *100)/100 %></td>
 							<input type="hidden" name="" value="<%= totalPrice += Math.round(raw_materials[i].price * stock *100)/100 %>">
