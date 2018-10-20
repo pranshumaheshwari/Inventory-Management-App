@@ -25,7 +25,7 @@ app.get("/output",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: Date.now().toString()
+									time: (new Date()).toISOString().slice(0,10)
 							});
 							res.render('error',{error: err})
 						});
@@ -41,7 +41,7 @@ app.get("/output/:slip_no", async (req, res) => {
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: Date.now().toString()
+									time: (new Date()).toISOString().slice(0,10)
 							});
 							res.render('error',{error: err})
 						});
@@ -64,7 +64,7 @@ app.post("/output",async function(req,res){
 								logger.info({
 									where: `${ req.method } ${ req.url } ${ q }`,
 									what: o,
-									time: Date.now().toString()
+									time: (new Date()).toISOString().slice(0,10)
 								});
 								q = "UPDATE raw_material SET stock = (stock - " + o.quantity + "), line_stock = (line_stock + " + o.quantity + ") WHERE code = '" + o.raw_material_code + "'";
 								await selectQuery(q)
@@ -72,14 +72,14 @@ app.post("/output",async function(req,res){
 														logger.info({
 															where: `${ req.method } ${ req.url } ${ q }`,
 															what: o,
-															time: Date.now().toString()
+															time: (new Date()).toISOString().slice(0,10)
 														});
 													})
 													.catch(err => {
 														logger.error({
 																error: err,
 																where: `${ req.method } ${ req.url } ${ q }`,
-																time: Date.now().toString()
+																time: (new Date()).toISOString().slice(0,10)
 														});
 														res.render('error',{error: err})
 													});
@@ -88,7 +88,7 @@ app.post("/output",async function(req,res){
 								logger.error({
 										error: err,
 										where: `${ req.method } ${ req.url } ${ q }`,
-										time: Date.now().toString()
+										time: (new Date()).toISOString().slice(0,10)
 								});
 								res.render('error',{error: err});
 							});
@@ -110,14 +110,14 @@ app.delete("/output/:slip_no", async (req,res) => {
 													.then(result => {
 														logger.info({
 															where: `${ req.method } ${ req.url } ${ q }`,
-															time: Date.now().toString()
+															time: (new Date()).toISOString().slice(0,10)
 														});
 													})
 													.catch(err => {
 														logger.error({
 																error: err,
 																where: `${ req.method } ${ req.url } ${ q }`,
-																time: Date.now().toString()
+																time: (new Date()).toISOString().slice(0,10)
 														});
 														res.render('error',{error: err})
 													});
@@ -129,14 +129,14 @@ app.delete("/output/:slip_no", async (req,res) => {
 												.then(result => {
 													logger.info({
 														where: `${ req.method } ${ req.url } ${ q }`,
-														time: Date.now().toString()
+														time: (new Date()).toISOString().slice(0,10)
 													});
 												})
 												.catch(err => {
 													logger.error({
 															error: err,
 															where: `${ req.method } ${ req.url } ${ q }`,
-															time: Date.now().toString()
+															time: (new Date()).toISOString().slice(0,10)
 													});
 													res.render('error',{error: err})
 												});
@@ -148,7 +148,7 @@ app.delete("/output/:slip_no", async (req,res) => {
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: Date.now().toString()
+									time: (new Date()).toISOString().slice(0,10)
 							});
 							res.render('error',{error: err})
 						});
@@ -164,14 +164,14 @@ app.delete("/output/:slip_no/:raw_material_code", async (req,res) => {
 													.then(result => {
 														logger.info({
 															where: `${ req.method } ${ req.url } ${ q }`,
-															time: Date.now().toString()
+															time: (new Date()).toISOString().slice(0,10)
 														});
 													})
 													.catch(err => {
 														logger.error({
 																error: err,
 																where: `${ req.method } ${ req.url } ${ q }`,
-																time: Date.now().toString()
+																time: (new Date()).toISOString().slice(0,10)
 														});
 														res.render('error',{error: err})
 													});
@@ -183,14 +183,14 @@ app.delete("/output/:slip_no/:raw_material_code", async (req,res) => {
 												.then(result => {
 													logger.info({
 														where: `${ req.method } ${ req.url } ${ q }`,
-														time: Date.now().toString()
+														time: (new Date()).toISOString().slice(0,10)
 													});
 												})
 												.catch(err => {
 													logger.error({
 															error: err,
 															where: `${ req.method } ${ req.url } ${ q }`,
-															time: Date.now().toString()
+															time: (new Date()).toISOString().slice(0,10)
 													});
 													res.render('error',{error: err})
 												});
@@ -202,7 +202,7 @@ app.delete("/output/:slip_no/:raw_material_code", async (req,res) => {
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: Date.now().toString()
+									time: (new Date()).toISOString().slice(0,10)
 							});
 							res.render('error',{error: err})
 						});

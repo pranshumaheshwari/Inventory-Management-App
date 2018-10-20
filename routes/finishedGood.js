@@ -25,7 +25,7 @@ app.get("/BOM",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: Date.now().toString()
+									time: (new Date()).toISOString().slice(0,10)
 							});
 							res.render('error',{error: err})
 						});
@@ -41,7 +41,7 @@ app.get("/finished_good",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: Date.now().toString()
+									time: (new Date()).toISOString().slice(0,10)
 							});
 							res.render('error',{error: err})
 						});
@@ -57,7 +57,7 @@ app.get("/finished_good/new",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: Date.now().toString()
+									time: (new Date()).toISOString().slice(0,10)
 							});
 							res.render('error',{error: err})
 						});
@@ -73,7 +73,7 @@ app.get("/finished_good/mock",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: Date.now().toString()
+									time: (new Date()).toISOString().slice(0,10)
 							});
 							res.render('error',{error: err})
 						});
@@ -89,13 +89,13 @@ app.get("/finished_good/reset",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: Date.now().toString()
+									time: (new Date()).toISOString().slice(0,10)
 							});
 							res.render('error',{error: err})
 						});
 });
 
-app.get("/finished_good/create",async function(req,res){
+app.get("/finished_good/production",async function(req,res){
 	var q = "SELECT * FROM finished_goods ORDER BY code";
 	await selectQuery(q)
 						.then(finished_goods => {
@@ -105,20 +105,20 @@ app.get("/finished_good/create",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: Date.now().toString()
+									time: (new Date()).toISOString().slice(0,10)
 							});
 							res.render('error',{error: err})
 						});
 });
 
-app.get("/finished_good/create/:date",async (req,res) => {
-	let q = `SELECT * FROM production WHERE date = '${ req.params.date }'`;
+app.get("/finished_good/production/:date",async (req,res) => {
+	let q = `SELECT * FROM production WHERE date BETWEEN '${ req.params.date }' AND '${ req.params.date }' + INTERVAL 1 DAY`;
 	let finished_goods = await selectQuery(q)
 																		.catch(err => {
 																			logger.error({
 																					error: err,
 																					where: `${ req.method } ${ req.url } ${ q }`,
-																					time: Date.now().toString()
+																					time: (new Date()).toISOString().slice(0,10)
 																			});
 																			res.render('error',{error: err})
 																		});
@@ -139,7 +139,7 @@ app.get("/finished_good/dispatch",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: Date.now().toString()
+									time: (new Date()).toISOString().slice(0,10)
 							});
 							res.render('error',{error: err})
 						});
@@ -155,7 +155,7 @@ app.get("/finished_good/dispatch/:invoice_no",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: Date.now().toString()
+									time: (new Date()).toISOString().slice(0,10)
 							});
 							res.render('error',{error: err})
 						});
@@ -177,7 +177,7 @@ app.get("/finished_good/:code",async function(req,res){
 																			logger.error({
 																					error: err,
 																					where: `${ req.method } ${ req.url } ${ q }`,
-																					time: Date.now().toString()
+																					time: (new Date()).toISOString().slice(0,10)
 																			});
 																			res.render('error',{error: err})
 																		});
@@ -186,7 +186,7 @@ app.get("/finished_good/:code",async function(req,res){
 													logger.error({
 															error: err,
 															where: `${ req.method } ${ req.url } ${ q }`,
-															time: Date.now().toString()
+															time: (new Date()).toISOString().slice(0,10)
 													});
 													res.render('error',{error: err})
 												});
@@ -195,7 +195,7 @@ app.get("/finished_good/:code",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: Date.now().toString()
+									time: (new Date()).toISOString().slice(0,10)
 							});
 							res.render('error',{error: err})
 						});
@@ -215,7 +215,7 @@ app.get("/finished_good/BOM/:code",async function(req,res){
 													logger.error({
 															error: err,
 															where: `${ req.method } ${ req.url } ${ q }`,
-															time: Date.now().toString()
+															time: (new Date()).toISOString().slice(0,10)
 													});
 													res.render('error',{error: err})
 												});
@@ -224,7 +224,7 @@ app.get("/finished_good/BOM/:code",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: Date.now().toString()
+									time: (new Date()).toISOString().slice(0,10)
 							});
 							res.render('error',{error: err})
 						});
@@ -240,7 +240,7 @@ app.get("/finished_good/:code/new",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: Date.now().toString()
+									time: (new Date()).toISOString().slice(0,10)
 							});
 							res.render('error',{error: err})
 						});
@@ -265,7 +265,7 @@ app.post("/BOM",async function(req,res){
 								logger.error({
 										error: err,
 										where: `${ req.method } ${ req.url } ${ q }`,
-										time: Date.now().toString()
+										time: (new Date()).toISOString().slice(0,10)
 								});
 								res.render('error',{error: err})
 							});
@@ -288,7 +288,7 @@ app.post("/BOM",async function(req,res){
 														logger.error({
 																error: err,
 																where: `${ req.method } ${ req.url } ${ q }`,
-																time: Date.now().toString()
+																time: (new Date()).toISOString().slice(0,10)
 														});
 														res.render('error',{error: err})
 													});
@@ -307,7 +307,7 @@ app.post("/BOM",async function(req,res){
 													logger.error({
 															error: err,
 															where: `${ req.method } ${ req.url } ${ q }`,
-															time: Date.now().toString()
+															time: (new Date()).toISOString().slice(0,10)
 													});
 													res.render('error',{error: err})
 												});
@@ -316,7 +316,7 @@ app.post("/BOM",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: Date.now().toString()
+									time: (new Date()).toISOString().slice(0,10)
 							});
 							res.render('error',{error: err})
 						});
@@ -329,7 +329,7 @@ app.post("/finished_good/dispatch",async function(req,res){
 							.then(async result => {
 								logger.info({
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: Date.now().toString()
+									time: (new Date()).toISOString().slice(0,10)
 								});
 								var dis = {
 									invoice_no: req.body.invoice,
@@ -342,14 +342,14 @@ app.post("/finished_good/dispatch",async function(req,res){
 														logger.info({
 															where: `${ req.method } ${ req.url } ${ q }`,
 															what: dis,
-															time: Date.now().toString()
+															time: (new Date()).toISOString().slice(0,10)
 														});
 													})
 													.catch(err => {
 														logger.error({
 																error: err,
 																where: `${ req.method } ${ req.url } ${ q }`,
-																time: Date.now().toString()
+																time: (new Date()).toISOString().slice(0,10)
 														});
 														res.render('error',{error: err});
 													});
@@ -358,7 +358,7 @@ app.post("/finished_good/dispatch",async function(req,res){
 								logger.error({
 										error: err,
 										where: `${ req.method } ${ req.url } ${ q }`,
-										time: Date.now().toString()
+										time: (new Date()).toISOString().slice(0,10)
 								});
 								res.render('error',{error: err})
 							});
@@ -366,14 +366,14 @@ app.post("/finished_good/dispatch",async function(req,res){
 	res.redirect("/finished_good/dispatch");
 });
 
-app.post("/finished_good/create",async function(req,res){
+app.post("/finished_good/production",async function(req,res){
 	for(var i=0;i<req.body.finished_goods_code.length;i++){
 		var q = "UPDATE finished_goods SET stock = stock + " + req.body.quantity[i] + " WHERE code ='" + req.body.finished_goods_code[i] + "'";
 		await selectQuery(q)
 							.then(async result => {
 								logger.info({
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: Date.now().toString()
+									time: (new Date()).toISOString().slice(0,10)
 								});
 								var obj = {
 									FG_code: req.body.finished_goods_code[i],
@@ -385,14 +385,14 @@ app.post("/finished_good/create",async function(req,res){
 														logger.info({
 															where: `${ req.method } ${ req.url } ${ q }`,
 															what: obj,
-															time: Date.now().toString()
+															time: (new Date()).toISOString().slice(0,10)
 														});
 													})
 													.catch(err => {
 														logger.error({
 																error: err,
 																where: `${ req.method } ${ req.url } ${ q }`,
-																time: Date.now().toString()
+																time: (new Date()).toISOString().slice(0,10)
 														});
 														res.render('error',{error: err});
 													});
@@ -407,14 +407,14 @@ app.post("/finished_good/create",async function(req,res){
 																				.then(result => {
 																					logger.info({
 																						where: `${ req.method } ${ req.url } ${ q }`,
-																						time: Date.now().toString()
+																						time: (new Date()).toISOString().slice(0,10)
 																					});
 																				})
 																				.catch(err => {
 																					logger.error({
 																							error: err,
 																							where: `${ req.method } ${ req.url } ${ q }`,
-																							time: Date.now().toString()
+																							time: (new Date()).toISOString().slice(0,10)
 																					});
 																					res.render('error',{error: err})
 																				});
@@ -424,7 +424,7 @@ app.post("/finished_good/create",async function(req,res){
 														logger.error({
 																error: err,
 																where: `${ req.method } ${ req.url } ${ q }`,
-																time: Date.now().toString()
+																time: (new Date()).toISOString().slice(0,10)
 														});
 														res.render('error',{error: err})
 													});
@@ -433,12 +433,12 @@ app.post("/finished_good/create",async function(req,res){
 								logger.error({
 										error: err,
 										where: `${ req.method } ${ req.url } ${ q }`,
-										time: Date.now().toString()
+										time: (new Date()).toISOString().slice(0,10)
 								});
 								res.render('error',{error: err})
 							});
 	}
-	res.redirect("/finished_good/create");
+	res.redirect("/finished_good/production");
 });
 
 app.post("/finished_good/mock",async function(req,res){
@@ -456,7 +456,7 @@ app.post("/finished_good/mock",async function(req,res){
 								logger.error({
 										error: err,
 										where: `${ req.method } ${ req.url } ${ q }`,
-										time: Date.now().toString()
+										time: (new Date()).toISOString().slice(0,10)
 								});
 								res.render('error',{error: err})
 							});
@@ -483,7 +483,7 @@ app.post("/finished_good/mock",async function(req,res){
 													logger.error({
 															error: err,
 															where: `${ req.method } ${ req.url } ${ q }`,
-															time: Date.now().toString()
+															time: (new Date()).toISOString().slice(0,10)
 													});
 													res.render('error',{error: err})
 												});
@@ -492,7 +492,7 @@ app.post("/finished_good/mock",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: Date.now().toString()
+									time: (new Date()).toISOString().slice(0,10)
 							});
 							res.render('error',{error: err})
 						});
@@ -508,7 +508,7 @@ app.post("/finished_good/search/category",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: Date.now().toString()
+									time: (new Date()).toISOString().slice(0,10)
 							});
 							res.render('error',{error: err})
 						});
@@ -521,7 +521,7 @@ app.post("/finished_good/new",async function(req,res){
 							logger.info({
 								where: `${ req.method } ${ req.url } ${ q }`,
 								what: req.body.finished_good,
-								time: Date.now().toString()
+								time: (new Date()).toISOString().slice(0,10)
 							});
 							q = "INSERT INTO finished_goods_detail SET ?";
 							for(var i=0;i<req.body.quantity.length;i++){
@@ -535,7 +535,7 @@ app.post("/finished_good/new",async function(req,res){
 														logger.info({
 															where: `${ req.method } ${ req.url } ${ q }`,
 															what: raw_material,
-															time: Date.now().toString()
+															time: (new Date()).toISOString().slice(0,10)
 														});
 														res.redirect("/finished_good/" + req.params.code);
 													})
@@ -543,7 +543,7 @@ app.post("/finished_good/new",async function(req,res){
 														logger.error({
 																error: err,
 																where: `${ req.method } ${ req.url } ${ q }`,
-																time: Date.now().toString()
+																time: (new Date()).toISOString().slice(0,10)
 														});
 														res.render('error',{error: err});
 													});
@@ -554,7 +554,7 @@ app.post("/finished_good/new",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: Date.now().toString()
+									time: (new Date()).toISOString().slice(0,10)
 							});
 							res.render('error',{error: err});
 						});
@@ -572,7 +572,7 @@ app.post("/finished_good/:code/new",async function(req,res){
 							logger.info({
 								where: `${ req.method } ${ req.url } ${ q }`,
 								what: raw,
-								time: Date.now().toString()
+								time: (new Date()).toISOString().slice(0,10)
 							});
 							res.redirect("/finished_good/" + req.params.code);
 						})
@@ -580,7 +580,7 @@ app.post("/finished_good/:code/new",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: Date.now().toString()
+									time: (new Date()).toISOString().slice(0,10)
 							});
 							res.render('error',{error: err});
 						});
@@ -596,14 +596,14 @@ app.put("/finished_good/:code",async function(req,res){
 						.then(async finished_goods => {
 							logger.info({
 								where: `${ req.method } ${ req.url } ${ q }`,
-								time: Date.now().toString()
+								time: (new Date()).toISOString().slice(0,10)
 							});
 							q = "DELETE FROM finished_goods_detail WHERE code='" + req.body.finished_good.code + "'";
 							await selectQuery(q)
 												.then(async finished_goods => {
 													logger.info({
 														where: `${ req.method } ${ req.url } ${ q }`,
-														time: Date.now().toString()
+														time: (new Date()).toISOString().slice(0,10)
 													});
 													q = "DELETE FROM finished_goods_detail WHERE code='" + req.body.finished_good.code + "'";
 													for(var i=0;i<req.body.code.length;i++){
@@ -618,14 +618,14 @@ app.put("/finished_good/:code",async function(req,res){
 																				logger.info({
 																					where: `${ req.method } ${ req.url } ${ q }`,
 																					what: raw,
-																					time: Date.now().toString()
+																					time: (new Date()).toISOString().slice(0,10)
 																				});
 																			})
 																			.catch(err => {
 																				logger.error({
 																						error: err,
 																						where: `${ req.method } ${ req.url } ${ q }`,
-																						time: Date.now().toString()
+																						time: (new Date()).toISOString().slice(0,10)
 																				});
 																				res.render('error',{error: err});
 																			});
@@ -636,7 +636,7 @@ app.put("/finished_good/:code",async function(req,res){
 													logger.error({
 															error: err,
 															where: `${ req.method } ${ req.url } ${ q }`,
-															time: Date.now().toString()
+															time: (new Date()).toISOString().slice(0,10)
 													});
 													res.render('error',{error: err})
 												});
@@ -645,7 +645,7 @@ app.put("/finished_good/:code",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: Date.now().toString()
+									time: (new Date()).toISOString().slice(0,10)
 							});
 							res.render('error',{error: err})
 						});
@@ -655,6 +655,67 @@ app.put("/finished_good/:code",async function(req,res){
 //																		DELETE
 //=======================================================================================
 
+app.delete("/finished_good/production/:code/:date/:quantity",async (req,res) => {
+	let q = `UPDATE finished_goods SET stock = stock - ${ req.params.quantity } WHERE code = '${ req.params.code }'`;
+	await selectQuery(q)
+								.then(result => {
+									logger.info({
+											where: `${ req.method } ${ req.url } ${ q }`,
+											time: (new Date()).toISOString().slice(0,10)
+									});
+								})
+								.catch(err => {
+									logger.error({
+											error: err,
+											where: `${ req.method } ${ req.url } ${ q }`,
+											time: (new Date()).toISOString().slice(0,10)
+									});
+								});
+	q = `SELECT * FROM finished_goods_detail WHERE code = '${ req.params.code }'`;
+	let raw_materials = await selectQuery(q)
+																	.catch(err => {
+																		logger.error({
+																				error: err,
+																				where: `${ req.method } ${ req.url } ${ q }`,
+																				time: (new Date()).toISOString().slice(0,10)
+																		});
+																		res.render('error',{error: err})
+																	});
+	await raw_materials.forEach(async raw_material => {
+		q = `UPDATE raw_material SET line_stock = line_stock + (${ req.params.quantity } * ${ raw_material.quantity }) WHERE code = '${ raw_material.raw_material_code }'`;
+		await selectQuery(q)
+									.then(result => {
+										logger.info({
+												where: `${ req.method } ${ req.url } ${ q }`,
+												time: (new Date()).toISOString().slice(0,10)
+										});
+									})
+									.catch(err => {
+										logger.error({
+												error: err,
+												where: `${ req.method } ${ req.url } ${ q }`,
+												time: (new Date()).toISOString().slice(0,10)
+										});
+									});
+	});
+	q = `DELETE FROM production WHERE FG_code = '${ req.params.code }' AND date BETWEEN '${ req.params.date }' AND '${ req.params.date }' + INTERVAL 1 DAY AND quantity = ${ req.params.quantity }`;
+	await selectQuery(q)
+								.then(result => {
+									logger.info({
+											where: `${ req.method } ${ req.url } ${ q }`,
+											time: (new Date()).toISOString().slice(0,10)
+									});
+								})
+								.catch(err => {
+									logger.error({
+											error: err,
+											where: `${ req.method } ${ req.url } ${ q }`,
+											time: (new Date()).toISOString().slice(0,10)
+									});
+								});
+	res.redirect("/finished_good/production");
+});
+
 app.delete("/finished_good/dispatch/:invoice_no/:code",async (req,res) => {
 	let q = `SELECT * FROM dispatch WHERE invoice_no = '${ req.params.invoice_no }' AND FG_code = '${ req.params.code }'`;
 	let finished_good = await selectQuery(q)
@@ -662,20 +723,24 @@ app.delete("/finished_good/dispatch/:invoice_no/:code",async (req,res) => {
 																			logger.error({
 																					error: err,
 																					where: `${ req.method } ${ req.url } ${ q }`,
-																					time: Date.now().toString()
+																					time: (new Date()).toISOString().slice(0,10)
 																			});
 																			res.render('error',{error: err})
 																		});
 	q = `UPDATE finished_goods SET stock = stock + ${ finished_good.quantity } WHERE code = '${ req.params.code }'`;
 	await selectQuery(q)
 								.then(result => {
+									logger.info({
+											where: `${ req.method } ${ req.url } ${ q }`,
+											time: (new Date()).toISOString().slice(0,10)
+									});
 									res.redirect(`/finished_good/dispatch/${req.params.invoice_no}`);
 								})
 								.catch(err => {
 									logger.error({
 											error: err,
 											where: `${ req.method } ${ req.url } ${ q }`,
-											time: Date.now().toString()
+											time: (new Date()).toISOString().slice(0,10)
 									});
 									res.render('error',{error: err})
 								});
@@ -688,7 +753,7 @@ app.delete("/finished_good/dispatch/:invoice_no",async (req,res) => {
 																			logger.error({
 																					error: err,
 																					where: `${ req.method } ${ req.url } ${ q }`,
-																					time: Date.now().toString()
+																					time: (new Date()).toISOString().slice(0,10)
 																			});
 																			res.render('error',{error: err})
 																		});
@@ -699,7 +764,7 @@ app.delete("/finished_good/dispatch/:invoice_no",async (req,res) => {
 										logger.error({
 												error: err,
 												where: `${ req.method } ${ req.url } ${ q }`,
-												time: Date.now().toString()
+												time: (new Date()).toISOString().slice(0,10)
 										});
 										res.render('error',{error: err})
 									});
@@ -713,14 +778,14 @@ app.delete("/finished_good/:code",async function(req,res){
 						.then(async finished_goods => {
 							logger.info({
 								where: `${ req.method } ${ req.url } ${ q }`,
-								time: Date.now().toString()
+								time: (new Date()).toISOString().slice(0,10)
 							});
 							q = "DELETE FROM finished_goods_detail WHERE code='" + req.params.code + "'";
 							await selectQuery(q)
 												.then(finished_goods => {
 													logger.info({
 														where: `${ req.method } ${ req.url } ${ q }`,
-														time: Date.now().toString()
+														time: (new Date()).toISOString().slice(0,10)
 													});
 													res.redirect("/finished_good");
 												})
@@ -728,7 +793,7 @@ app.delete("/finished_good/:code",async function(req,res){
 													logger.error({
 															error: err,
 															where: `${ req.method } ${ req.url } ${ q }`,
-															time: Date.now().toString()
+															time: (new Date()).toISOString().slice(0,10)
 													});
 													res.render('error',{error: err})
 												});
@@ -737,7 +802,7 @@ app.delete("/finished_good/:code",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: Date.now().toString()
+									time: (new Date()).toISOString().slice(0,10)
 							});
 							res.render('error',{error: err})
 						});
@@ -749,7 +814,7 @@ app.get("/finished_good/:code/:raw/delete",async function(req,res){
 						.then(finished_goods => {
 							logger.info({
 								where: `${ req.method } ${ req.url } ${ q }`,
-								time: Date.now().toString()
+								time: (new Date()).toISOString().slice(0,10)
 							});
 							res.redirect("/finished_good/" + req.params.code);
 						})
@@ -757,7 +822,7 @@ app.get("/finished_good/:code/:raw/delete",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: Date.now().toString()
+									time: (new Date()).toISOString().slice(0,10)
 							});
 							res.render('error',{error: err})
 						});

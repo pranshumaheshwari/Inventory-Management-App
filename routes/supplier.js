@@ -25,7 +25,7 @@ app.get("/supplier",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: Date.now().toString()
+									time: (new Date()).toISOString().slice(0,10)
 							});
 							res.render('error',{error: err})
 						});
@@ -45,7 +45,7 @@ app.get("/supplier/:code",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: Date.now().toString()
+									time: (new Date()).toISOString().slice(0,10)
 							});
 							res.render('error',{error: err})
 						});
@@ -62,7 +62,7 @@ app.post("/supplier/new",async function(req,res){
 							logger.info({
 								where: `${ req.method } ${ req.url } ${ q }`,
 								what: req.body.supplier,
-								time: Date.now().toString()
+								time: (new Date()).toISOString().slice(0,10)
 							});
 							res.redirect("/supplier");
 						})
@@ -70,7 +70,7 @@ app.post("/supplier/new",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: Date.now().toString()
+									time: (new Date()).toISOString().slice(0,10)
 							});
 							res.render('error',{error: err});
 						});
@@ -87,7 +87,7 @@ app.put("/supplier/:code",async function(req,res){
 							logger.info({
 								where: `${ req.method } ${ req.url } ${ q }`,
 								what: req.body.supplier,
-								time: Date.now().toString()
+								time: (new Date()).toISOString().slice(0,10)
 							});
 							res.redirect("/supplier");
 						})
@@ -95,7 +95,7 @@ app.put("/supplier/:code",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: Date.now().toString()
+									time: (new Date()).toISOString().slice(0,10)
 							});
 							res.render('error',{error: err});
 						});
@@ -115,7 +115,7 @@ app.delete("/supplier/:code",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: Date.now().toString()
+									time: (new Date()).toISOString().slice(0,10)
 							});
 							res.render('error',{error: err})
 						});

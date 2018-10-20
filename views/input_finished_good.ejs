@@ -1,8 +1,8 @@
 <% include partials/header.ejs %>
 <br>
-<h1 align="center">Production</h1>	
+<h1 align="center">Production</h1>
 <div class="container">
-		<form action="/finished_good/create" method="post" class="form" id="form" onsubmit="return confirm('Do you want to submit?');">
+		<form action="/finished_good/production" method="POST" class="form" id="form" onsubmit="return confirm('Do you want to submit?');">
 			<div class="row">
 				<div class="col-md-6">
 					<label>Description:<input id="product" list="Product" name="product" class="form-control">

@@ -14,7 +14,7 @@
     <tbody>
       <% for(var i=0;i<raw_materials.length;i++){ %>
         <tr>
-          <form action="/input/<%= raw_materials[i].invoice_no %>/<%= raw_materials[i].raw_desc %>?_method=DELETE" method="POST">
+          <form action="/input/<%= raw_materials[i].invoice_no %>/<%= raw_materials[i].raw_desc %>?_method=DELETE" method="POST" onsubmit="return confirm('Do you want to submit?');">
             <td><%= raw_materials[i].invoice_no %></td>
             <td><%= raw_materials[i].PO_code %></td>
             <td><%= raw_materials[i].raw_desc %></td>
@@ -26,7 +26,7 @@
       <% } %>
     </tbody>
   </table>
-  <form action="/input/<%= raw_materials[0].invoice_no %>?_method=DELETE" method="POST">
+  <form action="/input/<%= raw_materials[0].invoice_no %>?_method=DELETE" method="POST" onsubmit="return confirm('Do you want to submit?');">
     <button type="submit" class="btn btn-danger">Delete</button>
   </form>
 </div>
