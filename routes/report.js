@@ -49,9 +49,8 @@ app.get("/report",function(req,res){
 		var q = "SELECT * FROM finished_goods WHERE code ='" + finished_good_code + "'";
 		await selectQuery(q)
 							.then(Finished_good => {
-								Finished_good = Finished_good[0];
-								currentStock = Finished_good.stock;
-								finished_good = Finished_good;
+								finished_good = Finished_good[0];
+								currentStock = finished_good.stock;
 							})
 							.then(async _ => {
 								q = "SELECT SUM(quantity) AS sum FROM production WHERE date >='" + from + "' AND date <='" + to + "' + INTERVAL 1 DAY AND FG_code ='" + finished_good_code + "' ";
@@ -89,7 +88,7 @@ app.get("/report",function(req,res){
 													.then(sum => {
 														if(!sum[0].sum)
 															sum[0].sum = 0;
-														closingStock = - sum[0].sum;
+														closingStock = currentStock - sum[0].sum;
 													})
 													.catch(err => {
 														logger.error({
@@ -163,7 +162,7 @@ app.get("/report",function(req,res){
 								});
 								res.render('error',{error: err})
 							});
-		res.render("report_pd",{finished_goods:finished_goods,openingStock:openingStock,closingStock:closingStock,to:to,from:from,finished_good:finished_good,t:'FGName',totalExchange:totalExchange});
+		res.render("report_pd",{finished_goods:finished_goods,openingStock:openingStock,closingStock:closingStock,to:to,from:from,finished_good:finished_good,t:'FGName',totalExchange:totalExchange,productionQuantity:0,dispatchQuantity:0});
 	});
 
 //																		BY DATE
@@ -173,10 +172,10 @@ app.get("/report",function(req,res){
 	});
 
 	app.post("/report/date",async function(req,res){
-		var q = "SELECT * FROM " + req.body.type + " WHERE date >= '" + req.body.from + "' AND date <= '" + req.body.to + "' ORDER BY date";
+		var q = "SELECT * FROM " + req.body.type + " WHERE date >= '" + req.body.from + "' AND date <= '" + req.body.to + "' + INTERVAL 1 DAY ORDER BY date";
 		await selectQuery(q)
 							.then(finished_goods => {
-								res.render("report_FG-date_data",{finished_goods:finished_goods,type:type,from:from,to:to});
+								res.render("report_FG-date_data",{finished_goods:finished_goods,type:req.body.type,from:req.body.from,to:req.body.to});
 							})
 							.catch(err => {
 								logger.error({
@@ -220,7 +219,7 @@ app.get("/report",function(req,res){
 								finished_good = Finished_good;
 							})
 							.then(async _ => {
-								q = "SELECT SUM(quantity) AS sum FROM production WHERE date >='" + from + "' AND date <='" + to + "' AND FG_code ='" + finished_good_code + "'";
+								q = "SELECT SUM(quantity) AS sum FROM production WHERE date >='" + from + "' AND date <='" + to + "' + INTERVAL 1 DAY AND FG_code ='" + finished_good_code + "'";
 								await selectQuery(q)
 													.then(sum => {
 														sum = sum[0];
@@ -239,10 +238,10 @@ app.get("/report",function(req,res){
 													});
 							})
 							.then(async _ => {
-								q = "SELECT * FROM production WHERE FG_code ='" + finished_good_code + "' AND date >='" + from + "' AND date <='" + to + "' ORDER by date";
+								q = "SELECT * FROM production WHERE FG_code ='" + finished_good_code + "' AND date >='" + from + "' AND date <='" + to + "' + INTERVAL 1 DAY ORDER by date";
 								await selectQuery(q)
 													.then(finished_goods => {
-														res.render("report_pd",{t:'production',finished_goods:finished_goods,openingStock:0,closingStock:0,to:to,from:from,finished_good:finished_good,totalExchange:totalExchange});
+														res.render("report_pd",{t:'production',finished_goods:finished_goods,openingStock:0,closingStock:0,to:to,from:from,finished_good:finished_good,totalExchange:totalExchange,productionQuantity:0,dispatchQuantity:0});
 													})
 													.catch(err => {
 														logger.error({
@@ -295,7 +294,7 @@ app.get("/report",function(req,res){
 								finished_good = Finished_good;
 							})
 							.then(async _ => {
-								q = "SELECT SUM(quantity) AS sum FROM dispatch WHERE date >='" + from + "' AND date <='" + to + "' AND FG_code ='" + finished_good_code + "'";
+								q = "SELECT SUM(quantity) AS sum FROM dispatch WHERE date >='" + from + "' AND date <='" + to + "' + INTERVAL 1 DAY AND FG_code ='" + finished_good_code + "'";
 								await selectQuery(q)
 													.then(sum => {
 														sum = sum[0];
@@ -314,10 +313,10 @@ app.get("/report",function(req,res){
 													});
 							})
 							.then(async _ => {
-								q = "SELECT * FROM dispatch WHERE FG_code ='" + finished_good_code + "' AND date >='" + from + "' AND date <='" + to + "' ORDER by date";
+								q = "SELECT * FROM dispatch WHERE FG_code ='" + finished_good_code + "' AND date >='" + from + "' AND date <='" + to + "' + INTERVAL 1 DAY ORDER by date";
 								await selectQuery(q)
 													.then(finished_goods => {
-														res.render("report_pd",{t:'dispatch',finished_goods:finished_goods,openingStock:0,closingStock:0,to:to,from:from,finished_good:finished_good,totalExchange:totalExchange});
+														res.render("report_pd",{t:'dispatch',finished_goods:finished_goods,openingStock:0,closingStock:0,to:to,from:from,finished_good:finished_good,totalExchange:totalExchange,productionQuantity:0,dispatchQuantity:0});
 													})
 													.catch(err => {
 														logger.error({

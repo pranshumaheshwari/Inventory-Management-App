@@ -58,7 +58,7 @@
 			</thead>
 			<tbody>
 				<% for(var i=0;i<raw_materials.length;i++){ %>
-						<input type="hidden" name="" value="<%= stock = raw_materials[i].stock + raw_materials[i].line_stock %>">
+						<span style="display:none;"><%= stock = raw_materials[i].stock + raw_materials[i].line_stock %></span>
 						<tr id="<%= i %>" class="<% if(stock <= 0.25 * raw_materials[i].monthly_requirement){ %>
 													less
 												<% } %>
@@ -75,8 +75,8 @@
 							<td><%= raw_materials[i].unit %></td>
 							<td style="display:none;"><%= raw_materials[i].supplier_code %></td>
 							<td><%= raw_materials[i].price %></td>
-							<td><%= Math.round(raw_materials[i].price * (raw_materials[i].stock + raw_materials[i].line_stock) *100)/100 %></td>
-							<input type="hidden" name="" value="<%= totalPrice += Math.round(raw_materials[i].price * stock *100)/100 %>">
+							<td><%= Math.round(raw_materials[i].price * stock *100)/100 %></td>
+							<span style="display:none;"><%= totalPrice += Math.round(raw_materials[i].price * stock *100)/100 %><%= storePrice += Math.round(raw_materials[i].price * raw_materials[i].stock *100)/100 %><%= linePrice += Math.round(raw_materials[i].price * raw_materials[i].line_stock *100)/100 %></span>
 							<td><a class="btn btn-primary" href="/inventory/<%= raw_materials[i].code %>">Update/Delete</a></td>
 						</tr>
 				<% } %>
@@ -85,8 +85,8 @@
 					<td></td>
 					<td></td>
 					<td></td>
-					<td></td>
-					<td></td>
+					<td>Value: <%= Math.round(storePrice*100)/100 %></td>
+					<td>Value: <%= Math.round(linePrice*100)/100 %></td>
 					<td></td>
 					<td></td>
 					<td>Total Value</td>

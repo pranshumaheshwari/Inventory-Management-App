@@ -19,7 +19,7 @@ app.get("/inventory",async function(req,res){
 	var q = "SELECT * FROM raw_material ORDER BY code";
 	await selectQuery(q)
 						.then(raw_materials => {
-							res.render("inventory",{raw_materials:raw_materials,totalPrice:0,stock:0});
+							res.render("inventory",{raw_materials:raw_materials,totalPrice:0,stock:0,storePrice:0,linePrice:0});
 						})
 						.catch(err => {
 							logger.error({

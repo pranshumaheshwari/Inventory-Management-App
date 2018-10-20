@@ -27,7 +27,7 @@
 						<td><%= finishedGoods[i].name %></td>
 						<td><%= finishedGoods[i].code %> <input type="hidden" name="finished_code[<%= i %>]" value="<%= finishedGoods[i].code %>"> </td>
 						<td><%= finishedGoods[i].category %></td>
-						<% if(!mock) { %><td class="quantity"><input type="number" name="quantity[<%= i %>]" value="<%= finishedGoods[i].quantity %>" id="quantity<%= i %>"></td> <% } else { %> <td><input type="number" name="quantity[<%= i %>]" value="0" id="quantity<%= i %>"></td> <% } %>
+						<% if(!mock) { %><td class="quantity"><input type="number" name="quantity[<%= i %>]" value="<%= finishedGoods[i].quantity %>" id="quantity<%= i %>"></td> <% } else { %> <td class="quantity"><input type="number" name="quantity[<%= i %>]" value="0" id="quantity<%= i %>"></td> <% } %>
 					</tr>
 				<% } %>
 				<tr>
@@ -55,7 +55,7 @@
 		for(var i=0;i<length;i++){
 			total += parseInt(document.getElementById("quantity"+i).value);
 		}
-		Total.innerHTML = null;
+		var Total = document.getElementById("total");
 		Total.innerHTML = total;
 	});
 </script>

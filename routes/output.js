@@ -35,7 +35,7 @@ app.get("/output/:slip_no", async (req, res) => {
 	var q = `SELECT * FROM output WHERE slip_no = '${ req.params.slip_no }'`;
 	await selectQuery(q)
 						.then(raw_materials => {
-							res.render("update_delete_output",{raw_materials:raw_materials});
+							raw_materials.length !== 0 ? res.render("update_delete_output",{raw_materials:raw_materials}) : res.redirect("/output");
 						})
 						.catch(err => {
 							logger.error({
@@ -142,7 +142,7 @@ app.delete("/output/:slip_no", async (req,res) => {
 												});
 						})
 						.then( _ => {
-							res.redirect(`/`);
+							res.redirect(`/output`);
 						})
 						.catch(err => {
 							logger.error({

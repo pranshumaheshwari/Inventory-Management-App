@@ -16,7 +16,7 @@ app.use(express.static( __dirname + "/public"));
 //=======================================================================================
 
 app.get("/PO",async function(req,res){
-	var q = "SELECT * FROM PO";
+	var q = "SELECT * FROM PO ORDER BY supplier_code,date";
 	await selectQuery(q)
 						.then(POs => {
 							res.render("PO",{POs:POs});

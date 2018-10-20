@@ -24,7 +24,7 @@
       <% } %>
     </tbody>
   </table>
-  <form action="/finished_good/dispatch/<%= finished_goods[i].invoice_no %>?_method=DELETE" method="POST">
+  <form action="/finished_good/dispatch/<%= finished_goods[0].invoice_no %>?_method=DELETE" method="POST">
     <button type="submit" class="btn btn-danger">Delete</button>
   </form>
 </div>

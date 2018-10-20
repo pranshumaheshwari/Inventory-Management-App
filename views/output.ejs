@@ -62,7 +62,7 @@
 				$("#alert-div").html(`<div class='alert alert-danger' id='alert'>Quantity is greater than the stock cannot output!</div>`);
 				setTimeout(_ => {
 					$("#alert").remove();
-				} ,8000);
+				} ,10000);
 			} else {
 
 				if(document.getElementById("form").elements[1].value){
@@ -102,9 +102,8 @@
 		socket.on('return_slip',function(val){
 			if(val === true){
 				$("#alert-div").html(`<div class='alert alert-danger' id='alert'>Slip already exists.</div>`);
-				setTimeout(_ => {
-					$("#alert").remove();
-				} ,8000);
+			} else {
+				$("#alert").remove();
 			}
 		});
 	});

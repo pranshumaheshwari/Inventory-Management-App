@@ -87,8 +87,10 @@
             <span style="display:none;">
               <% if(finished_goods[i].type === 'p') { %>
                 <%= openingStock += finished_goods[i].quantity %>
+                <%= productionQuantity += finished_goods[i].quantity %>
               <% } else { %>
                 <%= openingStock -= finished_goods[i].quantity %>
+                <%= dispatchQuantity += finished_goods[i].quantity %>
               <% } %>
             </span>
             <% if(finished_goods[i].type === 'p') { %>
@@ -111,8 +113,8 @@
           <% } %>
         <tr>
           <td></td>
-          <td></td>
-          <td></td>
+          <td>Total: <%= productionQuantity %></td>
+          <td>Total: <%= dispatchQuantity %></td>
           <td>To: <%= to %></td>
           <td>Closing Stock: <%= closingStock %></td>
         </tr>

@@ -111,6 +111,20 @@ app.get("/finished_good/create",async function(req,res){
 						});
 });
 
+app.get("/finished_good/create/:date",async (req,res) => {
+	let q = `SELECT * FROM production WHERE date = '${ req.params.date }'`;
+	let finished_goods = await selectQuery(q)
+																		.catch(err => {
+																			logger.error({
+																					error: err,
+																					where: `${ req.method } ${ req.url } ${ q }`,
+																					time: Date.now().toString()
+																			});
+																			res.render('error',{error: err})
+																		});
+	res.render("update_delete_production",{finished_goods:finished_goods});
+});
+
 app.get("/finished_good/PD",async function(req,res){
 	res.render("PD");
 });
@@ -135,7 +149,7 @@ app.get("/finished_good/dispatch/:invoice_no",async function(req,res){
 	var q = `SELECT * FROM dispatch WHERE invoice_no = '${ req.params.invoice_no }'`;
 	await selectQuery(q)
 						.then(finished_goods => {
-							res.render("update_delete_dispatch",{finished_goods:finished_goods});
+							finished_goods.length !== 0 ? res.render("update_delete_dispatch",{finished_goods:finished_goods}) : res.redirect("/finished_good/dispatch");
 						})
 						.catch(err => {
 							logger.error({
@@ -313,6 +327,10 @@ app.post("/finished_good/dispatch",async function(req,res){
 		var q = "UPDATE finished_goods SET stock = stock - " + req.body.quantity[i] + " WHERE code ='" + req.body.product[i] + "'";
 		await selectQuery(q)
 							.then(async result => {
+								logger.info({
+									where: `${ req.method } ${ req.url } ${ q }`,
+									time: Date.now().toString()
+								});
 								var dis = {
 									invoice_no: req.body.invoice,
 									FG_code: req.body.product[i],
@@ -353,6 +371,10 @@ app.post("/finished_good/create",async function(req,res){
 		var q = "UPDATE finished_goods SET stock = stock + " + req.body.quantity[i] + " WHERE code ='" + req.body.finished_goods_code[i] + "'";
 		await selectQuery(q)
 							.then(async result => {
+								logger.info({
+									where: `${ req.method } ${ req.url } ${ q }`,
+									time: Date.now().toString()
+								});
 								var obj = {
 									FG_code: req.body.finished_goods_code[i],
 									quantity: req.body.quantity[i]

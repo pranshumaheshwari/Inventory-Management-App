@@ -36,7 +36,7 @@ app.get("/input/:invoice_no",async (req, res) => {
 	let q = `SELECT * FROM input WHERE invoice_no = '${ req.params.invoice_no }'`;
 	await selectQuery(q)
 						.then(raw_materials => {
-							res.render("update_delete_input",{raw_materials:raw_materials});
+							raw_materials.length !== 0 ? res.render("update_delete_input",{raw_materials:raw_materials}) : res.redirect("/input");
 						})
 						.catch(err => {
 							logger.error({
@@ -196,7 +196,7 @@ app.delete("/input/:invoice_no",async (req, res) => {
 												});
 						})
 						.then(_ => {
-							res.redirect("/");
+							res.redirect("/input");
 						})
 						.catch(err => {
 							logger.error({
