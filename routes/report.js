@@ -35,7 +35,7 @@ app.get("/report",function(req,res){
 								logger.error({
 										error: err,
 										where: `${ req.method } ${ req.url } ${ q }`,
-										time: (new Date()).toISOString().slice(0,10)
+										time: (new Date()).toISOString()
 								});
 								res.render('error',{error: err})
 							});
@@ -62,7 +62,7 @@ app.get("/report",function(req,res){
 														logger.error({
 																error: err,
 																where: `${ req.method } ${ req.url } ${ q }`,
-																time: (new Date()).toISOString().slice(0,10)
+																time: (new Date()).toISOString()
 														});
 														res.render('error',{error: err})
 													});
@@ -77,7 +77,7 @@ app.get("/report",function(req,res){
 														logger.error({
 																error: err,
 																where: `${ req.method } ${ req.url } ${ q }`,
-																time: (new Date()).toISOString().slice(0,10)
+																time: (new Date()).toISOString()
 														});
 														res.render('error',{error: err})
 													});
@@ -94,7 +94,7 @@ app.get("/report",function(req,res){
 														logger.error({
 																error: err,
 																where: `${ req.method } ${ req.url } ${ q }`,
-																time: (new Date()).toISOString().slice(0,10)
+																time: (new Date()).toISOString()
 														});
 														res.render('error',{error: err})
 													});
@@ -111,7 +111,7 @@ app.get("/report",function(req,res){
 														logger.error({
 																error: err,
 																where: `${ req.method } ${ req.url } ${ q }`,
-																time: (new Date()).toISOString().slice(0,10)
+																time: (new Date()).toISOString()
 														});
 														res.render('error',{error: err})
 													});
@@ -127,7 +127,7 @@ app.get("/report",function(req,res){
 														logger.error({
 																error: err,
 																where: `${ req.method } ${ req.url } ${ q }`,
-																time: (new Date()).toISOString().slice(0,10)
+																time: (new Date()).toISOString()
 														});
 														res.render('error',{error: err})
 													});
@@ -142,7 +142,7 @@ app.get("/report",function(req,res){
 														logger.error({
 																error: err,
 																where: `${ req.method } ${ req.url } ${ q }`,
-																time: (new Date()).toISOString().slice(0,10)
+																time: (new Date()).toISOString()
 														});
 														res.render('error',{error: err})
 													});
@@ -158,7 +158,7 @@ app.get("/report",function(req,res){
 								logger.error({
 										error: err,
 										where: `${ req.method } ${ req.url } ${ q }`,
-										time: (new Date()).toISOString().slice(0,10)
+										time: (new Date()).toISOString()
 								});
 								res.render('error',{error: err})
 							});
@@ -181,7 +181,7 @@ app.get("/report",function(req,res){
 								logger.error({
 										error: err,
 										where: `${ req.method } ${ req.url } ${ q }`,
-										time: (new Date()).toISOString().slice(0,10)
+										time: (new Date()).toISOString()
 								});
 								res.render('error',{error: err})
 							});
@@ -200,7 +200,7 @@ app.get("/report",function(req,res){
 								logger.error({
 										error: err,
 										where: `${ req.method } ${ req.url } ${ q }`,
-										time: (new Date()).toISOString().slice(0,10)
+										time: (new Date()).toISOString()
 								});
 								res.render('error',{error: err})
 							});
@@ -232,7 +232,7 @@ app.get("/report",function(req,res){
 														logger.error({
 																error: err,
 																where: `${ req.method } ${ req.url } ${ q }`,
-																time: (new Date()).toISOString().slice(0,10)
+																time: (new Date()).toISOString()
 														});
 														res.render('error',{error: err})
 													});
@@ -247,7 +247,7 @@ app.get("/report",function(req,res){
 														logger.error({
 																error: err,
 																where: `${ req.method } ${ req.url } ${ q }`,
-																time: (new Date()).toISOString().slice(0,10)
+																time: (new Date()).toISOString()
 														});
 														res.render('error',{error: err})
 													});
@@ -256,7 +256,7 @@ app.get("/report",function(req,res){
 								logger.error({
 										error: err,
 										where: `${ req.method } ${ req.url } ${ q }`,
-										time: (new Date()).toISOString().slice(0,10)
+										time: (new Date()).toISOString()
 								});
 								res.render('error',{error: err})
 							});
@@ -275,7 +275,7 @@ app.get("/report",function(req,res){
 								logger.error({
 										error: err,
 										where: `${ req.method } ${ req.url } ${ q }`,
-										time: (new Date()).toISOString().slice(0,10)
+										time: (new Date()).toISOString()
 								});
 								res.render('error',{error: err})
 							});
@@ -307,7 +307,7 @@ app.get("/report",function(req,res){
 														logger.error({
 																error: err,
 																where: `${ req.method } ${ req.url } ${ q }`,
-																time: (new Date()).toISOString().slice(0,10)
+																time: (new Date()).toISOString()
 														});
 														res.render('error',{error: err})
 													});
@@ -322,7 +322,7 @@ app.get("/report",function(req,res){
 														logger.error({
 																error: err,
 																where: `${ req.method } ${ req.url } ${ q }`,
-																time: (new Date()).toISOString().slice(0,10)
+																time: (new Date()).toISOString()
 														});
 														res.render('error',{error: err})
 													});
@@ -331,7 +331,7 @@ app.get("/report",function(req,res){
 								logger.error({
 										error: err,
 										where: `${ req.method } ${ req.url } ${ q }`,
-										time: (new Date()).toISOString().slice(0,10)
+										time: (new Date()).toISOString()
 								});
 								res.render('error',{error: err})
 							});
@@ -354,7 +354,7 @@ app.get("/report",function(req,res){
 								logger.error({
 										error: err,
 										where: `${ req.method } ${ req.url } ${ q }`,
-										time: (new Date()).toISOString().slice(0,10)
+										time: (new Date()).toISOString()
 								});
 								res.render('error',{error: err})
 							});
@@ -378,7 +378,7 @@ app.get("/report",function(req,res){
 																				logger.error({
 																						error: err,
 																						where: `${ req.method } ${ req.url } ${ q }`,
-																						time: (new Date()).toISOString().slice(0,10)
+																						time: (new Date()).toISOString()
 																				});
 																				res.render('error',{error: err})
 																			});
@@ -390,7 +390,7 @@ app.get("/report",function(req,res){
 																					logger.error({
 																							error: err,
 																							where: `${ req.method } ${ req.url } ${ q }`,
-																							time: (new Date()).toISOString().slice(0,10)
+																							time: (new Date()).toISOString()
 																					});
 																					res.render('error',{error: err})
 																				});
@@ -432,7 +432,7 @@ app.get("/report",function(req,res){
 								logger.error({
 										error: err,
 										where: `${ req.method } ${ req.url } ${ q }`,
-										time: (new Date()).toISOString().slice(0,10)
+										time: (new Date()).toISOString()
 								});
 								res.render('error',{error: err})
 							});
@@ -450,7 +450,7 @@ app.get("/report",function(req,res){
 								logger.error({
 										error: err,
 										where: `${ req.method } ${ req.url } ${ q }`,
-										time: (new Date()).toISOString().slice(0,10)
+										time: (new Date()).toISOString()
 								});
 								res.render('error',{error: err})
 							});
@@ -466,7 +466,7 @@ app.get("/report",function(req,res){
 								logger.error({
 										error: err,
 										where: `${ req.method } ${ req.url } ${ q }`,
-										time: (new Date()).toISOString().slice(0,10)
+										time: (new Date()).toISOString()
 								});
 								res.render('error',{error: err})
 							});
@@ -482,7 +482,7 @@ app.get("/report",function(req,res){
 								logger.error({
 										error: err,
 										where: `${ req.method } ${ req.url } ${ q }`,
-										time: (new Date()).toISOString().slice(0,10)
+										time: (new Date()).toISOString()
 								});
 								res.render('error',{error: err})
 							});
@@ -501,7 +501,7 @@ app.get("/report",function(req,res){
 								logger.error({
 										error: err,
 										where: `${ req.method } ${ req.url } ${ q }`,
-										time: (new Date()).toISOString().slice(0,10)
+										time: (new Date()).toISOString()
 								});
 								res.render('error',{error: err})
 							});
@@ -519,7 +519,7 @@ app.get("/report",function(req,res){
 								logger.error({
 										error: err,
 										where: `${ req.method } ${ req.url } ${ q }`,
-										time: (new Date()).toISOString().slice(0,10)
+										time: (new Date()).toISOString()
 								});
 								res.render('error',{error: err})
 							});
@@ -559,7 +559,7 @@ app.get("/report",function(req,res){
 								logger.error({
 										error: err,
 										where: `${ req.method } ${ req.url } ${ q }`,
-										time: (new Date()).toISOString().slice(0,10)
+										time: (new Date()).toISOString()
 								});
 								res.render('error',{error: err})
 							});

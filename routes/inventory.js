@@ -25,10 +25,16 @@ app.get("/inventory",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: (new Date()).toISOString().slice(0,10)
+									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
 						});
+});
+
+app.get("/inventory/master",async (req,res) => {
+	let q = `SELECT * FROM raw_material ORDER BY code`;
+	let raw_materials = await selectQuery(q);
+	res.render("inventory-master",{raw_materials: raw_materials});
 });
 
 app.get("/inventory/new",async function(req,res){
@@ -41,7 +47,7 @@ app.get("/inventory/new",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: (new Date()).toISOString().slice(0,10)
+									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err});
 						});
@@ -60,7 +66,7 @@ app.get("/inventory/:code",async function(req,res){
 													logger.error({
 															error: err,
 															where: `${ req.method } ${ req.url } ${ q }`,
-															time: (new Date()).toISOString().slice(0,10)
+															time: (new Date()).toISOString()
 													});
 													res.render('error',{error: err});
 												});
@@ -69,7 +75,7 @@ app.get("/inventory/:code",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: (new Date()).toISOString().slice(0,10)
+									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err});
 						});
@@ -85,7 +91,7 @@ app.get("/inventory/:code/requirement",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: (new Date()).toISOString().slice(0,10)
+									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err});
 						});
@@ -105,7 +111,7 @@ app.post("/inventory/search/category",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: (new Date()).toISOString().slice(0,10)
+									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err});
 						});
@@ -121,7 +127,7 @@ app.post("/inventory/search/name",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: (new Date()).toISOString().slice(0,10)
+									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err});
 						});
@@ -134,7 +140,7 @@ app.post("/inventory/new",async function(req,res){
 							logger.info({
 								where: `${ req.method } ${ req.url } ${ q }`,
 								what: req.body.raw_material,
-								time: (new Date()).toISOString().slice(0,10)
+								time: (new Date()).toISOString()
 							});
 							res.redirect("/inventory");
 						})
@@ -142,7 +148,7 @@ app.post("/inventory/new",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: (new Date()).toISOString().slice(0,10)
+									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err});
 						});
@@ -159,7 +165,7 @@ app.put("/inventory/:code",async function(req,res){
 							logger.info({
 								where: `${ req.method } ${ req.url } ${ q }`,
 								what: req.body.raw_material,
-								time: (new Date()).toISOString().slice(0,10)
+								time: (new Date()).toISOString()
 							});
 							res.redirect("/inventory");
 						})
@@ -167,7 +173,7 @@ app.put("/inventory/:code",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: (new Date()).toISOString().slice(0,10)
+									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err});
 						});
@@ -184,7 +190,7 @@ app.delete("/inventory/:code",async function(req,res){
 							logger.info({
 								where: `${ req.method } ${ req.url } ${ q }`,
 								what: `Code: ${ req.params.code }`,
-								time: (new Date()).toISOString().slice(0,10)
+								time: (new Date()).toISOString()
 							});
 							res.redirect("/inventory");
 						})
@@ -192,7 +198,7 @@ app.delete("/inventory/:code",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: (new Date()).toISOString().slice(0,10)
+									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err});
 						});

@@ -25,7 +25,7 @@ app.get("/PO",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: (new Date()).toISOString().slice(0,10)
+									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
 						});
@@ -44,7 +44,7 @@ app.get("/PO/new",async function(req,res){
 													logger.error({
 															error: err,
 															where: `${ req.method } ${ req.url } ${ q }`,
-															time: (new Date()).toISOString().slice(0,10)
+															time: (new Date()).toISOString()
 													});
 													res.render('error',{error: err})
 												});
@@ -53,7 +53,7 @@ app.get("/PO/new",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: (new Date()).toISOString().slice(0,10)
+									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
 						});
@@ -72,7 +72,7 @@ app.get("/PO/:code",async function(req,res){
 													logger.error({
 															error: err,
 															where: `${ req.method } ${ req.url } ${ q }`,
-															time: (new Date()).toISOString().slice(0,10)
+															time: (new Date()).toISOString()
 													});
 													res.render('error',{error: err})
 												});
@@ -81,7 +81,7 @@ app.get("/PO/:code",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: (new Date()).toISOString().slice(0,10)
+									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
 						});
@@ -100,7 +100,7 @@ app.get("/PO/:code/new",async function(req,res){
 													logger.error({
 															error: err,
 															where: `${ req.method } ${ req.url } ${ q }`,
-															time: (new Date()).toISOString().slice(0,10)
+															time: (new Date()).toISOString()
 													});
 													res.render('error',{error: err})
 												});
@@ -109,7 +109,7 @@ app.get("/PO/:code/new",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: (new Date()).toISOString().slice(0,10)
+									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
 						});
@@ -121,7 +121,7 @@ app.get("/PO/:code/close",async function(req,res){
 						.then(result => {
 							logger.info({
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: (new Date()).toISOString().slice(0,10)
+									time: (new Date()).toISOString()
 							});
 							res.redirect("/PO");
 						})
@@ -129,7 +129,7 @@ app.get("/PO/:code/close",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: (new Date()).toISOString().slice(0,10)
+									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
 						});
@@ -141,7 +141,7 @@ app.get("/PO/:code/:raw_code/delete",async function(req,res){
 						.then(result => {
 							logger.info({
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: (new Date()).toISOString().slice(0,10)
+									time: (new Date()).toISOString()
 							});
 							res.redirect("/PO/" + req.params.code);
 						})
@@ -149,7 +149,7 @@ app.get("/PO/:code/:raw_code/delete",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: (new Date()).toISOString().slice(0,10)
+									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
 						});
@@ -190,7 +190,7 @@ app.post("/PO/new",async function(req,res){
 							logger.info({
 								where: `${ req.method } ${ req.url } ${ q }`,
 								what: PO,
-								time: (new Date()).toISOString().slice(0,10)
+								time: (new Date()).toISOString()
 							});
 						})
 						.then(async _ => {
@@ -212,14 +212,14 @@ app.post("/PO/new",async function(req,res){
 														logger.info({
 															where: `${ req.method } ${ req.url } ${ q }`,
 															what: PO_obj,
-															time: (new Date()).toISOString().slice(0,10)
+															time: (new Date()).toISOString()
 														});
 													})
 													.catch(err => {
 														logger.error({
 																error: err,
 																where: `${ req.method } ${ req.url } ${ q }`,
-																time: (new Date()).toISOString().slice(0,10)
+																time: (new Date()).toISOString()
 														});
 														res.render('error',{error: err});
 													});
@@ -232,7 +232,7 @@ app.post("/PO/new",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: (new Date()).toISOString().slice(0,10)
+									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err});
 						});
@@ -263,14 +263,14 @@ app.post("/PO/:code/new",async function(req,res){
 													logger.info({
 														where: `${ req.method } ${ req.url } ${ q }`,
 														what: PO,
-														time: (new Date()).toISOString().slice(0,10)
+														time: (new Date()).toISOString()
 													});
 												})
 												.catch(err => {
 													logger.error({
 															error: err,
 															where: `${ req.method } ${ req.url } ${ q }`,
-															time: (new Date()).toISOString().slice(0,10)
+															time: (new Date()).toISOString()
 													});
 													res.render('error',{error: err});
 												});
@@ -282,7 +282,7 @@ app.post("/PO/:code/new",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: (new Date()).toISOString().slice(0,10)
+									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
 						});
@@ -324,14 +324,14 @@ app.post("/PO/generate",async function(req,res){
 								logger.info({
 									where: `${ req.method } ${ req.url } ${ q }`,
 									what: po,
-									time: (new Date()).toISOString().slice(0,10)
+									time: (new Date()).toISOString()
 								});
 							})
 							.catch(err => {
 								logger.error({
 										error: err,
 										where: `${ req.method } ${ req.url } ${ q }`,
-										time: (new Date()).toISOString().slice(0,10)
+										time: (new Date()).toISOString()
 								});
 								res.render('error',{error: err});
 							});
@@ -340,14 +340,14 @@ app.post("/PO/generate",async function(req,res){
 									.then(result => {
 										logger.info({
 											where: `${ req.method } ${ req.url } ${ q }`,
-											time: (new Date()).toISOString().slice(0,10)
+											time: (new Date()).toISOString()
 										});
 									})
 									.catch(err => {
 										logger.error({
 												error: err,
 												where: `${ req.method } ${ req.url } ${ q }`,
-												time: (new Date()).toISOString().slice(0,10)
+												time: (new Date()).toISOString()
 										});
 										res.render('error',{error: err});
 									});
@@ -365,14 +365,14 @@ app.post("/PO/generate",async function(req,res){
 								logger.info({
 									where: `${ req.method } ${ req.url } ${ q }`,
 									what: po,
-									time: (new Date()).toISOString().slice(0,10)
+									time: (new Date()).toISOString()
 								});
 							})
 							.catch(err => {
 								logger.error({
 										error: err,
 										where: `${ req.method } ${ req.url } ${ q }`,
-										time: (new Date()).toISOString().slice(0,10)
+										time: (new Date()).toISOString()
 								});
 								res.render('error',{error: err});
 							});
@@ -393,14 +393,14 @@ app.put("/PO/:code",async function(req,res){
 						.then(result => {
 							logger.info({
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: (new Date()).toISOString().slice(0,10)
+									time: (new Date()).toISOString()
 							});
 						})
 						.catch(err => {
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: (new Date()).toISOString().slice(0,10)
+									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
 						});
@@ -420,14 +420,14 @@ app.put("/PO/:code",async function(req,res){
 								logger.info({
 									where: `${ req.method } ${ req.url } ${ q }`,
 									what: PO,
-									time: (new Date()).toISOString().slice(0,10)
+									time: (new Date()).toISOString()
 								});
 							})
 							.catch(err => {
 								logger.error({
 										error: err,
 										where: `${ req.method } ${ req.url } ${ q }`,
-										time: (new Date()).toISOString().slice(0,10)
+										time: (new Date()).toISOString()
 								});
 								res.render('error',{error: err});
 							});
@@ -451,7 +451,7 @@ app.delete("/PO/:code",async function(req,res){
 													logger.error({
 															error: err,
 															where: `${ req.method } ${ req.url } ${ q }`,
-															time: (new Date()).toISOString().slice(0,10)
+															time: (new Date()).toISOString()
 													});
 													res.render('error',{error: err})
 												});
@@ -463,7 +463,7 @@ app.delete("/PO/:code",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: (new Date()).toISOString().slice(0,10)
+									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
 						});

@@ -26,7 +26,7 @@ app.get("/input",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: (new Date()).toISOString().slice(0,10)
+									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
 						});
@@ -42,7 +42,7 @@ app.get("/input/:invoice_no",async (req, res) => {
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: (new Date()).toISOString().slice(0,10)
+									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
 						});
@@ -62,7 +62,7 @@ app.post("/input",async function(req,res){
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: (new Date()).toISOString().slice(0,10)
+									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
 						});
@@ -80,14 +80,14 @@ app.post("/input/update",async function(req,res){
 							.then(async result => {
 								logger.info({
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: (new Date()).toISOString().slice(0,10)
+									time: (new Date()).toISOString()
 								});
 								q = 'UPDATE PO_detail SET quantity = quantity - ' + quantity[i] + ' WHERE PO_code = "' + PO_code + '" AND raw_desc = "' + raw_desc[i] + '" AND DTPL_code ="' + DTPL_code[i] + '"';
 								await selectQuery(q)
 													.then(async result => {
 														logger.info({
 															where: `${ req.method } ${ req.url } ${ q }`,
-															time: (new Date()).toISOString().slice(0,10)
+															time: (new Date()).toISOString()
 														});
 														q = "INSERT INTO input SET ?";
 														var input = {
@@ -102,14 +102,14 @@ app.post("/input/update",async function(req,res){
 																				logger.info({
 																					where: `${ req.method } ${ req.url } ${ q }`,
 																					what: req.body.raw_material,
-																					time: (new Date()).toISOString().slice(0,10)
+																					time: (new Date()).toISOString()
 																				});
 																			})
 																			.catch(err => {
 																				logger.error({
 																						error: err,
 																						where: `${ req.method } ${ req.url } ${ q }`,
-																						time: (new Date()).toISOString().slice(0,10)
+																						time: (new Date()).toISOString()
 																				});
 																				res.render('error',{error: err});
 																			});
@@ -118,7 +118,7 @@ app.post("/input/update",async function(req,res){
 														logger.error({
 																error: err,
 																where: `${ req.method } ${ req.url } ${ q }`,
-																time: (new Date()).toISOString().slice(0,10)
+																time: (new Date()).toISOString()
 														});
 														res.render('error',{error: err})
 													});
@@ -127,7 +127,7 @@ app.post("/input/update",async function(req,res){
 								logger.error({
 										error: err,
 										where: `${ req.method } ${ req.url } ${ q }`,
-										time: (new Date()).toISOString().slice(0,10)
+										time: (new Date()).toISOString()
 								});
 								res.render('error',{error: err})
 							});
@@ -164,14 +164,14 @@ app.delete("/input/:invoice_no",async (req, res) => {
 													.then(result => {
 														logger.info({
 																where: `${ req.method } ${ req.url } ${ q }`,
-																time: (new Date()).toISOString().slice(0,10)
+																time: (new Date()).toISOString()
 														});
 													})
 													.catch(err => {
 														logger.error({
 																error: err,
 																where: `${ req.method } ${ req.url } ${ q }`,
-																time: (new Date()).toISOString().slice(0,10)
+																time: (new Date()).toISOString()
 														});
 														res.render('error',{error: err})
 													});
@@ -183,14 +183,14 @@ app.delete("/input/:invoice_no",async (req, res) => {
 												.then(result => {
 													logger.info({
 															where: `${ req.method } ${ req.url } ${ q }`,
-															time: (new Date()).toISOString().slice(0,10)
+															time: (new Date()).toISOString()
 													});
 												})
 												.catch(err => {
 													logger.error({
 															error: err,
 															where: `${ req.method } ${ req.url } ${ q }`,
-															time: (new Date()).toISOString().slice(0,10)
+															time: (new Date()).toISOString()
 													});
 													res.render('error',{error: err})
 												});
@@ -202,7 +202,7 @@ app.delete("/input/:invoice_no",async (req, res) => {
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: (new Date()).toISOString().slice(0,10)
+									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
 						});
@@ -218,14 +218,14 @@ app.delete("/input/:invoice_no/:raw_desc",async (req, res) => {
 													.then(result => {
 														logger.info({
 																where: `${ req.method } ${ req.url } ${ q }`,
-																time: (new Date()).toISOString().slice(0,10)
+																time: (new Date()).toISOString()
 														});
 													})
 													.catch(err => {
 														logger.error({
 																error: err,
 																where: `${ req.method } ${ req.url } ${ q }`,
-																time: (new Date()).toISOString().slice(0,10)
+																time: (new Date()).toISOString()
 														});
 														res.render('error',{error: err})
 													});
@@ -237,14 +237,14 @@ app.delete("/input/:invoice_no/:raw_desc",async (req, res) => {
 												.then(result => {
 													logger.info({
 															where: `${ req.method } ${ req.url } ${ q }`,
-															time: (new Date()).toISOString().slice(0,10)
+															time: (new Date()).toISOString()
 													});
 												})
 												.catch(err => {
 													logger.error({
 															error: err,
 															where: `${ req.method } ${ req.url } ${ q }`,
-															time: (new Date()).toISOString().slice(0,10)
+															time: (new Date()).toISOString()
 													});
 													res.render('error',{error: err})
 												});
@@ -256,7 +256,7 @@ app.delete("/input/:invoice_no/:raw_desc",async (req, res) => {
 							logger.error({
 									error: err,
 									where: `${ req.method } ${ req.url } ${ q }`,
-									time: (new Date()).toISOString().slice(0,10)
+									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
 						});
