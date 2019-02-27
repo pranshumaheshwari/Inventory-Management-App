@@ -1,5 +1,5 @@
 # Initialize
-1.Download the repo<br>
+1.Download the latest release<br>
 2.Extract<br>
 3.npm install<br>
 4.npm start<br>
