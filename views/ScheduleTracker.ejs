@@ -18,17 +18,16 @@
 				<td><%= finished_goods[i].code %></td>
 				<td><%= finished_goods[i].category %></td>
 				<td><%= finished_goods[i].quantity %></td>
-				<% var k = 0 %>
 				<% for(var j=0;j<date;j++){ %>
 					<td>
-						<% if(finished_goods[i]['dispatch'][k]){ %>
-							<% if(finished_goods[i]["dispatch"][k].date.getDate() === j) { %>
-								<%= finished_goods[i].dispatch[k].quantity %>
-								<% k++ %>
-							<% } else { %>
-								0
+						<% var got = 0 %>
+						<% for(var k=0;k<finished_goods[i]["dispatch"].length;k++){ %>
+							<% if(finished_goods[i]["dispatch"][k].date.getDate() === j){ %>
+								finished_goods[i]["dispatch"][k].quantity
+								<% got = 1 %>
 							<% } %>
-						<% } else { %>
+						<% } %>
+						<% if(got === 0){ %>
 							0
 						<% } %>
 					</td>
