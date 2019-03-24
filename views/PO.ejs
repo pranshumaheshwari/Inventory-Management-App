@@ -18,7 +18,7 @@
 					<tr>
 						<td><%=POs[i].code%></td>
 						<td><%= POs[i].supplier_code %></td>
-						<td><%= POs[i].date.getDate() %>/<%= POs[i].date.getMonth() %>/<%= POs[i].date.getFullYear() %></td>
+						<td><%= POs[i].date.getDate() %>/<%= POs[i].date.getMonth() + 1 %>/<%= POs[i].date.getFullYear() %></td>
 						<td class="<% if(POs[i].pending === 'Closed'){ %>closed <% } else { %>open<% } %>"><%= POs[i].pending %></td>
 						<td><a class="btn btn-primary" href="/PO/<%= POs[i].code %>">Update/Delete</a></td>
 					</tr>

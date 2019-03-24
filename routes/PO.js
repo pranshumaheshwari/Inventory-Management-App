@@ -335,22 +335,7 @@ app.post("/PO/generate",async function(req,res){
 								});
 								res.render('error',{error: err});
 							});
-		q = `UPDATE raw_material SET monthly_requirement = ${ quantity[k] } WHERE name = '${ raw[k] }'`;
-		await selectQuery(q)
-									.then(result => {
-										logger.info({
-											where: `${ req.method } ${ req.url } ${ q }`,
-											time: (new Date()).toISOString()
-										});
-									})
-									.catch(err => {
-										logger.error({
-												error: err,
-												where: `${ req.method } ${ req.url } ${ q }`,
-												time: (new Date()).toISOString()
-										});
-										res.render('error',{error: err});
-									});
+		
 	}
 	for(var k=0;k<PO.length;k++){
 		q = "INSERT INTO PO SET ?";

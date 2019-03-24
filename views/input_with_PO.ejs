@@ -5,7 +5,7 @@
 		<div class="form-row">
 			<div class="col-md-6">
 				<label for="PO[code]">PO Number</label>
-				<input type="text" name="PO_code" value="<%= raw_materials[0].PO_code %>" readonly class="form-control-plaintext" id="PO[code]">
+				<input type="text" name="PO_code" value="<%= raw_materials[0].PO_code %>" readonly class="form-control-plaintext" id="PO_code">
 			</div>
 			<div class="col-md-6">
 				<label for="invoice">Invoice No</label>
@@ -24,20 +24,10 @@
 			</div>
 			<div class="col-md-2">
 				<label for="remainingQuantity">Remaining Quantity:</label>
-				<select name="remainingQuantity" id="remainingQuantity" class="form-control-plaintext" readonly>
-					<option value="" hidden selected></option>
-					<% for(var i=0;i<raw_materials.length;i++){ %>
-						<option value="<%= raw_materials[i].quantity %>"><%= raw_materials[i].quantity %></option>
-					<% } %>
-				</select>
+				<input type="text" id="remainingQuantity" class="form-control-plaintext" readonly />
 			</div>
 			<div class="col-md-2">
-				<label>Price: <select id="price" class="form-control-plaintext">
-					<option value=""></option>
-					<% for(var i=0;i<raw_materials.length;i++) { %>
-						<option value="<%= raw_materials[i].price %>"><%= raw_materials[i].price %></option>
-					<% } %>
-				</select></label>
+				<label>Price: <input id="price" class="form-control-plaintext" readonly /></label>
 			</div>
 		</div>
 		<div class="row col-md-6">
@@ -62,10 +52,20 @@
 </div>
 <script type="text/javascript">
 	$('#rawMaterialCode').combobox();
-	$("#rawMaterialCode").on("change",function(){
-		var index = this.selectedIndex;
-		$('#remainingQuantity option').eq(index).prop('selected',true);
-		$('#price option').eq(index).prop('selected',true);
+	var socket = io();
+	let PO = $("#PO_code").val();
+	$("#rawMaterialCode").on("change",async function(e){
+		let p = {
+			name: e.target.value.split("$")[0],
+			PO_code: PO
+		};
+		socket.emit("getRemaingQuantity", p);
+		await socket.on("return-getRemaingQuantity", s => {
+			$("#remainingQuantity").val(s);
+		});
+		await socket.on("return-Price", s => {
+			$("#price").val(s);
+		});
 	});
 	function but_func(i){
 			document.querySelector("table").deleteRow(i);
@@ -82,9 +82,9 @@
 			var cell5 = row.insertCell(4);
 			var cell6 = row.insertCell(5);
 			var cell7 = row.insertCell(6);
-			var PO_no = document.getElementById("PO[code]").value;
+			var PO_no = document.getElementById("PO_code").value;
 			var Invoice_no = document.getElementById("invoice").value;
-			var productInfo = document.getElementById("form").elements[2].value;
+			var productInfo = $("#rawMaterialCode").val();
 			var product = productInfo.split("$");
 			var product_name = product[0];
 			var product_code = product[1];

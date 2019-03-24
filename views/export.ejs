@@ -6,12 +6,12 @@
 			<thead class="thead-dark">
 				<tr>
 					<th>#</th>
-					<th>Description</th>
 					<th>Part Number</th>
 					<th>DTPL Part Number</th>
+					<th>Description</th>
 					<th>Category</th>
-          <th>Stock</th>
-					<th>Supplier</th>
+          			<th>Supplier</th>
+					<th>Stock</th>
 					<th>Net Requirement</th>
 					<th>Unit</th>
 					<th>PO Number</th>
@@ -21,9 +21,9 @@
 				<% for(var i=0;i<data.raw_name.length;i++){ %>
 					<tr>
 						<td><%= i+1 %></td>
-						<td><%= data.raw_name[i]%> %><input type="hidden" name="raw_name[<%=i%>]" value="<%=data.raw_name[i]%>"></td>
 						<td><%= data.raw_code[i] %></td>
 						<td><%= data.DTPL_code[i] %><input type="hidden" name="DTPL_code[<%=i%>]" value="<%=data.DTPL_code[i]%>"></td>
+						<td><%= data.raw_name[i]%> %><input type="hidden" name="raw_name[<%=i%>]" value="<%=data.raw_name[i]%>"></td>
 						<td><%= data.raw_category[i] %></td>
 						<td><%= data.supplier[i] %><input type="hidden" name="supplier[<%=i%>]" value="<%= data.supplier[i] %>"></td>
             <td><%= data.stock[i] %></td>

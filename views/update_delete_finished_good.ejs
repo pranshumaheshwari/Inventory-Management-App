@@ -13,10 +13,10 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-md-4">
+			<div class="col-md-3">
 				<label>Customer: <input type="text" name="finished_good[customer]" value="<%= finished_good.customer %>" class="form-control" required></label>
 			</div>
-			<div class="col-md-4">
+			<div class="col-md-3">
 			<label>Category: <select name="finished_good[category]" class="form-control">
 				<option value="<%= finished_good.category %>" hidden selected><%= finished_good.category %></option>
 				<option value="Fuse Box">Fuse Box</option>
@@ -29,8 +29,11 @@
 				<option value="Spare Part (SPD)">Spare Part (SPD)</option>
 			</select></label>
 			</div>
-			<div class="col-md-4">
+			<div class="col-md-3">
 				<label>Stock: <input type="number" name="finished_good[stock]" value="<%= finished_good.stock %>" class="form-control"></label>
+			</div>
+			<div class="col-md-3">
+				<label>Price: <input type="text" name="finished_good[price]" value="<%= finished_good.price %>" class="form-control"></label>
 			</div>
 		</div>
 	</div>

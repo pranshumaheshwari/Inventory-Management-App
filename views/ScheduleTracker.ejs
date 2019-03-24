@@ -1,0 +1,42 @@
+<% include partials/header.ejs %>
+<br>
+<h1 align="center">Schedule Tracker For <%= month %> Month</h1>
+<table class="table table-striped table-bordered table-hove">
+	<thead class="thead-dark">
+		<tr>
+			<th>Part Number</th>
+			<th>Category</th>
+			<th>Schedule</th>
+			<% for(var i=0;i<date;i++){ %>
+				<th><%= i+1 %></th>
+			<% } %>
+		</tr>
+	</thead>
+	<tbody>
+		<% for(var i=0;i<finished_goods.length;i++){ %>
+			<tr>
+				<td><%= finished_goods[i].code %></td>
+				<td><%= finished_goods[i].category %></td>
+				<td><%= finished_goods[i].quantity %></td>
+				<% var k = 0 %>
+				<% for(var j=0;j<date;j++){ %>
+					<td>
+						<% if(finished_goods[i]['dispatch'][k]){ %>
+							<% if(finished_goods[i]["dispatch"][k].date.getDate() === j) { %>
+								<%= finished_goods[i].dispatch[k].quantity %>
+								<% k++ %>
+							<% } else { %>
+								0
+							<% } %>
+						<% } else { %>
+							0
+						<% } %>
+					</td>
+				<% } %>
+			</tr>
+		<% } %>
+	</tbody>
+</table>
+
+<br>
+<% include partials/footer.ejs %>

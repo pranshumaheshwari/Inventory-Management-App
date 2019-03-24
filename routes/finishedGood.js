@@ -302,11 +302,26 @@ app.post("/BOM",async function(req,res){
 							q = "SELECT * FROM raw_material ORDER BY supplier_code ";
 							await selectQuery(q)
 												.then(async(raw_materials) => {
-													await raw_materials.forEach(raw => {
+													await raw_materials.forEach(async raw => {
 														raw.monthly_requirement = raw_quantity[raw.code];
+														q = `UPDATE raw_material SET monthly_requirement = ${ raw.monthly_requirement } WHERE code = '${ raw.code }'`;
+														await selectQuery(q)
+																					.then(result => {
+																						logger.info({
+																							where: `${ req.method } ${ req.url } ${ q }`,
+																							time: (new Date()).toISOString()
+																						});
+																					})
+																					.catch(err => {
+																						logger.error({
+																								error: err,
+																								where: `${ req.method } ${ req.url } ${ q }`,
+																								time: (new Date()).toISOString()
+																						});
+																						res.render('error',{error: err});
+																					});
 													});
 													let r = raw_materials.filter(raw => raw.monthly_requirement > 0 );
-													console.log(r.length);
 													res.render("BOM_manual",{raw_materials:r,w:0,mock:false});
 												})
 												.catch(err => {
@@ -543,9 +558,9 @@ app.post("/finished_good/new",async function(req,res){
 															what: raw_material,
 															time: (new Date()).toISOString()
 														});
-														res.redirect("/finished_good/" + req.params.code);
 													})
 													.catch(err => {
+														throw err;
 														logger.error({
 																error: err,
 																where: `${ req.method } ${ req.url } ${ q }`,
@@ -554,7 +569,7 @@ app.post("/finished_good/new",async function(req,res){
 														res.render('error',{error: err});
 													});
 							}
-							res.redirect("/");
+							res.redirect("/finished_good/" + req.body.finished_good.code);
 						})
 						.catch(err => {
 							logger.error({
@@ -580,7 +595,7 @@ app.post("/finished_good/:code/new",async function(req,res){
 								what: raw,
 								time: (new Date()).toISOString()
 							});
-							res.redirect("/finished_good/" + req.params.code);
+							res.redirect("/finished_good");
 						})
 						.catch(err => {
 							logger.error({

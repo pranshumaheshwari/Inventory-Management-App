@@ -35,11 +35,14 @@
 				<th>Category</th>
 				<th>Customer</th>
 				<th>Stock</th>
+				<th>Price</th>
+				<th>Value</th>
 				<th>Schedule Quantity</th>
 				<th>#</th>
 			</tr>
 		</thead>
 		<tbody>
+		<% var totalPrice = 0 %>
 			<% for(var i=0;i<finished_goods.length;i++){ %>
 				<tr>
 					<td><%= i+1 %></td>
@@ -48,10 +51,25 @@
 					<td><%= finished_goods[i].category %></td>
 					<td><%= finished_goods[i].customer %></td>
 					<td><%= finished_goods[i].stock %></td>
+					<td><%= finished_goods[i].price %></td>
+					<td><%= finished_goods[i].stock * finished_goods[i].price %></td>
+					<% totalPrice += finished_goods[i].stock * finished_goods[i].price %>
 					<td><%= finished_goods[i].quantity %></td>
 					<td><a href="/finished_good/<%= finished_goods[i].code %>" class="btn btn-info btn-block">Edit</td>
 				</tr>
 			<% } %>
+				<tr>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td>Total:</td>
+					<td><%= totalPrice %></td>
+					<td></td>
+					<td></td>
+				</tr>
 		</tbody>
 	</table>
 	<a href="/BOM" class="btn btn-dark" style="position:fixed;bottom:5px;">Change Schedule</a>
