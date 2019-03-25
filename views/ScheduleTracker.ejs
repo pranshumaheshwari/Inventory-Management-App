@@ -10,6 +10,8 @@
 			<% for(var i=0;i<date;i++){ %>
 				<th><%= i+1 %></th>
 			<% } %>
+			<th>Total</th>
+			<th>Balance</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -18,12 +20,14 @@
 				<td><%= finished_goods[i].code %></td>
 				<td><%= finished_goods[i].category %></td>
 				<td><%= finished_goods[i].quantity %></td>
+				<% var t = 0 %>
 				<% for(var j=1;j<=date;j++){ %>
 					<td>
 						<% var got = 0 %>
 						<% for(var k=0;k<finished_goods[i]["dispatch"].length;k++){ %>
 							<% if(finished_goods[i]["dispatch"][k].date.getDate() === j){ %>
-								finished_goods[i]["dispatch"][k].quantity
+								<%= finished_goods[i]["dispatch"][k].quantity %>
+								<% t += finished_goods[i]["dispatch"][k].quantity %>
 								<% got = 1 %>
 							<% } %>
 						<% } %>
@@ -32,10 +36,16 @@
 						<% } %>
 					</td>
 				<% } %>
+				<td><%= t %></td>
+				<td><%= finished_goods[i].quantity - t %></td>
 			</tr>
 		<% } %>
 	</tbody>
 </table>
+
+<script type="text/javascript">
+	new TableExport(document.getElementsByTagName("table"),{bootstrap:false,headers:true,formats:['csv','xls'],ignoreCols:[]});
+</script>
 
 <br>
 <% include partials/footer.ejs %>

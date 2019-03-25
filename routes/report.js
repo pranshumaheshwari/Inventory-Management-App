@@ -598,6 +598,38 @@ app.get("/report/ScheduleTracker", async (req, res) => {
 	res.render("ScheduleTracker", { finished_goods, date, month });
 });
 
+// 																		Production Tracker
+
+
+app.get("/report/ProductionTracker", async (req, res) => {
+	var d = new Date();
+	var month = d.getMonth() + 1;
+	var date = d.getDate();
+	var q = "SELECT code, category, quantity FROM finished_goods ORDER BY category";
+	var finished_goods = await selectQuery(q)
+							.catch(err => {
+								logger.error({
+										error: err,
+										where: `${ req.method } ${ req.url } ${ q }`,
+										time: (new Date()).toISOString()
+								});
+								res.render('error',{error: err})
+							});
+	for(var i = 0;i<finished_goods.length;i++){
+		q = `SELECT DATE(date) AS date, SUM(quantity) AS quantity FROM production WHERE FG_code = '${ finished_goods[i].code }' AND MONTH(date) = '${ month }' GROUP BY DATE(date)`;
+		finished_goods[i].production = await selectQuery(q)
+													.catch(err => {
+														logger.error({
+																error: err,
+																where: `${ req.method } ${ req.url } ${ q }`,
+																time: (new Date()).toISOString()
+														});
+														res.render('error',{error: err})
+													});
+	}
+	res.render("ProductionTracker", { finished_goods, date, month });
+});
+
 
 //=======================================================================================
 //																		POST
@@ -627,6 +659,8 @@ app.post("/report",function(req,res){
 		res.redirect("/report/FG_Name");
 	else if(by === 'ScheduleTracker')
 		res.redirect("/report/ScheduleTracker");
+	else if(by === 'ProductionTracker')
+		res.redirect("/report/ProductionTracker");
 });
 
 //=======================================================================================
