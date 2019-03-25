@@ -18,7 +18,7 @@
 				<td><%= finished_goods[i].code %></td>
 				<td><%= finished_goods[i].category %></td>
 				<td><%= finished_goods[i].quantity %></td>
-				<% for(var j=0;j<date;j++){ %>
+				<% for(var j=1;j<=date;j++){ %>
 					<td>
 						<% var got = 0 %>
 						<% for(var k=0;k<finished_goods[i]["dispatch"].length;k++){ %>
