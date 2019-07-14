@@ -72,6 +72,47 @@ io.on('connection', async function(socket){
 										res.render('error',{error: err})
 									});
   });
+
+	socket.on('getRemaingQuantity', async (val) => {
+		var q = `SELECT SUM(quantity) AS sum FROM input WHERE PO_code = '${ val.PO_code }' AND raw_desc = '${ val.name }'`;
+		await selectQuery(q)
+						.then(async quantity => {
+							q = `SELECT initial_quantity FROM PO_detail WHERE PO_code = '${ val.PO_code }' AND raw_desc = '${ val.name }'`;
+							await selectQuery(q)
+									.then(async initial_quantity => {
+										q = `SELECT price FROM raw_material WHERE name = '${ val.name }'`;
+										await selectQuery(q)
+														.then(price => {
+															socket.emit("return-Price", price[0].price);
+														})
+														.catch(err => {
+															logger.error({
+																	error: err,
+																	where: `${ req.method } ${ req.url } ${ q }`,
+																	time: Date.now().toString()
+															});
+															res.render('error',{error: err})
+														});
+										socket.emit("return-getRemaingQuantity", initial_quantity[0].initial_quantity - quantity[0].sum);
+									})
+									.catch(err => {
+										logger.error({
+												error: err,
+												where: `${ req.method } ${ req.url } ${ q }`,
+												time: Date.now().toString()
+										});
+										res.render('error',{error: err})
+									});
+						})
+						.catch(err => {
+										logger.error({
+												error: err,
+												where: `${ req.method } ${ req.url } ${ q }`,
+												time: Date.now().toString()
+										});
+										res.render('error',{error: err})
+									});
+	});
 });
 
 //======================================

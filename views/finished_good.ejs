@@ -52,7 +52,7 @@
 					<td><%= finished_goods[i].customer %></td>
 					<td><%= finished_goods[i].stock %></td>
 					<td><%= finished_goods[i].price %></td>
-					<td><%= finished_goods[i].stock * finished_goods[i].price %></td>
+					<td><%= Math.round(finished_goods[i].stock * finished_goods[i].price * 1000)/1000 %></td>
 					<% totalPrice += finished_goods[i].stock * finished_goods[i].price %>
 					<td><%= finished_goods[i].quantity %></td>
 					<td><a href="/finished_good/<%= finished_goods[i].code %>" class="btn btn-info btn-block">Edit</td>
@@ -66,7 +66,7 @@
 					<td></td>
 					<td></td>
 					<td>Total:</td>
-					<td><%= totalPrice %></td>
+					<td><%= Math.round(totalPrice*1000)/1000 %></td>
 					<td></td>
 					<td></td>
 				</tr>

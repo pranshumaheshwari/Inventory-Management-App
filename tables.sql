@@ -1,31 +1,3 @@
-CREATE TABLE raw_material(
-	code VARCHAR(10) PRIMARY KEY,
-	name VARCHAR(100) NOT NULL UNIQUE,
-	DTPL_code VARCHAR(25),
-	supplier_code VARCHAR(10) NOT NULL,
-	category VARCHAR(11) NOT NULL,
-	unit VARCHAR(10) NOT NULL,
-	price DECIMAL(6,2) NOT NULL,
-	stock INT NOT NULL,
-	line_stock FLOAT NOT NULL,
-	monthly_requirement INT
-);
-
-CREATE TABLE finished_goods(
-	customer varchar(40),
-	code varchar(14) PRIMARY KEY,
-	name varchar(48) NOT NULL,
-	quantity int(11),
-	stock int(11) NOT NULL,
-	category varchar(15) NOT NULL
-);
-
-CREATE TABLE finished_goods_detail(		--	BOM details
-	code VARCHAR(14) NOT NULL,     -- FG CODE
-	raw_material_code VARCHAR(7) NOT NULL,
-	quantity DECIMAL(15,3) NOT NULL
-);
-
 CREATE TABLE PO(
 	code INT NOT NULL,
 	supplier_code VARCHAR(10) NOT NULL,
