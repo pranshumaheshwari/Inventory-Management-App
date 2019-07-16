@@ -5,17 +5,19 @@
 		<form action="/finished_good/production" method="POST" class="form" id="form" onsubmit="return confirm('Do you want to submit?');">
 			<div class="row">
 				<div class="col-md-6">
-					<label>Description:<input id="product" list="Product" name="product" class="form-control">
-						<datalist id="Product">
-						<option value=""></option>
+					<label style="width: 100%;">Description: <select name="product" class="form-control" id="product">
+						<option value="" hidden></option>
 						<% for(var i=0;i<finished_goods.length;i++){ %>
-							<option value="<%= finished_goods[i].code %>$<%= finished_goods[i].name %>"><%= finished_goods[i].code %>$<%= finished_goods[i].name %></option>
+							<option value="<%= finished_goods[i].code %>$<%= finished_goods[i].name %>"><%= finished_goods[i].name %></option>
 						<% } %>
-						</datalist>
-					</label>
+					</select></label>
 				</div>
-				<div class="col-md-3"></div>
-				<label>Quantity: <input type="number" name="quan" class="form-control"></label>
+				<div class="col-md-3">
+					<label style="width: 100%;">Date: <input type="date" name="date" class="form-control" value="<%= new Date().toJSON().slice(0,10) %>"></label>
+				</div>
+				<div class="col-md-3">
+					<label style="width: 100%;">Quantity: <input type="number" name="quan" class="form-control" id="quan"></label>
+				</div>
 			</div>
 			<button type="button" class="btn btn-dark" onclick="func()">Add</button>
 			<br><br>
@@ -32,6 +34,7 @@
 </div>
 
 <script type="text/javascript">
+	$("#product").combobox()
 	function but_func(i){
 		document.querySelector("table").deleteRow(i);
 	}
@@ -48,7 +51,7 @@
 			var product = productInfo.split("$");
 			var product_name = product[1];
 			var product_code = product[0];
-			var quantity = document.getElementById("form").elements[1].value;
+			var quantity = document.getElementById("quan").value;
 
 			cell1.innerHTML = product_name + '<input type="hidden" name="finished_goods_name[' + i + ']" value="' + product_name + '">';
 			cell2.innerHTML = product_code + '<input type="hidden" name="finished_goods_code[' + i + ']" value="' + product_code + '">';

@@ -355,7 +355,8 @@ app.post("/finished_good/dispatch",async function(req,res){
 								var dis = {
 									invoice_no: req.body.invoice,
 									FG_code: req.body.product[i],
-									quantity: req.body.quantity[i]
+									quantity: req.body.quantity[i],
+									date: req.body.date
 								}
 								q = "INSERT INTO dispatch SET ?";
 								await insertQuery(q, dis)
@@ -398,7 +399,8 @@ app.post("/finished_good/production",async function(req,res){
 								});
 								var obj = {
 									FG_code: req.body.finished_goods_code[i],
-									quantity: req.body.quantity[i]
+									quantity: req.body.quantity[i],
+									date: req.body.date
 								};
 								q = "INSERT INTO production SET ?";
 								await insertQuery(q, obj)
