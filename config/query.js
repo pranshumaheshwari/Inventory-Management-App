@@ -4,7 +4,7 @@ var con = mysql.createConnection({
 	host: "localhost",
   user: "root",
   password: "",
-  database: "Store"
+  database: "store"
 });
 
 const selectQuery = q => {
@@ -19,7 +19,7 @@ const selectQuery = q => {
   });
 };
 
-const insertQuery = (q,data) => {
+const insertQuery = (q, data) => {
   return new Promise((resolve, reject) => {
     con.query(q, data, (err, result) => {
       if(err){
@@ -32,6 +32,6 @@ const insertQuery = (q,data) => {
 };
 
 module.exports = {
-  selectQuery: selectQuery,
-  insertQuery: insertQuery
+  selectQuery,
+  insertQuery
 }
