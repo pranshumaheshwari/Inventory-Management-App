@@ -4,7 +4,7 @@
 	<h1 align="center">Inventory</h1>
 	<br>
 	<div class="row">
-		<div class="col-md-10">
+		<div class="col-md-9">
 				<form action="/inventory/search/category" method="post" class="form-inline">
 					<select name="category" class="form-control">
 						<option value="" selected hidden>Select Category..</option>
@@ -23,7 +23,7 @@
 					<button type="submit" class="btn btn-dark">Go!</button>
 				</form>
 		</div>
-		<div style="float:right">
+		<div style="float:right" class="col-md-3">
 				<form action="/inventory/search/name" method="post" class="form-inline">
 					<select name="name_code" class="form-control" id="name_code">
 						<option value="" hidden selected>Enter Descr OR P/N</option>
@@ -106,7 +106,10 @@
 		color: red;
 	}
 </style>
-<script type="text/javascript">
-	new TableExport(document.getElementsByTagName("table"),{bootstrap:false,headers:true,formats:['csv','xls'],ignoreCols:[]});
+<script>
+	$('table').floatThead()
+</script>
+<script>
+	new TableExport($('#table'),{bootstrap:false,headers:true,formats:['csv','xls'],ignoreCols:[],position:"bottom"});
 </script>
 <% include partials/footer.ejs %>

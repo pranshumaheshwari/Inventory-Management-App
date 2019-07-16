@@ -608,20 +608,20 @@ app.post("/finished_good/:code/new",async function(req,res){
 });
 
 //=======================================================================================
-//																		PUT
+//										PUT
 //=======================================================================================
 
 app.put("/finished_good/:code",async function(req,res){
 	var q = "UPDATE finished_goods SET ? WHERE code ='" + req.params.code + "'";
 	await insertQuery(q,req.body.finished_good)
-						.then(async finished_goods => {
+						.then(async _ => {
 							logger.info({
 								where: `${ req.method } ${ req.url } ${ q }`,
 								time: (new Date()).toISOString()
 							});
 							q = "DELETE FROM finished_goods_detail WHERE code='" + req.body.finished_good.code + "'";
 							await selectQuery(q)
-												.then(async finished_goods => {
+												.then(async _ => {
 													logger.info({
 														where: `${ req.method } ${ req.url } ${ q }`,
 														time: (new Date()).toISOString()
@@ -673,7 +673,7 @@ app.put("/finished_good/:code",async function(req,res){
 });
 
 //=======================================================================================
-//																		DELETE
+//										DELETE
 //=======================================================================================
 
 app.delete("/finished_good/production/:code/:date/:quantity",async (req,res) => {
