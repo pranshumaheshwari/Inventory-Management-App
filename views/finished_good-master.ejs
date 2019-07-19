@@ -10,7 +10,8 @@
       <th>quantity</th>
       <th>category</th>
       <th>price</th>
-      <th>man_power</th>
+      <th class="admin">man_power</th>
+      <th class="admin">overheads</th>
     </thead>
     <tbody>
       <% for(var i=0;i<finished_goods.length;i++){ %>
@@ -22,7 +23,8 @@
           <td><%= finished_goods[i].quantity %></td>
           <td><%= finished_goods[i].category %></td>
           <td><%= finished_goods[i].price %></td>
-          <td><%= finished_goods[i].man_power %></td>
+          <td class="admin"><%= finished_goods[i].man_power %></td>
+          <td class="admin"><%= finished_goods[i].overheads %></td>
         </tr>
       <% } %>
     </tbody>

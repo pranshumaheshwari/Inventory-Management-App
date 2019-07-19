@@ -1,7 +1,7 @@
 <script>
     var isAdmin = Cookies.get('isAdmin');
     [...$('.admin')].forEach(ele => {
-       if(!isAdmin) {
+       if(isAdmin === 'false' ) {
             ele.style.display = "none";
        }
     });
