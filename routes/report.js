@@ -344,36 +344,48 @@ app.get("/report",function(req,res){
 
 //																		BY DESCRIPTION
 
-	app.get("/report/name",async function(req,res){
-		var q = "SELECT * FROM raw_material ORDER BY name";
-		await selectQuery(q)
-							.then(raw_materials => {
-								res.render("report_by_name",{raw_materials:raw_materials});
-							})
-							.catch(err => {
-								logger.error({
-										error: err,
-										where: `${ req.method } ${ req.url } ${ q }`,
-										time: (new Date()).toISOString()
-								});
-								res.render('error',{error: err})
+app.get("/report/name",async function(req,res){
+	var q = "SELECT * FROM raw_material ORDER BY name";
+	await selectQuery(q)
+						.then(raw_materials => {
+							res.render("report_by_name",{raw_materials:raw_materials});
+						})
+						.catch(err => {
+							logger.error({
+									error: err,
+									where: `${ req.method } ${ req.url } ${ q }`,
+									time: (new Date()).toISOString()
 							});
-	});
+							res.render('error',{error: err})
+						});
+});
 
-	app.post("/report/name",async function(req,res){
-		var raw = req.body.raw_material.split("$");
-		var Dateto = req.body.to.split("-"), Datefrom = req.body.from.split("-");
-		var to = new Date(Dateto[0],parseInt(Dateto[1])-1,Dateto[2]);
-		var from = new Date(Datefrom[0],parseInt(Datefrom[1])-1,Datefrom[2]);
-		var input_output = [], openingStock, closingStock, raw_material, inputs, outputs;
-		var currentStock;
-		var q = "SELECT * FROM raw_material WHERE code = '" + raw[0] + "'";
-		await selectQuery(q)
-							.then(async raw_materials => {
-								raw_material = raw_materials[0];
-								currentStock = raw_material.stock;
-								q = "SELECT * FROM input WHERE DTPL_code ='" + raw[1] + "' AND raw_desc='" + raw[2] + "' ORDER BY date";
-								inputs = await selectQuery(q)
+app.post("/report/name",async function(req,res){
+	var raw = req.body.raw_material.split("$");
+	var Dateto = req.body.to.split("-"), Datefrom = req.body.from.split("-");
+	var to = new Date(Dateto[0],parseInt(Dateto[1])-1,Dateto[2]);
+	var from = new Date(Datefrom[0],parseInt(Datefrom[1])-1,Datefrom[2]);
+	var input_output = [], openingStock, closingStock, raw_material, inputs, outputs;
+	var currentStock;
+	var q = "SELECT * FROM raw_material WHERE code = '" + raw[0] + "'";
+	await selectQuery(q)
+						.then(async raw_materials => {
+							raw_material = raw_materials[0];
+							currentStock = raw_material.stock;
+							q = "SELECT * FROM input WHERE DTPL_code ='" + raw[1] + "' AND raw_desc='" + raw[2] + "' ORDER BY date";
+							inputs = await selectQuery(q)
+																		.catch(err => {
+																			logger.error({
+																					error: err,
+																					where: `${ req.method } ${ req.url } ${ q }`,
+																					time: (new Date()).toISOString()
+																			});
+																			res.render('error',{error: err})
+																		});
+						})
+						.then(async _ => {
+							q = "SELECT * FROM output WHERE raw_material_code ='" + raw_material.code + "' ORDER BY date";
+							outputs = await selectQuery(q)
 																			.catch(err => {
 																				logger.error({
 																						error: err,
@@ -382,97 +394,85 @@ app.get("/report",function(req,res){
 																				});
 																				res.render('error',{error: err})
 																			});
-							})
-							.then(async _ => {
-								q = "SELECT * FROM output WHERE raw_material_code ='" + raw_material.code + "' ORDER BY date";
-								outputs = await selectQuery(q)
-																				.catch(err => {
-																					logger.error({
-																							error: err,
-																							where: `${ req.method } ${ req.url } ${ q }`,
-																							time: (new Date()).toISOString()
-																					});
-																					res.render('error',{error: err})
-																				});
-							})
-							.then(async _ => {
-								closingStock = currentStock;
+						})
+						.then(async _ => {
+							closingStock = currentStock;
+							for(var i=0;i<inputs.length;i++){
+								if(inputs[i].date > new Date(to.getTime() + (24*60*60*1000))){
+									closingStock -= inputs[i].quantity;
+								}
+							}
+							for(var i=0;i<outputs.length;i++){
+								if(outputs[i].date > new Date(to.getTime() + (24*60*60*1000))){
+									closingStock += outputs[i].quantity;
+								}
+							}
+							var check = from;
+							openingStock = closingStock;
+							for(var j=0;check >= from && check <= to;j++){
 								for(var i=0;i<inputs.length;i++){
-									if(inputs[i].date > new Date(to.getTime() + (24*60*60*1000))){
-										closingStock -= inputs[i].quantity;
+									if(inputs[i].date.getDate() === check.getDate() && inputs[i].date.getMonth() === check.getMonth() && inputs[i].date.getFullYear() === check.getFullYear()){
+										input_output.push(inputs[i]);
+										openingStock -= inputs[i].quantity;
 									}
 								}
 								for(var i=0;i<outputs.length;i++){
-									if(outputs[i].date > new Date(to.getTime() + (24*60*60*1000))){
-										closingStock += outputs[i].quantity;
+									if(outputs[i].date.getDate() === check.getDate() && outputs[i].date.getMonth() === check.getMonth() && outputs[i].date.getFullYear() === check.getFullYear()){
+										input_output.push(outputs[i]);
+										openingStock += outputs[i].quantity;
 									}
 								}
-								var check = from;
-								openingStock = closingStock;
-								for(var j=0;check >= from && check <= to;j++){
-									for(var i=0;i<inputs.length;i++){
-										if(inputs[i].date.getDate() === check.getDate() && inputs[i].date.getMonth() === check.getMonth() && inputs[i].date.getFullYear() === check.getFullYear()){
-											input_output.push(inputs[i]);
-											openingStock -= inputs[i].quantity;
-										}
-									}
-									for(var i=0;i<outputs.length;i++){
-										if(outputs[i].date.getDate() === check.getDate() && outputs[i].date.getMonth() === check.getMonth() && outputs[i].date.getFullYear() === check.getFullYear()){
-											input_output.push(outputs[i]);
-											openingStock += outputs[i].quantity;
-										}
-									}
-									check = new Date(check.getTime() + (24*60*60*1000));
-								}
-							})
-							.then( _ => {
-								res.render("reports_with_data",{input_output:input_output,raw_material:raw_material,openingStock:openingStock,closingStock:closingStock,from:req.body.from,to:req.body.to,total_in:0,total_out:0});
-							})
-							.catch(err => {
-								logger.error({
-										error: err,
-										where: `${ req.method } ${ req.url } ${ q }`,
-										time: (new Date()).toISOString()
-								});
-								res.render('error',{error: err})
+								check = new Date(check.getTime() + (24*60*60*1000));
+							}
+						})
+						.then( _ => {
+							res.render("reports_with_data",{input_output:input_output,raw_material:raw_material,openingStock:openingStock,closingStock:closingStock,from:req.body.from,to:req.body.to,total_in:0,total_out:0});
+						})
+						.catch(err => {
+							logger.error({
+									error: err,
+									where: `${ req.method } ${ req.url } ${ q }`,
+									time: (new Date()).toISOString()
 							});
-	});
+							res.render('error',{error: err})
+						});
+});
 
 //																		BY PO
 
-	app.get("/report/PO",async function(req,res){
-		var q = "SELECT * FROM PO";
-		await selectQuery(q)
-							.then(PO => {
-								res.render("report_by_PO",{PO:PO});
-							})
-							.catch(err => {
-								logger.error({
-										error: err,
-										where: `${ req.method } ${ req.url } ${ q }`,
-										time: (new Date()).toISOString()
-								});
-								res.render('error',{error: err})
+app.get("/report/PO",async function(req,res){
+	var q = "SELECT * FROM PO";
+	await selectQuery(q)
+						.then(PO => {
+							res.render("report_by_PO",{PO:PO});
+						})
+						.catch(err => {
+							logger.error({
+									error: err,
+									where: `${ req.method } ${ req.url } ${ q }`,
+									time: (new Date()).toISOString()
 							});
-	});
+							res.render('error',{error: err})
+						});
+});
 
-	app.get("/report/PO/:code",async function(req,res){
-		var q = "SELECT * FROM input WHERE PO_code ='" + req.params.code + "'";
-		await selectQuery(q)
-							.then(inputs => {
-								res.render("report_by_PO_detail",{PO_code:req.params.code,inputs:inputs});
-							})
-							.catch(err => {
-								logger.error({
-										error: err,
-										where: `${ req.method } ${ req.url } ${ q }`,
-										time: (new Date()).toISOString()
-								});
-								res.render('error',{error: err})
+app.get("/report/PO/:code",async function(req,res){
+	var q = "SELECT * FROM input WHERE PO_code ='" + req.params.code + "'";
+	await selectQuery(q)
+						.then(inputs => {
+							res.render("report_by_PO_detail",{PO_code:req.params.code,inputs:inputs});
+						})
+						.catch(err => {
+							logger.error({
+									error: err,
+									where: `${ req.method } ${ req.url } ${ q }`,
+									time: (new Date()).toISOString()
 							});
-	});
+							res.render('error',{error: err})
+						});
+});
 
-	app.post("/report/PO",async function(req,res){
+app.post("/report/PO",async function(req,res){
 		var q = 'SELECT p.*,i.sum FROM PO_detail AS p LEFT OUTER JOIN (SELECT SUM(quantity) AS sum,PO_code,raw_desc FROM input WHERE PO_code = "' + req.body.PO.code + '" GROUP BY raw_desc) AS i ON p.PO_code = i.PO_code AND p.raw_desc = i.raw_desc WHERE p.PO_code = "' + req.body.PO.code + '"';
 		await selectQuery(q)
 							.then(PO => {
@@ -488,110 +488,67 @@ app.get("/report",function(req,res){
 							});
 	});
 
-
 //																		SHORTAGE
 
-	app.get("/report/shortage",async function(req,res){
-		var q = "SELECT * FROM raw_material WHERE stock<0.25*monthly_requirement ORDER BY code";
-		await selectQuery(q)
-							.then(raw => {
-								res.render("report_more_less",{raw_materials:raw,type:"shortage"});
-							})
-							.catch(err => {
-								logger.error({
-										error: err,
-										where: `${ req.method } ${ req.url } ${ q }`,
-										time: (new Date()).toISOString()
-								});
-								res.render('error',{error: err})
+app.get("/report/shortage",async function(req,res){
+	var q = "SELECT * FROM raw_material WHERE stock<0.25*monthly_requirement ORDER BY code";
+	await selectQuery(q)
+						.then(raw => {
+							res.render("report_more_less",{raw_materials:raw,type:"shortage"});
+						})
+						.catch(err => {
+							logger.error({
+									error: err,
+									where: `${ req.method } ${ req.url } ${ q }`,
+									time: (new Date()).toISOString()
 							});
-	});
+							res.render('error',{error: err})
+						});
+});
 
 //																		EXCESS
 
-	app.get("/report/excess",async function(req,res){
-		var q = "SELECT * FROM raw_material WHERE stock>monthly_requirement ORDER BY code";
-		await selectQuery(q)
-							.then(raw => {
-								res.render("report_more_less",{raw_materials:raw,type:"excess"});
-							})
-							.catch(err => {
-								logger.error({
-										error: err,
-										where: `${ req.method } ${ req.url } ${ q }`,
-										time: (new Date()).toISOString()
-								});
-								res.render('error',{error: err})
+app.get("/report/excess",async function(req,res){
+	var q = "SELECT * FROM raw_material WHERE stock>monthly_requirement ORDER BY code";
+	await selectQuery(q)
+						.then(raw => {
+							res.render("report_more_less",{raw_materials:raw,type:"excess"});
+						})
+						.catch(err => {
+							logger.error({
+									error: err,
+									where: `${ req.method } ${ req.url } ${ q }`,
+									time: (new Date()).toISOString()
 							});
-	});
-
-//																		INPUT-OUTPUT
-
-	app.get("/report/input",function(req,res){
-		res.render("report_date",{type:"input"});
-	});
-
-	app.get("/report/output",function(req,res){
-		res.render("report_date",{type:"output"});
-	});
-
-	app.post("/report/:type",async function(req,res){
-		var Dateto = req.body.to.split("-"), Datefrom = req.body.from.split("-");
-		var to = new Date(Dateto[0],parseInt(Dateto[1])-1,parseInt(Dateto[2])+1);
-		var from = new Date(Datefrom[0],parseInt(Datefrom[1])-1,parseInt(Datefrom[2]));
-		var i_o = [];
-		var q;
-		if(req.params.type === "input")
-			q = "SELECT i.*,r.code FROM input AS i INNER JOIN raw_material AS r ON r.name = i.raw_desc ORDER BY date DESC";
-		else
-			q = "SELECT * FROM output ORDER BY date DESC"
-		await selectQuery(q)
-							.then(i_os => {
-								for(var i=0;i<i_os.length;i++){
-									if(i_os[i].date >= from && i_os[i].date <= to)
-										i_o.push(i_os[i]);
-								}
-								from.setDate(from.getDate()+1);
-								i_o.reverse();
-								res.render("report_inputORoutput",{i_o:i_o,type:req.params.type,to:to,from:from});
-							})
-							.catch(err => {
-								logger.error({
-										error: err,
-										where: `${ req.method } ${ req.url } ${ q }`,
-										time: (new Date()).toISOString()
-								});
-								res.render('error',{error: err})
-							});
-	});
-
+							res.render('error',{error: err})
+						});
+});
 
 // 																		Schedule Tracker
 
-
 app.get("/report/ScheduleTracker", async (req, res) => {
-	var d = new Date();
-	var month = d.getMonth() + 1;
-	var date = d.getDate();
-	var q = "SELECT code, category, quantity FROM finished_goods ORDER BY category";
-	var finished_goods = await selectQuery(q)
-							.catch(err => {
-								logger.error({
-										error: err,
+		var d = new Date();
+		var month = d.getMonth() + 1;
+		var date = d.getDate();
+		var q = "SELECT code, category, quantity FROM finished_goods ORDER BY category";
+		var finished_goods = await selectQuery(q)
+		.catch(err => {
+			logger.error({
+				error: err,
 										where: `${ req.method } ${ req.url } ${ q }`,
 										time: (new Date()).toISOString()
-								});
-								res.render('error',{error: err})
+									});
+									res.render('error',{error: err})
 							});
-	for(var i = 0;i<finished_goods.length;i++){
-		q = `SELECT DATE(date) AS date, SUM(quantity) AS quantity FROM dispatch WHERE FG_code = '${ finished_goods[i].code }' AND MONTH(date) = '${ month }' GROUP BY DATE(date)`;
-		finished_goods[i].dispatch = await selectQuery(q)
-													.catch(err => {
+							for(var i = 0;i<finished_goods.length;i++){
+								q = `SELECT DATE(date) AS date, SUM(quantity) AS quantity FROM dispatch WHERE FG_code = '${ finished_goods[i].code }' AND MONTH(date) = '${ month }' GROUP BY DATE(date)`;
+								finished_goods[i].dispatch = await selectQuery(q)
+								.catch(err => {
 														logger.error({
-																error: err,
+															error: err,
 																where: `${ req.method } ${ req.url } ${ q }`,
 																time: (new Date()).toISOString()
-														});
+															});
 														res.render('error',{error: err})
 													});
 	}
@@ -599,7 +556,6 @@ app.get("/report/ScheduleTracker", async (req, res) => {
 });
 
 // 																		Production Tracker
-
 
 app.get("/report/ProductionTracker", async (req, res) => {
 	var d = new Date();
@@ -609,27 +565,111 @@ app.get("/report/ProductionTracker", async (req, res) => {
 	var finished_goods = await selectQuery(q)
 							.catch(err => {
 								logger.error({
-										error: err,
-										where: `${ req.method } ${ req.url } ${ q }`,
+									error: err,
+									where: `${ req.method } ${ req.url } ${ q }`,
 										time: (new Date()).toISOString()
-								});
-								res.render('error',{error: err})
+									});
+									res.render('error',{error: err})
 							});
-	for(var i = 0;i<finished_goods.length;i++){
-		q = `SELECT DATE(date) AS date, SUM(quantity) AS quantity FROM production WHERE FG_code = '${ finished_goods[i].code }' AND MONTH(date) = '${ month }' GROUP BY DATE(date)`;
+							for(var i = 0;i<finished_goods.length;i++){
+								q = `SELECT DATE(date) AS date, SUM(quantity) AS quantity FROM production WHERE FG_code = '${ finished_goods[i].code }' AND MONTH(date) = '${ month }' GROUP BY DATE(date)`;
 		finished_goods[i].production = await selectQuery(q)
-													.catch(err => {
+		.catch(err => {
 														logger.error({
-																error: err,
-																where: `${ req.method } ${ req.url } ${ q }`,
+															error: err,
+															where: `${ req.method } ${ req.url } ${ q }`,
 																time: (new Date()).toISOString()
-														});
+															});
 														res.render('error',{error: err})
 													});
-	}
+												}
 	res.render("ProductionTracker", { finished_goods, date, month });
 });
 
+//										Man Power Efficenicy
+
+app.get("/report/manPower", async (req, res) => {
+	res.render("date.ejs");
+});
+
+app.post("/report/manPower", async (req, res) => {
+	var from = req.body.from;
+	var to = req.body.to;
+	var nextDate = d => {
+		var year = d.split("-")[0]
+		var month = d.split("-")[1]
+		var day = d.split("-")[2]
+		var d = new Date(year, parseInt(month) - 1, day, 0, 0, 0, 0)
+		d.setDate(d.getDate() + 1)
+		var s = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}` 
+		return s
+	}
+	var q = `SELECT SUM(production.quantity) AS quantity, production.FG_code, finished_goods.man_power, finished_goods.name, finished_goods.overheads FROM (production INNER JOIN finished_goods ON production.FG_code = finished_goods.code) WHERE production.date >= '${from.replace(/-/g, '/')}' AND production.date < '${nextDate(to).replace(/-/g, '/')}' GROUP BY production.FG_code`
+	selectQuery(q)
+		.then(data => {
+			q = `SELECT SUM(nos) AS nos FROM attendance WHERE date >= '${from.replace(/-/g, '/')}' AND date < '${nextDate(to).replace(/-/g, '/')}'`
+			selectQuery(q)
+				.then(nos => {
+					res.render('report_man_power', { data, nos: nos[0].nos });
+				})
+				.catch(err => {
+					logger.error({
+						error: err,
+						where: `${ req.method } ${ req.url } ${ q }`,
+							time: (new Date()).toISOString()
+						});
+					res.render('error',{error: err})
+				});
+		})
+		.catch(err => {
+			logger.error({
+				error: err,
+				where: `${ req.method } ${ req.url } ${ q }`,
+					time: (new Date()).toISOString()
+				});
+			res.render('error',{error: err})
+		});
+});
+
+//																		INPUT-OUTPUT
+
+app.get("/report/input",function(req,res){
+	res.render("report_date",{type:"input"});
+});
+
+app.get("/report/output",function(req,res){
+	res.render("report_date",{type:"output"});
+});
+
+app.post("/report/:type",async function(req,res){
+	var Dateto = req.body.to.split("-"), Datefrom = req.body.from.split("-");
+	var to = new Date(Dateto[0],parseInt(Dateto[1])-1,parseInt(Dateto[2])+1);
+	var from = new Date(Datefrom[0],parseInt(Datefrom[1])-1,parseInt(Datefrom[2]));
+	var i_o = [];
+	var q;
+	if(req.params.type === "input")
+		q = "SELECT i.*,r.code FROM input AS i INNER JOIN raw_material AS r ON r.name = i.raw_desc ORDER BY date DESC";
+	else
+		q = "SELECT * FROM output ORDER BY date DESC"
+	await selectQuery(q)
+						.then(i_os => {
+							for(var i=0;i<i_os.length;i++){
+								if(i_os[i].date >= from && i_os[i].date <= to)
+									i_o.push(i_os[i]);
+							}
+							from.setDate(from.getDate()+1);
+							i_o.reverse();
+							res.render("report_inputORoutput",{i_o:i_o,type:req.params.type,to:to,from:from});
+						})
+						.catch(err => {
+							logger.error({
+									error: err,
+									where: `${ req.method } ${ req.url } ${ q }`,
+									time: (new Date()).toISOString()
+							});
+							res.render('error',{error: err})
+						});
+});
 
 //=======================================================================================
 //																		POST

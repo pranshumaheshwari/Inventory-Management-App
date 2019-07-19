@@ -1,5 +1,10 @@
 USE store;
 
+CREATE TABLE IF NOT EXISTS users(
+	username VARCHAR(100) PRIMARY KEY,
+	password VARCHAR(50) NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS raw_material(
 	code VARCHAR(10) PRIMARY KEY,
 	name VARCHAR(100) NOT NULL UNIQUE,
@@ -21,7 +26,8 @@ CREATE TABLE IF NOT EXISTS finished_goods(
 	stock int(11) NOT NULL DEFAULT 0,
 	category varchar(15) NOT NULL,
 	price FLOAT NOT NULL DEFAULT 0.0,
-	man_power FLOAT NOT NULL DEFAULT 0
+	man_power FLOAT NOT NULL DEFAULT 0,
+	overheads FLOAT NOT NULL DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS finished_goods_detail(
@@ -32,7 +38,7 @@ CREATE TABLE IF NOT EXISTS finished_goods_detail(
 
 CREATE TABLE IF NOT EXISTS attendance(
 	date DATETIME NOT NULL,
-	nos INT NOT NULL
+	nos INT NOT NULL DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS supplier (

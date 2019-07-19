@@ -15,6 +15,29 @@ app.use(express.static( __dirname + "/public"));
 //																		GET
 //=======================================================================================
 
+app.get("/attendance", async (req, res) => {
+	res.render("attendance")
+})
+
+app.post("/attendance", async (req, res) => {
+	var q = `INSERT INTO attendance SET ?`
+	insertQuery(q, {
+		date: req.body.date,
+		nos: req.body.nos 
+	})
+	.then(_ => {
+		res.redirect("/attendance")
+	})
+	.catch(err => {
+		logger.error({
+				error: err,
+				where: `${ req.method } ${ req.url } ${ q }`,
+				time: (new Date()).toISOString()
+		});
+		res.render('error',{error: err})
+	});
+})
+
 app.get("/BOM",async function(req,res){
 	var q = "SELECT * FROM finished_goods ORDER BY category";
 	await selectQuery(q)

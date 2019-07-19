@@ -12,31 +12,36 @@
 					<label style="width: 100%">Part Number: <input type="text" name="finished_good[code]" class="form-control" required value="<%= finished_good.code %>"></label>
 				</div>
 				<div class="col-md-3">
-					<label style="width: 100%">Customer: <input type="text" name="finished_good[customer]" value="<%= finished_good.customer %>" class="form-control" required></label>
+					<label style="width: 100%">Stock: <input type="number" name="finished_good[stock]" value="<%= finished_good.stock %>" class="form-control"></label>
 				</div>
 			</div>
 			<div class="row">
-				<div class="col-md-3">
-				<label style="width: 100%">Category: <select name="finished_good[category]" class="form-control">
-					<option value="<%= finished_good.category %>" hidden selected><%= finished_good.category %></option>
-					<option value="Fuse Box">Fuse Box</option>
-					<option value="Indicator">Indicator</option>
-					<option value="Magneto">Magneto</option>
-					<option value="Battery Cable">Battery Cable</option>
-					<option value="Lead Wires">Lead Wires</option>
-					<option value="Piaggio">Piaggio</option>
-					<option value="Pigtail">Pigtail</option>
-					<option value="Spare Part (SPD)">Spare Part (SPD)</option>
-				</select></label>
+				<div class="col-md-6">
+					<label style="width: 100%">Customer: <input type="text" name="finished_good[customer]" value="<%= finished_good.customer %>" class="form-control" required></label>
 				</div>
 				<div class="col-md-3">
-					<label style="width: 100%">Stock: <input type="number" name="finished_good[stock]" value="<%= finished_good.stock %>" class="form-control"></label>
+					<label style="width: 100%">Category: <select name="finished_good[category]" class="form-control">
+						<option value="<%= finished_good.category %>" hidden selected><%= finished_good.category %></option>
+						<option value="Fuse Box">Fuse Box</option>
+						<option value="Indicator">Indicator</option>
+						<option value="Magneto">Magneto</option>
+						<option value="Battery Cable">Battery Cable</option>
+						<option value="Lead Wires">Lead Wires</option>
+						<option value="Piaggio">Piaggio</option>
+						<option value="Pigtail">Pigtail</option>
+						<option value="Spare Part (SPD)">Spare Part (SPD)</option>
+					</select></label>
 				</div>
 				<div class="col-md-3">
 					<label style="width: 100%">Price: <input type="text" name="finished_good[price]" value="<%= finished_good.price %>" class="form-control"></label>
 				</div>
+			</div>
+			<div class="row">
 				<div class="col-md-3">
 					<label style="width: 100%">Man Power: <input type="text" name="finished_good[man_power]" value="<%= finished_good.man_power %>" class="form-control"></label>
+				</div>
+				<div class="col-md-3">
+					<label style="width: 100%">Overheads: <input type="text" name="finished_good[overheads]" value="<%= finished_good.overheads %>" class="form-control"></label>
 				</div>
 			</div>
 		</div>
