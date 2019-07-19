@@ -6,7 +6,7 @@
 		<div class="row">
 			<div class="col-md-6">
 				<label>Raw Material Code:
-					<input type="text" name="newCode" list="Product" required class="form-control">
+					<input type="text" name="newCode" list="Product" required class="form-control" autocomplete="off">
 							<datalist id="Product" name="Product">	
 								<% for(var j=0;j<raw.length;j++){ %>
 									<option value="<%= raw[j].code %>"><%= raw[j].code %>$$<%= raw[j].DTPL_code %>$$<%= raw[j].name %></option>
@@ -15,7 +15,7 @@
 				</label>
 			</div>
 			<div class="col-md-6">
-				<label>Quantity: <input type="text" name="newQuantity" required></label>
+				<label>Quantity: <input type="text" name="newQuantity" required autocomplete="off"></label>
 			</div>
 		</div>
 		<button type="submit" class="btn btn-success">Add</button>

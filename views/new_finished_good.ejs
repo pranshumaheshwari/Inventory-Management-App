@@ -5,10 +5,10 @@
 		<form action="/finished_good/new" method="post" id="form" onsubmit="return confirm('Do you want to submit?');">
 			<div class="row">
 				<div class="col-md-6">
-					<label>Part Number: <input type="text" name="finished_good[code]" required class="form-control" placeholder="Part Number"></label>
+					<label>Part Number: <input type="text" autocomplete="off" name="finished_good[code]" required class="form-control" placeholder="Part Number"></label>
 				</div>
 				<div class="col-md-6">
-					<label>Description: <input type="text" name="finished_good[name]" required class="form-control" placeholder="Description"></label>
+					<label>Description: <input type="text" autocomplete="off" name="finished_good[name]" required class="form-control" placeholder="Description"></label>
 				</div>
 			</div>
 			<div class="row">
@@ -42,7 +42,7 @@
 					<label for="PO[raw_material_code]">Raw Material Code</label>
 				</div>
 				<div class="col-md-4">
-					<input name="PO[raw_material_code]" list="Product" id="PO[raw_material_code]">
+					<input name="PO[raw_material_code]" list="Product" id="PO[raw_material_code]" autocomplete="off">
 							<datalist id="Product" name="Product">
 							<% for(var i=0;i<raw_materials.length;i++){ %>
 									<option value="<%= raw_materials[i].name %>,<%= raw_materials[i].code %>,<%= raw_materials[i].unit %>"><%= raw_materials[i].name %>/<%= raw_materials[i].code %></option>
@@ -53,7 +53,7 @@
 					<label for="quantity">Quantity</label>
 				</div>
 				<div class="col-md-2">
-					<input type="number" name="PO[quantity]" id="quantity">
+					<input type="number" name="PO[quantity]" id="quantity" autocomplete="off">
 				</div>
 				<div class="col-md-1">
 				</div>

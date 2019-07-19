@@ -5,11 +5,11 @@
 		<div class="form-row">
 			<div class="col-md-6">
 				<label for="PO[code]">PO Number</label>
-				<input type="text" name="PO_code" value="<%= raw_materials[0].PO_code %>" readonly class="form-control-plaintext" id="PO_code">
+				<input autocomplete="off" type="text" name="PO_code" value="<%= raw_materials[0].PO_code %>" readonly class="form-control-plaintext" id="PO_code">
 			</div>
 			<div class="col-md-6">
 				<label for="invoice">Invoice No</label>
-				<input type="text" name="invoice" class="form-control" id="invoice">
+				<input autocomplete="off" type="text" name="invoice" class="form-control" id="invoice">
 			</div>
 		</div>
 		<div class="form-row">
@@ -24,15 +24,15 @@
 			</div>
 			<div class="col-md-2">
 				<label for="remainingQuantity">Remaining Quantity:</label>
-				<input type="text" id="remainingQuantity" class="form-control-plaintext" readonly />
+				<input autocomplete="off" type="text" id="remainingQuantity" class="form-control-plaintext" readonly />
 			</div>
 			<div class="col-md-2">
-				<label>Price: <input id="price" class="form-control-plaintext" readonly /></label>
+				<label>Price: <input autocomplete="off" id="price" class="form-control-plaintext" readonly /></label>
 			</div>
 		</div>
 		<div class="row col-md-6">
 			<label for="quantit">Quantity</label>
-			<input type="number" name="quantit" class="form-control" id="quantity">
+			<input type="number" autocomplete="off" name="quantit" class="form-control" id="quantity">
 			<button type="button" onclick="func()" class="btn btn-dark">Add</button>
 		</div>
 
@@ -47,7 +47,7 @@
 				<th>#</th>
 			</thead>
 		</table>
-		<input type="submit" class="btn btn-primary">
+		<input type="submit" autocomplete="off" class="btn btn-primary">
 </form>
 </div>
 <script type="text/javascript">

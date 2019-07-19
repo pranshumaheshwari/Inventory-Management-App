@@ -5,8 +5,8 @@
 <div class="container">
 	<form action="/finished_good/dispatch" method="post" id="form" onsubmit="return confirm('Do you want to submit?');">
 		<div class="row">
-			<label class="col-md-6">Invoice No: <input type="text" name="invoice" class="form-control"></label>
-			<label class="col-md-6">Date: <input type="date" class="form-control" name="date" value="<%= new Date().toJSON().slice(0,10) %>"></label>
+			<label class="col-md-6">Invoice No: <input type="text" name="invoice" class="form-control" autocomplete="off"></label>
+			<label class="col-md-6">Date: <input type="date" class="form-control" name="date" autocomplete="off" value="<%= new Date().toJSON().slice(0,10) %>"></label>
 		</div>
 		<div class="row">
 			<div class="col-md-4">
@@ -18,7 +18,7 @@
 				</select></label>
 			</div>
 			<div class="col-md-4">
-				<label>Quantity: <input type="number" name="Quantity" class="form-control" id="quan"></label>
+				<label>Quantity: <input type="number" name="Quantity" autocomplete="off" class="form-control" id="quan"></label>
 			</div>
 			<div class="col-md-2"></div>
 			<div class="col-md-2">

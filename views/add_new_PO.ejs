@@ -5,17 +5,17 @@
 		<div class="row container form-group">
 				<div class="col-md-8">
 					<label for="PO_no">PO Number</label>
-					<input type="text" name="PO_no" value="<%= PO %>" readonly class="form-control-plaintext" id="PO_no" class="form-control">
+					<input type="text" name="PO_no" value="<%= PO %>" readonly class="form-control-plaintext" id="PO_no" class="form-control" autocomplete="off">
 				</div>
 				<div class="col-md-4">
 					<label for="date">Date</label>
-					<input type="date" name="date"  required id="date" class="form-control-plaintext" value="<%= date.toISOString().substring(0,10) %>">
+					<input type="date" name="date"  required id="date" class="form-control-plaintext" value="<%= date.toISOString().substring(0,10) %>" autocomplete="off">
 				</div>
 			</div>
 		<div class="row">
 			<div class="col-md-6">
 				<label for="product_name">Description/DTPL Part Number</label>
-				<input type="text" name="raw" list="Product" id="product_name" class="form-control">
+				<input type="text" name="raw" list="Product" id="product_name" class="form-control" autocomplete="off">
 					<datalist id="Product" name="Product">
 						<% for(var i=0;i<raw_materials.length;i++){ %>
 							<option value="<%= raw_materials[i].name %>$<%= raw_materials[i].DTPL_code %>"><%= raw_materials[i].code %>/<%= raw_materials[i].name %>/<%= raw_materials[i].DTPL_code %></option>
@@ -23,7 +23,7 @@
 					</datalist>
 			</div>
 			<div class="col-md-6">
-				<label>Quantity<input type="number" name="quantity" class="form-control"></label>
+				<label>Quantity<input type="number" name="quantity" class="form-control" autocomplete="off"></label>
 			</div>
 		</div>
 		<br>

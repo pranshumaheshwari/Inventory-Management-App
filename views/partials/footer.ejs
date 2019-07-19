@@ -1,2 +1,10 @@
+<script>
+    var isAdmin = Cookies.get('isAdmin');
+    [...$('.admin')].forEach(ele => {
+       if(!isAdmin) {
+            ele.style.display = "none";
+       }
+    });
+</script>
 </body>
 </html>

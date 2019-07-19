@@ -1,3 +1,6 @@
 h1{
 	font-family: 'Courier New';
 }
+.dropdown-item:hover {
+	margin-left: 5px;
+}

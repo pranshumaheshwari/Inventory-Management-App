@@ -6,18 +6,18 @@
 		<div class="jumbotron">
 			<div class="row form-group">
 				<div class="col-md-6">
-					<label style="width: 100%">Description: <input type="text" name="finished_good[name]" class="form-control" value="<%= finished_good.name %>" required></label>
+					<label style="width: 100%">Description: <input autocomplete="off" type="text" name="finished_good[name]" class="form-control" value="<%= finished_good.name %>" required></label>
 				</div>
 				<div class="col-md-3">
-					<label style="width: 100%">Part Number: <input type="text" name="finished_good[code]" class="form-control" required value="<%= finished_good.code %>"></label>
+					<label style="width: 100%">Part Number: <input autocomplete="off" type="text" name="finished_good[code]" class="form-control" required value="<%= finished_good.code %>"></label>
 				</div>
 				<div class="col-md-3">
-					<label style="width: 100%">Stock: <input type="number" name="finished_good[stock]" value="<%= finished_good.stock %>" class="form-control"></label>
+					<label style="width: 100%">Stock: <input autocomplete="off" type="number" name="finished_good[stock]" value="<%= finished_good.stock %>" class="form-control"></label>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col-md-6">
-					<label style="width: 100%">Customer: <input type="text" name="finished_good[customer]" value="<%= finished_good.customer %>" class="form-control" required></label>
+					<label style="width: 100%">Customer: <input autocomplete="off" type="text" name="finished_good[customer]" value="<%= finished_good.customer %>" class="form-control" required></label>
 				</div>
 				<div class="col-md-3">
 					<label style="width: 100%">Category: <select name="finished_good[category]" class="form-control">
@@ -33,15 +33,15 @@
 					</select></label>
 				</div>
 				<div class="col-md-3">
-					<label style="width: 100%">Price: <input type="text" name="finished_good[price]" value="<%= finished_good.price %>" class="form-control"></label>
+					<label style="width: 100%">Price: <input autocomplete="off" type="text" name="finished_good[price]" value="<%= finished_good.price %>" class="form-control"></label>
 				</div>
 			</div>
-			<div class="row">
+			<div class="row admin">
 				<div class="col-md-3">
-					<label style="width: 100%">Man Power: <input type="text" name="finished_good[man_power]" value="<%= finished_good.man_power %>" class="form-control"></label>
+					<label style="width: 100%">Man Power: <input autocomplete="off" type="text" name="finished_good[man_power]" value="<%= finished_good.man_power %>" class="form-control"></label>
 				</div>
 				<div class="col-md-3">
-					<label style="width: 100%">Overheads: <input type="text" name="finished_good[overheads]" value="<%= finished_good.overheads %>" class="form-control"></label>
+					<label style="width: 100%">Overheads: <input autocomplete="off" type="text" name="finished_good[overheads]" value="<%= finished_good.overheads %>" class="form-control"></label>
 				</div>
 			</div>
 		</div>
@@ -59,13 +59,13 @@
 			<% for(var i=0;i<raw_materials.length;i++){ %>
 				<tr>
 					<td><%= i+1 %></td>
-					<td><input type="text" name="code[<%=i%>]" list="Product" required class="form-control" value="<%= raw_materials[i].raw_material_code %>">
+					<td><input autocomplete="off" type="text" name="code[<%=i%>]" list="Product" required class="form-control" value="<%= raw_materials[i].raw_material_code %>">
 							<datalist id="Product" name="Product">
 								<% for(var j=0;j<raw.length;j++){ %>
 									<option value="<%= raw[j].code %>"><%= raw[j].code %>$$<%= raw[j].DTPL_code %>$$<%= raw[j].name %></option>
 								<% } %>
 							</datalist></td>
-					<td><input type="text" name="quantity[<%=i%>]" value="<%= raw_materials[i].quantity %>" class="form-control"></td>
+					<td><input autocomplete="off" type="text" name="quantity[<%=i%>]" value="<%= raw_materials[i].quantity %>" class="form-control"></td>
 					<td><a href="/finished_good/<%= finished_good.code %>/<%= raw_materials[i].raw_material_code %>/delete">Delete</a></td>
 				</tr>
 			<% } %>

@@ -5,10 +5,12 @@
 var express 	   				 		 = require('express'),
 	bodyParser 	  						 = require('body-parser'),
 	methodOverride 						 = require('method-override'),
+	cookieParser 						 = require('cookie-parser')
 	logger    	 						 = require('./config/winston'),
 	app 		  						 = express(),
 	http 		   						 = require('http').Server(app),
 	io 			   						 = require('socket.io')(http),
+	logger		  	 					 = require('./config/winston').finished_good,
 	{ selectQuery } 		 			 = require('./config/query.js');
 
 var inventoryRoutes 	= require('./routes/inventory'),
@@ -21,6 +23,7 @@ var inventoryRoutes 	= require('./routes/inventory'),
 
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true, parameterLimit: 1000000}));
 app.use(methodOverride("_method"));
+app.use(cookieParser());
 app.use(express.static( __dirname + "/public"));
 app.use(inventoryRoutes);
 app.use(supplierRoutes);
@@ -119,8 +122,43 @@ io.on('connection', async function(socket){
 //                ROOT
 //======================================
 
-app.get("/",function(req,res){
-	res.render("landing");
+app.get("/",function(req, res) {
+	if(req.cookies.isAdmin){
+		res.render('landing')
+	} else {
+		res.render("login", {err: ``});
+	}
+});
+
+app.post("/", async (req, res) => {
+	var q = `SELECT * FROM users WHERE username = '${req.body.username}'`
+	selectQuery(q)
+		.then(users => {
+			let user = users[0];
+			if(user && req.body.password === user.password) {
+				if(user.isAdmin) {
+					res.cookie('isAdmin', true, {
+						maxAge: 1000 * 60 * 60
+					})
+				} else {
+					res.cookie('isAdmin', false, {
+						maxAge: 1000 * 60 * 600
+					})
+				}
+				res.render('landing')
+			} else {
+				res.render('login', {err: `User Not Found`})
+			}
+		})
+		.catch(err => {
+			logger.error({
+					error: err,
+					where: `${ req.method } ${ req.url } ${ q }`,
+					time: (new Date()).toISOString()
+			});
+			res.render('error',{error: err})
+		});
+
 });
 
 //=======================================

@@ -6,30 +6,30 @@
     <div class="row">
       <div class="col-md-6">
         <label for="finished_good[name]">Description</label>
-        <input type="text" name="finished_good[name]" value="<%= finished_good.name %>" class="form-control-plaintext">
+        <input autocomplete="off" type="text" name="finished_good[name]" value="<%= finished_good.name %>" class="form-control-plaintext">
       </div>
       <div class="col-md-6">
         <label for="finished_good[code]">Part Number</label>
-        <input type="text" name="finished_good[code]" value="<%= finished_good.code %>" class="form-control-plaintext">
+        <input autocomplete="off" type="text" name="finished_good[code]" value="<%= finished_good.code %>" class="form-control-plaintext">
       </div>
     </div>
     <br>
     <div class="row">
       <div class="col-md-3">
         <label for="finished_good[quantity]">Current Schedule</label>
-        <input type="text" name="finished_good[quantity]" value="<%= finished_good.quantity %>" class="form-control-plaintext">
+        <input autocomplete="off" type="text" name="finished_good[quantity]" value="<%= finished_good.quantity %>" class="form-control-plaintext">
       </div>
       <div class="col-md-3">
         <label for="production">Total Exchange</label>
-        <input type="text" name="production" value="<%= totalExchange %>" class="form-control-plaintext">
+        <input autocomplete="off" type="text" name="production" value="<%= totalExchange %>" class="form-control-plaintext">
       </div>
       <div class="col-md-3">
         <label for="production">Balance</label>
-        <input type="text" name="production" value="<%= finished_good.quantity - totalExchange %>" class="form-control-plaintext">
+        <input autocomplete="off" type="text" name="production" value="<%= finished_good.quantity - totalExchange %>" class="form-control-plaintext">
       </div>
       <div class="col-md-3">
         <label for="finished_good[stock]">Current Stock</label>
-        <input type="text" name="finished_good[stock]" value="<%= finished_good.stock %>" class="form-control-plaintext">
+        <input autocomplete="off" type="text" name="finished_good[stock]" value="<%= finished_good.stock %>" class="form-control-plaintext">
       </div>
     </div>
   </div>

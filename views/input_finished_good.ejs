@@ -13,10 +13,10 @@
 					</select></label>
 				</div>
 				<div class="col-md-3">
-					<label style="width: 100%;">Date: <input type="date" name="date" class="form-control" value="<%= new Date().toJSON().slice(0,10) %>"></label>
+					<label style="width: 100%;">Date: <input type="date" name="date" class="form-control" autocomplete="off" value="<%= new Date().toJSON().slice(0,10) %>"></label>
 				</div>
 				<div class="col-md-3">
-					<label style="width: 100%;">Quantity: <input type="number" name="quan" class="form-control" id="quan"></label>
+					<label style="width: 100%;">Quantity: <input type="number" name="quan" autocomplete="off" class="form-control" id="quan"></label>
 				</div>
 			</div>
 			<button type="button" class="btn btn-dark" onclick="func()">Add</button>

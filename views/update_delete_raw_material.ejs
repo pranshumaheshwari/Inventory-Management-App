@@ -6,30 +6,30 @@
 		<div class="row">
 			<div class="col-md-8">
 				<label for="raw_material[name]">Description</label>
-				<input type="text" name="raw_material[name]" value="<%= raw_material.name %>" id="raw_material[name]" class="form-control" required>
+				<input autocomplete="off" type="text" name="raw_material[name]" value="<%= raw_material.name %>" id="raw_material[name]" class="form-control" required>
 			</div>
 			<div class="col-md-4">
 				<label for="raw_material[code]">Part Number</label>
-				<input type="text" name="raw_material[code]" value="<%= raw_material.code %>" id="raw_material[code]" class="form-control" required>
+				<input autocomplete="off" type="text" name="raw_material[code]" value="<%= raw_material.code %>" id="raw_material[code]" class="form-control" required>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-md-8">
-				<label>DTPL Part Number: <input type="text" name="raw_material[DTPL_code]" class="form-control" required value="<%= raw_material.DTPL_code %>"></label>
+				<label>DTPL Part Number: <input autocomplete="off" type="text" name="raw_material[DTPL_code]" class="form-control" required value="<%= raw_material.DTPL_code %>"></label>
 			</div>
 			<div class="col-md-4">
 				<label for="raw_material[unit]">Unit</label>
-				<input type="text" name="raw_material[unit]" value="<%= raw_material.unit %>" id="raw_material[unit]" class="form-control" required>
+				<input autocomplete="off" type="text" name="raw_material[unit]" value="<%= raw_material.unit %>" id="raw_material[unit]" class="form-control" required>
 			</div>
 		</div>
 		<br>
 		<div class="row">
 			<div class="col-md-4">
 				<label for="raw_material[stock]">Current Stock</label>
-				<input type="number" name="raw_material[stock]" required id="raw_material[stock]" value="<%= raw_material.stock %>" class="form-control">
+				<input autocomplete="off" type="number" name="raw_material[stock]" required id="raw_material[stock]" value="<%= raw_material.stock %>" class="form-control">
 			</div>
 			<div class="col-md-4">
-				<label>Line Stock: <input type="number" name="raw_material[line_stock]" value="<%= raw_material.line_stock %>" required class="form-control"></label>
+				<label>Line Stock: <input autocomplete="off" type="number" name="raw_material[line_stock]" value="<%= raw_material.line_stock %>" required class="form-control"></label>
 			</div>
 			<div class="col-md-4">
 				<label for="raw_material[category]">Category</label>
@@ -51,7 +51,7 @@
 		</div>
 		<div class="row">
 			<div class="col">
-				<label>Price: <input type="text" name="raw_material[price]" value="<%= raw_material.price %>" class="form-control" required></label>
+				<label>Price: <input autocomplete="off" type="text" name="raw_material[price]" value="<%= raw_material.price %>" class="form-control" required></label>
 			</div>
 			<div class="col">
 				<label>Supplier:<select name="raw_material[supplier_code]" class="form-control">
@@ -79,7 +79,7 @@
 			<form id="f">
 			<div class="modal-body">
 					<label>Password</label>
-					<input type="password" name="Password" class="form-control" id='pass' placeholder='Enter Password Here'>
+					<input autocomplete="off" type="password" name="Password" class="form-control" id='pass' placeholder='Enter Password Here'>
 			</div>
 			<div class="modal-footer">
 				<button type="submit" class="btn btn-primary">Update</button>

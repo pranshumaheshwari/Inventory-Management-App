@@ -10,13 +10,13 @@
 				<label for="PO[code]">PO Number</label>
 			</div>
 			<div class="col-md-4">
-				<input type="text" name="PO[code]" id="PO[code]" required>
+				<input type="text" name="PO[code]" id="PO[code]" required autocomplete="off">
 			</div>
 			<div class="col-md-1">
 				<label for="date">Date</label>				
 			</div>
 			<div class="col-md-4">
-				<input type="date" name="PO[date]" value="<%= Date.now() %>" id="date" required>
+				<input type="date" name="PO[date]" value="<%= Date.now() %>" id="date" required autocomplete="off">
 			</div>
 		</div>
 		<div class="form-row">
@@ -24,7 +24,7 @@
 				<label for="PO[supplier_code]">Supplier Name</label>
 			</div>
 			<div class="col-md-4">
-				<input name="PO[supplier_code]" id="PO[supplier_code]" list="Supplier" required>
+				<input name="PO[supplier_code]" id="PO[supplier_code]" list="Supplier" required autocomplete="off">
 					<datalist id="Supplier" name="Supplier">
 					<% for(var i=0;i<suppliers.length;i++){ %>
 							<option value="<%= suppliers[i].name %>,<%= suppliers[i].code %>"><%= suppliers[i].name %>/<%= suppliers[i].code %></option>
@@ -37,7 +37,7 @@
 				<label for="PO[raw_material_code]">Raw Material Code</label>			
 			</div>
 			<div class="col-md-4">
-				<input name="PO[raw_material_code]" list="Product" id="PO[raw_material_code]">
+				<input name="PO[raw_material_code]" list="Product" id="PO[raw_material_code]" autocomplete="off">
 						<datalist id="Product" name="Product">	
 						<% for(var i=0;i<raw_materials.length;i++){ %>
 								<option value="<%= raw_materials[i].name %>,<%= raw_materials[i].code %>,<%= raw_materials[i].DTPL_code %>"><%= raw_materials[i].name %>/<%= raw_materials[i].code %>/<%= raw_materials[i].DTPL_code %></option>
@@ -48,7 +48,7 @@
 				<label for="quantity">Quantity</label>
 			</div>
 			<div class="col-md-2">
-				<input type="number" name="PO[quantity]" id="quantity" >
+				<input type="number" name="PO[quantity]" id="quantity" autocomplete="off">
 			</div>
 			<div class="col-md-1">
 			</div>
