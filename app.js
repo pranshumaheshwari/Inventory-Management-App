@@ -161,6 +161,11 @@ app.post("/", async (req, res) => {
 
 });
 
+app.get('/logout', async (req, res) => {
+	res.clearCookie("isAdmin");
+	res.render("login", {err: ``});
+});
+
 //=======================================
 //              OTHERS
 //=======================================
