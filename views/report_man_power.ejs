@@ -8,7 +8,8 @@
 			<tr>
 				<th>#</th>
 				<th>Description</th>
-				<th>Part Number</th>
+                <th>Part Number</th>
+                <th>Category</th>
 				<th>Production</th>
 				<th>Man Power Per Unit</th>
 				<th>Overheads Per Unit</th>
@@ -24,6 +25,7 @@
 					<td><%= i+1 %></td>
 					<td><%= data[i].name %></td>
 					<td><%= data[i].FG_code %></td>
+					<td><%= data[i].category %></td>
 					<td><%= data[i].quantity %></td>
                     <td><%= data[i].man_power %></td>
                     <td><%= data[i].overheads %></td>
@@ -39,6 +41,7 @@
                 <td></td>
                 <td></td>
                 <td></td>
+                <td></td>
                 <td>Total</td>
                 <td><%= Math.round(totalManPower * 100) / 100 %></td>
                 <td><%= Math.round(totalOverheads * 100) / 100 %></td>
@@ -49,11 +52,13 @@
                 <td></td>
                 <td></td>
                 <td></td>
+                <td></td>
                 <td>Actual</td>
                 <td><%= nos %></td>
                 <td></td>
             </tr>
             <tr>
+                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>

@@ -604,7 +604,7 @@ app.post("/report/manPower", async (req, res) => {
 		var s = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}` 
 		return s
 	}
-	var q = `SELECT SUM(production.quantity) AS quantity, production.FG_code, finished_goods.man_power, finished_goods.name, finished_goods.overheads FROM (production INNER JOIN finished_goods ON production.FG_code = finished_goods.code) WHERE production.date >= '${from.replace(/-/g, '/')}' AND production.date < '${nextDate(to).replace(/-/g, '/')}' GROUP BY production.FG_code`
+	var q = `SELECT SUM(production.quantity) AS quantity, production.FG_code, finished_goods.man_power, finished_goods.name, finished_goods.overheads, finished_goods.category FROM (production INNER JOIN finished_goods ON production.FG_code = finished_goods.code) WHERE production.date >= '${from.replace(/-/g, '/')}' AND production.date < '${nextDate(to).replace(/-/g, '/')}' GROUP BY production.FG_code ORDER BY finished_goods.category`
 	selectQuery(q)
 		.then(data => {
 			q = `SELECT SUM(nos) AS nos FROM attendance WHERE date >= '${from.replace(/-/g, '/')}' AND date < '${nextDate(to).replace(/-/g, '/')}'`
