@@ -589,7 +589,7 @@ app.get("/report/ProductionTracker", async (req, res) => {
 //										Man Power Efficenicy
 
 app.get("/report/manPower", async (req, res) => {
-	res.render("date.ejs");
+	res.render("date.ejs", {action: "manPower"});
 });
 
 app.post("/report/manPower", async (req, res) => {
@@ -629,6 +629,28 @@ app.post("/report/manPower", async (req, res) => {
 				});
 			res.render('error',{error: err})
 		});
+});
+
+app.get('/report/attendance', async (req, res) => {
+	res.render("date.ejs", {action: "attendance"});	
+});
+
+app.post('/report/attendance', async (req, res) => {
+	var from = req.body.from;
+	var to = req.body.to;
+	var q = `SELECT * FROM attendance WHERE date >= '${from}' AND date < '${to}'`
+	selectQuery(q)
+			.then(data => {
+				res.render("report_attendance", {data})
+			})
+			.catch(err => {
+				logger.error({
+					error: err,
+					where: `${ req.method } ${ req.url } ${ q }`,
+						time: (new Date()).toISOString()
+					});
+				res.render('error',{error: err})
+			});
 });
 
 //																		INPUT-OUTPUT
