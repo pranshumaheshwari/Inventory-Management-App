@@ -25,6 +25,17 @@ app.use(bodyParser.urlencoded({limit: '50mb', extended: true, parameterLimit: 10
 app.use(methodOverride("_method"));
 app.use(cookieParser());
 app.use(express.static( __dirname + "/public"));
+app.use((req, res, next) => {
+	if (req.method === 'POST' && req.url === '/')
+		next()
+	else {
+		if (req.cookies.isAdmin) {
+			next()
+		} else {
+			res.render("login", {err: ``});
+		}
+	}
+});
 app.use(inventoryRoutes);
 app.use(supplierRoutes);
 app.use(PORoutes);
@@ -138,11 +149,11 @@ app.post("/", async (req, res) => {
 			if(user && req.body.password === user.password) {
 				if(user.isAdmin) {
 					res.cookie('isAdmin', true, {
-						maxAge: 1000 * 60 * 60
+						maxAge: 1000 * 60 * 60 * 12
 					})
 				} else {
 					res.cookie('isAdmin', false, {
-						maxAge: 1000 * 60 * 600
+						maxAge: 1000 * 60 * 60 * 12
 					})
 				}
 				res.render('landing')

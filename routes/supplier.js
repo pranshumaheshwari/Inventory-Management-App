@@ -1,15 +1,15 @@
 var express 	  							 = require('express'),
 		{selectQuery, insertQuery} = require('../config/query.js'),
-		bodyParser 	  						 = require('body-parser'),
-		methodOverride 						 = require('method-override'),
+		// bodyParser 	  						 = require('body-parser'),
+		// methodOverride 						 = require('method-override'),
 		logger		  	 						 = require('../config/winston').supplier,
 		app      	   							 = express.Router();
 
 //=======================================================================================
 
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(methodOverride("_method"));
-app.use(express.static( __dirname + "/public"));
+// app.use(bodyParser.urlencoded({extended: true}));
+// app.use(methodOverride("_method"));
+// app.use(express.static( __dirname + "/public"));
 
 //=======================================================================================
 //																		GET

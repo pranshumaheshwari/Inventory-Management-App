@@ -1,15 +1,15 @@
 var express 	   						 	 = require('express'),
 		{selectQuery, insertQuery} = require('../config/query.js'),
-		bodyParser 	   						 = require('body-parser'),
-		methodOverride 						 = require('method-override'),
+		// bodyParser 	   						 = require('body-parser'),
+		// methodOverride 						 = require('method-override'),
 		logger		  	 						 = require('../config/winston').inventory,
 		app      	   							 = express.Router();
 
 //=======================================================================================
 
-app.use(bodyParser.urlencoded({limit: '50mb', extended: true, parameterLimit: 1000000}));
-app.use(methodOverride("_method"));
-app.use(express.static( __dirname + "/public"));
+// app.use(bodyParser.urlencoded({limit: '50mb', extended: true, parameterLimit: 1000000}));
+// app.use(methodOverride("_method"));
+// app.use(express.static( __dirname + "/public"));
 
 //=======================================================================================
 //																		GET
@@ -184,7 +184,7 @@ app.put("/inventory/:code",async function(req,res){
 //=======================================================================================
 
 app.delete("/inventory/:code",async function(req,res){
-	var q = '${ req.method } FROM raw_material WHERE code = "' + req.params.code + '"';
+	var q = `DELETE FROM raw_material WHERE code = "` + req.params.code + '"';
 	await selectQuery(q)
 						.then(result => {
 							logger.info({
