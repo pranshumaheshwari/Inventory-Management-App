@@ -20,6 +20,7 @@ app.get("/inventory",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
@@ -42,6 +43,7 @@ app.get("/inventory/new",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err});
+							res.end()
 						});
 });
 
@@ -61,7 +63,8 @@ app.get("/inventory/:code",async function(req,res){
 															time: (new Date()).toISOString()
 													});
 													res.render('error',{error: err});
-												});
+												res.end()
+											});
 						})
 						.catch(err => {
 							logger.error({
@@ -70,6 +73,7 @@ app.get("/inventory/:code",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err});
+							res.end()
 						});
 });
 
@@ -86,6 +90,7 @@ app.get("/inventory/:code/requirement",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err});
+							res.end()
 						});
 });
 
@@ -106,6 +111,7 @@ app.post("/inventory/search/category",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err});
+							res.end()
 						});
 });
 
@@ -122,6 +128,7 @@ app.post("/inventory/search/name",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err});
+							res.end()
 						});
 });
 
@@ -143,6 +150,7 @@ app.post("/inventory/new",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err});
+							res.end()
 						});
 });
 
@@ -168,6 +176,7 @@ app.put("/inventory/:code",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err});
+							res.end()
 						});
 });
 
@@ -193,6 +202,7 @@ app.delete("/inventory/:code",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err});
+							res.end()
 						});
 });
 
