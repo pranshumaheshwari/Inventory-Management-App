@@ -30,6 +30,7 @@ app.get("/report",function(req,res){
 										time: (new Date()).toISOString()
 								});
 								res.render('error',{error: err})
+								res.end()
 							});
 	});
 
@@ -57,6 +58,7 @@ app.get("/report",function(req,res){
 																time: (new Date()).toISOString()
 														});
 														res.render('error',{error: err})
+														res.end()
 													});
 							})
 							.then(async _ => {
@@ -72,6 +74,7 @@ app.get("/report",function(req,res){
 																time: (new Date()).toISOString()
 														});
 														res.render('error',{error: err})
+														res.end()
 													});
 							})
 							.then(async _ => {
@@ -89,6 +92,7 @@ app.get("/report",function(req,res){
 																time: (new Date()).toISOString()
 														});
 														res.render('error',{error: err})
+														res.end()
 													});
 							})
 							.then(async _ => {
@@ -106,6 +110,7 @@ app.get("/report",function(req,res){
 																time: (new Date()).toISOString()
 														});
 														res.render('error',{error: err})
+														res.end()
 													});
 							})
 							.then(async _ => {
@@ -122,6 +127,7 @@ app.get("/report",function(req,res){
 																time: (new Date()).toISOString()
 														});
 														res.render('error',{error: err})
+														res.end()
 													});
 							})
 							.then(async _ => {
@@ -137,6 +143,7 @@ app.get("/report",function(req,res){
 																time: (new Date()).toISOString()
 														});
 														res.render('error',{error: err})
+														res.end()
 													});
 							})
 							.then(async _ => {
@@ -153,6 +160,7 @@ app.get("/report",function(req,res){
 										time: (new Date()).toISOString()
 								});
 								res.render('error',{error: err})
+								res.end()
 							});
 		res.render("report_pd",{finished_goods:finished_goods,openingStock:openingStock,closingStock:closingStock,to:to,from:from,finished_good:finished_good,t:'FGName',totalExchange:totalExchange,productionQuantity:0,dispatchQuantity:0});
 	});
@@ -176,6 +184,7 @@ app.get("/report",function(req,res){
 										time: (new Date()).toISOString()
 								});
 								res.render('error',{error: err})
+								res.end()
 							});
 	});
 
@@ -195,6 +204,7 @@ app.get("/report",function(req,res){
 										time: (new Date()).toISOString()
 								});
 								res.render('error',{error: err})
+								res.end()
 							});
 	});
 
@@ -227,6 +237,7 @@ app.get("/report",function(req,res){
 																time: (new Date()).toISOString()
 														});
 														res.render('error',{error: err})
+														res.end()
 													});
 							})
 							.then(async _ => {
@@ -242,6 +253,7 @@ app.get("/report",function(req,res){
 																time: (new Date()).toISOString()
 														});
 														res.render('error',{error: err})
+														res.end()
 													});
 							})
 							.catch(err => {
@@ -251,6 +263,7 @@ app.get("/report",function(req,res){
 										time: (new Date()).toISOString()
 								});
 								res.render('error',{error: err})
+								res.end()
 							});
 	});
 
@@ -270,6 +283,7 @@ app.get("/report",function(req,res){
 										time: (new Date()).toISOString()
 								});
 								res.render('error',{error: err})
+								res.end()
 							});
 	});
 
@@ -302,6 +316,7 @@ app.get("/report",function(req,res){
 																time: (new Date()).toISOString()
 														});
 														res.render('error',{error: err})
+														res.end()
 													});
 							})
 							.then(async _ => {
@@ -317,6 +332,7 @@ app.get("/report",function(req,res){
 																time: (new Date()).toISOString()
 														});
 														res.render('error',{error: err})
+														res.end()
 													});
 							})
 							.catch(err => {
@@ -326,6 +342,7 @@ app.get("/report",function(req,res){
 										time: (new Date()).toISOString()
 								});
 								res.render('error',{error: err})
+								res.end()
 							});
 	});
 
@@ -349,7 +366,8 @@ app.get("/report/name",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
-						});
+							res.end()
+							});
 });
 
 app.post("/report/name",async function(req,res){
@@ -373,6 +391,7 @@ app.post("/report/name",async function(req,res){
 																					time: (new Date()).toISOString()
 																			});
 																			res.render('error',{error: err})
+																			res.end()
 																		});
 						})
 						.then(async _ => {
@@ -385,6 +404,7 @@ app.post("/report/name",async function(req,res){
 																						time: (new Date()).toISOString()
 																				});
 																				res.render('error',{error: err})
+																				res.end()
 																			});
 						})
 						.then(async _ => {
@@ -427,6 +447,7 @@ app.post("/report/name",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
@@ -445,6 +466,7 @@ app.get("/report/PO",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
@@ -461,6 +483,7 @@ app.get("/report/PO/:code",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
@@ -477,6 +500,7 @@ app.post("/report/PO",async function(req,res){
 										time: (new Date()).toISOString()
 								});
 								res.render('error',{error: err})
+								res.end()
 							});
 	});
 
@@ -495,6 +519,7 @@ app.get("/report/shortage",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
@@ -513,6 +538,7 @@ app.get("/report/excess",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
@@ -524,24 +550,26 @@ app.get("/report/ScheduleTracker", async (req, res) => {
 		var date = d.getDate();
 		var q = "SELECT code, category, quantity FROM finished_goods ORDER BY category";
 		var finished_goods = await selectQuery(q)
-		.catch(err => {
-			logger.error({
-				error: err,
-										where: `${ req.method } ${ req.url } ${ q }`,
-										time: (new Date()).toISOString()
-									});
-									res.render('error',{error: err})
-							});
+										.catch(err => {
+											logger.error({
+												error: err,
+												where: `${ req.method } ${ req.url } ${ q }`,
+												time: (new Date()).toISOString()
+											});
+											res.render('error',{error: err})
+											res.end()
+										});
 							for(var i = 0;i<finished_goods.length;i++){
 								q = `SELECT DATE(date) AS date, SUM(quantity) AS quantity FROM dispatch WHERE FG_code = '${ finished_goods[i].code }' AND MONTH(date) = '${ month }' GROUP BY DATE(date)`;
 								finished_goods[i].dispatch = await selectQuery(q)
-								.catch(err => {
+													.catch(err => {
 														logger.error({
 															error: err,
 																where: `${ req.method } ${ req.url } ${ q }`,
 																time: (new Date()).toISOString()
 															});
 														res.render('error',{error: err})
+														res.end()
 													});
 	}
 	res.render("ScheduleTracker", { finished_goods, date, month });
@@ -562,18 +590,20 @@ app.get("/report/ProductionTracker", async (req, res) => {
 										time: (new Date()).toISOString()
 									});
 									res.render('error',{error: err})
-							});
+									res.end()
+								});
 							for(var i = 0;i<finished_goods.length;i++){
 								q = `SELECT DATE(date) AS date, SUM(quantity) AS quantity FROM production WHERE FG_code = '${ finished_goods[i].code }' AND MONTH(date) = '${ month }' GROUP BY DATE(date)`;
-		finished_goods[i].production = await selectQuery(q)
-		.catch(err => {
-														logger.error({
-															error: err,
-															where: `${ req.method } ${ req.url } ${ q }`,
-																time: (new Date()).toISOString()
-															});
-														res.render('error',{error: err})
-													});
+								finished_goods[i].production = await selectQuery(q)
+																		.catch(err => {
+																					logger.error({
+																					error: err,
+																					where: `${ req.method } ${ req.url } ${ q }`,
+																						time: (new Date()).toISOString()
+																					});
+																				res.render('error',{error: err})
+																				res.end()
+																			});
 												}
 	res.render("ProductionTracker", { finished_goods, date, month });
 });
@@ -611,6 +641,7 @@ app.post("/report/manPower", async (req, res) => {
 							time: (new Date()).toISOString()
 						});
 					res.render('error',{error: err})
+					res.end()
 				});
 		})
 		.catch(err => {
@@ -620,6 +651,7 @@ app.post("/report/manPower", async (req, res) => {
 					time: (new Date()).toISOString()
 				});
 			res.render('error',{error: err})
+			res.end()
 		});
 });
 
@@ -642,6 +674,7 @@ app.post('/report/attendance', async (req, res) => {
 						time: (new Date()).toISOString()
 					});
 				res.render('error',{error: err})
+				res.end()
 			});
 });
 
@@ -682,6 +715,7 @@ app.post("/report/:type",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
