@@ -1,9 +1,9 @@
 <script>
-    var isAdmin = Cookies.get('isAdmin');
-    [...$('.admin')].forEach(ele => {
-       if(isAdmin === 'false' ) {
-            ele.style.display = "none";
-       }
+    var userType = Cookies.get('user');
+    [...$('.element')].forEach(ele => {
+        if(!ele.classList.contains(userType)) {
+            ele.parentNode.removeChild(ele)
+        }
     });
 </script>
 </body>
