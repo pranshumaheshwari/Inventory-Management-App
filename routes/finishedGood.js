@@ -18,6 +18,10 @@ app.post("/attendance", async (req, res) => {
 		nos: req.body.nos 
 	})
 	.then(_ => {
+		logger.info({
+			where: `${ req.method } ${ req.url } ${ q }`,
+			time: (new Date()).toISOString()
+		});
 		res.redirect("/attendance")
 	})
 	.catch(err => {
@@ -82,6 +86,12 @@ app.post("/finished_good/bulkUpdate", async (req, res) => {
 		let error = data[code] - currentStock;
 		q = `INSERT INTO finished_goods_error SET ?`
 		await insertQuery(q, {code, quantity: error})
+					.then(resp => {
+						logger.info({
+							where: `${ req.method } ${ req.url } ${ q }`,
+							time: (new Date()).toISOString()
+						});
+					})
 					.catch(err => {
 						logger.error({
 								error: err,
@@ -93,6 +103,12 @@ app.post("/finished_good/bulkUpdate", async (req, res) => {
 					});
 		q = `UPDATE finished_goods SET stock = '${data[code]}' WHERE code = '${code}'`
 		await selectQuery(q)
+					.then(resp => {
+						logger.info({
+							where: `${ req.method } ${ req.url } ${ q }`,
+							time: (new Date()).toISOString()
+						});
+					})
 					.catch(err => {
 						logger.error({
 								error: err,
