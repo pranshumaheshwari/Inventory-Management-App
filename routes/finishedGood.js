@@ -27,6 +27,7 @@ app.post("/attendance", async (req, res) => {
 				time: (new Date()).toISOString()
 		});
 		res.render('error',{error: err})
+		res.end()
 	});
 })
 
@@ -59,6 +60,7 @@ app.get("/finished_good/bulkUpdate", async (req, res) => {
 						time: (new Date()).toISOString()
 				});
 				res.render('error',{error: err})
+				res.end()
 			});
 });
 
@@ -75,6 +77,7 @@ app.post("/finished_good/bulkUpdate", async (req, res) => {
 												time: (new Date()).toISOString()
 										});
 										res.render('error',{error: err})
+										res.end()
 									});
 		let error = data[code] - currentStock;
 		q = `INSERT INTO finished_goods_error SET ?`
@@ -86,6 +89,7 @@ app.post("/finished_good/bulkUpdate", async (req, res) => {
 								time: (new Date()).toISOString()
 						});
 						res.render('error',{error: err})
+						res.end()
 					});
 		q = `UPDATE finished_goods SET stock = '${data[code]}' WHERE code = '${code}'`
 		await selectQuery(q)
@@ -96,6 +100,7 @@ app.post("/finished_good/bulkUpdate", async (req, res) => {
 								time: (new Date()).toISOString()
 						});
 						res.render('error',{error: err})
+						res.end()
 					});
 	}
 	res.redirect("/finished_good")
@@ -114,6 +119,7 @@ app.get("/finished_good",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
@@ -136,6 +142,7 @@ app.get("/finished_good/new",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
@@ -152,6 +159,7 @@ app.get("/finished_good/mock",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
@@ -168,6 +176,7 @@ app.get("/finished_good/reset",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
@@ -184,20 +193,22 @@ app.get("/finished_good/production",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
 app.get("/finished_good/production/:date",async (req,res) => {
 	let q = `SELECT * FROM production WHERE date BETWEEN '${ req.params.date }' AND '${ req.params.date }' + INTERVAL 1 DAY`;
 	let finished_goods = await selectQuery(q)
-																		.catch(err => {
-																			logger.error({
-																					error: err,
-																					where: `${ req.method } ${ req.url } ${ q }`,
-																					time: (new Date()).toISOString()
-																			});
-																			res.render('error',{error: err})
-																		});
+									.catch(err => {
+										logger.error({
+												error: err,
+												where: `${ req.method } ${ req.url } ${ q }`,
+												time: (new Date()).toISOString()
+										});
+										res.render('error',{error: err})
+										res.end()
+									});
 	res.render("update_delete_production",{finished_goods:finished_goods});
 });
 
@@ -218,6 +229,7 @@ app.get("/finished_good/dispatch",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
@@ -234,6 +246,7 @@ app.get("/finished_good/dispatch/:invoice_no",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
@@ -256,6 +269,7 @@ app.get("/finished_good/:code",async function(req,res){
 																					time: (new Date()).toISOString()
 																			});
 																			res.render('error',{error: err})
+																			res.end()
 																		});
 												})
 												.catch(err => {
@@ -265,6 +279,7 @@ app.get("/finished_good/:code",async function(req,res){
 															time: (new Date()).toISOString()
 													});
 													res.render('error',{error: err})
+													res.end()
 												});
 						})
 						.catch(err => {
@@ -274,6 +289,7 @@ app.get("/finished_good/:code",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
@@ -294,6 +310,7 @@ app.get("/finished_good/BOM/:code",async function(req,res){
 															time: (new Date()).toISOString()
 													});
 													res.render('error',{error: err})
+													res.end()
 												});
 						})
 						.catch(err => {
@@ -303,6 +320,7 @@ app.get("/finished_good/BOM/:code",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
@@ -319,6 +337,7 @@ app.get("/finished_good/:code/new",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
@@ -344,6 +363,7 @@ app.post("/BOM",async function(req,res){
 										time: (new Date()).toISOString()
 								});
 								res.render('error',{error: err})
+								res.end()
 							});
 	}
 	var q = "SELECT * FROM raw_material";
@@ -367,6 +387,7 @@ app.post("/BOM",async function(req,res){
 																time: (new Date()).toISOString()
 														});
 														res.render('error',{error: err})
+														res.end()
 													});
 							}
 							q = "SELECT * FROM raw_material ORDER BY supplier_code ";
@@ -389,6 +410,7 @@ app.post("/BOM",async function(req,res){
 																								time: (new Date()).toISOString()
 																						});
 																						res.render('error',{error: err});
+																						res.end()
 																					});
 													});
 													let r = raw_materials.filter(raw => raw.monthly_requirement > 0 );
@@ -401,6 +423,7 @@ app.post("/BOM",async function(req,res){
 															time: (new Date()).toISOString()
 													});
 													res.render('error',{error: err})
+													res.end()
 												});
 						})
 						.catch(err => {
@@ -410,6 +433,7 @@ app.post("/BOM",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
@@ -444,6 +468,7 @@ app.post("/finished_good/dispatch",async function(req,res){
 																time: (new Date()).toISOString()
 														});
 														res.render('error',{error: err});
+														res.end()
 													});
 							})
 							.catch(err => {
@@ -453,6 +478,7 @@ app.post("/finished_good/dispatch",async function(req,res){
 										time: (new Date()).toISOString()
 								});
 								res.render('error',{error: err})
+								res.end()
 							});
 	}
 	res.redirect("/finished_good/dispatch");
@@ -488,6 +514,7 @@ app.post("/finished_good/production",async function(req,res){
 																time: (new Date()).toISOString()
 														});
 														res.render('error',{error: err});
+														res.end()
 													});
 							})
 							.then(async _ => {
@@ -510,6 +537,7 @@ app.post("/finished_good/production",async function(req,res){
 																							time: (new Date()).toISOString()
 																					});
 																					res.render('error',{error: err})
+																					res.end()
 																				});
 														}
 													})
@@ -520,6 +548,7 @@ app.post("/finished_good/production",async function(req,res){
 																time: (new Date()).toISOString()
 														});
 														res.render('error',{error: err})
+														res.end()
 													});
 							})
 							.catch(err => {
@@ -529,6 +558,7 @@ app.post("/finished_good/production",async function(req,res){
 										time: (new Date()).toISOString()
 								});
 								res.render('error',{error: err})
+								res.end()
 							});
 	}
 	res.redirect("/finished_good/production");
@@ -552,6 +582,7 @@ app.post("/finished_good/mock",async function(req,res){
 										time: (new Date()).toISOString()
 								});
 								res.render('error',{error: err})
+								res.end()
 							});
 	}
 	var q = "SELECT * FROM raw_material";
@@ -579,6 +610,7 @@ app.post("/finished_good/mock",async function(req,res){
 															time: (new Date()).toISOString()
 													});
 													res.render('error',{error: err})
+													res.end()
 												});
 						})
 						.catch(err => {
@@ -588,6 +620,7 @@ app.post("/finished_good/mock",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
@@ -604,6 +637,7 @@ app.post("/finished_good/search/category",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
@@ -632,13 +666,13 @@ app.post("/finished_good/new",async function(req,res){
 														});
 													})
 													.catch(err => {
-														throw err;
 														logger.error({
 																error: err,
 																where: `${ req.method } ${ req.url } ${ q }`,
 																time: (new Date()).toISOString()
 														});
 														res.render('error',{error: err});
+														res.end()
 													});
 							}
 							res.redirect("/finished_good/" + req.body.finished_good.code);
@@ -650,6 +684,7 @@ app.post("/finished_good/new",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err});
+							res.end()
 						});
 });
 
@@ -676,6 +711,7 @@ app.post("/finished_good/:code/new",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err});
+							res.end()
 						});
 });
 
@@ -721,6 +757,7 @@ app.put("/finished_good/:code",async function(req,res){
 																						time: (new Date()).toISOString()
 																				});
 																				res.render('error',{error: err});
+																				res.end()
 																			});
 													}
 													res.redirect("/finished_good");
@@ -732,6 +769,7 @@ app.put("/finished_good/:code",async function(req,res){
 															time: (new Date()).toISOString()
 													});
 													res.render('error',{error: err})
+													res.end()
 												});
 						})
 						.catch(err => {
@@ -741,6 +779,7 @@ app.put("/finished_good/:code",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
@@ -751,75 +790,83 @@ app.put("/finished_good/:code",async function(req,res){
 app.delete("/finished_good/production/:code/:date/:quantity",async (req,res) => {
 	let q = `UPDATE finished_goods SET stock = stock - ${ req.params.quantity } WHERE code = '${ req.params.code }'`;
 	await selectQuery(q)
-								.then(result => {
-									logger.info({
-											where: `${ req.method } ${ req.url } ${ q }`,
-											time: (new Date()).toISOString()
-									});
-								})
+			.then(result => {
+				logger.info({
+						where: `${ req.method } ${ req.url } ${ q }`,
+						time: (new Date()).toISOString()
+				});
+			})
+			.catch(err => {
+				logger.error({
+						error: err,
+						where: `${ req.method } ${ req.url } ${ q }`,
+						time: (new Date()).toISOString()
+				});
+				res.render('error',{error: err})
+				res.end()
+			});
+	q = `SELECT * FROM finished_goods_detail WHERE code = '${ req.params.code }'`;
+	let raw_materials = await selectQuery(q)
 								.catch(err => {
 									logger.error({
 											error: err,
 											where: `${ req.method } ${ req.url } ${ q }`,
 											time: (new Date()).toISOString()
 									});
+									res.render('error',{error: err})
+									res.end()
 								});
-	q = `SELECT * FROM finished_goods_detail WHERE code = '${ req.params.code }'`;
-	let raw_materials = await selectQuery(q)
-																	.catch(err => {
-																		logger.error({
-																				error: err,
-																				where: `${ req.method } ${ req.url } ${ q }`,
-																				time: (new Date()).toISOString()
-																		});
-																		res.render('error',{error: err})
-																	});
 	await raw_materials.forEach(async raw_material => {
 		q = `UPDATE raw_material SET line_stock = line_stock + (${ req.params.quantity } * ${ raw_material.quantity }) WHERE code = '${ raw_material.raw_material_code }'`;
 		await selectQuery(q)
-									.then(result => {
-										logger.info({
-												where: `${ req.method } ${ req.url } ${ q }`,
-												time: (new Date()).toISOString()
-										});
-									})
-									.catch(err => {
-										logger.error({
-												error: err,
-												where: `${ req.method } ${ req.url } ${ q }`,
-												time: (new Date()).toISOString()
-										});
-									});
+					.then(result => {
+						logger.info({
+								where: `${ req.method } ${ req.url } ${ q }`,
+								time: (new Date()).toISOString()
+						});
+					})
+					.catch(err => {
+						logger.error({
+								error: err,
+								where: `${ req.method } ${ req.url } ${ q }`,
+								time: (new Date()).toISOString()
+						});
+						res.render('error',{error: err})
+						res.end()
+					});
 	});
 	q = `DELETE FROM production WHERE FG_code = '${ req.params.code }' AND date BETWEEN '${ req.params.date }' AND '${ req.params.date }' + INTERVAL 1 DAY AND quantity = ${ req.params.quantity }`;
 	await selectQuery(q)
-								.then(result => {
-									logger.info({
-											where: `${ req.method } ${ req.url } ${ q }`,
-											time: (new Date()).toISOString()
-									});
-								})
-								.catch(err => {
-									logger.error({
-											error: err,
-											where: `${ req.method } ${ req.url } ${ q }`,
-											time: (new Date()).toISOString()
-									});
-								});
+				.then(result => {
+					logger.info({
+							where: `${ req.method } ${ req.url } ${ q }`,
+							time: (new Date()).toISOString()
+					});
+				})
+				.catch(err => {
+					logger.error({
+							error: err,
+							where: `${ req.method } ${ req.url } ${ q }`,
+							time: (new Date()).toISOString()
+					});
+					res.render('error',{error: err})
+					res.end()
+				});
 	res.redirect("/finished_good/production");
 });
 
 app.delete("/finished_good/dispatch/:invoice_no/:code",async (req,res) => {
 	let q = `SELECT * FROM dispatch WHERE invoice_no = '${ req.params.invoice_no }' AND FG_code = '${ req.params.code }'`;
 	let finished_good = await selectQuery(q)
-																		.catch(err => {
-																			logger.error({
-																					error: err,
-																					where: `${ req.method } ${ req.url } ${ q }`,
-																					time: (new Date()).toISOString()
-																			});
-																			res.render('error',{error: err})
-																		});
+									.catch(err => {
+										logger.error({
+												error: err,
+												where: `${ req.method } ${ req.url } ${ q }`,
+												time: (new Date()).toISOString()
+										});
+										res.render('error',{error: err})
+										res.end()
+									});
 	q = `UPDATE finished_goods SET stock = stock + ${ finished_good.quantity } WHERE code = '${ req.params.code }'`;
 	await selectQuery(q)
 								.then(result => {
@@ -836,6 +883,7 @@ app.delete("/finished_good/dispatch/:invoice_no/:code",async (req,res) => {
 											time: (new Date()).toISOString()
 									});
 									res.render('error',{error: err})
+									res.end()
 								});
 });
 
@@ -849,6 +897,7 @@ app.delete("/finished_good/dispatch/:invoice_no",async (req,res) => {
 																					time: (new Date()).toISOString()
 																			});
 																			res.render('error',{error: err})
+																			res.end()
 																		});
 	await finished_goods.forEach(async finished_good => {
 		q = `UPDATE finished_goods SET stock = stock + ${ finished_good.quantity } WHERE code = '${ finished_good.FG_code }'`;
@@ -860,6 +909,7 @@ app.delete("/finished_good/dispatch/:invoice_no",async (req,res) => {
 												time: (new Date()).toISOString()
 										});
 										res.render('error',{error: err})
+										res.end()
 									});
 	});
 	res.redirect(`/finished_good/dispatch`);
@@ -889,6 +939,7 @@ app.delete("/finished_good/:code",async function(req,res){
 															time: (new Date()).toISOString()
 													});
 													res.render('error',{error: err})
+													res.end()
 												});
 						})
 						.catch(err => {
@@ -898,6 +949,7 @@ app.delete("/finished_good/:code",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
@@ -918,6 +970,7 @@ app.get("/finished_good/:code/:raw/delete",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
