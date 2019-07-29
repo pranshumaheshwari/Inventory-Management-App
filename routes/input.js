@@ -21,6 +21,7 @@ app.get("/input",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
@@ -37,6 +38,7 @@ app.get("/input/:invoice_no",async (req, res) => {
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
@@ -57,6 +59,7 @@ app.post("/input",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
@@ -104,6 +107,7 @@ app.post("/input/update",async function(req,res){
 																						time: (new Date()).toISOString()
 																				});
 																				res.render('error',{error: err});
+																				res.end()
 																			});
 													})
 													.catch(err => {
@@ -113,6 +117,7 @@ app.post("/input/update",async function(req,res){
 																time: (new Date()).toISOString()
 														});
 														res.render('error',{error: err})
+														res.end()
 													});
 							})
 							.catch(err => {
@@ -122,6 +127,7 @@ app.post("/input/update",async function(req,res){
 										time: (new Date()).toISOString()
 								});
 								res.render('error',{error: err})
+								res.end()
 							});
 	}
 	// let q = 'SELECT * FROM PO_detail WHERE PO_code ="' + PO_code + '"';
@@ -166,6 +172,7 @@ app.delete("/input/:invoice_no",async (req, res) => {
 																time: (new Date()).toISOString()
 														});
 														res.render('error',{error: err})
+														res.end()
 													});
 							});
 						})
@@ -185,6 +192,7 @@ app.delete("/input/:invoice_no",async (req, res) => {
 															time: (new Date()).toISOString()
 													});
 													res.render('error',{error: err})
+													res.end()
 												});
 						})
 						.then(_ => {
@@ -197,6 +205,7 @@ app.delete("/input/:invoice_no",async (req, res) => {
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
@@ -220,6 +229,7 @@ app.delete("/input/:invoice_no/:raw_desc",async (req, res) => {
 																time: (new Date()).toISOString()
 														});
 														res.render('error',{error: err})
+														res.end()
 													});
 							});
 						})
@@ -239,6 +249,7 @@ app.delete("/input/:invoice_no/:raw_desc",async (req, res) => {
 															time: (new Date()).toISOString()
 													});
 													res.render('error',{error: err})
+													res.end()
 												});
 						})
 						.then(_ => {
@@ -251,6 +262,7 @@ app.delete("/input/:invoice_no/:raw_desc",async (req, res) => {
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
