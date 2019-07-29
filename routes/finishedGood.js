@@ -1,15 +1,7 @@
 var express 	   						 	 = require('express'),
 		{selectQuery, insertQuery} = require('../config/query.js'),
-		// bodyParser 	   						 = require('body-parser'),
-		// methodOverride 						 = require('method-override'),
 		logger		  	 						 = require('../config/winston').finished_good,
 		app      	   							 = express.Router();
-
-//=======================================================================================
-
-// app.use(bodyParser.urlencoded({limit: '50mb', extended: true, parameterLimit: 1000000}));
-// app.use(methodOverride("_method"));
-// app.use(express.static( __dirname + "/public"));
 
 //=======================================================================================
 //																		GET
@@ -52,6 +44,61 @@ app.get("/BOM",async function(req,res){
 							});
 							res.render('error',{error: err})
 						});
+});
+
+app.get("/finished_good/bulkUpdate", async (req, res) => {
+	var q = `SELECT * FROM finished_goods ORDER BY category`;
+	selectQuery(q)
+			.then(finishedGoods => {
+				res.render("bulk_update", {data: finishedGoods, type: 'finished_good'});
+			})
+			.catch(err => {
+				logger.error({
+						error: err,
+						where: `${ req.method } ${ req.url } ${ q }`,
+						time: (new Date()).toISOString()
+				});
+				res.render('error',{error: err})
+			});
+});
+
+app.post("/finished_good/bulkUpdate", async (req, res) => {
+	var data = req.body;
+	for(const code in data) {
+		let q = `SELECT stock FROM finished_goods WHERE code = '${code}'`
+		let currentStock = await selectQuery(q)
+									.then(f => f[0].stock)
+									.catch(err => {
+										logger.error({
+												error: err,
+												where: `${ req.method } ${ req.url } ${ q }`,
+												time: (new Date()).toISOString()
+										});
+										res.render('error',{error: err})
+									});
+		let error = data[code] - currentStock;
+		q = `INSERT INTO finished_goods_error SET ?`
+		await insertQuery(q, {code, quantity: error})
+					.catch(err => {
+						logger.error({
+								error: err,
+								where: `${ req.method } ${ req.url } ${ q }`,
+								time: (new Date()).toISOString()
+						});
+						res.render('error',{error: err})
+					});
+		q = `UPDATE finished_goods SET stock = '${data[code]}' WHERE code = '${code}'`
+		await selectQuery(q)
+					.catch(err => {
+						logger.error({
+								error: err,
+								where: `${ req.method } ${ req.url } ${ q }`,
+								time: (new Date()).toISOString()
+						});
+						res.render('error',{error: err})
+					});
+	}
+	res.redirect("/finished_good")
 });
 
 app.get("/finished_good",async function(req,res){

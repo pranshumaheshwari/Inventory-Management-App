@@ -1,0 +1,31 @@
+<% include partials/header.ejs %>
+
+<div class="container jumbotron">
+    <form action="/<%=type%>/bulkUpdate" method="post" onsubmit="return confirm('Are you sure?');">
+        <table class="table table-striped table-bordered table-hover">
+			<thead class="thead-dark">
+				<th>#</th>
+				<th>Name</th>
+				<th>Part Number</th>
+				<th>Category</th>
+				<th>Current Stock</th>
+				<th>Updated Stock</th>
+            </thead>
+            <tbody>
+                <% for(let i=0;i<data.length;i++){ %>
+                    <tr>
+                        <td><%= i+1 %></td>
+                        <td><%= data[i].name %></td>
+                        <td><%= data[i].code %></td>
+                        <td><%= data[i].category %></td>
+                        <td><%= data[i].stock %></td>
+                        <td><input type="number" class="form-control" value="<%=data[i].stock%>" name="<%=data[i].code%>"></td>
+                    </tr>
+                <% } %>
+            </tbody>
+		</table>
+		<button type="submit" class="btn btn-success">Update!</button>
+	</form>
+</div>
+
+<% include partials/footer.ejs %>
