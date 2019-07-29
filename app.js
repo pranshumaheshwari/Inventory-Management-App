@@ -29,7 +29,7 @@ app.use((req, res, next) => {
 	if (req.method === 'POST' && req.url === '/')
 		next()
 	else {
-		if (req.cookies.isAdmin) {
+		if (req.cookies.user) {
 			next()
 		} else {
 			res.render("login", {err: ``});
@@ -68,6 +68,7 @@ io.on('connection', async function(socket){
 												time: Date.now().toString()
 										});
 										res.render('error',{error: err})
+										res.end()
 									});
   });
 
@@ -84,6 +85,7 @@ io.on('connection', async function(socket){
 												time: Date.now().toString()
 										});
 										res.render('error',{error: err})
+										res.end()
 									});
   });
 
@@ -106,7 +108,8 @@ io.on('connection', async function(socket){
 																	time: Date.now().toString()
 															});
 															res.render('error',{error: err})
-														});
+															res.end()
+									});
 										socket.emit("return-getRemaingQuantity", initial_quantity[0].initial_quantity - quantity[0].sum);
 									})
 									.catch(err => {
@@ -116,16 +119,18 @@ io.on('connection', async function(socket){
 												time: Date.now().toString()
 										});
 										res.render('error',{error: err})
+										res.end()
 									});
 						})
 						.catch(err => {
-										logger.error({
-												error: err,
-												where: `${ req.method } ${ req.url } ${ q }`,
-												time: Date.now().toString()
-										});
-										res.render('error',{error: err})
-									});
+							logger.error({
+									error: err,
+									where: `${ req.method } ${ req.url } ${ q }`,
+									time: Date.now().toString()
+							});
+							res.render('error',{error: err})
+							res.end()
+						});
 	});
 });
 
@@ -134,7 +139,7 @@ io.on('connection', async function(socket){
 //======================================
 
 app.get("/",function(req, res) {
-	if(req.cookies.isAdmin){
+	if(req.cookies.user){
 		res.render('landing')
 	} else {
 		res.render("login", {err: ``});
@@ -147,15 +152,15 @@ app.post("/", async (req, res) => {
 		.then(users => {
 			let user = users[0];
 			if(user && req.body.password === user.password) {
-				if(user.isAdmin) {
-					res.cookie('isAdmin', true, {
+				// if(user.isAdmin) {
+					res.cookie('user', user.type, {
 						maxAge: 1000 * 60 * 60 * 12
 					})
-				} else {
-					res.cookie('isAdmin', false, {
-						maxAge: 1000 * 60 * 60 * 12
-					})
-				}
+				// } else {
+				// 	res.cookie('isAdmin', false, {
+				// 		maxAge: 1000 * 60 * 60 * 12
+				// 	})
+				// }
 				res.render('landing')
 			} else {
 				res.render('login', {err: `User Not Found`})
@@ -168,6 +173,7 @@ app.post("/", async (req, res) => {
 					time: (new Date()).toISOString()
 			});
 			res.render('error',{error: err})
+			res.end()
 		});
 
 });

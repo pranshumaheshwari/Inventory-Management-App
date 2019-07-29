@@ -1,15 +1,7 @@
 var express 	  							 = require('express'),
 		{selectQuery, insertQuery} = require('../config/query.js'),
-		// bodyParser 	  						 = require('body-parser'),
-		// methodOverride 						 = require('method-override'),
 		logger		  	 						 = require('../config/winston').supplier,
 		app      	   							 = express.Router();
-
-//=======================================================================================
-
-// app.use(bodyParser.urlencoded({extended: true}));
-// app.use(methodOverride("_method"));
-// app.use(express.static( __dirname + "/public"));
 
 //=======================================================================================
 //																		GET
@@ -28,6 +20,7 @@ app.get("/supplier",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
@@ -48,6 +41,7 @@ app.get("/supplier/:code",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
@@ -73,6 +67,7 @@ app.post("/supplier/new",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err});
+							res.end()
 						});
 });
 
@@ -98,6 +93,7 @@ app.put("/supplier/:code",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err});
+							res.end()
 						});
 });
 
@@ -118,6 +114,7 @@ app.delete("/supplier/:code",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
