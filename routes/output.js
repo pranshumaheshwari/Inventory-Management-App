@@ -20,6 +20,7 @@ app.get("/output",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
@@ -36,6 +37,7 @@ app.get("/output/:slip_no", async (req, res) => {
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
@@ -74,6 +76,7 @@ app.post("/output",async function(req,res){
 																time: (new Date()).toISOString()
 														});
 														res.render('error',{error: err})
+														res.end()
 													});
 							})
 							.catch(err => {
@@ -83,6 +86,7 @@ app.post("/output",async function(req,res){
 										time: (new Date()).toISOString()
 								});
 								res.render('error',{error: err});
+								res.end()
 							});
 	}
 	res.redirect("/output");
@@ -112,6 +116,7 @@ app.delete("/output/:slip_no", async (req,res) => {
 																time: (new Date()).toISOString()
 														});
 														res.render('error',{error: err})
+														res.end()
 													});
 							});
 						})
@@ -131,6 +136,7 @@ app.delete("/output/:slip_no", async (req,res) => {
 															time: (new Date()).toISOString()
 													});
 													res.render('error',{error: err})
+													res.end()
 												});
 						})
 						.then( _ => {
@@ -143,6 +149,7 @@ app.delete("/output/:slip_no", async (req,res) => {
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
@@ -166,6 +173,7 @@ app.delete("/output/:slip_no/:raw_material_code", async (req,res) => {
 																time: (new Date()).toISOString()
 														});
 														res.render('error',{error: err})
+														res.end()
 													});
 							});
 						})
@@ -185,6 +193,7 @@ app.delete("/output/:slip_no/:raw_material_code", async (req,res) => {
 															time: (new Date()).toISOString()
 													});
 													res.render('error',{error: err})
+													res.end()
 												});
 						})
 						.then( _ => {
@@ -197,6 +206,7 @@ app.delete("/output/:slip_no/:raw_material_code", async (req,res) => {
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
