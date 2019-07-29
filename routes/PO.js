@@ -20,6 +20,7 @@ app.get("/PO",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
@@ -39,6 +40,7 @@ app.get("/PO/new",async function(req,res){
 															time: (new Date()).toISOString()
 													});
 													res.render('error',{error: err})
+													res.end()
 												});
 						})
 						.catch(err => {
@@ -48,6 +50,7 @@ app.get("/PO/new",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
@@ -67,6 +70,7 @@ app.get("/PO/:code",async function(req,res){
 															time: (new Date()).toISOString()
 													});
 													res.render('error',{error: err})
+													res.end()
 												});
 						})
 						.catch(err => {
@@ -76,6 +80,7 @@ app.get("/PO/:code",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
@@ -95,6 +100,7 @@ app.get("/PO/:code/new",async function(req,res){
 															time: (new Date()).toISOString()
 													});
 													res.render('error',{error: err})
+													res.end()
 												});
 						})
 						.catch(err => {
@@ -104,6 +110,7 @@ app.get("/PO/:code/new",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
@@ -124,6 +131,7 @@ app.get("/PO/:code/close",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
@@ -144,6 +152,7 @@ app.get("/PO/:code/:raw_code/delete",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 	});
 
@@ -214,6 +223,7 @@ app.post("/PO/new",async function(req,res){
 																time: (new Date()).toISOString()
 														});
 														res.render('error',{error: err});
+														res.end()
 													});
 							}
 						})
@@ -227,6 +237,7 @@ app.post("/PO/new",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err});
+							res.end()
 						});
 });
 
@@ -265,6 +276,7 @@ app.post("/PO/:code/new",async function(req,res){
 															time: (new Date()).toISOString()
 													});
 													res.render('error',{error: err});
+													res.end()
 												});
 						})
 						.then( _ => {
@@ -277,6 +289,7 @@ app.post("/PO/:code/new",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
@@ -326,6 +339,7 @@ app.post("/PO/generate",async function(req,res){
 										time: (new Date()).toISOString()
 								});
 								res.render('error',{error: err});
+								res.end()
 							});
 		
 	}
@@ -352,6 +366,7 @@ app.post("/PO/generate",async function(req,res){
 										time: (new Date()).toISOString()
 								});
 								res.render('error',{error: err});
+								res.end()
 							});
 	}
 	res.redirect("/PO");
@@ -380,6 +395,7 @@ app.put("/PO/:code",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 	for(var i=0;i<raw.length;i++){
 		q = "INSERT INTO PO_detail SET ?";
@@ -407,6 +423,7 @@ app.put("/PO/:code",async function(req,res){
 										time: (new Date()).toISOString()
 								});
 								res.render('error',{error: err});
+								res.end()
 							});
 	}
 	res.redirect("/PO");
@@ -431,6 +448,7 @@ app.delete("/PO/:code",async function(req,res){
 															time: (new Date()).toISOString()
 													});
 													res.render('error',{error: err})
+													res.end()
 												});
 						})
 						.then( _ => {
@@ -443,6 +461,7 @@ app.delete("/PO/:code",async function(req,res){
 									time: (new Date()).toISOString()
 							});
 							res.render('error',{error: err})
+							res.end()
 						});
 });
 
