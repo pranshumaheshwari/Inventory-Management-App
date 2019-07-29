@@ -24,6 +24,23 @@ app.get("/inventory",async function(req,res){
 						});
 });
 
+app.get("/inventory/bulkUpdate", async (req, res) => {
+	var q = `SELECT * FROM raw_material ORDER BY category`;
+	selectQuery(q)
+			.then(data => {
+				res.render("bulk_update", {data, type: 'inventory'});
+			})
+			.catch(err => {
+				logger.error({
+						error: err,
+						where: `${ req.method } ${ req.url } ${ q }`,
+						time: (new Date()).toISOString()
+				});
+				res.render('error',{error: err})
+				res.end()
+			});
+});
+
 app.get("/inventory/master",async (req,res) => {
 	let q = `SELECT * FROM raw_material ORDER BY code`;
 	let raw_materials = await selectQuery(q);
@@ -152,6 +169,60 @@ app.post("/inventory/new",async function(req,res){
 							res.render('error',{error: err});
 							res.end()
 						});
+});
+
+app.post("/inventory/bulkUpdate", async (req, res) => {
+	var data = req.body;
+	for(const code in data) {
+		let q = `SELECT stock FROM raw_material WHERE code = '${code}'`
+		let currentStock = await selectQuery(q)
+									.then(f => f[0].stock)
+									.catch(err => {
+										logger.error({
+												error: err,
+												where: `${ req.method } ${ req.url } ${ q }`,
+												time: (new Date()).toISOString()
+										});
+										res.render('error',{error: err})
+										res.end()
+									});
+		let error = data[code] - currentStock;
+		q = `INSERT INTO raw_material_error SET ?`
+		await insertQuery(q, {code, quantity: error})
+					.then(resp => {
+						logger.info({
+							where: `${ req.method } ${ req.url } ${ q }`,
+							time: (new Date()).toISOString()
+						});
+					})
+					.catch(err => {
+						logger.error({
+								error: err,
+								where: `${ req.method } ${ req.url } ${ q }`,
+								time: (new Date()).toISOString()
+						});
+						res.render('error',{error: err})
+						res.end()
+					});
+		q = `UPDATE raw_material SET stock = '${data[code]}' WHERE code = '${code}'`
+		await selectQuery(q)
+					.then(resp => {
+						logger.info({
+							where: `${ req.method } ${ req.url } ${ q }`,
+							time: (new Date()).toISOString()
+						});
+					})
+					.catch(err => {
+						logger.error({
+								error: err,
+								where: `${ req.method } ${ req.url } ${ q }`,
+								time: (new Date()).toISOString()
+						});
+						res.render('error',{error: err})
+						res.end()
+					});
+	}
+	res.redirect("/inventory")
 });
 
 //=======================================================================================
