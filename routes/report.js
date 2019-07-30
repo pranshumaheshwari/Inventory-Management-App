@@ -11,6 +11,50 @@ app.get("/report",function(req,res){
 	res.render("reports");
 });
 
+app.get("/report/finishedGoodsError", async (req, res) => {
+	res.render("date", {action: "finishedGoodsError"});	
+});
+
+app.get("/report/rawMaterialError", async (req, res) => {
+	res.render("date", {action: "rawMaterialError"});	
+});
+
+app.post("/report/finishedGoodsError", async (req, res) => {
+	var {to, from} = req.body;
+	var q = `SELECT * FROM finished_goods_error WHERE date >= '${from}' AND date < '${to}'`
+	selectQuery(q)
+			.then(data => {
+				res.render("report_error", {data, to, from})
+			})
+			.catch(err => {
+				logger.error({
+						error: err,
+						where: `${ req.method } ${ req.url } ${ q }`,
+						time: (new Date()).toISOString()
+				});
+				res.render('error',{error: err})
+				res.end()
+			});
+});
+
+app.post("/report/rawMaterialError", async (req, res) => {
+	var {to, from} = req.body;
+	var q = `SELECT * FROM raw_material_error WHERE date >= '${from}' AND date < '${to}'`
+	selectQuery(q)
+			.then(data => {
+				res.render("report_error", {data, to, from})
+			})
+			.catch(err => {
+				logger.error({
+						error: err,
+						where: `${ req.method } ${ req.url } ${ q }`,
+						time: (new Date()).toISOString()
+				});
+				res.render('error',{error: err})
+				res.end()
+			});
+});
+
 //=======================================================================================
 //																		FINISHED GOODS
 //=======================================================================================
@@ -611,7 +655,7 @@ app.get("/report/ProductionTracker", async (req, res) => {
 //										Man Power Efficenicy
 
 app.get("/report/manPower", async (req, res) => {
-	res.render("date.ejs", {action: "manPower"});
+	res.render("date", {action: "manPower"});
 });
 
 app.post("/report/manPower", async (req, res) => {
@@ -656,7 +700,7 @@ app.post("/report/manPower", async (req, res) => {
 });
 
 app.get('/report/attendance', async (req, res) => {
-	res.render("date.ejs", {action: "attendance"});	
+	res.render("date", {action: "attendance"});	
 });
 
 app.post('/report/attendance', async (req, res) => {
