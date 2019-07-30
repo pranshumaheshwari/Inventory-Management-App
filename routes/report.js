@@ -676,7 +676,7 @@ app.post("/report/manPower", async (req, res) => {
 			q = `SELECT SUM(nos) AS nos FROM attendance WHERE date >= '${from.replace(/-/g, '/')}' AND date < '${nextDate(to).replace(/-/g, '/')}'`
 			selectQuery(q)
 				.then(nos => {
-					res.render('report_man_power', { data, nos: nos[0].nos });
+					res.render('report_man_power', { data, nos: nos[0].nos, from, to });
 				})
 				.catch(err => {
 					logger.error({
