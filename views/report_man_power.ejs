@@ -19,7 +19,8 @@
 		</thead>
 		<tbody>
             <% var totalManPower = 0 %> 
-            <% var totalOverheads = 0 %> 
+            <% var totalOverheads = 0 %>
+            <% var totalProduction = 0 %>
 			<% for(var i=0;i<data.length;i++){ %>
 				<tr>
 					<td><%= i+1 %></td>
@@ -33,14 +34,15 @@
                     <td><%= Math.round(data[i].quantity * data[i].overheads * 100) / 100 %></td>
                     <% totalManPower += data[i].quantity * data[i].man_power %>
                     <% totalOverheads += data[i].quantity * data[i].overheads %>
+                    <% totalProduction += data[i].quantity %>
 				</tr>
             <% } %>
             <tr>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td></td>
+                <td>Total:</td>
+                <td><%= totalProduction %></td>
                 <td></td>
                 <td>Total</td>
                 <td><%= Math.round(totalManPower * 100) / 100 %></td>
