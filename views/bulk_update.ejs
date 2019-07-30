@@ -8,8 +8,12 @@
 				<th>Name</th>
 				<th>Part Number</th>
 				<th>Category</th>
-				<th>Current Stock</th>
-				<th>Updated Stock</th>
+				<th>Current Store Stock</th>
+                <th>Updated Store Stock</th>
+                <% if(type == 'inventory') { %>
+                    <th>Current Line Stock</th>
+                    <th>Updated Line Stock</th>
+                <% } %>
             </thead>
             <tbody>
                 <% for(let i=0;i<data.length;i++){ %>
@@ -19,7 +23,11 @@
                         <td><%= data[i].code %></td>
                         <td><%= data[i].category %></td>
                         <td><%= data[i].stock %></td>
-                        <td><input type="number" class="form-control" value="<%=data[i].stock%>" name="<%=data[i].code%>"></td>
+                        <td><input type="number" class="form-control" value="<%=data[i].stock%>" name="stock[<%=data[i].code%>]"></td>
+                        <% if(type == 'inventory') { %>
+                            <td><%= data[i].line_stock %></td>
+                            <td><input type="number" class="form-control" value="<%=data[i].line_stock%>" name="line_stock[<%=data[i].code%>]"></td>
+                        <% } %>
                     </tr>
                 <% } %>
             </tbody>

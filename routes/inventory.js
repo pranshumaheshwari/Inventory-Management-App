@@ -25,7 +25,7 @@ app.get("/inventory",async function(req,res){
 });
 
 app.get("/inventory/bulkUpdate", async (req, res) => {
-	var q = `SELECT * FROM raw_material ORDER BY category`;
+	var q = `SELECT * FROM raw_material ORDER BY code`;
 	selectQuery(q)
 			.then(data => {
 				res.render("bulk_update", {data, type: 'inventory'});
@@ -172,11 +172,12 @@ app.post("/inventory/new",async function(req,res){
 });
 
 app.post("/inventory/bulkUpdate", async (req, res) => {
-	var data = req.body;
+	var data = req.body.stock;
+	var line_stock = req.body.line_stock
 	for(const code in data) {
-		let q = `SELECT stock FROM raw_material WHERE code = '${code}'`
+		let q = `SELECT stock, line_stock FROM raw_material WHERE code = '${code}'`
 		let currentStock = await selectQuery(q)
-									.then(f => f[0].stock)
+									.then(f => f[0])
 									.catch(err => {
 										logger.error({
 												error: err,
@@ -186,7 +187,7 @@ app.post("/inventory/bulkUpdate", async (req, res) => {
 										res.render('error',{error: err})
 										res.end()
 									});
-		let error = data[code] - currentStock;
+		let error = parseFloat(data[code]) - parseFloat(currentStock.stock) + parseFloat(line_stock[code]) - parseFloat(currentStock.line_stock);
 		q = `INSERT INTO raw_material_error SET ?`
 		await insertQuery(q, {code, quantity: error})
 					.then(resp => {
@@ -204,7 +205,7 @@ app.post("/inventory/bulkUpdate", async (req, res) => {
 						res.render('error',{error: err})
 						res.end()
 					});
-		q = `UPDATE raw_material SET stock = '${data[code]}' WHERE code = '${code}'`
+		q = `UPDATE raw_material SET stock = '${data[code]}', line_stock = '${line_stock[code]}' WHERE code = '${code}'`
 		await selectQuery(q)
 					.then(resp => {
 						logger.info({
