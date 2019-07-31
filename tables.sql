@@ -14,7 +14,8 @@ CREATE TABLE IF NOT EXISTS finished_goods_error(
 
 CREATE TABLE IF NOT EXISTS raw_material_error(
 	code varchar(10) NOT NULL,
-	quantity FLOAT NOT NULL,
+	store_quantity FLOAT NOT NULL,
+	line_quantity FLOAT NOT NULL,
 	date DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 

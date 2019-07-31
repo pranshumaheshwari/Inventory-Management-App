@@ -7,7 +7,10 @@
     <thead class="thead-dark">
       <th>#</th>
       <th>Part Number</th>
-      <th>Quantity</th>
+      <th>Store Quantity</th>
+      <% if(type == 'raw_material') {
+        <th>Line Quantity</th>
+      <% } %>
       <th>Date</th>
     </thead>
     <tbody>
@@ -21,7 +24,12 @@
         <tr>
           <td><%= i+1 %></td>
           <td><%= data[i].code %></td>
-          <td><%= data[i].quantity %></td>
+          <% if(type == 'raw_material') {
+            <td><%= data[i].store_quantity %></td>
+            <td><%= data[i].line_quantity %></td>
+          <% } else { %>
+            <td><%= data[i].quantity %></td>
+          <% } %>
           <td><%= data[i].date %></td>
         </tr>
       <% } %>

@@ -187,9 +187,10 @@ app.post("/inventory/bulkUpdate", async (req, res) => {
 										res.render('error',{error: err})
 										res.end()
 									});
-		let error = parseFloat(data[code]) - parseFloat(currentStock.stock) + parseFloat(line_stock[code]) - parseFloat(currentStock.line_stock);
+		let store_error = parseFloat(data[code]) - parseFloat(currentStock.stock);
+		let line_error = parseFloat(line_stock[code]) - parseFloat(currentStock.line_stock);
 		q = `INSERT INTO raw_material_error SET ?`
-		await insertQuery(q, {code, quantity: error})
+		await insertQuery(q, {code, store_quantity: store_error, line_quantity: line_error})
 					.then(resp => {
 						logger.info({
 							where: `${ req.method } ${ req.url } ${ q }`,
