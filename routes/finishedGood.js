@@ -144,6 +144,28 @@ app.post("/finished_good/production/delete", async (req, res) => {
 			});
 })
 
+app.get("/finished_good/dispatch/delete", async (req, res) => {
+	res.render("delete_production_dispatch", {type: "dispatch"});
+})
+
+app.post("/finished_good/dispatch/delete", async (req, res) => {
+	var {from, to} = req.body;
+	let q = `SELECT * FROM dispatch WHERE date >= '${from}' AND date <= '${to}'`
+	selectQuery(q)
+			.then(finished_goods => {
+				res.render("update_delete_dispatch", {finished_goods})
+			})
+			.catch(err => {
+				logger.error({
+						error: err,
+						where: `${ req.method } ${ req.url } ${ q }`,
+						time: (new Date()).toISOString()
+				});
+				res.render('error',{error: err})
+				res.end()
+			});
+})
+
 app.get("/finished_good",async function(req,res){
 	var q = "SELECT * FROM finished_goods ORDER BY category";
 	await selectQuery(q)
@@ -970,7 +992,7 @@ app.delete("/finished_good/production/:id", async (req, res) => {
 					res.render('error',{error: err})
 					res.end()
 				});
-	res.redirect("/finished_good/production");
+	res.redirect("/finished_good");
 });
 
 app.delete("/finished_good/dispatch/:invoice_no/:code",async (req,res) => {
@@ -1003,6 +1025,56 @@ app.delete("/finished_good/dispatch/:invoice_no/:code",async (req,res) => {
 									res.render('error',{error: err})
 									res.end()
 								});
+});
+
+app.delete("/finished_good/dispatch/:id", async (req, res) => {
+	let q = `SELECT * FROM dispatch WHERE id = '${ req.params.id }'`;
+	let finished_good = await selectQuery(q)
+									.then(data => data[0])
+									.catch(err => {
+										logger.error({
+												error: err,
+												where: `${ req.method } ${ req.url } ${ q }`,
+												time: (new Date()).toISOString()
+										});
+										res.render('error',{error: err})
+										res.end()
+									});
+	q = `UPDATE finished_goods SET stock = stock + ${ finished_good.quantity } WHERE code = '${ finished_good.FG_code }'`;
+	await selectQuery(q)
+					.then(result => {
+						logger.info({
+								where: `${ req.method } ${ req.url } ${ q }`,
+								time: (new Date()).toISOString()
+						});
+					})
+					.catch(err => {
+						logger.error({
+								error: err,
+								where: `${ req.method } ${ req.url } ${ q }`,
+								time: (new Date()).toISOString()
+						});
+						res.render('error',{error: err})
+						res.end()
+					});
+	q = `DELETE FROM dispatch WHERE id = '${req.params.id}'`
+	await selectQuery(q)
+					.then(result => {
+						logger.info({
+								where: `${ req.method } ${ req.url } ${ q }`,
+								time: (new Date()).toISOString()
+						});
+					})
+					.catch(err => {
+						logger.error({
+								error: err,
+								where: `${ req.method } ${ req.url } ${ q }`,
+								time: (new Date()).toISOString()
+						});
+						res.render('error',{error: err})
+						res.end()
+					});
+	res.redirect("/finished_good");
 });
 
 app.delete("/finished_good/dispatch/:invoice_no",async (req,res) => {
