@@ -21,7 +21,7 @@ app.get("/report/rawMaterialError", async (req, res) => {
 
 app.post("/report/finishedGoodsError", async (req, res) => {
 	var {to, from} = req.body;
-	var q = `SELECT * FROM finished_goods_error WHERE date >= '${from}' AND date < '${to}'`
+	var q = `SELECT * FROM finished_goods_error WHERE date >= '${from}' AND date <= '${to}'`
 	selectQuery(q)
 			.then(data => {
 				res.render("report_error", {data, to, from, type: 'finished_goods'})
@@ -39,7 +39,7 @@ app.post("/report/finishedGoodsError", async (req, res) => {
 
 app.post("/report/rawMaterialError", async (req, res) => {
 	var {to, from} = req.body;
-	var q = `SELECT * FROM raw_material_error WHERE date >= '${from}' AND date < '${to}'`
+	var q = `SELECT * FROM raw_material_error WHERE date >= '${from}' AND date <= '${to}'`
 	selectQuery(q)
 			.then(data => {
 				res.render("report_error", {data, to, from, type: 'raw_material'})

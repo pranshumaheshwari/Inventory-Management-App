@@ -122,6 +122,28 @@ app.post("/finished_good/bulkUpdate", async (req, res) => {
 	res.redirect("/finished_good")
 });
 
+app.get("/finished_good/production/delete", async (req, res) => {
+	res.render("delete_production_dispatch", {type: "production"});
+})
+
+app.post("/finished_good/production/delete", async (req, res) => {
+	var {from, to} = req.body;
+	let q = `SELECT * FROM production WHERE date >= '${from}' AND date <= '${to}'`
+	selectQuery(q)
+			.then(finished_goods => {
+				res.render("update_delete_production", {finished_goods})
+			})
+			.catch(err => {
+				logger.error({
+						error: err,
+						where: `${ req.method } ${ req.url } ${ q }`,
+						time: (new Date()).toISOString()
+				});
+				res.render('error',{error: err})
+				res.end()
+			});
+})
+
 app.get("/finished_good",async function(req,res){
 	var q = "SELECT * FROM finished_goods ORDER BY category";
 	await selectQuery(q)
