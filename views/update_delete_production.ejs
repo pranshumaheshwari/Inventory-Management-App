@@ -12,7 +12,7 @@
     </thead>
     <tbody>
       <% for(var i=0;i<finished_goods.length;i++) {%>
-        <form action="/finished_good/production/<%= finished_goods[i].FG_code %>/<%= finished_goods[i].date %>/<%= finished_goods[i].quantity %>?_method=DELETE" method="POST"  onsubmit="return confirm('Do you want to submit?');">
+        <form action="/finished_good/production/<%= finished_goods[i].id %>?_method=DELETE" method="POST"  onsubmit="return confirm('Do you want to submit?');">
           <tr>
             <td><%= finished_goods[i].FG_code %></td>
             <td><%= finished_goods[i].quantity %></td>

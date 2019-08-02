@@ -25,7 +25,7 @@ app.get("/inventory",async function(req,res){
 });
 
 app.get("/inventory/bulkUpdate", async (req, res) => {
-	var q = `SELECT * FROM raw_material ORDER BY code`;
+	var q = `SELECT * FROM raw_material ORDER BY category`;
 	selectQuery(q)
 			.then(data => {
 				res.render("bulk_update", {data, type: 'inventory'});

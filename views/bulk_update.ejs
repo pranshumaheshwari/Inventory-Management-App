@@ -23,10 +23,10 @@
                         <td><%= data[i].code %></td>
                         <td><%= data[i].category %></td>
                         <td><%= data[i].stock %></td>
-                        <td><input type="number" class="form-control" value="<%=data[i].stock%>" name="stock[<%=data[i].code%>]"></td>
+                        <td><input type="text" class="form-control" value="<%=data[i].stock%>" name="stock[<%=data[i].code%>]"></td>
                         <% if(type == 'inventory') { %>
                             <td><%= data[i].line_stock %></td>
-                            <td><input type="number" class="form-control" value="<%=data[i].line_stock%>" name="line_stock[<%=data[i].code%>]"></td>
+                            <td><input type="text" class="form-control" value="<%=data[i].line_stock%>" name="line_stock[<%=data[i].code%>]"></td>
                         <% } %>
                     </tr>
                 <% } %>

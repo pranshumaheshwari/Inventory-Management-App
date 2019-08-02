@@ -871,6 +871,86 @@ app.delete("/finished_good/production/:code/:date/:quantity",async (req,res) => 
 	res.redirect("/finished_good/production");
 });
 
+app.delete("/finished_good/production/:id", async (req, res) => {
+	let q = `SELECT * FROM production WHERE id = '${req.params.id}'`
+	let production = await selectQuery(q)
+								.then(data => data[0])
+								.catch(err => {
+									logger.error({
+											error: err,
+											where: `${ req.method } ${ req.url } ${ q }`,
+											time: (new Date()).toISOString()
+									});
+									res.render('error',{error: err})
+									res.end()
+								});
+	q = `UPDATE finished_goods SET stock = stock - ${ production.quantity } WHERE code = '${ production.FG_code }'`;
+	await selectQuery(q)
+			.then(result => {
+				logger.info({
+						where: `${ req.method } ${ req.url } ${ q }`,
+						time: (new Date()).toISOString()
+				});
+			})
+			.catch(err => {
+				logger.error({
+						error: err,
+						where: `${ req.method } ${ req.url } ${ q }`,
+						time: (new Date()).toISOString()
+				});
+				res.render('error',{error: err})
+				res.end()
+			});
+	q = `SELECT * FROM finished_goods_detail WHERE code = '${ production.FG_code }'`;
+	let raw_materials = await selectQuery(q)
+								.catch(err => {
+									logger.error({
+											error: err,
+											where: `${ req.method } ${ req.url } ${ q }`,
+											time: (new Date()).toISOString()
+									});
+									res.render('error',{error: err})
+									res.end()
+								});
+	for(let r of raw_materials) {
+		q = `UPDATE raw_material SET line_stock = line_stock + (${ production.quantity } * ${ r.quantity }) WHERE code = '${ r.raw_material_code }'`;
+		await selectQuery(q)
+					.then(result => {
+						logger.info({
+								where: `${ req.method } ${ req.url } ${ q }`,
+								time: (new Date()).toISOString()
+						});
+					})
+					.catch(err => {
+						logger.error({
+								error: err,
+								where: `${ req.method } ${ req.url } ${ q }`,
+								time: (new Date()).toISOString()
+						});
+						res.render('error',{error: err})
+						res.end()
+					});
+	};
+	q = `DELETE FROM production WHERE id = '${req.params.id}'`
+	await selectQuery(q)
+				.then(result => {
+					logger.info({
+							where: `${ req.method } ${ req.url } ${ q }`,
+							time: (new Date()).toISOString()
+					});
+				})
+				.catch(err => {
+					logger.error({
+							error: err,
+							where: `${ req.method } ${ req.url } ${ q }`,
+							time: (new Date()).toISOString()
+					});
+					res.render('error',{error: err})
+					res.end()
+				});
+	res.redirect("/finished_good/production");
+});
+
 app.delete("/finished_good/dispatch/:invoice_no/:code",async (req,res) => {
 	let q = `SELECT * FROM dispatch WHERE invoice_no = '${ req.params.invoice_no }' AND FG_code = '${ req.params.code }'`;
 	let finished_good = await selectQuery(q)
