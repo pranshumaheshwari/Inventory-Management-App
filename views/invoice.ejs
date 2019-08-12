@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Sankalp Enterprises</title>
+	<link rel="stylesheet" type="text/css" href="/stylesheets/bootstrap.css">
+	<link rel="stylesheet" type="text/css" href="/stylesheets/css.css">
+	<script src="/javascript/jquery.js"></script>
+	<script src="/javascript/bootstrap.js"></script>
+</head>
+<body>
+    <style>
+        /* body {
+            width: 21cm;
+            height: 29.7cm;
+            margin: 30mm 45mm 30mm 45mm; 
+        } */
+        .invoice {
+            width: 21cm;
+            height: 29.7cm;
+            margin: 30mm 45mm 30mm 45mm;
+        }
+        .border-left {
+            border-left: 2px solid black !important;
+        }
+        .border-right {
+            border-right: 2px solid black !important;
+        }
+        .border-top {
+            border-top: 2px solid black !important;
+        }
+        .border-bottom {
+            border-bottom: 2px solid black !important;
+        }
+        .border {
+            border: 2px solid black !important;
+        }
+        .row {
+            margin-left: 0px;
+            margin-right: 0px;
+        }
+        .col-md-3 {
+            padding-left: 0px;
+            padding-right: 0px;
+        }
+        .col-md-6, .col-md-8, .col-md-4 {
+            padding-left: 1px;
+            padding-right: 1px;
+        }
+        .table td {
+            border-top: 0px !important;
+        }
+        .table thead th {
+            border-bottom: 0px !important;
+        }
+        @media print {
+            body {
+                width: 21cm;
+                height: 29.7cm;
+                /* margin: 30mm 45mm 30mm 45mm;  */
+            } 
+        }
+    </style>
+    <div class="border invoice">
+        <div class="row">
+            <div class="col-md-4"></div>
+            <div class="col-md-3 text-center">
+                <strong style="font-size: 1.4em;">TAX INVOICE</strong> <br>
+                <span style="font-size: 0.8em; line-height: 0.5">
+                    As per Section bla bla
+                </span>
+            </div>
+            <div class="col-md-1"></div>
+            <div class="col-md-2 text-center">
+                <strong style="color: red;">DUPLICATE</strong>
+            </div>
+            <div class="col-md-2 text-center">
+                <strong>NO. 123</strong>
+            </div>
+        </div>
+        <div class="row border-top">
+            <div class="col-md-6 border-right">
+                <strong style="color: red;font-size: 1.4em;">SANKALP ENTERPRISES</strong> <br>
+                <strong>(Propritor: Sandeep R. Maheshwari)</strong> <br>
+                Address 1 <br>
+                Address 2 <br>
+                Email
+            </div>
+            <div class="col-md-3">
+                <div class="row border-bottom">STATE CODE</div>
+                <div class="row border-bottom">GSTIN</div>
+                <div class="row border-bottom">PAN NO.</div>
+                <div class="row border-bottom">WHETHER TAX ON REVERSE CHARGE</div>
+                <div class="row border-bottom">INVOICE NO</div>
+                <div class="row border-bottom">INVOICE DATE</div>
+                <div class="row">TIME OF SUPPLY</div>            
+            </div>
+            <div class="col-md-3">
+                <div class="row border-bottom">Value</div>
+                <div class="row border-bottom">Value</div>
+                <div class="row border-bottom">Value</div>
+                <div class="row">Value</div>
+                <div class="row border-bottom">&nbsp;</div>
+                <div class="row border-bottom">Value</div>
+                <div class="row border-bottom">Value</div>
+                <div class="row">Value</div>
+            </div>
+        </div>
+        <div class="row border-top">
+            <div class="col-md-4">
+                <div class="row">Po No.:</div>
+                <div class="row">Po Date:</div>
+                <div class="row">Export Under:</div>
+            </div>
+            <div class="col-md-4">
+                <div class="row">Unloading Point:</div>
+                <div class="row">Transport Mode:</div>
+                <div class="row">Transport Name:</div>
+            </div>
+            <div class="col-md-4">
+                <div class="row">Vehicle Name:</div>
+                <div class="row">LR No.:</div>
+                <div class="row">LR Date:</div>
+            </div>
+        </div>
+        <div class="row border-top">
+            <div class="col-md-6 border-right">
+                <strong>Sold To Recipient (Name & Address):</strong> <br>
+                &emsp;Name <br>
+                &emsp;Address 1 <br>
+                &emsp;Address 2 <br>
+                &emsp;City <br>
+                <strong>Vendor Code:</strong> <br>
+                <strong>State Code:</strong> <br>
+                <strong>GSTIN:</strong>
+            </div>
+            <div class="col-md-6">
+                <strong>Place of Supply (Name & Address):</strong> <br>
+                &emsp;Name <br>
+                &emsp;Address 1 <br>
+                &emsp;Address 2 <br>
+                &emsp;City <br>
+                <strong>Vendor Code:</strong> <br>
+                <strong>State Code:</strong> <br>
+                <strong>GSTIN:</strong>
+            </div>
+        </div>
+        <table class="table" style="width: 102%;" id="table">
+            <thead class="thead border-top border-bottom">
+                <th>Sr. No.</th>
+                <th>Part No.</th>
+                <th>Description</th>
+                <th>HSN Code</th>
+                <th>Packaging Qty. / Unit</th>
+                <th>Qty</th>
+                <th>Unit</th>
+                <th>Unit Rate(Rs)</th>
+                <th>Total Value(Rs)</th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="row border-top border-bottom">
+            <div class="col-md-8">
+                <div class="row">
+                    <strong>Terms Of Sale:</strong>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="row border-left">
+                    <div class="col-md-6">
+                        <strong>Taxable Value</strong>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        10000.00
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row border-bottom">
+            <div class="col-md-8">
+                <div class="row border-bottom">
+                    <strong>CGST (in words):</strong>
+                </div>
+                <div class="row border-bottom">
+                    <strong>SGST (in words):</strong>
+                </div>
+                <div class="row border-bottom">
+                    <strong>IGST (in words):</strong>
+                </div>
+                <div class="row">
+                    <strong>UGST (in words):</strong>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="row border-bottom border-left">
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>CGST</strong>
+                            </div>
+                            <div class="col-md-6 text-right">
+                                9%
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        900
+                    </div>
+                </div>
+                <div class="row border-bottom border-left">
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>SGST</strong>
+                            </div>
+                            <div class="col-md-6 text-right">
+                                9%
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        900
+                    </div>
+                </div>
+                <div class="row border-bottom border-left">
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>IGST</strong>
+                            </div>
+                            <div class="col-md-6 text-right">
+                                0%
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        0
+                    </div>
+                </div>
+                <div class="row border-left">
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>UTGST</strong>
+                            </div>
+                            <div class="col-md-6 text-right">
+                                0%
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        0
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row border-bottom">
+            <div class="col-md-8">
+                <strong>Amount in words:</strong>
+            </div>
+            <div class="col-md-4">
+                <div class="row border-left">
+                    <div class="col-md-6">
+                        <strong>Grand Total</strong>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        1800
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8">
+
+            </div>
+            <div class="col-md-4 text-center border-left">
+                <br>
+                <span style="color: red;">For SANKALP ENTERPRISES</span>
+                <br><br><br>
+                <span style="color: red;">Authorised Signatory</span>
+            </div>
+        </div>
+    </div>
+
+</body>
