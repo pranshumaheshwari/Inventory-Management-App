@@ -313,24 +313,17 @@ app.get("/finished_good/dispatch/:invoice_no",async function(req,res){
 app.get("/finished_good/:code",async function(req,res){
 	var q = "SELECT * FROM finished_goods WHERE code='" + req.params.code + "'";
 	await selectQuery(q)
-						.then(async finished_good => {
-							q = "SELECT * FROM finished_goods_detail WHERE code='" + req.params.code + "' ORDER BY raw_material_code";
-							await selectQuery(q)
-												.then(async raw_materials => {
-													q = "SELECT * FROM raw_material";
-													await selectQuery(q)
-																		.then(raw => {
-																			res.render("update_delete_finished_good",{finished_good:finished_good[0],raw_materials:raw_materials,raw:raw});
-																		})
-																		.catch(err => {
-																			logger.error({
-																					error: err,
-																					where: `${ req.method } ${ req.url } ${ q }`,
-																					time: (new Date()).toISOString()
-																			});
-																			res.render('error',{error: err})
-																			res.end()
-																		});
+				.then(async finished_good => {
+					q = "SELECT * FROM finished_goods_detail WHERE code='" + req.params.code + "' ORDER BY raw_material_code";
+					await selectQuery(q)
+							.then(async raw_materials => {
+								q = "SELECT * FROM raw_material";
+								await selectQuery(q)
+										.then(raw => {
+											q = `SELECT code FROM customer ORDER BY name`
+											selectQuery(q)
+												.then(customer => {
+													res.render("update_delete_finished_good",{finished_good:finished_good[0],raw_materials,raw, customer});
 												})
 												.catch(err => {
 													logger.error({
@@ -341,16 +334,36 @@ app.get("/finished_good/:code",async function(req,res){
 													res.render('error',{error: err})
 													res.end()
 												});
-						})
-						.catch(err => {
-							logger.error({
-									error: err,
-									where: `${ req.method } ${ req.url } ${ q }`,
-									time: (new Date()).toISOString()
+										})
+										.catch(err => {
+											logger.error({
+													error: err,
+													where: `${ req.method } ${ req.url } ${ q }`,
+													time: (new Date()).toISOString()
+											});
+											res.render('error',{error: err})
+											res.end()
+										});
+							})
+							.catch(err => {
+								logger.error({
+										error: err,
+										where: `${ req.method } ${ req.url } ${ q }`,
+										time: (new Date()).toISOString()
+								});
+								res.render('error',{error: err})
+								res.end()
 							});
-							res.render('error',{error: err})
-							res.end()
-						});
+				})
+				.catch(err => {
+					logger.error({
+							error: err,
+							where: `${ req.method } ${ req.url } ${ q }`,
+							time: (new Date()).toISOString()
+					});
+					res.render('error',{error: err})
+					res.end()
+				});
 });
 
 app.get("/finished_good/BOM/:code",async function(req,res){

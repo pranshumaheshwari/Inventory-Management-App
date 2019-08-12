@@ -17,7 +17,13 @@
 			</div>
 			<div class="row">
 				<div class="col-md-6">
-					<label style="width: 100%">Customer: <input autocomplete="off" type="text" name="finished_good[customer]" value="<%= finished_good.customer %>" class="form-control" required></label>
+					<!-- <label style="width: 100%">Customer: <input autocomplete="off" type="text" name="finished_good[customer]" value="<%= finished_good.customer %>" class="form-control" required></label> -->
+					<label>Customer: <select name="finished_good[customer]" class="form-control">
+						<option value="<%= finished_good.customer %>" hidden selected required><%= finished_good.customer %></option>
+						<% for(var i=0;i<customer.length;i++){ %>
+							<option value="<%= customer[i].code %>"><%= customer[i].code %></option>
+						<% } %>
+					</select></label>
 				</div>
 				<div class="col-md-3">
 					<label style="width: 100%">Category: <select name="finished_good[category]" class="form-control">
