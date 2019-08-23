@@ -10,7 +10,7 @@
 		</div>
 		<div class="row">
 			<div class="col-md-4">
-				<label>Description: <select name="finished" class="form-control" id="finished">
+				<label>Description: <select name="finished" class="form-control desc" id="finished">
 					<option value="" hidden></option>
 					<% for(var i=0;i<finished_goods.length;i++){ %>
 						<option value="<%= finished_goods[i].code %>"><%= finished_goods[i].name %></option>
@@ -73,6 +73,9 @@
 			cell5.innerHTML = '<button type="button" class="btn btn-danger" onclick="but_func('+row.rowIndex+')">Delete</button>'
 
 			i++;
+			document.getElementById("quan").value = null;
+			document.querySelector(".desc").value = null;
+			document.getElementById("remaining_quantity").value = null;
 			document.getElementById("form").elements[2].value = null;
 			document.getElementById("form").elements[4].value = null;
 		}
