@@ -13,17 +13,30 @@
     </thead>
     <tbody>
       <% for(var i=0;i<finished_goods.length;i++) { %>
-        <form action="/finished_good/dispatch/<%= finished_goods[i].id %>?_method=DELETE" method="POST"  onsubmit="return confirm('Do you want to submit?');">
-          <tr>
+          <tr id="<%= finished_goods[i].id %>">
             <td><%= finished_goods[i].invoice_no %></td>
             <td><%= finished_goods[i].date %></td>
             <td><%= finished_goods[i].FG_code %></td>
             <td><%= finished_goods[i].quantity %></td>
-            <td><button type="submit" class="btn btn-danger">Delete</button></td>
+            <td><button class="btn btn-danger" onclick="func(<%=finished_goods[i].id%>)">Delete</button></td>
           </tr>
-        </form>
       <% } %>
     </tbody>
   </table>
 </div>
+
+<script>
+    let func = (id) => {
+      var result = confirm('Do you want to submit?');
+      if (result) {
+        fetch(`/finished_good/dispatch/${id}`, {
+          method: 'delete'
+        }).then(res => {
+          var element = document.getElementById(id)
+          element.parentNode.removeChild(element);
+        })
+      }
+    }
+  </script>
+
 <% include ./partials/footer.ejs %>

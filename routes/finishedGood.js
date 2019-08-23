@@ -1005,7 +1005,9 @@ app.delete("/finished_good/production/:id", async (req, res) => {
 					res.render('error',{error: err})
 					res.end()
 				});
-	res.redirect("/finished_good");
+	res.json({
+		ok: true
+	});
 });
 
 app.delete("/finished_good/dispatch/:invoice_no/:code",async (req,res) => {
@@ -1087,7 +1089,9 @@ app.delete("/finished_good/dispatch/:id", async (req, res) => {
 						res.render('error',{error: err})
 						res.end()
 					});
-	res.redirect("/finished_good");
+	res.json({
+		ok: true
+	});
 });
 
 app.delete("/finished_good/dispatch/:invoice_no",async (req,res) => {
