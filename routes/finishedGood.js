@@ -52,7 +52,7 @@ app.get("/BOM",async function(req,res){
 });
 
 app.get("/finished_good/bulkUpdate", async (req, res) => {
-	var q = `SELECT * FROM finished_goods ORDER BY code`;
+	var q = `SELECT * FROM finished_goods ORDER BY category`;
 	selectQuery(q)
 			.then(finishedGoods => {
 				res.render("bulk_update", {data: finishedGoods, type: 'finished_good'});
