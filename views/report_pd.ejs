@@ -39,6 +39,9 @@
     <% if(t !== 'FGName'){ %>
       <th>#</th>
       <th>Quantity</th>
+      <% if(t !== 'production') { %>
+        <th>Invoice</th>
+      <% } %>
       <th>Date</th>
     <% } else { %>
       <th>#</th>
@@ -54,6 +57,9 @@
         <tr>
           <td></td>
           <td></td>
+          <% if(t !== 'production') { %>
+            <td></td>
+          <% } %>
           <td>From: <%= from %></td>
         </tr>
         <% if(t === 'production') { %>
@@ -72,6 +78,7 @@
             <tr>
               <td><%= i+1 %></td>
               <td><%= finished_goods[i].quantity %></td>
+              <td><%= finished_goods[i].invoice_no %></td>
               <% total += finished_goods[i].quantity %>
               <td><%= finished_goods[i].date %></td>
             </tr>
@@ -80,6 +87,9 @@
         <tr>
           <td>Total</td>
           <td><%= total %></td>
+          <% if(t !== 'production') { %>
+            <td></td>
+          <% } %>
           <td>To: <%= to %></td>
         </tr>
       <% } else { %>
