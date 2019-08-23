@@ -28,6 +28,12 @@
 			<th>Quantity</th>
 			<th>#</th>
 		</thead>
+		<tr>
+			<td></td>
+			<td></td>
+			<td id="total">Total: 0</td>
+			<td></td>
+		</tr>
 	</table>
 	<button type="submit" class="btn btn-success">Submit</button>
 	</form>
@@ -38,7 +44,7 @@
 	function but_func(i){
 		document.querySelector("table").deleteRow(i);
 	}
-	var i = 0;
+	var i = 0, total = 0;
 	function func () {
 		if(document.getElementById("form").elements[1].value){
 			var table = document.querySelector("table");
@@ -52,6 +58,7 @@
 			var product_name = product[1];
 			var product_code = product[0];
 			var quantity = document.getElementById("quan").value;
+			total += parseFloat(quantity);
 
 			cell1.innerHTML = product_name + '<input type="hidden" name="finished_goods_name[' + i + ']" value="' + product_name + '">';
 			cell2.innerHTML = product_code + '<input type="hidden" name="finished_goods_code[' + i + ']" value="' + product_code + '">';
@@ -60,7 +67,9 @@
 
 			i++;
 			document.getElementById("product").value = null;
+			document.getElementById("quan").value = null;
 			document.getElementById("form").elements[1].value = null;
+			document.getElementById("total").innerHTML = "Total: " + total;
 		}
 	}
 </script>
