@@ -1,0 +1,30 @@
+<% include partials/header.ejs %>
+<br>
+<h1 align="center">New Requisition</h1>
+
+<div class="container">
+    <br><br><br>
+    <form action="/requisition" method="POST">
+        <div class="row">
+            <div class="col-md-2">
+                <label style="width: 100%;">ID: <input type="text" class="form-control-plaintext" name="id" value="<%=id%>"></label>
+            </div>
+            <div class="col-md-6">
+                <label style="width: 100%;">Description: <select name="FG_code" class="form-control" id="product">
+                    <option value="" hidden></option>
+                    <% for(var i=0;i<finished_goods.length;i++){ %>
+                        <option value="<%= finished_goods[i].code %>"><%= finished_goods[i].name %></option>
+                    <% } %>
+                </select></label>
+            </div>
+            <div class="col-md-4">
+                <label style="width: 100%;">Quantity: <input type="number" name="quantity" autocomplete="off" class="form-control" id="quan"></label>
+            </div>
+        </div>
+        <div class="row col">
+            <input type="submit" class="btn btn-success" value="Submit">
+        </div>
+    </form>
+</div>
+
+<% include partials/footer.ejs %>
