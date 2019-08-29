@@ -101,7 +101,7 @@ app.get("/requisition/:id", (req, res) => {
 													res.end()
 												});
 
-					q = `SELECT COALESCE(SUM(ro.quantity),0) issued_quantity FROM requisition_output ro LEFT OUTER JOIN requisition r ON r.id = ro.req_id WHERE ro.RM_code = "${r.RM_code}" AND MONTH(r.date) = "${today.getMonth() + 1}" AND ro.req_id <= "${r.id}" AND r.status="Running"`
+					q = `SELECT COALESCE(SUM(ro.quantity),0) issued_quantity FROM requisition_output ro LEFT OUTER JOIN requisition r ON r.id = ro.req_id WHERE ro.RM_code = "${r.RM_code}" AND MONTH(r.date) = "${today.getMonth() + 1}" AND ro.req_id <= "${r.id}" AND (r.status="Running" OR r.status = "Closed")`
 					r.total_quantity = await selectQuery(q)
 												.then(result => result[0].issued_quantity)
 												.catch(err => {
@@ -113,7 +113,7 @@ app.get("/requisition/:id", (req, res) => {
 													res.render('error',{error: err})
 													res.end()
 												});
-					q = `SELECT COALESCE(SUM(r.quantity * fd.quantity),0) total FROM finished_goods_detail fd INNER JOIN requisition r ON fd.code = r.FG_code WHERE fd.raw_material_code = "${r.RM_code}" AND MONTH(r.date) = "${today.getMonth() + 1}" AND r.id <= "${r.id}" AND r.status="Running"`
+					q = `SELECT COALESCE(SUM(r.quantity * fd.quantity),0) total FROM finished_goods_detail fd INNER JOIN requisition r ON fd.code = r.FG_code WHERE fd.raw_material_code = "${r.RM_code}" AND MONTH(r.date) = "${today.getMonth() + 1}" AND r.id <= "${r.id}" AND (r.status="Running" OR r.status = "Closed")`
 					r.total_required_quantity = await selectQuery(q)
 													.then(result => result[0].total)
 													.catch(err => {
@@ -307,7 +307,7 @@ app.post("/requisition/:id", async (req, res) => {
 				res.render('error',{error: err});
 				res.end()
 			});
-	res.redirect(`/requisition/${id}`)
+	res.redirect(`/requisition`)
 });
 
 //=======================================================================================
