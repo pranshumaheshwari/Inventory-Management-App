@@ -45,21 +45,7 @@ app.get("/requisition", (req, res) => {
 	let q = `SELECT name, code FROM finished_goods`
 	selectQuery(q)
 			.then(finished_goods => {
-				q = `SHOW TABLE STATUS WHERE name = 'requisition'`
-				selectQuery(q)
-						.then(data => {
-							let id = data[0].Auto_increment;
-							res.render("requisition", {finished_goods, id})
-						})
-						.catch(err => {
-							logger.error({
-									error: err,
-									where: `${ req.method } ${ req.url } ${ q }`,
-									time: (new Date()).toISOString()
-							});
-							res.render('error',{error: err})
-							res.end()
-						});
+				res.render("requisition", {finished_goods})
 			})
 			.catch(err => {
 				logger.error({
@@ -82,7 +68,7 @@ app.get("/requisition/:id", (req, res) => {
 	// 		 WHERE r.id = ${id} AND r.FG_code = fd.code AND fd.raw_material_code = raw.code`
 	let q = `
 			SELECT
-				r.id, r.FG_code, r.quantity,
+				r.id, r.FG_code, r.quantity, r.status,
 				fd.raw_material_code RM_code, fd.quantity * r.quantity required_quantity,
 				raw.name RM_name, raw.stock
 			FROM
@@ -115,7 +101,7 @@ app.get("/requisition/:id", (req, res) => {
 													res.end()
 												});
 
-					q = `SELECT COALESCE(SUM(quantity),0) issued_quantity FROM requisition_output WHERE RM_code = "${r.RM_code}" AND MONTH(date) = "${today.getMonth() + 1}" AND req_id <= "${r.id}"`
+					q = `SELECT COALESCE(SUM(ro.quantity),0) issued_quantity FROM requisition_output ro LEFT OUTER JOIN requisition r ON r.id = ro.req_id WHERE ro.RM_code = "${r.RM_code}" AND MONTH(r.date) = "${today.getMonth() + 1}" AND ro.req_id <= "${r.id}" AND r.status="Running"`
 					r.total_quantity = await selectQuery(q)
 												.then(result => result[0].issued_quantity)
 												.catch(err => {
@@ -127,7 +113,7 @@ app.get("/requisition/:id", (req, res) => {
 													res.render('error',{error: err})
 													res.end()
 												});
-					q = `SELECT COALESCE(SUM(r.quantity * fd.quantity),0) total FROM finished_goods_detail fd INNER JOIN requisition r ON fd.code = r.FG_code WHERE fd.raw_material_code = "${r.RM_code}" AND MONTH(r.date) = "${today.getMonth() + 1}" AND r.id <= "${r.id}"`
+					q = `SELECT COALESCE(SUM(r.quantity * fd.quantity),0) total FROM finished_goods_detail fd INNER JOIN requisition r ON fd.code = r.FG_code WHERE fd.raw_material_code = "${r.RM_code}" AND MONTH(r.date) = "${today.getMonth() + 1}" AND r.id <= "${r.id}" AND r.status="Running"`
 					r.total_required_quantity = await selectQuery(q)
 													.then(result => result[0].total)
 													.catch(err => {
@@ -214,43 +200,7 @@ app.post("/requisition", (req, res) => {
 					what: data,
 					time: (new Date()).toISOString()
 				});
-				// q = `SELECT raw_material_code AS code, quantity FROM finished_goods_detail WHERE code = "${data.FG_code}"`
-				// let raw_materials = await selectQuery(q)
-				// 						.catch(err => {
-				// 							logger.error({
-				// 									error: err,
-				// 									where: `${ req.method } ${ req.url } ${ q }`,
-				// 									time: (new Date()).toISOString()
-				// 							});
-				// 							res.render('error',{error: err});
-				// 							res.end()
-				// 						});
-				// for (var raw_material of raw_materials) {
-				// 	q = `INSERT INTO requisition_details SET ?`
-				// 	var details = {
-				// 		req_id: data.id,
-				// 		RM_code: raw_material.code,
-				// 		required_quantity: data.quantity * raw_material.quantity
-				// 	}
-				// 	await insertQuery(q, details)
-				// 				.then(result => {
-				// 					logger.info({
-				// 						where: `${ req.method } ${ req.url } ${ q }`,
-				// 						what: details,
-				// 						time: (new Date()).toISOString()
-				// 					});
-				// 				})
-				// 				.catch(err => {
-				// 					logger.error({
-				// 							error: err,
-				// 							where: `${ req.method } ${ req.url } ${ q }`,
-				// 							time: (new Date()).toISOString()
-				// 					});
-				// 					res.render('error',{error: err});
-				// 					res.end()
-				// 				});
-				// }
-				res.redirect(`/requisition/${data.id}`)
+				res.redirect(`/requisition/${result.insertId}`)
 			})
 			.catch(err => {
 				logger.error({
@@ -265,6 +215,7 @@ app.post("/requisition", (req, res) => {
 
 app.post("/requisition/:id", async (req, res) => {
 	let id = req.params.id
+	
 	for (let [key, value] of Object.entries(req.body)) {
 		if (value == 0) continue;
 		let q = `INSERT INTO requisition_output SET ?`
@@ -312,6 +263,50 @@ app.post("/requisition/:id", async (req, res) => {
 					
 	}
 
+	let q = `SELECT f.raw_material_code RM_code, r.quantity * f.quantity quantity FROM requisition r INNER JOIN finished_goods_detail f ON f.code = r.FG_code WHERE r.id = ${id}`
+	let RM_code = await selectQuery(q)
+							.catch(err => {
+								logger.error({
+										error: err,
+										where: `${ req.method } ${ req.url } ${ q }`,
+										time: (new Date()).toISOString()
+								});
+								res.render('error',{error: err});
+								res.end()
+							});
+	
+	let status = true
+	for (var r of RM_code) {
+		var today = new Date()
+		q = `SELECT COALESCE(SUM(quantity),0) issued_quantity FROM requisition_output WHERE req_id = ${id} AND RM_code = "${r.RM_code}"`
+		status = status && await selectQuery(q)
+								.then(result => result[0].issued_quantity)
+								.then(issued_quantity => {
+									return (issued_quantity >= r.quantity)
+								})
+								.catch(err => {
+									logger.error({
+											error: err,
+											where: `${ req.method } ${ req.url } ${ q }`,
+											time: (new Date()).toISOString()
+									});
+									res.render('error',{error: err})
+									res.end()
+								});
+	}
+
+	status = status ? "Closed" : "Running"
+	q = `UPDATE requisition SET status = "${status}" WHERE id = ${id}`
+	await selectQuery(q)
+			.catch(err => {
+				logger.error({
+						error: err,
+						where: `${ req.method } ${ req.url } ${ q }`,
+						time: (new Date()).toISOString()
+				});
+				res.render('error',{error: err});
+				res.end()
+			});
 	res.redirect(`/requisition/${id}`)
 });
 

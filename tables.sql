@@ -135,7 +135,8 @@ CREATE TABLE IF NOT EXISTS requisition (
 	id INT AUTO_INCREMENT PRIMARY KEY,
 	FG_code varchar(14) NOT NULL,
 	date DATETIME DEFAULT CURRENT_TIMESTAMP,
-	quantity FLOAT NOT NULL
+	status ENUM('Ready','Running', 'Closed'),
+	quantity DOUBLE NOT NULL
 );
 
 -- CREATE TABLE IF NOT EXISTS requisition_details (
