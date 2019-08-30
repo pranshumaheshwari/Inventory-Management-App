@@ -42,10 +42,31 @@ app.get("/output/:slip_no", async (req, res) => {
 });
 
 app.get("/requisition", (req, res) => {
+	if(!req.query.status)
+		res.render("requisition")
+	else {
+		let q = `SELECT * FROM requisition WHERE status = "${req.query.status}"`
+		selectQuery(q)
+			.then(data => {
+				res.send(data)
+			})
+			.catch(err => {
+				logger.error({
+						error: err,
+						where: `${ req.method } ${ req.url } ${ q }`,
+						time: (new Date()).toISOString()
+				});
+				res.render('error',{error: err})
+				res.end()
+			});
+	}
+})
+
+app.get("/requisition/new", (req, res) => {
 	let q = `SELECT name, code FROM finished_goods`
 	selectQuery(q)
 			.then(finished_goods => {
-				res.render("requisition", {finished_goods})
+				res.render("requisition_new", {finished_goods})
 			})
 			.catch(err => {
 				logger.error({
@@ -190,7 +211,7 @@ app.post("/output",async function(req,res){
 	res.redirect("/output");
 });
 
-app.post("/requisition", (req, res) => {
+app.post("/requisition/new", (req, res) => {
 	let data = req.body
 	var q = "INSERT INTO requisition SET ?"
 	insertQuery(q, data)
