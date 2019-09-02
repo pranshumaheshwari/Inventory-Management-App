@@ -7,6 +7,27 @@ var express 	   							 = require('express'),
 //																		GET
 //=======================================================================================
 
+app.get(`/api/finishedGoods`, async (req, res) => {
+	if(req.query.category) {
+		let q = `SELECT * FROM finished_goods WHERE category = "${req.query.category}"`
+		selectQuery(q)
+			.then(data => {
+				res.send(data)
+			})
+			.catch(err => {
+				logger.error({
+						error: err,
+						where: `${ req.method } ${ req.url } ${ q }`,
+						time: (new Date()).toISOString()
+				});
+				res.render('error',{error: err})
+				res.end()
+			});
+	} else {
+
+	}
+})
+
 app.get("/output",async function(req,res){
 	var q = "SELECT * FROM raw_material";
 	await selectQuery(q)
@@ -63,10 +84,10 @@ app.get("/requisition", (req, res) => {
 })
 
 app.get("/requisition/new", (req, res) => {
-	let q = `SELECT name, code FROM finished_goods`
+	let q = `SELECT DISTINCT category FROM finished_goods`
 	selectQuery(q)
-			.then(finished_goods => {
-				res.render("requisition_new", {finished_goods})
+			.then(finished_goods_categories => {
+				res.render("requisition_new", {finished_goods_categories})
 			})
 			.catch(err => {
 				logger.error({

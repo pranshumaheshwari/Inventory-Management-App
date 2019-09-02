@@ -69,7 +69,7 @@ app.get("/finished_good/bulkUpdate", async (req, res) => {
 });
 
 app.post("/finished_good/bulkUpdate", async (req, res) => {
-	var data = req.body;
+	var data = req.body.stock;
 	for(const code in data) {
 		let q = `SELECT stock FROM finished_goods WHERE code = '${code}'`
 		let currentStock = await selectQuery(q)

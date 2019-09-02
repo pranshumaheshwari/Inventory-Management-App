@@ -29,6 +29,11 @@
         url: `/requisition?status=Ready`, 
         success: (res) => {
             $("#id").empty()
+            $("#id")
+                .append($("<option></option>")
+                .attr("value",'')
+                .attr("hidden",'')
+                .text(``));
             for(var d of res) {
                 $("#id")
                     .append($("<option></option>")
@@ -41,6 +46,11 @@
             url: `/requisition?status=${e.target.value}`, 
             success: (res) => {
                 $("#id").empty()
+                $("#id")
+                    .append($("<option></option>")
+                    .attr("value",'')
+                    .attr("hidden",'')
+                    .text(``));
                 for(var d of res) {
                     $("#id")
                         .append($("<option></option>")
