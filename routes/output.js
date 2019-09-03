@@ -301,7 +301,6 @@ let updateRequisitionStatus = async id => {
 										res.end()
 									});
 		if (r.issued_quantity < r.required_quantity) {
-			console.log(r)
 			isCompleted = false
 			break
 		}

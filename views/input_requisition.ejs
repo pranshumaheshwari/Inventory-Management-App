@@ -42,9 +42,11 @@
                         <td><%= data[i].issued_quantity %></td>
                         <% var total = Math.round(((data[i].total_quantity - data[i].total_required_quantity - data[i].required_quantity + data[i].issued_quantity) * 100) / 100) %>
                         <td><%= total + data[i].required_quantity - data[i].issued_quantity %></td>
-                        <% if(total >= 0) {%>
+                        <% if(data[i].required_quantity == data[i].issued_quantity) {%>
                             <td></td>
-                        <% } else {  %>
+                        <% } else if(total >= 0) {  %>
+                            <td><input type="text" value="<%= data[i].required_quantity %>" style="display: none;" name="<%= data[i].RM_code %>" /></td>
+                        <% } else { %>
                             <td><input type="text" value="<%= -total %>" name="<%= data[i].RM_code %>" /></td>
                         <% } %>
                     </tr>

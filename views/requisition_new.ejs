@@ -7,7 +7,7 @@
     <form action="/requisition/new" method="POST" onsubmit="return confirm('Are you sure?')">
         <div class="row">
             <div class="col-md-3">
-                <label style="width: 100%;">Description: <select class="form-control" id="category">
+                <label style="width: 100%;">Category: <select class="form-control" id="category">
                     <option value="" hidden></option>
                     <% for(var i=0;i<finished_goods_categories.length;i++){ %>
                         <option value="<%= finished_goods_categories[i].category %>"><%= finished_goods_categories[i].category %></option>
