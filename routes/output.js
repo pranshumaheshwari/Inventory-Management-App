@@ -324,7 +324,6 @@ app.post("/requisition/:id", async (req, res) => {
 	let id = req.params.id
 	
 	for (let [key, value] of Object.entries(req.body)) {
-		if (value == 0) continue;
 		value = parseFloat(value)
 		let q = `SELECT quantity FROM requisition_output WHERE req_id = 0 AND RM_code = "${key}"`
 		await selectQuery(q)
@@ -418,6 +417,7 @@ app.post("/requisition/:id", async (req, res) => {
 			}
 			updateRequisitionStatus(requisition.id)
 		}
+		console.log(value, totalValue)
 		if (totalValue <= value) {
 			q = `UPDATE requisition_output SET quantity = ${value - totalValue} WHERE RM_code = "${key}" AND req_id = 0`
 			await selectQuery(q)

@@ -45,7 +45,7 @@
                         <% if(data[i].required_quantity == data[i].issued_quantity) {%>
                             <td></td>
                         <% } else if(total >= 0) {  %>
-                            <td><input type="text" value="<%= data[i].required_quantity %>" style="display: none;" name="<%= data[i].RM_code %>" /></td>
+                            <td><input type="text" value="<%= 0 %>" style="display: none;" name="<%= data[i].RM_code %>" /></td>
                         <% } else { %>
                             <td><input type="text" value="<%= -total %>" name="<%= data[i].RM_code %>" /></td>
                         <% } %>
