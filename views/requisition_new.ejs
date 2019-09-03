@@ -4,7 +4,7 @@
 
 <div class="container">
     <br><br><br>
-    <form action="/requisition/new" method="POST">
+    <form action="/requisition/new" method="POST" onsubmit="return confirm('Are you sure?')">
         <div class="row">
             <div class="col-md-3">
                 <label style="width: 100%;">Description: <select class="form-control" id="category">
