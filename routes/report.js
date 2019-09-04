@@ -732,35 +732,33 @@ app.get("/report/output",function(req,res){
 	res.render("report_date",{type:"output"});
 });
 
+app.get("/report/requisition",function(req,res){
+	res.render("report_date",{type:"requisition"});
+});
+
 app.post("/report/:type",async function(req,res){
-	var Dateto = req.body.to.split("-"), Datefrom = req.body.from.split("-");
-	var to = new Date(Dateto[0],parseInt(Dateto[1])-1,parseInt(Dateto[2])+1);
-	var from = new Date(Datefrom[0],parseInt(Datefrom[1])-1,parseInt(Datefrom[2]));
-	var i_o = [];
+	var to = req.body.to, from = req.body.from;
+	console.log(to ,from)
 	var q;
 	if(req.params.type === "input")
-		q = "SELECT i.*,r.code FROM input AS i INNER JOIN raw_material AS r ON r.name = i.raw_desc ORDER BY date DESC";
-	else
-		q = "SELECT * FROM output ORDER BY date DESC"
+		q = `SELECT i.*, r.code FROM input AS i INNER JOIN raw_material AS r ON r.name = i.raw_desc WHERE date >= "${from}" AND date <= "${to}" ORDER BY date`
+	else if (req.params.type === "output")
+		q = `SELECT * FROM output WHERE date >= "${from}" AND date <= "${to}" ORDER BY date`
+	else if (req.params.type === "requisition")
+		q = `SELECT * FROM requisition_output WHERE date >= "${from}" AND date <= "${to}" AND req_id != 0 ORDER BY date`
 	await selectQuery(q)
-						.then(i_os => {
-							for(var i=0;i<i_os.length;i++){
-								if(i_os[i].date >= from && i_os[i].date <= to)
-									i_o.push(i_os[i]);
-							}
-							from.setDate(from.getDate()+1);
-							i_o.reverse();
-							res.render("report_inputORoutput",{i_o:i_o,type:req.params.type,to:to,from:from});
-						})
-						.catch(err => {
-							logger.error({
-									error: err,
-									where: `${ req.method } ${ req.url } ${ q }`,
-									time: (new Date()).toISOString()
-							});
-							res.render('error',{error: err})
-							res.end()
-						});
+			.then(data => {
+				res.render("report_inputORoutput",{i_o:data,type:req.params.type,to:to,from:from});
+			})
+			.catch(err => {
+				logger.error({
+						error: err,
+						where: `${ req.method } ${ req.url } ${ q }`,
+						time: (new Date()).toISOString()
+				});
+				res.render('error',{error: err})
+				res.end()
+			});
 });
 
 //=======================================================================================
