@@ -21,6 +21,54 @@ var express 	   							 = require('express'),
 // 		}
 // 	})
 
+app.get(`/temp`, async (req, res) => {
+	let q = `SELECT code FROM raw_material ORDER BY code`
+	let raw = await selectQuery(q)
+	for(let r of raw) {
+		q = `SELECT COALESCE(SUM(ro.quantity),0) issued_quantity FROM requisition_output ro LEFT OUTER JOIN requisition r ON r.id = ro.req_id WHERE ro.RM_code = "${r.code}"`
+		r.total_quantity = await selectQuery(q)
+									.then(result => result[0].issued_quantity)
+									.catch(err => {
+										console.log(r)
+										logger.error({
+												error: err,
+												where: `${ req.method } ${ req.url } ${ q }`,
+												time: (new Date()).toISOString()
+										});
+										res.render('error',{error: err})
+										res.end()
+									});
+		q = `SELECT quantity FROM requisition_output WHERE req_id = 0 AND RM_code = "${r.code}"`
+		r.total_quantity += await selectQuery(q)
+									.then(result => result[0].quantity)
+									.catch(err => {
+										console.log(r)
+										logger.error({
+												error: err,
+												where: `${ req.method } ${ req.url } ${ q }`,
+												time: (new Date()).toISOString()
+										});
+										res.render('error',{error: err})
+										res.end()
+									});
+		q = `SELECT COALESCE(SUM(r.quantity * fd.quantity),0) total FROM finished_goods_detail fd INNER JOIN requisition r ON fd.code = r.FG_code WHERE fd.raw_material_code = "${r.code}"`
+		r.total_required_quantity = await selectQuery(q)
+										.then(result => result[0].total)
+										.catch(err => {
+										console.log(r)
+										logger.error({
+													error: err,
+													where: `${ req.method } ${ req.url } ${ q }`,
+													time: (new Date()).toISOString()
+											});
+											res.render('error',{error: err})
+											res.end()
+										});
+	}
+
+	res.render("temp", {data: raw})
+})
+
 app.get(`/api/finishedGoods`, async (req, res) => {
 	if(req.query.category) {
 		let q = `SELECT * FROM finished_goods WHERE category = "${req.query.category}"`
@@ -325,6 +373,7 @@ app.post("/requisition/:id", async (req, res) => {
 	
 	for (let [key, value] of Object.entries(req.body)) {
 		value = parseFloat(value)
+		let oldv = value
 		let q = `SELECT quantity FROM requisition_output WHERE req_id = 0 AND RM_code = "${key}"`
 		await selectQuery(q)
 					.then(data => data[0].quantity)
@@ -417,7 +466,6 @@ app.post("/requisition/:id", async (req, res) => {
 			}
 			updateRequisitionStatus(requisition.id)
 		}
-		console.log(value, totalValue)
 		if (totalValue <= value) {
 			q = `UPDATE requisition_output SET quantity = ${value - totalValue} WHERE RM_code = "${key}" AND req_id = 0`
 			await selectQuery(q)
@@ -431,7 +479,7 @@ app.post("/requisition/:id", async (req, res) => {
 						res.end()
 					});
 		}
-		q = `UPDATE raw_material SET stock = (stock - ${value}), line_stock = (line_stock + ${value}) WHERE code = '${key}'`
+		q = `UPDATE raw_material SET stock = (stock - ${oldv}), line_stock = (line_stock + ${oldv}) WHERE code = '${key}'`
 		await selectQuery(q)
 					.then(result => {
 						logger.info({

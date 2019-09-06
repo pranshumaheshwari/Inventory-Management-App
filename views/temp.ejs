@@ -3,21 +3,17 @@
 <table class="table table-striped table-bordered table-hover">
 	<thead>
 		<tr>
-			<th>#</th>
-			<th>Part Number</th>
-			<th>Desc</th>
-			<th>Stock</th>
-			<th>Opening</th>
+			<th>req_id</th>
+			<th>RM_code</th>
+			<th>quantity</th>
 		</tr>
 	</thead>
 	<tbody>
-	<% for(var i=0;i<raw_materials.length;i++){ %>
+	<% for(var i=0;i<data.length;i++){ %>
 		<tr>
-			<td><%= i+1 %></td>
-			<td><%= raw_materials[i].code %></td>
-			<td><%= raw_materials[i].name %></td>
-			<td><%= raw_materials[i].stock %></td>
-			<td><%= raw_materials[i].stock + raw_materials[i].q - raw_materials[i].qu %></td>
+			<td>0</td>
+			<td><%= data[i].code %></td>
+			<td><%= Math.max(-data[i].total_required_quantity + data[i].total_quantity, 0) %></td>
 		</tr>
 	<% } %>
 	</tbody>
