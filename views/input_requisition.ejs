@@ -40,8 +40,8 @@
                         <td><%= data[i].stock %></td>
                         <td><%= Math.round(data[i].required_quantity*100)/100 %></td>
                         <td><%= Math.round(data[i].issued_quantity*100)/100 %></td>
-                        <% var total = Math.round(((data[i].total_quantity - data[i].total_required_quantity - data[i].required_quantity + data[i].issued_quantity) * 100) / 100) %>
-                        <td><%= total + data[i].required_quantity - data[i].issued_quantity %></td>
+                        <% var total = data[i].total_quantity - data[i].total_required_quantity - data[i].required_quantity + data[i].issued_quantity %>
+                        <td><%= Math.round((total + data[i].required_quantity - data[i].issued_quantity)*100)/100 %></td>
                         <% if(data[i].required_quantity == data[i].issued_quantity) {%>
                             <td></td>
                         <% } else if(total >= 0) {  %>
