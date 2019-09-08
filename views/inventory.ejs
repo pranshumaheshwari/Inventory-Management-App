@@ -77,7 +77,7 @@
 							<td><%= raw_materials[i].price %></td>
 							<td><%= Math.round(raw_materials[i].price * stock *100)/100 %></td>
 							<span style="display:none;"><%= totalPrice += Math.round(raw_materials[i].price * stock *100)/100 %><%= storePrice += Math.round(raw_materials[i].price * raw_materials[i].stock *100)/100 %><%= linePrice += Math.round(raw_materials[i].price * raw_materials[i].line_stock *100)/100 %></span>
-							<td><a class="btn btn-primary" href="/inventory/<%= raw_materials[i].code %>">Update/Delete</a></td>
+							<td><a class="btn btn-primary element admin ppc" href="/inventory/<%= raw_materials[i].code %>">Update/Delete</a></td>
 						</tr>
 				<% } %>
 				<tr>
