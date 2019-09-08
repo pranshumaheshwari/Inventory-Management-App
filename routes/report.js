@@ -734,25 +734,61 @@ app.get("/report/manPower", async (req, res) => {
 });
 
 app.post("/report/manPower", async (req, res) => {
-	var from = req.body.from;
-	var to = req.body.to;
-	var nextDate = d => {
-		var year = d.split("-")[0]
-		var month = d.split("-")[1]
-		var day = d.split("-")[2]
-		var d = new Date(year, parseInt(month) - 1, day, 0, 0, 0, 0)
-		d.setDate(d.getDate() + 1)
-		var s = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}` 
-		return s
-	}
-	var q = `SELECT SUM(production.quantity) AS quantity, production.FG_code, finished_goods.man_power, finished_goods.name, finished_goods.overheads, finished_goods.category FROM (production INNER JOIN finished_goods ON production.FG_code = finished_goods.code) WHERE production.date >= '${from.replace(/-/g, '/')}' AND production.date < '${nextDate(to).replace(/-/g, '/')}' GROUP BY production.FG_code ORDER BY finished_goods.category`
-	selectQuery(q)
-		.then(data => {
-			q = `SELECT SUM(nos) AS nos FROM attendance WHERE date >= '${from.replace(/-/g, '/')}' AND date < '${nextDate(to).replace(/-/g, '/')}'`
-			selectQuery(q)
-				.then(nos => {
-					res.render('report_man_power', { data, nos: nos[0].nos, from, to });
-				})
+	let from = req.body.from;
+	let to = req.body.to;
+	// var q = `
+	// 		SELECT SUM(p.quantity) AS quantity, p.FG_code, 
+	// 			   fg.man_power, fg.name, fg.overheads, fg.category
+	// 		FROM production p
+	// 		INNER JOIN finished_goods fg 
+	// 		ON p.FG_code = fg.code 
+	// 		WHERE p.date >= '${from}' AND p.date <= '${to}'
+	// 		GROUP BY p.FG_code 
+	// 		ORDER BY fg.category
+	// 		`
+	// selectQuery(q)
+	// 	.then(data => {
+	// 		q = `SELECT SUM(nos) AS nos FROM attendance WHERE date >= '${from}' AND date <= '${to}'`
+	// 		selectQuery(q)
+	// 			.then(nos => {
+	// 				res.render('report_man_power', { data, nos: nos[0].nos, from, to });
+	// 			})
+	// 			.catch(err => {
+	// 				logger.error({
+	// 					error: err,
+	// 					where: `${ req.method } ${ req.url } ${ q }`,
+	// 						time: (new Date()).toISOString()
+	// 					});
+	// 				res.render('error',{error: err})
+	// 				res.end()
+	// 			});
+	// 	})
+		// .catch(err => {
+		// 	logger.error({
+		// 		error: err,
+		// 		where: `${ req.method } ${ req.url } ${ q }`,
+		// 			time: (new Date()).toISOString()
+		// 		});
+		// 	res.render('error',{error: err})
+		// 	res.end()
+		// });
+
+	let data = await selectQuery(`SELECT code, name, category, man_power, overheads FROM finished_goods ORDER BY code`)
+	let dateFrom = new Date(from), dateTo = new Date(to)
+	let date = dateFrom
+	let attendance = []
+	let numberOfDays = ((dateTo.getTime() - dateFrom.getTime()) / (1000 * 3600 * 24)) + 1
+	for(let i=0;i<numberOfDays;i++) {
+		for(let r of data) {
+			if(!r.productionData) r.productionData = []
+			let q = `
+					SELECT SUM(p.quantity) AS quantity, "${date}" date
+					FROM production p
+					WHERE DAY(p.date) = '${date.getDate()}' AND MONTH(p.date) = '${date.getMonth()+1}' AND YEAR(p.date) = '${date.getFullYear()}' AND p.FG_code = "${r.code}"
+					`
+			r.productionData.push(
+				await selectQuery(q)
+				.then(data => data[0])
 				.catch(err => {
 					logger.error({
 						error: err,
@@ -761,17 +797,27 @@ app.post("/report/manPower", async (req, res) => {
 						});
 					res.render('error',{error: err})
 					res.end()
-				});
-		})
-		.catch(err => {
-			logger.error({
-				error: err,
-				where: `${ req.method } ${ req.url } ${ q }`,
-					time: (new Date()).toISOString()
-				});
-			res.render('error',{error: err})
-			res.end()
-		});
+				}))
+		}
+		q = `SELECT nos FROM attendance WHERE DAY(date) = '${date.getDate()}' AND MONTH(date) = '${date.getMonth()+1}' AND YEAR(date) = '${date.getFullYear()}'`
+		attendance.push(
+			await selectQuery(q)
+			.then(data => data[0])
+			.then(data => (!data) ? {nos: 0} : data)
+			.then(data => data.nos)
+			.catch(err => {
+				logger.error({
+					error: err,
+					where: `${ req.method } ${ req.url } ${ q }`,
+						time: (new Date()).toISOString()
+					});
+				res.render('error',{error: err})
+				res.end()
+			}))
+		date.setDate(date.getDate() + 1)
+	}
+	console.log(data[Object.keys(data)[0]].productionData)
+	res.render("report_man_power", {data, attendance, from, to})
 });
 
 app.get('/report/attendance', async (req, res) => {
