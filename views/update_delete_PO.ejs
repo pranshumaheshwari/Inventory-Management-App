@@ -16,11 +16,11 @@
 			<% for(var j=0;j<foundRaw.length;j++){ %>
 				<div class="row">
 					<div class="col-md-6">
-						<label for="product_name">Description/DTPL Part Number</label>
-						<input autocomplete="off" type="text" name="PO_code[<%= j %>]" list="Product" value="<%= foundRaw[j].raw_desc %>$<%= foundRaw[j].DTPL_code %>" id="product_name" class="form-control">
+						<label for="product_name">Description/DTPL Part Number/Part Number</label>
+						<input autocomplete="off" type="text" name="PO_code[<%= j %>]" list="Product" value="<%= foundRaw[j].raw_desc %>$<%= foundRaw[j].DTPL_code %>$<%=foundRaw[j].RM_code%>" id="product_name" class="form-control">
 							<datalist id="Product" name="Product">
 							<% for(var i=0;i<raw_materials.length;i++){ %>
-									<option value="<%= raw_materials[i].name %>$<%= raw_materials[i].DTPL_code %>"><%= raw_materials[i].code %>/<%= raw_materials[i].DTPL_code %>/<%= raw_materials[i].name %></option>
+									<option value="<%= raw_materials[i].name %>$<%= raw_materials[i].DTPL_code %>$<%= raw_materials[i].code %>"><%= raw_materials[i].code %>/<%= raw_materials[i].DTPL_code %>/<%= raw_materials[i].name %></option>
 							<% } %>
 							</datalist>
 					</div>
