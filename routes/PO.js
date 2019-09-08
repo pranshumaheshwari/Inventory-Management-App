@@ -55,7 +55,7 @@ app.get("/PO/new",async function(req,res){
 });
 
 app.get("/PO/:code",async function(req,res){
-	var q = "SELECT * FROM PO_detail WHERE PO_code = '" + req.params.code + "'";
+	var q = "SELECT po.*, r.code RM_code FROM PO_detail po INNER JOIN raw_material r ON r.name = po.raw_desc WHERE po.PO_code = '" + req.params.code + "'";
 	await selectQuery(q)
 						.then(async foundRaw => {
 							q = "SELECT * FROM raw_material ORDER BY code";
