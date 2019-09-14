@@ -70,10 +70,10 @@
                 <td>Total Overheads: </td>
                 <% let totalOH = 0 %>
                 <% for(let i of OHPerDay) { %>
-                    <td><%= i %></td>
+                    <td><%= Math.round(i) %></td>
                     <% totalOH += i %>
                 <% } %>
-                <td><%= totalOH %></td>
+                <td><%= Math.round(totalOH) %></td>
                 <td></td>
                 <td></td>
             </tr>
@@ -86,10 +86,10 @@
                 <td>Total MP Required: </td>
                 <% let totalMP = 0 %>
                 <% for(let i of MPPerDay) { %>
-                    <td><%= i %></td>
+                    <td><%= Math.round(i) %></td>
                     <% totalMP += i %>
                 <% } %>
-                <td><%= totalMP %></td>
+                <td><%= Math.round(totalMP) %></td>
                 <td></td>
                 <td></td>
             </tr>
