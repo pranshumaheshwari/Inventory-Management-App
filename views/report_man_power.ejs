@@ -14,7 +14,7 @@
 				<th>MP / Unit</th>
 				<th>OH / Unit</th>
                 <% for(let i of data[Object.keys(data)[0]].productionData) { %>
-                    <th><%= new Date(i.date).toISOString().substring(5,10) %></th>
+                    <th><%= new Date(i.date).toISOString().substring(0,10) %></th>
                 <% } %>
 				<th>Total Production</th>
 				<th>Total Man Power</th>
