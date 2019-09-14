@@ -248,6 +248,23 @@ app.get("/requisition/:id", (req, res) => {
 			});
 })
 
+app.get("/requisition/:id/close", (req, res) => {
+	let q = `UPDATE requsition SET status = "Closed" WHERE id = ${req.params.id}`
+	selectQuery(q)
+		.then(data => {
+			res.redirect("/requisition")
+		})
+		.catch(err => {
+			logger.error({
+					error: err,
+					where: `${ req.method } ${ req.url } ${ q }`,
+					time: (new Date()).toISOString()
+			});
+			res.render('error',{error: err})
+			res.end()
+		});
+})
+
 //=======================================================================================
 //																		POST
 //=======================================================================================
