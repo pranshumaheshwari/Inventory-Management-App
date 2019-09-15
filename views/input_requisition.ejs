@@ -19,7 +19,7 @@
                 <label style="width: 100%;">Requisition Status: <input type="text" class="form-control-plaintext" value="<%=data[0].status%>"></label>
             </div>
             <div class="col-md-1">
-                <label style="width: 100%;">Requisition Date: <input type="text" class="form-control-plaintext" value="<%=data[0].date%>"></label>
+                <label style="width: 100%;">Requisition Date: <input type="text" class="form-control-plaintext" value="<%=data[0].date.toISOString().substring(0,10)%>"></label>
             </div>
         </div>
         <br>
