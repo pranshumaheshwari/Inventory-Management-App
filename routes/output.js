@@ -166,7 +166,7 @@ app.get("/requisition/:id", (req, res) => {
 	let id = req.params.id
 	let q = `
 			SELECT
-				r.id, r.FG_code, r.quantity, r.status,
+				r.id, r.FG_code, r.quantity, r.status, r.date,
 				fd.raw_material_code RM_code, fd.quantity * r.quantity required_quantity,
 				raw.name RM_name, raw.stock
 			FROM
