@@ -799,7 +799,7 @@ app.post("/report/manPower", async (req, res) => {
 					res.end()
 				}))
 		}
-		q = `SELECT nos FROM attendance WHERE DAY(date) = '${date.getDate()}' AND MONTH(date) = '${date.getMonth()+1}' AND YEAR(date) = '${date.getFullYear()}'`
+		q = `SELECT SUM(nos) nos FROM attendance WHERE DAY(date) = '${date.getDate()}' AND MONTH(date) = '${date.getMonth()+1}' AND YEAR(date) = '${date.getFullYear()}'`
 		attendance.push(
 			await selectQuery(q)
 			.then(data => data[0])
@@ -816,7 +816,6 @@ app.post("/report/manPower", async (req, res) => {
 			}))
 		date.setDate(date.getDate() + 1)
 	}
-	console.log(data[Object.keys(data)[0]].productionData)
 	res.render("report_man_power", {data, attendance, from, to})
 });
 
