@@ -56,7 +56,7 @@
                             <td>0</td>
                             <td><input type="text" value="<%= 0 %>" style="display: none;" name="<%= data[i].RM_code %>" /></td>
                         <% } else { %>
-                            <td><%= -total %></td>
+                            <td><%= Math.ceil(-total*100)/100 %></td>
                             <td><input type="text" value="0" name="<%= data[i].RM_code %>" /></td>
                         <% } %>
                     </tr>
