@@ -775,7 +775,7 @@ app.post("/report/manPower", async (req, res) => {
 
 	// let data = await selectQuery(`SELECT code, name, category, man_power, overheads FROM finished_goods ORDER BY code`)
 	let q = `
-				SELECT fg.code, fg.name, fg.category, fg.man_power, fg_overheads 
+				SELECT fg.code, fg.name, fg.category, fg.man_power, fg.overheads 
 				FROM production p 
 				INNER JOIN finished_goods fg ON fg.code = p.FG_code 
 				WHERE p.date >= "${from}" AND p.date <= "${to}" 
