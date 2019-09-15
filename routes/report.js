@@ -773,7 +773,16 @@ app.post("/report/manPower", async (req, res) => {
 		// 	res.end()
 		// });
 
-	let data = await selectQuery(`SELECT code, name, category, man_power, overheads FROM finished_goods ORDER BY code`)
+	// let data = await selectQuery(`SELECT code, name, category, man_power, overheads FROM finished_goods ORDER BY code`)
+	let q = `
+				SELECT fg.code, fg.name, fg.category, fg.man_power, fg_overheads 
+				FROM production p 
+				INNER JOIN finished_goods fg ON fg.code = p.FG_code 
+				WHERE p.date >= "${from}" AND p.date <= "${to}" 
+				HAVING SUM(p.quantity) > 0
+				ORDER BY fg.code
+			`
+	let data = await selectQuery(q)
 	let dateFrom = new Date(from), dateTo = new Date(to)
 	let date = dateFrom
 	let attendance = []
@@ -782,7 +791,7 @@ app.post("/report/manPower", async (req, res) => {
 		for(let r of data) {
 			if(!r.productionData) r.productionData = []
 			let q = `
-					SELECT SUM(p.quantity) AS quantity, "${date}" date
+					SELECT SUM(p.quantity) quantity, "${date}" date
 					FROM production p
 					WHERE DAY(p.date) = '${date.getDate()}' AND MONTH(p.date) = '${date.getMonth()+1}' AND YEAR(p.date) = '${date.getFullYear()}' AND p.FG_code = "${r.code}"
 					`

@@ -47,6 +47,20 @@
             <% } %>
 
             <tr>
+				<td></td>
+                <td></td>
+                <td></td>
+				<td></td>
+				<td></td>
+                <% for(let i of data[Object.keys(data)[0]].productionData) { %>
+                    <td><%= new Date(i.date).toISOString().substring(0,10) %></td>
+                <% } %>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+
+            <tr>
                 <td></td>
                 <td></td>
                 <td></td>
