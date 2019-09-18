@@ -131,9 +131,9 @@
                 <td></td>
                 <td>Efficiency: </td>
                 <% for(let i in attendance) { %>
-                    <td><%= Math.round((MPPerDay[i] / attendance[i]) * 100) %>%</td>
+                    <td><%= Math.round((MPPerDay[i] / attendance[i]) * 10000) / 100 %>%</td>
                 <% } %>
-                <td><%= Math.round((totalMP / totalAttendance) * 100) %>%</td>
+                <td><%= Math.round((totalMP / totalAttendance) * 10000) / 100 %>%</td>
                 <td></td>
                 <td></td>
             </tr>

@@ -419,9 +419,11 @@ app.post("/report/name",async function(req,res){
 
 	let {to, from} = req.body
 	let q = `
-			SELECT PO_code, invoice_no, quantity, date, 'i' type FROM input WHERE DTPL_code = "${raw[1]}" AND raw_desc = "${raw[2]}" AND date >= "${from}" AND date <= "${to}"
-			UNION
-			SELECT req_id, RM_code, quantity, date, 'o' type FROM requisition_output WHERE RM_code = "${raw[0]}" AND date >= "${from}" AND date <= "${to}"
+			SELECT PO_code, invoice_no, quantity, date, 'i' type FROM input WHERE DTPL_code = "${raw[1]}" AND raw_desc = "${raw[2]}" AND date >= "${from}" AND date <= "${to}" 
+			UNION 
+			SELECT req_id, RM_code, quantity, date, 'ro' type FROM requisition_output WHERE RM_code = "${raw[0]}" AND date >= "${from}" AND date <= "${to}" 
+			UNION 
+			SELECT slip_no, raw_material_code, quantity, date, 'o' type FROM output WHERE raw_material_code = "${raw[0]}" AND date >= "${from}" AND date <= "${to}" 
 			ORDER BY date
 		`
 	let data = await selectQuery(q)
@@ -467,6 +469,17 @@ app.post("/report/name",async function(req,res){
 											res.render('error',{error: err})
 											res.end()
 											});
+	q = `SELECT SUM(quantity) quantity FROM output WHERE raw_material_code = "${raw[0]}" AND date >= "${from}" AND date <= "${to}"`
+	totalOutputInRange += await selectQuery(q).then(d => d[0].quantity)
+										.catch(err => {
+											logger.error({
+													error: err,
+													where: `${ req.method } ${ req.url } ${ q }`,
+													time: (new Date()).toISOString()
+											});
+											res.render('error',{error: err})
+											res.end()
+											});
 	q = `SELECT SUM(quantity) quantity FROM input WHERE DTPL_code = "${raw[1]}" AND raw_desc = "${raw[2]}" AND date > "${to}"`
 	let totalInputOutRange = await selectQuery(q).then(d => d[0].quantity)
 										.catch(err => {
@@ -480,6 +493,17 @@ app.post("/report/name",async function(req,res){
 											});
 	q = `SELECT SUM(quantity) quantity FROM requisition_output WHERE RM_code = "${raw[0]}" AND date > "${to}"`
 	let totalOutputOutRange = await selectQuery(q).then(d => d[0].quantity)
+										.catch(err => {
+											logger.error({
+													error: err,
+													where: `${ req.method } ${ req.url } ${ q }`,
+													time: (new Date()).toISOString()
+											});
+											res.render('error',{error: err})
+											res.end()
+											});
+	q = `SELECT SUM(quantity) quantity FROM output WHERE raw_material_code = "${raw[0]}" AND date > "${to}"`
+	totalOutputOutRange += await selectQuery(q).then(d => d[0].quantity)
 										.catch(err => {
 											logger.error({
 													error: err,
