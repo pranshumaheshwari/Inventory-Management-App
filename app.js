@@ -144,6 +144,7 @@ app.get("/",function(req, res) {
 	} else {
 		res.render("login", {err: ``});
 	}
+	// res.render("invoice");
 });
 
 app.post("/", async (req, res) => {
