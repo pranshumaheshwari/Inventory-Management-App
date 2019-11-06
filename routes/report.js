@@ -11,6 +11,20 @@ app.get("/report",function(req,res){
 	res.render("reports");
 });
 
+app.get("/report/excessOnLine", async (req, res) => {
+	let q = `
+			SELECT req.quantity excessQuantity,
+				   r.code, r.DTPL_code, r.name, r.stock, r.line_stock 
+			FROM requisition_output req 
+			INNER JOIN raw_material r
+			ON req.RM_code = r.code 
+			WHERE req.req_id = 0 AND req.quantity > 0
+			ORDER BY r.code
+		`
+	let data = await selectQuery(q)
+	res.render("report_excessOnLine", {data})
+})
+
 app.get("/report/finishedGoodsError", async (req, res) => {
 	res.render("date", {action: "finishedGoodsError"});	
 });
