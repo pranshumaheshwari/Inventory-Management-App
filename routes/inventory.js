@@ -70,18 +70,20 @@ app.get("/inventory/:code",async function(req,res){
 						.then(async raw_material => {
 							q = "SELECT code FROM supplier ORDER BY name";
 							await selectQuery(q)
-												.then(supplier_code => {
-													res.render("update_delete_raw_material",{raw_material:raw_material[0],supplier_code:supplier_code});
-												})
-												.catch(err => {
-													logger.error({
-															error: err,
-															where: `${ req.method } ${ req.url } ${ q }`,
-															time: (new Date()).toISOString()
-													});
-													res.render('error',{error: err});
-												res.end()
-											});
+									.then(async supplier_code => {
+										q = `SELECT quantity FROM requisition_output WHERE req_id = 0 AND RM_code = "${req.params.code}"`
+										let excessOnLine = await selectQuery(q).then(data => data[0].quantity);
+										res.render("update_delete_raw_material",{excessOnLine,raw_material:raw_material[0],supplier_code:supplier_code});
+									})
+									.catch(err => {
+										logger.error({
+												error: err,
+												where: `${ req.method } ${ req.url } ${ q }`,
+												time: (new Date()).toISOString()
+										});
+										res.render('error',{error: err});
+									res.end()
+									});
 						})
 						.catch(err => {
 							logger.error({
@@ -240,7 +242,7 @@ app.put("/inventory/:code",async function(req,res){
 								what: req.body.raw_material,
 								time: (new Date()).toISOString()
 							});
-							res.redirect("/inventory");
+							// res.redirect("/inventory");
 						})
 						.catch(err => {
 							logger.error({
@@ -251,6 +253,9 @@ app.put("/inventory/:code",async function(req,res){
 							res.render('error',{error: err});
 							res.end()
 						});
+	q = `UPDATE requisition_output SET quantity = ${req.body.excessOnLine} WHERE req_id = 0 AND RM_code = "${req.params.code}"`
+	await selectQuery(q)
+	res.redirect("/inventory")
 });
 
 //=======================================================================================

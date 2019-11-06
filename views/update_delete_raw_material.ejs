@@ -24,12 +24,16 @@
 		</div>
 		<br>
 		<div class="row">
-			<div class="col-md-4">
+			<div class="col-md-3">
 				<label for="raw_material[stock]">Current Stock</label>
 				<input autocomplete="off" type="number" name="raw_material[stock]" required id="raw_material[stock]" value="<%= raw_material.stock %>" class="form-control">
 			</div>
-			<div class="col-md-4">
+			<div class="col-md-3">
 				<label>Line Stock: <input autocomplete="off" type="number" name="raw_material[line_stock]" value="<%= raw_material.line_stock %>" required class="form-control"></label>
+			</div>
+			<div class="col-md-3">
+				<label for="excessOnLine">Excess On Line</label>
+				<input autocomplete="off" type="number" name="excessOnLine" required id="excessOnLine" value="<%= excessOnLine %>" class="form-control">
 			</div>
 			<div class="col-md-4">
 				<label for="raw_material[category]">Category</label>
