@@ -11,12 +11,18 @@
 			</tr>
 		</thead>
 		<tbody>
+			<% let totalNos = 0 %>
 			<% for(var i=0;i<data.length;i++){ %>
 				<tr>
 					<td><%= data[i].date %></td>
 					<td><%= data[i].nos %></td>
+					<% totalNos += data[i].nos %>
 				</tr>
-            <% } %>
+			<% } %>
+			<tr>
+				<td>Total: </td>
+				<td><%= totalNos %></td>
+			</tr>
 		</tbody>
 	</table>
 </div>

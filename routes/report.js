@@ -859,7 +859,7 @@ app.get('/report/attendance', async (req, res) => {
 app.post('/report/attendance', async (req, res) => {
 	var from = req.body.from;
 	var to = req.body.to;
-	var q = `SELECT * FROM attendance WHERE date >= '${from}' AND date < '${to}'`
+	var q = `SELECT * FROM attendance WHERE date >= '${from}' AND date <= '${to}'`
 	selectQuery(q)
 			.then(data => {
 				res.render("report_attendance", {data})
