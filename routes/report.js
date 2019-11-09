@@ -450,6 +450,17 @@ app.post("/report/name",async function(req,res){
 							res.render('error',{error: err})
 							res.end()
 							});
+	q = `SELECT quantity FROM requisition_output WHERE req_id = 0 AND RM_code = "${raw[0]}"`
+	let excessOnLine = await selectQuery(q).then(d => d[0].quantity)
+								.catch(err => {
+									logger.error({
+											error: err,
+											where: `${ req.method } ${ req.url } ${ q }`,
+											time: (new Date()).toISOString()
+									});
+									res.render('error',{error: err})
+									res.end()
+									});
 	q = `SELECT stock FROM raw_material WHERE code = "${raw[0]}"`
 	let currentStock = await selectQuery(q).then(d => d[0].stock)
 								.catch(err => {
@@ -528,7 +539,7 @@ app.post("/report/name",async function(req,res){
 											res.end()
 											});
 	let openingStock = currentStock + totalOutputInRange + totalOutputOutRange - totalInputInRange - totalInputOutRange
-	res.render("reports_with_data",{input_output:data, currentStock, openingStock, from, to, totalInputInRange, totalOutputInRange, raw});
+	res.render("reports_with_data",{excessOnLine, input_output:data, currentStock, openingStock, from, to, totalInputInRange, totalOutputInRange, raw});
 });
 
 //																		BY PO

@@ -47,6 +47,13 @@
 				<td>From: <%= from %></td>
 				<td>Opening: <%= openingStock %></td>
 			</tr>
+			<tr>
+				<td>Excess On Line: </td>
+				<td></td>
+				<td><%= excessOnLine %></td>
+				<td></td>
+				<td><% openingStock -= excessOnLine %><%= openingStock %></td>
+			</tr>
 			<% for(var i=0;i<input_output.length;i++){ %>
 				<tr>
 					<% if(input_output[i].type === 'i' ){ %>
@@ -59,11 +66,7 @@
 
 					<% } else if(input_output[i].type === 'ro' ) { %>
 
-						<% if (input_output[i].PO_code == 0) { %>
-							<td>Excess On Line: <%= input_output[i].PO_code %></td>
-						<% } else { %>
-							<td>Requisition ID: <%= input_output[i].PO_code %></td>
-						<% } %>
+						<td>Requisition ID: <%= input_output[i].PO_code %></td>
 						<td></td>
 						<td><%= input_output[i].quantity %> (<%= input_output[i].issuing_req_id %> WITH <%= input_output[i].issuing_quantity %>)</td>
 						<td><%= input_output[i].date.toISOString().substring(0,10) %></td>
