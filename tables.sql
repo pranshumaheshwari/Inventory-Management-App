@@ -128,7 +128,9 @@ CREATE TABLE IF NOT EXISTS requisition_output (
 	req_id INT NOT NULL,
 	RM_code VARCHAR(10),
 	quantity DOUBLE NOT NULL,
-	date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+	date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	issuing_req_id INT NOT NULL,
+	issuing_quantity DOUBLE NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS requisition (
@@ -138,12 +140,6 @@ CREATE TABLE IF NOT EXISTS requisition (
 	status ENUM('Ready','Running', 'Closed'),
 	quantity DOUBLE NOT NULL
 );
-
--- CREATE TABLE IF NOT EXISTS requisition_details (
--- 	req_id INT NOT NULL,
--- 	RM_code VARCHAR(10) NOT NULL,
--- 	required_quantity FLOAT NOT NULL,
--- );
 
 CREATE TABLE IF NOT EXISTS production (
 	FG_code VARCHAR(50) NOT NULL,
