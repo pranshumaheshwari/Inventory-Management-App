@@ -50,27 +50,33 @@
 			<% for(var i=0;i<input_output.length;i++){ %>
 				<tr>
 					<% if(input_output[i].type === 'i' ){ %>
+
 						<td>Invoice Number: <%= input_output[i].invoice_no %>/PO Number: <%= input_output[i].PO_code %></td>
 						<td><%= input_output[i].quantity %></td>
 						<td></td>
 						<td><%= input_output[i].date.toISOString().substring(0,10) %></td>
 						<td><% openingStock += input_output[i].quantity %><%= openingStock %></td>
+
 					<% } else if(input_output[i].type === 'ro' ) { %>
+
 						<% if (input_output[i].PO_code == 0) { %>
 							<td>Excess On Line: <%= input_output[i].PO_code %></td>
 						<% } else { %>
 							<td>Requisition ID: <%= input_output[i].PO_code %></td>
 						<% } %>
 						<td></td>
-						<td><%= input_output[i].quantity %></td>
+						<td><%= input_output[i].quantity %> (<%= input_output[i].issuing_req_id %> WITH <%= input_output[i].issuing_quantity %>)</td>
 						<td><%= input_output[i].date.toISOString().substring(0,10) %></td>
 						<td><% openingStock -= input_output[i].quantity %><%= openingStock %></td>
+
 					<% } else { %>
+
 						<td>Slip No.: <%= input_output[i].PO_code %></td>
 						<td></td>
 						<td><%= input_output[i].quantity %></td>
 						<td><%= input_output[i].date.toISOString().substring(0,10) %></td>
 						<td><% openingStock -= input_output[i].quantity %><%= openingStock %></td>
+
 					<% } %>
 				</tr>
 			<% } %>
