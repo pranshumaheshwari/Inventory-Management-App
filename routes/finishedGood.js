@@ -558,6 +558,7 @@ app.post("/finished_good/dispatch",async function(req,res){
 });
 
 app.post("/finished_good/production",async function(req,res){
+	res.redirect("/finished_good/production");
 	for(var i=0;i<req.body.finished_goods_code.length;i++){
 		var q = "UPDATE finished_goods SET stock = stock + " + req.body.quantity[i] + " WHERE code ='" + req.body.finished_goods_code[i] + "'";
 		await selectQuery(q)
@@ -634,7 +635,7 @@ app.post("/finished_good/production",async function(req,res){
 								res.end()
 							});
 	}
-	res.redirect("/finished_good/production");
+	// res.redirect("/finished_good/production");
 });
 
 app.post("/finished_good/mock",async function(req,res){

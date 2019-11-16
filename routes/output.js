@@ -337,6 +337,7 @@ app.post("/requisition/new", (req, res) => {
 });
 
 app.post("/requisition/:id", async (req, res) => {
+	res.redirect(`/requisition`)
 	let id = req.params.id
 	let q = ``
 	for (let [key, value] of Object.entries(req.body)) {
@@ -615,7 +616,7 @@ app.post("/requisition/:id", async (req, res) => {
 						res.end()
 					});
 	}
-	res.redirect(`/requisition`)
+	// res.redirect(`/requisition`)
 });
 
 //=======================================================================================
