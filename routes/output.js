@@ -246,7 +246,7 @@ app.get("/requisition/:id", (req, res) => {
 })
 
 app.get("/requisition/:id/close", (req, res) => {
-	let q = `UPDATE requsition SET status = "Closed" WHERE id = ${req.params.id}`
+	let q = `UPDATE requisition SET status = "Closed" WHERE id = ${req.params.id}`
 	selectQuery(q)
 		.then(data => {
 			res.redirect("/requisition")
