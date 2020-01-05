@@ -160,7 +160,6 @@ app.post("/inventory/new",async function(req,res){
 								what: req.body.raw_material,
 								time: (new Date()).toISOString()
 							});
-							res.redirect("/inventory");
 						})
 						.catch(err => {
 							logger.error({
@@ -171,6 +170,25 @@ app.post("/inventory/new",async function(req,res){
 							res.render('error',{error: err});
 							res.end()
 						});
+	q = `INSERT INTO requisition_output SET quantity = 0, req_id = 0, RM_code = "${req.body.raw_material.code}"`
+	await selectQuery(q)
+			.then(result => {
+				logger.info({
+					where: `${ req.method } ${ req.url } ${ q }`,
+					what: req.body.raw_material,
+					time: (new Date()).toISOString()
+				});
+			})
+			.catch(err => {
+				logger.error({
+						error: err,
+						where: `${ req.method } ${ req.url } ${ q }`,
+						time: (new Date()).toISOString()
+				});
+				res.render('error',{error: err});
+				res.end()
+			});
+	res.redirect('/inventory')
 });
 
 app.post("/inventory/bulkUpdate", async (req, res) => {
