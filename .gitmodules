@@ -1,0 +1,6 @@
+[submodule "packages/api"]
+	path = packages/api
+	url = https://github.com/pranshumaheshwari/Inventory-Management-App-API.git
+[submodule "packages/frontend"]
+	path = packages/frontend
+	url = https://github.com/pranshumaheshwari/Inventory-Management-App-FrontEnd.git

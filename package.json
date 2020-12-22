@@ -1,0 +1,31 @@
+{
+  "name": "Inventory-Management-App",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/pranshumaheshwari/Inventory-Management-App.git",
+  "author": "Pranshu Maheshwari <maheshwari.pranshu511@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  },
+  "scripts": {
+    "lint": "eslint --fix .",
+    "lint-check": "eslint ."
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn lint",
+      "pre-push": "yarn lint-check"
+    }
+  },
+  "devDependencies": {
+    "eslint": "^7.16.0",
+    "eslint-config-prettier": "^7.1.0",
+    "eslint-plugin-prettier": "^3.3.0",
+    "husky": "^4.3.6",
+    "prettier": "^2.2.1"
+  }
+}
