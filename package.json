@@ -12,6 +12,7 @@
 		]
 	},
 	"scripts": {
+		"commit": "npx git-cz",
 		"lint": "eslint --fix .",
 		"lint-check": "eslint ."
 	},
