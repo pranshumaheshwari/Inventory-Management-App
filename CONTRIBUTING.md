@@ -9,7 +9,7 @@ Install the following programs to your preffered Operating System
 -   VSCode
 -   Prettier extension for VSCode
 
-Clone/Fork the repository then follow the folling steps to get started
+Clone/Fork the repository then follow these steps to get started
 
 ```bash
     git checkout develop

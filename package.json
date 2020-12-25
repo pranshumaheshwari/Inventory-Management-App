@@ -1,5 +1,5 @@
 {
-	"name": "Inventory-Management-App",
+	"name": "ims",
 	"version": "1.0.0",
 	"main": "index.js",
 	"repository": "https://github.com/pranshumaheshwari/Inventory-Management-App.git",
@@ -14,7 +14,8 @@
 	"scripts": {
 		"commit": "npx git-cz",
 		"lint": "eslint --fix .",
-		"lint-check": "eslint ."
+		"lint-check": "eslint .",
+		"api-dev": "yarn workspace ims-api dev"
 	},
 	"husky": {
 		"hooks": {
