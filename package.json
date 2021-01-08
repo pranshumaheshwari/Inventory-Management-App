@@ -12,10 +12,12 @@
 		]
 	},
 	"scripts": {
+		"start": "start yarn api-dev && start yarn frontend-start &",
 		"commit": "npx git-cz",
 		"lint": "eslint --fix .",
 		"lint-check": "eslint .",
-		"api-dev": "yarn workspace ims-api dev"
+		"api-dev": "yarn workspace ims-api dev",
+		"frontend-start": "yarn workspace ims-frontend start"
 	},
 	"husky": {
 		"hooks": {
