@@ -588,13 +588,8 @@ app.post("/report/name", async function (req, res) {
 			res.end()
 		})
 	q = `SELECT stock, line_stock FROM raw_material WHERE code = "${raw[0]}"`
-	let { currentStoreStock, currentLineStock } = await selectQuery(q)
-		.then((d) => {
-			return {
-				currentStoreStock: d.stock,
-				currentLineStock: d.line_stock
-			}
-		})
+	let currentStock = await selectQuery(q)
+		.then((q) => q[0])
 		.catch((err) => {
 			logger.error({
 				error: err,
@@ -700,6 +695,8 @@ app.post("/report/name", async function (req, res) {
 			res.render("error", { error: err })
 			res.end()
 		})
+	let currentStoreStock = currentStock.stock,
+		currentLineStock = currentStock.line_stock
 	let openingStoreStock =
 		currentStoreStock +
 		totalOutputInRange +

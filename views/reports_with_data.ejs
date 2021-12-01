@@ -16,13 +16,16 @@
 				</div>
 			</fieldset>
 			<div class="row">
-				<div class="col-md-4">
-					<label><strong>Current Stock</strong><input autocomplete="off" type="text" name="current_stock" class="form-control-plaintext" value="<%= currentStock %>"></label>
+				<div class="col-md-3">
+					<label><strong>Current Store Stock</strong><input autocomplete="off" type="text" name="current_stock" class="form-control-plaintext" value="<%= currentStoreStock %>"></label>
 				</div>
-				<div class="col-md-4">
+				<div class="col-md-3">
+					<label><strong>Current Line Stock</strong><input autocomplete="off" type="text" name="current_stock" class="form-control-plaintext" value="<%= currentLineStock %>"></label>
+				</div>
+				<div class="col-md-3">
 					<label><strong>From:</strong><input autocomplete="off" type="date" value="<%= from %>" class="form-control-plaintext"></label>
 				</div>
-				<div class="col-md-4">
+				<div class="col-md-3">
 					<label><strong>To:</strong><input autocomplete="off" type="date" value="<%= to %>" class="form-control-plaintext"></label>
 				</div>
 			</div>
@@ -49,7 +52,7 @@
 				<td></td>
 				<td>From: <%= from %></td>
 				<td>Opening: <%= openingStoreStock %></td>
-				<td>Opening: <%= openingLineStock %></td>
+				<td>Opening: <%= Math.round(openingLineStock) %></td>
 			</tr>
 			<tr>
 				<td>Excess On Line: </td>
@@ -69,7 +72,7 @@
 						<td></td>
 						<td></td>
 						<td><%= input_output[i].date.toISOString().substring(0,10) %></td>
-						<td><% openingStoreStock += input_output[i].quantity %><%= openingStoreStock %></td>
+						<td><% openingStoreStock += input_output[i].quantity %><%= Math.round(openingStoreStock) %></td>
 						<td><%= openingLineStock %></td>
 
 					<% } else if(input_output[i].type === 'ro' ) { %>
@@ -80,7 +83,7 @@
 						<td></td>
 						<td><%= input_output[i].date.toISOString().substring(0,10) %></td>
 						<td><% openingStoreStock -= input_output[i].quantity %><%= openingStoreStock %></td>
-						<td><% openingLineStock += input_output[i].quantity %><%= openingLineStock %></td>
+						<td><% openingLineStock += input_output[i].quantity %><%= Math.round(openingLineStock) %></td>
 
 					<% } else if(input_output[i].type === 'prod' ) { %>
 
@@ -90,7 +93,7 @@
 						<td><%= input_output[i].quantity %></td>
 						<td><%= input_output[i].date.toISOString().substring(0,10) %></td>
 						<td><%= openingStoreStock %></td>
-						<td><% openingLineStock -= input_output[i].quantity %><%= openingLineStock %></td>
+						<td><% openingLineStock -= input_output[i].quantity %><%= Math.round(openingLineStock) %></td>
 
 					<% } else { %>
 
@@ -100,7 +103,7 @@
 						<td></td>
 						<td><%= input_output[i].date.toISOString().substring(0,10) %></td>
 						<td><% openingStoreStock -= input_output[i].quantity %><%= openingStoreStock %></td>
-						<td><% openingLineStock += input_output[i].quantity %><%= openingLineStock %></td>
+						<td><% openingLineStock += input_output[i].quantity %><%= Math.round(openingLineStock) %></td>
 
 					<% } %>
 				</tr>
@@ -112,7 +115,7 @@
 				<td>Total: <%= totalProductionOut %></td>
 				<td>To: <%= to %></td>
 				<td>Closing: <%= openingStoreStock %></td>
-				<td>Closing: <%= openingLineStock %></td>
+				<td>Closing: <%= Math.round(openingLineStock) %></td>
 			</tr>
 		</tbody>
 	</table>
