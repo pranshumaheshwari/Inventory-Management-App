@@ -64,11 +64,9 @@ io.on('connection', async function(socket){
 									.catch(err => {
 										logger.error({
 												error: err,
-												where: `${ req.method } ${ req.url } ${ q }`,
+												where: `slip_no socket`,
 												time: Date.now().toString()
 										});
-										res.render('error',{error: err})
-										res.end()
 									});
   });
 
@@ -81,11 +79,9 @@ io.on('connection', async function(socket){
 									.catch(err => {
 										logger.error({
 												error: err,
-												where: `${ req.method } ${ req.url } ${ q }`,
+												where: `check-stock socket`,
 												time: Date.now().toString()
 										});
-										res.render('error',{error: err})
-										res.end()
 									});
   });
 
@@ -104,32 +100,26 @@ io.on('connection', async function(socket){
 														.catch(err => {
 															logger.error({
 																	error: err,
-																	where: `${ req.method } ${ req.url } ${ q }`,
+																	where: `getRemaingQuantity socket`,
 																	time: Date.now().toString()
 															});
-															res.render('error',{error: err})
-															res.end()
 									});
 										socket.emit("return-getRemaingQuantity", initial_quantity[0].initial_quantity - quantity[0].sum);
 									})
 									.catch(err => {
 										logger.error({
 												error: err,
-												where: `${ req.method } ${ req.url } ${ q }`,
+												where: `return-getRemaingQuantity socket`,
 												time: Date.now().toString()
 										});
-										res.render('error',{error: err})
-										res.end()
 									});
 						})
 						.catch(err => {
 							logger.error({
 									error: err,
-									where: `${ req.method } ${ req.url } ${ q }`,
+									where: `getRemaingQuantity socket`,
 									time: Date.now().toString()
 							});
-							res.render('error',{error: err})
-							res.end()
 						});
 	});
 });
@@ -194,6 +184,6 @@ app.get("*",function(req,res){
 
 //=======================================
 
-http.listen(3000,function(){
+http.listen(20865,function(){
 	console.log("Server has started at PORT 3000");
 });
