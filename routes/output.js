@@ -390,6 +390,7 @@ app.post("/requisition/:id", async (req, res) => {
 					res.end()
 				});
 		let val = requisition.required_quantity - requisition.issued_quantity
+		if(isNaN(total_issued_quantity)) total_issued_quantity = 0
 		if(val != 0) {
 			q = `INSERT INTO requisition_output SET ?`
 			let output = {
