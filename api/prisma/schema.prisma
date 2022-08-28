@@ -126,7 +126,6 @@ model Bom {
 model Po {
     id         String       @id
     supplierId String       @map("supplier_id")
-    month      String
     status     PoStatus?    @default(Open)
     createdAt  DateTime?    @default(now()) @map("created_at")
     supplier   Supplier     @relation(fields: [supplierId], references: [id])

@@ -4,6 +4,7 @@ import Supplier from './supplier'
 import Customer from './customer'
 import Rm from './rm'
 import Fg from './fg'
+import Po from './po'
 import Attendance from './attendance'
 import Users from './user'
 
@@ -16,6 +17,7 @@ app.use(express.json())
 app.use('/attendance', Attendance)
 app.use('/customer', Customer)
 app.use('/fg', Fg)
+app.use('/po', Po)
 app.use('/rm', Rm)
 app.use('/supplier', Supplier)
 app.use('/users', Users)
