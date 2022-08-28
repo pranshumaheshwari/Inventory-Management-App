@@ -1,5 +1,11 @@
 import express, { Express, Request, Response } from 'express'
 import dotenv from 'dotenv'
+import Supplier from './supplier'
+import Customer from './customer'
+import Rm from './rm'
+import Fg from './fg'
+import Attendance from './attendance'
+import Users from './user'
 
 dotenv.config()
 
@@ -7,6 +13,12 @@ const app: Express = express()
 const port = process.env.PORT
 
 app.use(express.json())
+app.use('/attendance', Attendance)
+app.use('/customer', Customer)
+app.use('/fg', Fg)
+app.use('/rm', Rm)
+app.use('/supplier', Supplier)
+app.use('/users', Users)
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Express + TypeScript Server')
