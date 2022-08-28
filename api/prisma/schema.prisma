@@ -1,0 +1,412 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
+model Attendance {
+    id        Int       @id @default(autoincrement())
+    number    Int       @default(0)
+    date      DateTime  @default(now())
+    createdAt DateTime? @default(now()) @map("created_at")
+    updatedAt DateTime? @default(now()) @map("updated_at")
+
+    @@map("attendance")
+}
+
+model Bom {
+    FGId      String    @map("fg_id")
+    RMId      String    @map("rm_id")
+    quantity  Float
+    createdAt DateTime? @default(now()) @map("created_at")
+    updatedAt DateTime? @default(now()) @map("updated_at")
+    FG        FG        @relation(fields: [FGId], references: [id])
+    RM        Rm        @relation(fields: [RMId], references: [id])
+
+    @@id([FGId, RMId])
+    @@index([RMId], name: "rm_id")
+    @@map("bom")
+}
+
+model Customer {
+    id        String    @id
+    name      String
+    address1  String?
+    address2  String?
+    city      String
+    state     String
+    GST       String
+    createdAt DateTime? @default(now()) @map("created_at")
+    updatedAt DateTime? @default(now()) @map("updated_at")
+    FG        FG[]
+    SO        So[]
+
+    @@map("customer")
+}
+
+model Dispatch {
+    user             String
+    invoiceNumber    String             @map("invoice_number")
+    SOId             String             @map("so_id")
+    FGId             String             @map("fg_id")
+    quantity         Int
+    OQCStatus        DispatchOqcStatus? @default(Pending)
+    storeStockBefore Float?             @map("store_stock_before")
+    createdAt        DateTime?          @default(now()) @map("created_at")
+    updatedAt        DateTime?          @default(now()) @map("updated_at")
+    FG               FG                 @relation(fields: [FGId], references: [id])
+    SO               So                 @relation("dispatchToso", fields: [SOId], references: [id])
+    users            Users              @relation(fields: [user], references: [username])
+
+    @@id([invoiceNumber, FGId])
+    @@index([FGId], name: "fg_id")
+    @@index([SOId], name: "so_id")
+    @@index([user], name: "user")
+    @@map("dispatch")
+}
+
+model FG {
+    id          String        @id
+    customerId  String        @map("customer_id")
+    description String
+    storeStock  Int           @default(0) @map("store_stock")
+    category    String
+    price       Float         @default(0)
+    manPower    Float         @default(0) @map("man_power")
+    overheads   Float         @default(0)
+    createdAt   DateTime?     @default(now()) @map("created_at")
+    updatedAt   DateTime?     @default(now()) @map("updated_at")
+    customer    Customer      @relation(fields: [customerId], references: [id])
+    BOM         Bom[]
+    dispatch    Dispatch[]
+    production  Production[]
+    requisition Requisition[]
+    SODetails   SoDetails[]
+
+    @@index([customerId], name: "customer_id")
+    @@map("fg")
+}
+
+model InvoiceInwards {
+    user          String
+    supplierId    String                @map("supplier_id")
+    invoiceNumber String                @map("invoice_number")
+    status        InvoiceInwardsStatus? @default(PO)
+    createdAt     DateTime?             @default(now()) @map("created_at")
+    updatedAt     DateTime?             @default(now()) @map("updated_at")
+    supplier      Supplier              @relation(fields: [supplierId], references: [id])
+    users         Users                 @relation(fields: [user], references: [username])
+    IQCInwards    IqcInwards[]
+    POInwards     PoInwards[]
+
+    @@id([supplierId, invoiceNumber])
+    @@index([user], name: "user")
+    @@map("invoice_inwards")
+}
+
+model IqcInwards {
+    user                  String
+    POId                  String         @map("po_id")
+    supplierId            String         @map("supplier_id")
+    invoiceNumber         String         @map("invoice_number")
+    RMId                  String         @map("rm_id")
+    quantity              Float
+    storeStockBefore      Float?         @map("store_stock_before")
+    IQCPendingStockBefore Float?         @map("iqc_pending_stock_before")
+    lineStockBefore       Float?         @map("line_stock_before")
+    createdAt             DateTime?      @default(now()) @map("created_at")
+    updatedAt             DateTime?      @default(now()) @map("updated_at")
+    PO                    Po             @relation(fields: [POId], references: [id])
+    PODetails             PODetails      @relation("iqc_inwardsTopo_details", fields: [POId, RMId], references: [POId, RMId])
+    RM                    Rm             @relation(fields: [RMId], references: [id])
+    supplier              Supplier       @relation(fields: [supplierId], references: [id])
+    invoiceInwards        InvoiceInwards @relation(fields: [supplierId, invoiceNumber], references: [supplierId, invoiceNumber])
+    users                 Users          @relation(fields: [user], references: [username])
+
+    @@id([supplierId, invoiceNumber, RMId])
+    @@index([POId, RMId], name: "po_id")
+    @@index([RMId], name: "rm_id")
+    @@index([user], name: "user")
+    @@map("iqc_inwards")
+}
+
+model Po {
+    supplierId String       @map("supplier_id")
+    month      String
+    id         String       @id
+    status     PoStatus?    @default(Open)
+    createdAt  DateTime?    @default(now()) @map("created_at")
+    updatedAt  DateTime?    @default(now()) @map("updated_at")
+    supplier   Supplier     @relation(fields: [supplierId], references: [id])
+    IQCInwards IqcInwards[]
+    PODetails  PODetails[]
+    POInwards  PoInwards[]
+
+    @@index([supplierId], name: "supplier_id")
+    @@map("po")
+}
+
+model PODetails {
+    POId       String       @map("po_id")
+    RMId       String       @map("rm_id")
+    quantity   Float
+    createdAt  DateTime?    @default(now()) @map("created_at")
+    updatedAt  DateTime?    @default(now()) @map("updated_at")
+    PO         Po           @relation(fields: [POId], references: [id])
+    RM         Rm           @relation(fields: [RMId], references: [id])
+    IQCInwards IqcInwards[] @relation("iqc_inwardsTopo_details")
+    POInwards  PoInwards[]  @relation("po_detailsTopo_inwards")
+
+    @@id([POId, RMId])
+    @@index([RMId], name: "rm_id")
+    @@map("po_details")
+}
+
+model PoInwards {
+    user                  String
+    POId                  String           @map("po_id")
+    supplierId            String           @map("supplier_id")
+    invoiceNumber         String           @map("invoice_number")
+    RMId                  String           @map("rm_id")
+    quantity              Float
+    status                PoInwardsStatus? @default(IQC)
+    storeStockBefore      Float?           @map("store_stock_before")
+    IQCPendingStockBefore Float?           @map("iqc_pending_stock_before")
+    lineStockBefore       Float?           @map("line_stock_before")
+    createdAt             DateTime?        @default(now()) @map("created_at")
+    updatedAt             DateTime?        @default(now()) @map("updated_at")
+    PO                    Po               @relation(fields: [POId], references: [id])
+    PODetails             PODetails        @relation("po_detailsTopo_inwards", fields: [POId, RMId], references: [POId, RMId])
+    RM                    Rm               @relation(fields: [RMId], references: [id])
+    supplier              Supplier         @relation(fields: [supplierId], references: [id])
+    invoiceInwards        InvoiceInwards   @relation(fields: [supplierId, invoiceNumber], references: [supplierId, invoiceNumber])
+    users                 Users            @relation(fields: [user], references: [username])
+
+    @@id([supplierId, invoiceNumber, RMId])
+    @@index([POId, RMId], name: "po_id")
+    @@index([RMId], name: "rm_id")
+    @@index([user], name: "user")
+    @@map("po_inwards")
+}
+
+model Production {
+    user             String
+    SOId             String            @map("so_id")
+    FGId             String            @map("fg_id")
+    quantity         Int
+    id               Int               @id @default(autoincrement())
+    storeStockBefore Float?            @map("store_stock_before")
+    createdAt        DateTime?         @default(now()) @map("created_at")
+    updatedAt        DateTime?         @default(now()) @map("updated_at")
+    FG               FG                @relation(fields: [FGId], references: [id])
+    SO               So                @relation("productionToso", fields: [SOId], references: [id])
+    users            Users             @relation(fields: [user], references: [username])
+    RMProductionLog  RmProductionLog[]
+
+    @@index([FGId], name: "fg_id")
+    @@index([SOId], name: "so_id")
+    @@index([user], name: "user")
+	@@map("production")
+}
+
+model Requisition {
+    user               String
+    SOId               String               @map("so_id")
+    FGId               String               @map("fg_id")
+    quantity           Float
+    id                 Int                  @id @default(autoincrement())
+    status             RequisitionStatus    @default(Ready)
+    createdAt          DateTime?            @default(now()) @map("created_at")
+    updatedAt          DateTime?            @default(now()) @map("updated_at")
+    FG                 FG                   @relation(fields: [FGId], references: [id])
+    SO                 So                   @relation("requisitionToso", fields: [SOId], references: [id])
+    users              Users                @relation(fields: [user], references: [username])
+    requisitionOutward RequisitionOutward[] @relation("requisitionTorequisition_outward_requisition_id")
+
+    @@index([FGId], name: "fg_id")
+    @@index([SOId], name: "so_id")
+    @@index([user], name: "user")
+	@@map("requisition")
+}
+
+model RequisitionOutward {
+    user                  String
+    requisitionId         Int         @map("requisition_id")
+    RMId                  String      @map("rm_id")
+    quantity              Float
+    id                    Int         @id @default(autoincrement())
+    storeStockBefore      Float?      @map("store_stock_before")
+    IQCPendingStockBefore Float?      @map("iqc_pending_stock_before")
+    lineStockBefore       Float?      @map("line_stock_before")
+    createdAt             DateTime?   @default(now()) @map("created_at")
+    updatedAt             DateTime?   @default(now()) @map("updated_at")
+    requisition           Requisition @relation("requisitionTorequisition_outward_requisition_id", fields: [requisitionId], references: [id])
+    RM                    Rm          @relation(fields: [RMId], references: [id])
+    users                 Users       @relation("requisition_outwardTousers", fields: [user], references: [username])
+
+    @@index([requisitionId], name: "requisition_id")
+    @@index([RMId], name: "rm_id")
+    @@index([user], name: "user")
+    @@map("requisition_outward")
+}
+
+model Rm {
+    id                 String               @id
+    description        String               @unique
+    DTPLCode           String               @unique @map("DTPL_code")
+    supplierId         String               @map("supplier_id")
+    category           String
+    unit               String
+    price              Float                @default(0.00)
+    storeStock         Float                @default(0.00) @map("store_stock")
+    IQCPendingStock    Float                @default(0.00) @map("iqc_pending_stock")
+    lineStock          Float                @default(0.00) @map("line_stock")
+    createdAt          DateTime?            @default(now()) @map("created_at")
+    updatedAt          DateTime?            @default(now()) @map("updated_at")
+    supplier           Supplier             @relation(fields: [supplierId], references: [id])
+    BOM                Bom[]
+    IQCInwards         IqcInwards[]
+    PODetails          PODetails[]
+    POInwards          PoInwards[]
+    requisitionOutward RequisitionOutward[]
+    RMProductionLog    RmProductionLog[]    @relation("rmTorm_production_log")
+
+    @@index([supplierId], name: "supplier_id")
+    @@map("rm")
+}
+
+model So {
+    customerId  String        @map("customer_id")
+    month       String
+    id          String        @id
+    status      SoStatus?     @default(Open)
+    createdAt   DateTime?     @default(now()) @map("created_at")
+    updatedAt   DateTime?     @default(now()) @map("updated_at")
+    customer    Customer      @relation(fields: [customerId], references: [id])
+    dispatch    Dispatch[]    @relation("dispatchToso")
+    production  Production[]  @relation("productionToso")
+    requisition Requisition[] @relation("requisitionToso")
+    SODetails   SoDetails[]
+
+    @@index([customerId], name: "customer_id")
+    @@map("so")
+}
+
+model SoDetails {
+    SOId      String    @map("so_id")
+    FGId      String    @map("fg_id")
+    quantity  Float
+    createdAt DateTime? @default(now()) @map("created_at")
+    updatedAt DateTime? @default(now()) @map("updated_at")
+    FG        FG        @relation(fields: [FGId], references: [id])
+    SO        So        @relation(fields: [SOId], references: [id])
+
+    @@id([SOId, FGId])
+    @@index([FGId], name: "fg_id")
+    @@map("so_details")
+}
+
+model Supplier {
+    id             String           @id
+    name           String
+    address1       String?
+    address2       String?
+    city           String
+    state          String
+    GST            String
+    createdAt      DateTime?        @default(now()) @map("created_at")
+    updatedAt      DateTime?        @default(now()) @map("updated_at")
+    invoiceInwards InvoiceInwards[]
+    IQCInwards     IqcInwards[]
+    PO             Po[]
+    POInwards      PoInwards[]
+    RM             Rm[]
+	@@map("supplier")
+}
+
+model Users {
+    username           String               @id
+    password           String
+    type               UsersType
+    name               String
+    createdAt          DateTime?            @default(now()) @map("created_at")
+    updatedAt          DateTime?            @default(now()) @map("updated_at")
+    dispatch           Dispatch[]
+    invoiceInwards     InvoiceInwards[]
+    IQCInwards         IqcInwards[]
+    POInwards          PoInwards[]
+    production         Production[]
+    requisition        Requisition[]
+    requisitionOutward RequisitionOutward[] @relation("requisition_outwardTousers")
+	@@map("users")
+}
+
+model RmProductionLog {
+    RMId                  String     @map("rm_id")
+    productionId          Int        @map("production_id")
+    storeStockBefore      Float?     @map("store_stock_before")
+    IQCPendingStockBefore Float?     @map("iqc_pending_stock_before")
+    lineStockBefore       Float?     @map("line_stock_before")
+    production            Production @relation(fields: [productionId], references: [id])
+    RM                    Rm         @relation("rmTorm_production_log", fields: [RMId], references: [id])
+
+    @@id([RMId, productionId])
+    @@index([productionId], name: "production_id")
+    @@map("rm_production_log")
+}
+
+enum DispatchOqcStatus {
+    Pending
+    Finished
+
+    @@map("dispatch_oqc_status")
+}
+
+enum InvoiceInwardsStatus {
+    PO
+    IQC
+    IN
+
+    @@map("invoice_inwards_status")
+}
+
+enum PoStatus {
+    Open
+    Closed
+
+    @@map("po_status")
+}
+
+enum PoInwardsStatus {
+    IQC
+    IN
+
+    @@map("po_inwards_status")
+}
+
+enum RequisitionStatus {
+    Ready
+    Running
+    Closed
+
+    @@map("requisition_status")
+}
+
+enum SoStatus {
+    Open
+    Closed
+
+    @@map("so_status")
+}
+
+enum UsersType {
+    admin
+    store
+    ppc
+    production
+
+    @@map("users_type")
+}
