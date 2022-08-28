@@ -97,16 +97,6 @@ app.put('/:id', async (req: Request, res: Response) => {
 app.delete('/:id', async (req: Request, res: Response) => {
     const { id } = req.params
     try {
-        const r = await prisma.update({
-            where: {
-                id
-            },
-            data: {
-                poDetails: {
-                    deleteMany: {}
-                }
-            }
-        })
         const result = await prisma.delete({
             where: {
                 id

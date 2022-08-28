@@ -77,7 +77,7 @@ model Rm {
     iqcPendingStock    Float                @default(0.00) @map("iqc_pending_stock")
     lineStock          Float                @default(0.00) @map("line_stock")
     createdAt          DateTime?            @default(now()) @map("created_at")
-    supplier           Supplier             @relation(fields: [supplierId], references: [id])
+    supplier           Supplier             @relation(fields: [supplierId], references: [id], onDelete: Restrict, onUpdate: Cascade)
     bom                Bom[]
     iqcInwards         IqcInwards[]
     poDetails          PoDetails[]
@@ -99,7 +99,7 @@ model Fg {
     manPower    Float         @default(0) @map("man_power")
     overheads   Float         @default(0)
     createdAt   DateTime?     @default(now()) @map("created_at")
-    customer    Customer      @relation(fields: [customerId], references: [id])
+    customer    Customer      @relation(fields: [customerId], references: [id], onDelete: Restrict, onUpdate: Cascade)
     bom         Bom[]
     dispatch    Dispatch[]
     production  Production[]
@@ -115,8 +115,8 @@ model Bom {
     rmId      String    @map("rm_id")
     quantity  Float
     createdAt DateTime? @default(now()) @map("created_at")
-    fg        Fg        @relation(fields: [fgId], references: [id])
-    rm        Rm        @relation(fields: [rmId], references: [id])
+    fg        Fg        @relation(fields: [fgId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    rm        Rm        @relation(fields: [rmId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
     @@id([fgId, rmId])
     @@index([rmId], name: "rm_id")
@@ -128,7 +128,7 @@ model Po {
     supplierId String       @map("supplier_id")
     status     PoStatus?    @default(Open)
     createdAt  DateTime?    @default(now()) @map("created_at")
-    supplier   Supplier     @relation(fields: [supplierId], references: [id])
+    supplier   Supplier     @relation(fields: [supplierId], references: [id], onDelete: Cascade, onUpdate: Cascade)
     iqcInwards IqcInwards[]
     poDetails  PoDetails[]
     poInwards  PoInwards[]
@@ -142,8 +142,8 @@ model PoDetails {
     rmId       String       @map("rm_id")
     quantity   Float
     createdAt  DateTime?    @default(now()) @map("created_at")
-    po         Po           @relation(fields: [poId], references: [id])
-    rm         Rm           @relation(fields: [rmId], references: [id])
+    po         Po           @relation(fields: [poId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    rm         Rm           @relation(fields: [rmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
     iqcInwards IqcInwards[] @relation("iqc_inwardsTopo_details")
     poInwards  PoInwards[]  @relation("po_detailsTopo_inwards")
 
@@ -314,7 +314,6 @@ model Dispatch {
 model So {
     id          String        @id
     customerId  String        @map("customer_id")
-    month       String
     status      SoStatus?     @default(Open)
     createdAt   DateTime?     @default(now()) @map("created_at")
     customer    Customer      @relation(fields: [customerId], references: [id])

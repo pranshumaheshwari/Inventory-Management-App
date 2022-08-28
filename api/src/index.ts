@@ -7,6 +7,7 @@ import Fg from './fg'
 import Po from './po'
 import Attendance from './attendance'
 import Users from './user'
+import So from './so'
 
 dotenv.config()
 
@@ -19,6 +20,7 @@ app.use('/customer', Customer)
 app.use('/fg', Fg)
 app.use('/po', Po)
 app.use('/rm', Rm)
+app.use('/so', So)
 app.use('/supplier', Supplier)
 app.use('/users', Users)
 
