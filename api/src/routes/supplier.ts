@@ -1,8 +1,8 @@
-import { default as PrismaClient } from './prisma'
 import express, { Request, Response, Router } from 'express'
+import { PrismaService } from '../service'
 
 const app: Router = express.Router()
-const prisma = PrismaClient.customer
+const prisma = PrismaService.supplier
 
 
 app.get('/', async (req: Request, res: Response) => {

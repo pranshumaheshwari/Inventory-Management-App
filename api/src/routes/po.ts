@@ -1,8 +1,9 @@
-import { default as PrismaClient } from './prisma'
 import express, { Request, Response, Router } from 'express'
+import { Prisma } from '@prisma/client'
+import { PrismaService } from '../service'
 
 const app: Router = express.Router()
-const prisma = PrismaClient.attendance
+const prisma = PrismaService.po
 
 
 app.get('/', async (req: Request, res: Response) => {
@@ -12,15 +13,28 @@ app.get('/', async (req: Request, res: Response) => {
 
 app.post('/', async (req: Request, res: Response) => {
     const {
-        number,
-        date,
+        id,
+        supplierId,
+        status,
+        details
     } = req.body
+
+    const poDetails = details.map((rm: Prisma.PoDetailsUncheckedCreateInput) => {
+        return {
+            rmId: rm.rmId,
+            quantity: rm.quantity
+        }
+    })
 
     try {
         const result = await prisma.create({
             data: {
-                number,
-                date,
+                id,
+                supplierId,
+                status,
+                poDetails: {
+                    create: poDetails
+                }
             }
         })
         res.json(result)
@@ -32,30 +46,43 @@ app.post('/', async (req: Request, res: Response) => {
     }
 })
 
-app.get('/:date', async (req: Request, res: Response) => {
-    const { date } = req.params
+app.get('/:id', async (req: Request, res: Response) => {
+    const { id } = req.params
     const data = await prisma.findUnique({
         where: {
-            date
+            id
         }
     })
     res.json(data)
 })
 
-app.put('/:date', async (req: Request, res: Response) => {
+app.put('/:id', async (req: Request, res: Response) => {
     const {
-        number
+        supplierId,
+        status,
+        details
     } = req.body
 
-    const { date } = req.params
+    const { id } = req.params
+
+    const poDetails = details.map((rm: Prisma.PoDetailsUncheckedCreateInput) => {
+        return {
+            rmId: rm.rmId,
+            quantity: rm.quantity
+        }
+    })
 
     try {
         const result = await prisma.update({
             where: {
-                date,
+                id,
             },
             data: {
-                number
+                supplierId,
+                status,
+                poDetails: {
+                    upsert: poDetails
+                }
             }
         })
         res.json(result)
@@ -67,12 +94,12 @@ app.put('/:date', async (req: Request, res: Response) => {
     }
 })
 
-app.delete('/:date', async (req: Request, res: Response) => {
-    const { date } = req.params
+app.delete('/:id', async (req: Request, res: Response) => {
+    const { id } = req.params
     try {
         const result = await prisma.delete({
             where: {
-                date
+                id
             }
         })
         res.json(result)

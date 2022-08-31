@@ -1,8 +1,8 @@
-import { default as PrismaClient } from './prisma'
 import express, { Request, Response, Router } from 'express'
+import { PrismaService } from '../service'
 
 const app: Router = express.Router()
-const prisma = PrismaClient.supplier
+const prisma = PrismaService.rm
 
 
 app.get('/', async (req: Request, res: Response) => {
@@ -13,24 +13,28 @@ app.get('/', async (req: Request, res: Response) => {
 app.post('/', async (req: Request, res: Response) => {
     const {
         id,
-        name,
-        address1,
-        address2,
-        city,
-        state,
-        gst,
+        description,
+        dtplCode,
+        supplierId,
+        category,
+        unit,
+        price,
+        storeStock,
+        lineStock
     } = req.body
 
     try {
         const result = await prisma.create({
             data: {
                 id,
-                name,
-                address1,
-                address2,
-                city,
-                state,
-                gst,
+                description,
+                dtplCode,
+                supplierId,
+                category,
+                unit,
+                price,
+                storeStock,
+                lineStock
             }
         })
         res.json(result)
@@ -54,12 +58,14 @@ app.get('/:id', async (req: Request, res: Response) => {
 
 app.put('/:id', async (req: Request, res: Response) => {
     const {
-        name,
-        address1,
-        address2,
-        city,
-        state,
-        gst,
+        description,
+        dtplCode,
+        supplierId,
+        category,
+        unit,
+        price,
+        storeStock,
+        lineStock
     } = req.body
 
     const { id } = req.params
@@ -70,13 +76,14 @@ app.put('/:id', async (req: Request, res: Response) => {
                 id,
             },
             data: {
-                id,
-                name,
-                address1,
-                address2,
-                city,
-                state,
-                gst,
+                description,
+                dtplCode,
+                supplierId,
+                category,
+                unit,
+                price,
+                storeStock,
+                lineStock
             }
         })
         res.json(result)

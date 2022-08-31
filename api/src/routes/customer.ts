@@ -1,9 +1,8 @@
-import { default as PrismaClient } from './prisma'
 import express, { Request, Response, Router } from 'express'
-import { Prisma } from '@prisma/client'
+import { PrismaService } from '../service'
 
 const app: Router = express.Router()
-const prisma = PrismaClient.fg
+const prisma = PrismaService.customer
 
 
 app.get('/', async (req: Request, res: Response) => {
@@ -14,37 +13,24 @@ app.get('/', async (req: Request, res: Response) => {
 app.post('/', async (req: Request, res: Response) => {
     const {
         id,
-        description,
-        customerId,
-        category,
-        manPower,
-        price,
-        storeStock,
-        overheads,
-        bom
+        name,
+        address1,
+        address2,
+        city,
+        state,
+        gst,
     } = req.body
-
-    const BOM = bom?.map((rm: Prisma.BomUncheckedCreateInput) => {
-        return {
-            RMId: rm.rmId,
-            quantity: rm.quantity
-        }
-    })
 
     try {
         const result = await prisma.create({
             data: {
                 id,
-                description,
-                customerId,
-                category,
-                manPower,
-                price,
-                storeStock,
-                overheads,
-                bom: {
-                    create: BOM
-                }
+                name,
+                address1,
+                address2,
+                city,
+                state,
+                gst,
             }
         })
         res.json(result)
@@ -66,38 +52,17 @@ app.get('/:id', async (req: Request, res: Response) => {
     res.json(data)
 })
 
-app.get('/:id/bom', async (req: Request, res: Response) => {
-    const { id } = req.params
-    const data = await prisma.findUnique({
-        where: {
-            id
-        },
-        include: {
-            bom: true
-        }
-    })
-    res.json(data)
-})
-
 app.put('/:id', async (req: Request, res: Response) => {
     const {
-        description,
-        customerId,
-        category,
-        manPower,
-        price,
-        storeStock,
-        overheads,
-        bom
+        name,
+        address1,
+        address2,
+        city,
+        state,
+        gst,
     } = req.body
 
     const { id } = req.params
-    const BOM = bom?.map((rm: Prisma.BomUncheckedCreateInput) => {
-        return {
-            RMId: rm.rmId,
-            quantity: rm.quantity
-        }
-    })
 
     try {
         const result = await prisma.update({
@@ -105,16 +70,13 @@ app.put('/:id', async (req: Request, res: Response) => {
                 id,
             },
             data: {
-                description,
-                customerId,
-                category,
-                manPower,
-                price,
-                storeStock,
-                overheads,
-                bom: {
-                    upsert : bom
-                }
+                id,
+                name,
+                address1,
+                address2,
+                city,
+                state,
+                gst,
             }
         })
         res.json(result)
@@ -132,7 +94,7 @@ app.delete('/:id', async (req: Request, res: Response) => {
         const result = await prisma.delete({
             where: {
                 id
-            },
+            }
         })
         res.json(result)
     } catch (e) {

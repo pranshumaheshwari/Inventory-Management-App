@@ -1,8 +1,9 @@
-import { default as PrismaClient } from './prisma'
 import express, { Request, Response, Router } from 'express'
+import { Prisma } from '@prisma/client'
+import { PrismaService } from '../service'
 
 const app: Router = express.Router()
-const prisma = PrismaClient.users
+const prisma = PrismaService.so
 
 
 app.get('/', async (req: Request, res: Response) => {
@@ -12,19 +13,28 @@ app.get('/', async (req: Request, res: Response) => {
 
 app.post('/', async (req: Request, res: Response) => {
     const {
-        username,
-        password,
-        type,
-        name
+        id,
+        customerId,
+        status,
+        details
     } = req.body
+
+    const soDetails = details.map((fg: Prisma.SoDetailsUncheckedCreateInput) => {
+        return {
+            fgId: fg.fgId,
+            quantity: fg.quantity
+        }
+    })
 
     try {
         const result = await prisma.create({
             data: {
-                username,
-                password,
-                type,
-                name
+                id,
+                customerId,
+                status,
+                soDetails: {
+                    create: soDetails
+                }
             }
         })
         res.json(result)
@@ -36,34 +46,43 @@ app.post('/', async (req: Request, res: Response) => {
     }
 })
 
-app.get('/:username', async (req: Request, res: Response) => {
-    const { username } = req.params
+app.get('/:id', async (req: Request, res: Response) => {
+    const { id } = req.params
     const data = await prisma.findUnique({
         where: {
-            username
+            id
         }
     })
     res.json(data)
 })
 
-app.put('/:username', async (req: Request, res: Response) => {
+app.put('/:id', async (req: Request, res: Response) => {
     const {
-        password,
-        type,
-        name
+        customerId,
+        status,
+        details
     } = req.body
 
-    const { username } = req.params
+    const { id } = req.params
+
+    const soDetails = details.map((fg: Prisma.SoDetailsUncheckedCreateInput) => {
+        return {
+            fgId: fg.fgId,
+            quantity: fg.quantity
+        }
+    })
 
     try {
         const result = await prisma.update({
             where: {
-                username,
+                id,
             },
             data: {
-                password,
-                type,
-                name
+                customerId,
+                status,
+                soDetails: {
+                    upsert: soDetails
+                }
             }
         })
         res.json(result)
@@ -75,12 +94,12 @@ app.put('/:username', async (req: Request, res: Response) => {
     }
 })
 
-app.delete('/:username', async (req: Request, res: Response) => {
-    const { username } = req.params
+app.delete('/:id', async (req: Request, res: Response) => {
+    const { id } = req.params
     try {
         const result = await prisma.delete({
             where: {
-                username
+                id
             }
         })
         res.json(result)

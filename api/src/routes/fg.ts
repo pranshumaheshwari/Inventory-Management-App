@@ -1,9 +1,9 @@
-import { default as PrismaClient } from './prisma'
 import express, { Request, Response, Router } from 'express'
 import { Prisma } from '@prisma/client'
+import { PrismaService } from '../service'
 
 const app: Router = express.Router()
-const prisma = PrismaClient.so
+const prisma = PrismaService.fg
 
 
 app.get('/', async (req: Request, res: Response) => {
@@ -14,15 +14,20 @@ app.get('/', async (req: Request, res: Response) => {
 app.post('/', async (req: Request, res: Response) => {
     const {
         id,
+        description,
         customerId,
-        status,
-        details
+        category,
+        manPower,
+        price,
+        storeStock,
+        overheads,
+        bom
     } = req.body
 
-    const soDetails = details.map((fg: Prisma.SoDetailsUncheckedCreateInput) => {
+    const BOM = bom?.map((rm: Prisma.BomUncheckedCreateInput) => {
         return {
-            fgId: fg.fgId,
-            quantity: fg.quantity
+            RMId: rm.rmId,
+            quantity: rm.quantity
         }
     })
 
@@ -30,10 +35,15 @@ app.post('/', async (req: Request, res: Response) => {
         const result = await prisma.create({
             data: {
                 id,
+                description,
                 customerId,
-                status,
-                soDetails: {
-                    create: soDetails
+                category,
+                manPower,
+                price,
+                storeStock,
+                overheads,
+                bom: {
+                    create: BOM
                 }
             }
         })
@@ -56,19 +66,36 @@ app.get('/:id', async (req: Request, res: Response) => {
     res.json(data)
 })
 
+app.get('/:id/bom', async (req: Request, res: Response) => {
+    const { id } = req.params
+    const data = await prisma.findUnique({
+        where: {
+            id
+        },
+        include: {
+            bom: true
+        }
+    })
+    res.json(data)
+})
+
 app.put('/:id', async (req: Request, res: Response) => {
     const {
+        description,
         customerId,
-        status,
-        details
+        category,
+        manPower,
+        price,
+        storeStock,
+        overheads,
+        bom
     } = req.body
 
     const { id } = req.params
-
-    const soDetails = details.map((fg: Prisma.SoDetailsUncheckedCreateInput) => {
+    const BOM = bom?.map((rm: Prisma.BomUncheckedCreateInput) => {
         return {
-            fgId: fg.fgId,
-            quantity: fg.quantity
+            RMId: rm.rmId,
+            quantity: rm.quantity
         }
     })
 
@@ -78,10 +105,15 @@ app.put('/:id', async (req: Request, res: Response) => {
                 id,
             },
             data: {
+                description,
                 customerId,
-                status,
-                soDetails: {
-                    upsert: soDetails
+                category,
+                manPower,
+                price,
+                storeStock,
+                overheads,
+                bom: {
+                    upsert : bom
                 }
             }
         })
@@ -100,7 +132,7 @@ app.delete('/:id', async (req: Request, res: Response) => {
         const result = await prisma.delete({
             where: {
                 id
-            }
+            },
         })
         res.json(result)
     } catch (e) {

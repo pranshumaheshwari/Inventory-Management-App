@@ -1,13 +1,10 @@
 import express, { Express, Request, Response } from 'express'
+import cors from 'cors'
 import dotenv from 'dotenv'
-import Supplier from './supplier'
-import Customer from './customer'
-import Rm from './rm'
-import Fg from './fg'
-import Po from './po'
-import Attendance from './attendance'
-import Users from './user'
-import So from './so'
+import cookierParser from 'cookie-parser'
+import bodyParser from 'body-parser'
+import { AuthService } from './service'
+import { Attendance, Customer, Fg, Login, Po, Rm, So, Supplier, Users } from './routes'
 
 dotenv.config()
 
@@ -15,14 +12,23 @@ const app: Express = express()
 const port = process.env.PORT
 
 app.use(express.json())
-app.use('/attendance', Attendance)
-app.use('/customer', Customer)
-app.use('/fg', Fg)
-app.use('/po', Po)
-app.use('/rm', Rm)
-app.use('/so', So)
-app.use('/supplier', Supplier)
-app.use('/users', Users)
+app.use(cors({
+  origin: ["http://localhost:3001"],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}))
+app.use(cookierParser())
+app.use(bodyParser.urlencoded({ extended: true }))
+
+app.use('/attendance', AuthService, Attendance)
+app.use('/customer', AuthService, Customer)
+app.use('/fg', AuthService, Fg)
+app.use('/', Login)
+app.use('/po', AuthService, Po)
+app.use('/rm', AuthService, Rm)
+app.use('/so', AuthService, So)
+app.use('/supplier', AuthService, Supplier)
+app.use('/users', AuthService, Users)
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Express + TypeScript Server')
