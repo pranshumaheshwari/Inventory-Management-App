@@ -30,17 +30,9 @@ const Login = (props: LoginProps) => {
 							<Card
 								elevation={0}
 								sx={{
+									boxShadow: 5,
 									maxWidth: { xs: 400, lg: 475 },
 									margin: { xs: 2.5, md: 3 },
-									'& > *': {
-										flexGrow: 1,
-										flexBasis: '50%'
-									},
-									'& pre': {
-										m: 0,
-										p: '16px !important',
-										fontSize: '0.75rem'
-									}
 								}}
 							>
 								<Box sx={{ p: { xs: 2, sm: 3, md: 4, xl: 5 } }}>

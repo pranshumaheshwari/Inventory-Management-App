@@ -6,15 +6,13 @@ import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined
 import { Button, FormHelperText, Grid, IconButton, InputAdornment, InputLabel, OutlinedInput, Stack } from '@mui/material';
 import { Fetch, useAuth } from '../../../services'
 
-type Props = {}
-
 interface FormValues {
     username: string;
     password: string;
     submit: null
 }
 
-const LoginForm = (props: Props) => {
+const LoginForm = () => {
     const { setToken } = useAuth()
     const [showPassword, setShowPassword] = React.useState(false)
     const onSubmit = async (values: FormValues, { setErrors, setStatus, setSubmitting }: FormikHelpers<FormValues>) => {
@@ -30,6 +28,7 @@ const LoginForm = (props: Props) => {
                 }
             })
             setToken(token)
+            window.location.reload()
         } catch(err) {
             setStatus({ success: false });
             setErrors({ submit: (err as Error).message });
