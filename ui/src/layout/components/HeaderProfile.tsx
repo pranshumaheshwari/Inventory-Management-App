@@ -30,9 +30,7 @@ const Profile = () => {
 
     const handleLogout = async () => {
         removeToken()
-        // TODO - Test logout from different routes
-        navigate("/", { replace: true })
-        window.location.reload()
+        navigate(0)
     }
 
     const anchorRef = useRef<HTMLButtonElement>(null)

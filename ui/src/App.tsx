@@ -7,7 +7,7 @@ import { DrawerContext } from './context';
 
 function App() {
 	const [open, setOpen] = useState(false)
-	const [selected, setSelected] = useState(['dashboard'])
+	const [selected, setSelected] = useState('dashboard')
 	return (
 		<CustomTheme>
 			<ScrollTop>

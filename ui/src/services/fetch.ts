@@ -1,11 +1,11 @@
 const API_URL = 'http://localhost:3000'
 
-interface FetchInterface {
+export interface FetchInterface {
     url: string,
     options?: {
         method?: "GET" | "POST" | "PUT" | "DELETE",
-        body?: { [key: string]: string },
-        params?: { [key: string]: string },
+        body?: { [key: string]: any },
+        params?: { [key: string]: any },
         authToken?: string
     }
 }

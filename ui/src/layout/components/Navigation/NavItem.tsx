@@ -14,7 +14,7 @@ const NavItem = ({ item, level }: { item: ItemInterface, level: number}) => {
 
     const itemIcon = item.icon ? <Icon>{item.icon}</Icon> : false
 
-    const isSelected = openItem.findIndex((id) => id === item.id) > -1
+    const isSelected = openItem === item.id
 
     useEffect(() => {
         const currentIndex = document.location.pathname
@@ -22,7 +22,7 @@ const NavItem = ({ item, level }: { item: ItemInterface, level: number}) => {
             .split('/')
             .findIndex((id) => id === item.id)
         if (currentIndex > -1) {
-            setSelected([item.id])
+            setSelected(item.id)
         }
         // eslint-disable-next-line
     }, [])
@@ -34,7 +34,7 @@ const NavItem = ({ item, level }: { item: ItemInterface, level: number}) => {
         <ListItemButton
             {...listItemProps}
             disabled={item.disabled}
-            onClick={() => setSelected([item.id])}
+            onClick={() => setSelected(item.id)}
             selected={isSelected}
             sx={{
                 zIndex: 1201,

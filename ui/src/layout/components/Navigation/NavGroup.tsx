@@ -1,46 +1,53 @@
-import { Box, List, Typography } from '@mui/material'
+import { Accordion, AccordionDetails, AccordionSummary, Box, List, Typography } from '@mui/material'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { useContext } from 'react'
 import { DrawerContext } from '../../../context'
 import { ItemInterface } from '../../../menu-items'
 
 import NavItem from './NavItem'
 
-const NavGroup = ({ item }: { item : ItemInterface}) => {
-    const { open: drawerOpen } = useContext(DrawerContext)
+const NavGroup = ({ item }: { item: ItemInterface }) => {
+    const { open: drawerOpen, selected } = useContext(DrawerContext)
 
     const navCollapse = item.children?.map((menuItem) => {
-        switch (menuItem.type) {
-            case 'collapse':
-                return (
-                    <Typography key={menuItem.id} variant="caption" color="error" sx={{ p: 2.5 }}>
-                        collapse - only available in paid version
-                    </Typography>
-                )
-            case 'item':
-                return <NavItem key={menuItem.id} item={menuItem} level={1} />
-            default:
-                return (
-                    <Typography key={menuItem.id} variant="h6" color="error" align="center">
-                        Fix - Group Collapse or Items
-                    </Typography>
-                )
-        }
+        return <NavItem key={menuItem.id} item={menuItem} level={1} />
     })
 
+    const isSelected = selected.split('-')[0] === item.id
+    const textColor = 'text.primary'
+    const selectedColor = 'primary.main'
+
+    if (item.title) {
+        return (
+            <Accordion>
+                <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="panel1a-content"
+                >
+                    {
+                        item.title &&
+                        drawerOpen && (
+                            <Box sx={{ pl: 3, mb: 1.5 }}>
+                                <Typography variant="h6" color={isSelected ? selectedColor: textColor}>
+                                    {item.title}
+                                </Typography>
+                            </Box>
+                        )
+                    }
+                </AccordionSummary>
+                <AccordionDetails>
+                    <List
+                        sx={{ mb: drawerOpen ? 1.5 : 0, py: 0, zIndex: 0 }}
+                    >
+                        {navCollapse}
+                    </List>
+                </AccordionDetails>
+            </Accordion>
+        )
+    }
+
     return (
-        <List
-            subheader={
-                item.title &&
-                drawerOpen && (
-                    <Box sx={{ pl: 3, mb: 1.5 }}>
-                        <Typography variant="subtitle2" color="textSecondary">
-                            {item.title}
-                        </Typography>
-                    </Box>
-                )
-            }
-            sx={{ mb: drawerOpen ? 1.5 : 0, py: 0, zIndex: 0 }}
-        >
+        <List sx={{ mb: drawerOpen ? 1.5 : 0, py: 0, zIndex: 0 }}>
             {navCollapse}
         </List>
     )

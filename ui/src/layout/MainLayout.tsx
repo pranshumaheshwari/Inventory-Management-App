@@ -1,16 +1,14 @@
 import { Outlet } from 'react-router-dom'
+import { useContext } from 'react'
+import { Box, Toolbar } from '@mui/material'
 
-import { Box, Toolbar, useMediaQuery, useTheme } from '@mui/material'
 import { Drawer, Header } from './components'
-import { useContext, useState } from 'react'
 import { DrawerContext } from '../context'
-import drawerContext from '../context/DrawerContext'
+import { BreadCrumbs } from '../components'
 
 
 const MainLayout = () => {
-    const theme = useTheme();
-    const matchDownLG = useMediaQuery(theme.breakpoints.down('xl'));
-    const { open: drawerOpen, setOpen } = useContext(drawerContext)
+    const { open: drawerOpen, setOpen } = useContext(DrawerContext)
     const handleDrawerToggle = () => {
         setOpen(!drawerOpen)
     }
@@ -21,7 +19,10 @@ const MainLayout = () => {
             <Drawer open={drawerOpen} setOpen={setOpen} />
             <Box component="main" sx={{ width: '100%', flexGrow: 1, p: { xs: 2, sm: 3 } }}>
                 <Toolbar />
-                <Outlet />
+                <BreadCrumbs />
+                <Box width="100%" height="75vh" paddingTop={3}>
+                    <Outlet />
+                </Box>
             </Box>
         </Box>
     )

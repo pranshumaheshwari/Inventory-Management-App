@@ -18,7 +18,11 @@ app.post('/login', async (req: Request, res: Response) => {
         const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET as Secret)
         res.json({
             token,
-            user
+            user: {
+                username: user.username,
+                type: user.type,
+                name: user.name
+            }
         })
     } catch (e) {
         res.sendStatus(401)

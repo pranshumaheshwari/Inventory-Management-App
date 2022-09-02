@@ -5,6 +5,7 @@ import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined'
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined'
 import { Button, FormHelperText, Grid, IconButton, InputAdornment, InputLabel, OutlinedInput, Stack } from '@mui/material';
 import { Fetch, useAuth } from '../../../services'
+import { useNavigate } from 'react-router-dom'
 
 interface FormValues {
     username: string;
@@ -13,6 +14,7 @@ interface FormValues {
 }
 
 const LoginForm = () => {
+    const navigate = useNavigate()
     const { setToken } = useAuth()
     const [showPassword, setShowPassword] = React.useState(false)
     const onSubmit = async (values: FormValues, { setErrors, setStatus, setSubmitting }: FormikHelpers<FormValues>) => {
@@ -21,14 +23,11 @@ const LoginForm = () => {
                 url: '/login',
                 options: {
                     method: "POST",
-                    body: {
-                        "username": values.username,
-                        "password": values.password
-                    }
+                    body: values
                 }
             })
             setToken(token)
-            window.location.reload()
+            navigate(0)
         } catch(err) {
             setStatus({ success: false });
             setErrors({ submit: (err as Error).message });

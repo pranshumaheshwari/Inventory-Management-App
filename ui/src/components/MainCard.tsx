@@ -1,8 +1,7 @@
 import PropTypes from 'prop-types'
 import { ForwardedRef, forwardRef, ReactElement } from 'react'
 
-import { useTheme } from '@mui/material/styles'
-import { alpha, Card, CardContent, CardHeader, Divider, SxProps, Typography } from '@mui/material'
+import { alpha, Card, CardContent, CardHeader, Divider, SxProps, Typography, useTheme } from '@mui/material'
 
 const headerSX = {
     p: 2.5,
