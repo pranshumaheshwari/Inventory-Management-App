@@ -17,7 +17,7 @@ const FetchService = async ({ url, options }: FetchInterface) => {
     if (options?.authToken) {
         headers['Authorization'] = 'Bearer ' + options.authToken
     }
-    const data = await fetch(API_URL + url + "?" + new URLSearchParams(options?.params), {
+    const data = await fetch(API_URL + url + (options?.params ? "?" + new URLSearchParams(options?.params) : ''), {
         method: options ? options.method : "GET",
         headers,
         body: JSON.stringify(options?.body),

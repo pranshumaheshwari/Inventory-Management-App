@@ -29,6 +29,10 @@ const MainRoutes = {
                 {
                     path: 'new',
                     element: <NewRawMaterial />
+                },
+                {
+                    path: 'edit',
+                    element: <NewRawMaterial />
                 }
             ]
         },
@@ -41,6 +45,10 @@ const MainRoutes = {
                 },
                 {
                     path: 'new',
+                    element: <NewSupplier />
+                },
+                {
+                    path: 'edit',
                     element: <NewSupplier />
                 }
             ]

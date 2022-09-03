@@ -1,11 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import * as Yup from 'yup'
 import { Formik, FormikHelpers, Field } from 'formik'
 import { Button, CircularProgress, FormHelperText, Grid, InputLabel, OutlinedInput, Stack } from '@mui/material';
 import { Fetch, useAuth } from '../../../services'
-import { useNavigate } from 'react-router-dom'
-import { SupplierInterface } from '../Suppliers';
-import { FormInput } from '../../../components';
+import { useLocation, useNavigate } from 'react-router-dom'
+import { SupplierInterface } from '../Suppliers'
+import { FormInput } from '../../../components'
 
 interface FormValues extends Required<SupplierInterface> {
     submit: null;
@@ -13,27 +13,51 @@ interface FormValues extends Required<SupplierInterface> {
 
 const Form = () => {
     const navigate = useNavigate()
-    const { token } = useAuth()
+    const location = useLocation()
+    const isEdit = location.state ? true : false
+    const { token: {token} } = useAuth()
+    const [error, setError] = useState('')
     const onSubmit = async (values: FormValues, { setErrors, setStatus, setSubmitting }: FormikHelpers<FormValues>) => {
         try {
             const resp = await Fetch({
-                url: '/supplier',
+                url: '/supplier' + (isEdit ? '/' + values.id : ''),
                 options: {
-                    method: "POST",
+                    method: isEdit ? "PUT" : "POST",
                     body: values,
-                    authToken: token.token
+                    authToken: token
                 }
             })
             navigate('..')
         } catch (err) {
-            setStatus({ success: false });
-            setErrors({ submit: (err as Error).message });
-            setSubmitting(false);
+            setStatus({ success: false })
+            setErrors({ submit: (err as Error).message })
+            setSubmitting(false)
         }
     }
+    const onDelete = async () => {
+        try {
+            const data = await Fetch({
+                url: `/supplier/${(location.state as FormValues).id}`,
+                options: {
+                    method: "DELETE",
+                    authToken: token
+                }
+            })
+            navigate('..')
+        } catch (e) {
+            setError((e as Error).message)
+        }
+    }
+
+    if (error) {
+        <Grid item xs={12}>
+            <FormHelperText error>{error}</FormHelperText>
+        </Grid>
+    }
+
     return (
         <Formik
-            initialValues={{
+            initialValues={isEdit ? location.state as FormValues : {
                 id: '',
                 name: '',
                 address1: '',
@@ -130,7 +154,7 @@ const Form = () => {
                                 variant="contained"
                                 color="primary"
                             >
-                                Create
+                                {isEdit ? "Update" : "Create"}
                             </Button>
                             {isSubmitting && (
                                 <CircularProgress
@@ -146,6 +170,30 @@ const Form = () => {
                                 />
                             )}
                         </Grid>
+                        {
+                            isEdit && (
+                                <Grid item xs={12}>
+                                    <Grid
+                                        container
+                                        justifyContent='center'
+                                        alignItems='center'
+                                    >
+                                        <Button
+                                            disableElevation
+                                            disabled={isSubmitting}
+                                            size="large"
+                                            variant="contained"
+                                            color="error"
+                                            onClick={() => {
+                                                onDelete()
+                                            }}
+                                        >
+                                            DELETE
+                                        </Button>
+                                    </Grid>
+                                </Grid>
+                            )
+                        }
                     </Grid>
                 </form>
             )}

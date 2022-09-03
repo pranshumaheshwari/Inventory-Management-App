@@ -1,3 +1,4 @@
+import { Button, Typography } from '@mui/material';
 import { ColDef } from 'ag-grid-community'
 import React, { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -24,6 +25,31 @@ const Suppliers = () => {
             }, headerName: 'Address'
         },
         { field: 'gst', headerName: 'GST' },
+        {
+            field: '#',
+            cellRenderer: ({ data }: {
+                data: SupplierInterface
+            }) => (
+                <Button
+                    disableElevation
+                    size="medium"
+                    type="submit"
+                    variant="contained"
+                    sx={{
+                        backgroundColor: 'primary.light',
+                    }}
+                    onClick={() => {
+                        navigate("edit", {
+                            state: data
+                        })
+                    }}
+                >
+                    <Typography color='secondary.dark'>
+                        Edit
+                    </Typography>
+                </Button>
+            )
+        }
     ])
 
     return (

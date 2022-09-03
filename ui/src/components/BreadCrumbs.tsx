@@ -9,9 +9,6 @@ function capitalizeFirstLetter(string: string) {
 const BreadCrumbsCustom = (props: BreadcrumbsProps) => {
     const location = useLocation()
     const paths = location.pathname.split('/').slice(1)
-    if (paths.length < 2) {
-        return (<></>)
-    }
     const cummulativePaths = paths.map((value, index) => {
         if (!index) return {
             href: value,
