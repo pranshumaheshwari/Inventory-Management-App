@@ -1,12 +1,21 @@
 import express, { Request, Response, Router } from 'express'
 import { PrismaService } from '../service'
+import {Prisma} from '@prisma/client'
 
 const app: Router = express.Router()
 const prisma = PrismaService.rm
 
 
 app.get('/', async (req: Request, res: Response) => {
-    const data = await prisma.findMany()
+    const args: Prisma.RmFindManyArgs = {}
+    const { select, include } = req.query
+    if (select) {
+        args.select = JSON.parse(select as string)
+    }
+    if (include) {
+        args.include = JSON.parse(include as string)
+    }
+    const data = await prisma.findMany(args)
     res.json(data)
 })
 
@@ -39,8 +48,7 @@ app.post('/', async (req: Request, res: Response) => {
         })
         res.json(result)
     } catch (e) {
-        res.json({
-            status: 500,
+        res.status(500).json({
             message: (e as Error).message
         })
     }
@@ -88,8 +96,7 @@ app.put('/:id', async (req: Request, res: Response) => {
         })
         res.json(result)
     } catch (e) {
-        res.json({
-            status: 500,
+        res.status(500).json({
             message: (e as Error).message
         })
     }
@@ -105,8 +112,7 @@ app.delete('/:id', async (req: Request, res: Response) => {
         })
         res.json(result)
     } catch (e) {
-        res.json({
-            status: 500,
+        res.status(500).json({
             message: (e as Error).message
         })
     }

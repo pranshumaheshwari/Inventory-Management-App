@@ -4,10 +4,10 @@ import { Formik, FormikHelpers, Field } from 'formik'
 import { Button, CircularProgress, FormHelperText, Grid, InputLabel, OutlinedInput, Stack } from '@mui/material';
 import { Fetch, useAuth } from '../../../services'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { SupplierInterface } from '../Suppliers'
+import { CustomerInterface } from '../Customers'
 import { FormInput } from '../../../components'
 
-interface FormValues extends Required<SupplierInterface> {
+interface FormValues extends Required<CustomerInterface> {
     submit: null;
 }
 
@@ -20,7 +20,7 @@ const Form = () => {
     const onSubmit = async (values: FormValues, { setErrors, setStatus, setSubmitting }: FormikHelpers<FormValues>) => {
         try {
             const resp = await Fetch({
-                url: '/supplier' + (isEdit ? '/' + encodeURIComponent((location.state as FormValues).id) : ''),
+                url: '/customer' + (isEdit ? '/' + encodeURIComponent((location.state as FormValues).id) : ''),
                 options: {
                     method: isEdit ? "PUT" : "POST",
                     body: values,
@@ -37,7 +37,7 @@ const Form = () => {
     const onDelete = async () => {
         try {
             const data = await Fetch({
-                url: `/supplier/${encodeURIComponent((location.state as FormValues).id)}`,
+                url: `/customer/${encodeURIComponent((location.state as FormValues).id)}`,
                 options: {
                     method: "DELETE",
                     authToken: token
@@ -80,7 +80,7 @@ const Form = () => {
             }
             onSubmit={onSubmit}
         >
-            {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
+            {({ errors, handleSubmit, isSubmitting }) => (
                 <form noValidate onSubmit={handleSubmit}>
                     <Grid container spacing={3}>
                         <Field 

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ChangeEvent } from 'react'
 import { FormHelperText, Grid, InputLabel, OutlinedInput, RegularBreakpoints, Stack } from '@mui/material'
 import { FieldProps } from 'formik'
 
@@ -7,9 +7,10 @@ interface FormInputInterface extends FieldProps {
     label: string;
     type: string;
     placeholder?: string;
+    onChange?: (e: ChangeEvent) => void;
 }
 
-const FormInput = ({ xs, label, type, placeholder, field, form }: FormInputInterface) => {
+const FormInput = ({ xs, label, type, placeholder, field, form, onChange }: FormInputInterface) => {
     const meta = form.getFieldMeta(field.name)
     return (
         <Grid item xs={xs}>
@@ -21,7 +22,7 @@ const FormInput = ({ xs, label, type, placeholder, field, form }: FormInputInter
                     value={field.value}
                     name={field.name}
                     onBlur={field.onBlur}
-                    onChange={field.onChange}
+                    onChange={onChange ? onChange : field.onChange}
                     placeholder={placeholder}
                     fullWidth
                     error={Boolean(meta.touched && meta.error)}

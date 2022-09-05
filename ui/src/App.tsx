@@ -7,11 +7,10 @@ import { DrawerContext } from './context';
 
 function App() {
 	const [open, setOpen] = useState(false)
-	const [selected, setSelected] = useState('dashboard')
 	return (
 		<CustomTheme>
 			<ScrollTop>
-				<DrawerContext.Provider value={{ open, setOpen, selected, setSelected }}>
+				<DrawerContext.Provider value={{ open, setOpen }}>
 					<Routes />
 				</DrawerContext.Provider>
 			</ScrollTop>

@@ -11,6 +11,7 @@ const dashboard: ItemInterface = {
             type: 'item',
             url: '/rawmaterial',
             icon: 'bar_chart_outlined',
+            urls: ['/rawmaterial', '/rawmaterial/new', '/rawmaterial/edit']
         },
         {
             id: 'rawmaterial-suppliers',
@@ -18,6 +19,7 @@ const dashboard: ItemInterface = {
             type: 'item',
             url: '/suppliers',
             icon: 'local_shipping_outlined',
+            urls: ['/suppliers', '/suppliers/new', '/suppliers/edit']
         }
     ]
 }

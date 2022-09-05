@@ -1,10 +1,9 @@
-import { ChipProps } from '@mui/material';
-import { ReactElement } from 'react';
 import dashboard from './dashboard'
 import rawmaterial from './rawmaterial'
+import finishedgoods from './finishedgoods'
 
 const menuItems: MenuItemsInterface = {
-    items: [dashboard, rawmaterial]
+    items: [dashboard, rawmaterial, finishedgoods]
 }
 
 export default menuItems
@@ -17,7 +16,7 @@ export interface ItemInterface {
     url?: string;
     icon?: string
     disabled?: boolean;
-    chip?: ChipProps
+    urls?: string[];
 }
 
 export interface MenuItemsInterface {

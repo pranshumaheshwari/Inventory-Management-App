@@ -6,18 +6,22 @@ function capitalizeFirstLetter(string: string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
+function splitOnCamelCase(string: string) {
+    return string.replace(/([a-z])([A-Z])/g, '$1 $2')
+}
+
 const BreadCrumbsCustom = (props: BreadcrumbsProps) => {
     const location = useLocation()
     const paths = location.pathname.split('/').slice(1)
     const cummulativePaths = paths.map((value, index) => {
         if (!index) return {
             href: value,
-            value: capitalizeFirstLetter(value),
+            value: capitalizeFirstLetter(splitOnCamelCase(value)),
             active: index === paths.length - 1 ? true : false
         }
         return {
             href: paths.slice(0, index).join('/') + '/' + value,
-            value: capitalizeFirstLetter(value),
+            value: capitalizeFirstLetter(splitOnCamelCase(value)),
             active: index === paths.length - 1 ? true : false
         }
     })

@@ -1,18 +1,20 @@
-import React from 'react'
-import { FormHelperText, Grid, InputLabel, MenuItem, RegularBreakpoints, Select, Stack } from '@mui/material'
+import React, { ReactNode } from 'react'
+import { FormHelperText, Grid, InputLabel, MenuItem, RegularBreakpoints, Select, SelectChangeEvent, Stack } from '@mui/material'
 import { FieldProps } from 'formik'
 
 interface FormSelectInterface extends FieldProps {
     xs: RegularBreakpoints["xs"];
     label: string;
     placeholder: string;
+    defaultValue?: string;
     items: {
         value: string | number;
         label?: string;
-    }[]
+    }[];
+    onChange?: ((event: SelectChangeEvent, child: ReactNode) => void) | undefined;
 }
 
-const FormSelect = ({ xs, label, field, form, items, placeholder }: FormSelectInterface) => {
+const FormSelect = ({ xs, label, field, form, items, placeholder, defaultValue, onChange }: FormSelectInterface) => {
     const meta = form.getFieldMeta(field.name)
     return (
         <Grid item xs={xs}>
@@ -24,9 +26,10 @@ const FormSelect = ({ xs, label, field, form, items, placeholder }: FormSelectIn
                     name={field.name}
                     value={field.value}
                     onBlur={field.onBlur}
-                    onChange={field.onChange}
+                    onChange={onChange ? onChange : field.onChange}
                     fullWidth
                     error={Boolean(meta.touched && meta.error)}
+                    defaultValue={defaultValue}
                 >
                     <MenuItem
                         value=""

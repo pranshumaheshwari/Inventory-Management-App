@@ -5,15 +5,17 @@ import { DrawerContext } from '../../../context'
 import { ItemInterface } from '../../../menu-items'
 
 import NavItem from './NavItem'
+import { useLocation } from 'react-router-dom'
 
 const NavGroup = ({ item }: { item: ItemInterface }) => {
-    const { open: drawerOpen, selected } = useContext(DrawerContext)
+    const location = useLocation()
+    const { open: drawerOpen } = useContext(DrawerContext)
 
     const navCollapse = item.children?.map((menuItem) => {
         return <NavItem key={menuItem.id} item={menuItem} level={1} />
     })
 
-    const isSelected = selected.split('-')[0] === item.id
+    const isSelected = item.children?.map(item => item.urls ? item.urls.indexOf(location.pathname) > -1 : false).reduce((acc, cur) => acc || cur)
     const textColor = 'text.primary'
     const selectedColor = 'primary.main'
 

@@ -34,7 +34,7 @@ const SpeedDialCustom = ({ actions }: SpeedDialInterface) => {
     )
 }
 
-interface SpeedDialInterface {
+export interface SpeedDialInterface {
     actions: {
         name: string;
         icon: string;

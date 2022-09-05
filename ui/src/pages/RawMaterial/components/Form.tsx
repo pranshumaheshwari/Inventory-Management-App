@@ -17,12 +17,12 @@ const Form = () => {
     const location = useLocation()
     const isEdit = location.state ? true : false
     const { token: { token } } = useAuth()
-    const [supplier, setSupplier] = useState<{ value: string }[] | null>([{ value: '' }])
+    const [supplier, setSupplier] = useState<{ value: string }[] | null>()
     const [error, setError] = useState('')
     const onSubmit = async (values: FormValues, { setErrors, setStatus, setSubmitting }: FormikHelpers<FormValues>) => {
         try {
             const resp = await Fetch({
-                url: '/rm' + (isEdit ? '/' + (location.state as FormValues).id : ''),
+                url: '/rawmaterial' + (isEdit ? '/' + encodeURIComponent((location.state as FormValues).id) : ''),
                 options: {
                     method: isEdit ? "PUT" : "POST",
                     body: values,
@@ -39,7 +39,7 @@ const Form = () => {
     const onDelete = async () => {
         try {
             const data = await Fetch({
-                url: `/rm/${(location.state as FormValues).id}`,
+                url: `/rawmaterial/${encodeURIComponent((location.state as FormValues).id)}`,
                 options: {
                     method: "DELETE",
                     authToken: token

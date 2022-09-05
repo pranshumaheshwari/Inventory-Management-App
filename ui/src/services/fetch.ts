@@ -21,11 +21,12 @@ const FetchService = async ({ url, options }: FetchInterface) => {
         method: options ? options.method : "GET",
         headers,
         body: JSON.stringify(options?.body),
-    }).then(res => {
+    }).then(async res => {
+        const data = await res.json()
         if (res.ok) {
-            return res.json()
+            return data
         }
-        throw Error('Error while doing fetch')
+        throw Error(JSON.stringify(data))
     })
     .catch(err => {
         throw Error(err)

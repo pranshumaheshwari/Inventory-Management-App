@@ -29,8 +29,7 @@ app.post('/', async (req: Request, res: Response) => {
         })
         res.json(result)
     } catch (e) {
-        res.json({
-            status: 500,
+        res.status(500).json({
             message: (e as Error).message
         })
     }
@@ -68,8 +67,7 @@ app.put('/:username', async (req: Request, res: Response) => {
         })
         res.json(result)
     } catch (e) {
-        res.json({
-            status: 500,
+        res.status(500).json({
             message: (e as Error).message
         })
     }
@@ -85,8 +83,7 @@ app.delete('/:username', async (req: Request, res: Response) => {
         })
         res.json(result)
     } catch (e) {
-        res.json({
-            status: 500,
+        res.status(500).json({
             message: (e as Error).message
         })
     }

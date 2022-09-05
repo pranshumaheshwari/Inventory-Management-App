@@ -3,7 +3,7 @@ import { ColDef } from 'ag-grid-community'
 import { useNavigate } from 'react-router-dom'
 import { Inventory } from '../common'
 
-export interface SupplierInterface {
+export interface CustomerInterface {
     id: string;
     name: string;
     address1?: string;
@@ -13,9 +13,9 @@ export interface SupplierInterface {
     gst: string;
 }
 
-const Suppliers = () => {
+const Customers = () => {
     const navigate = useNavigate()
-    const columnDefs: ColDef<SupplierInterface>[] = [
+    const columnDefs: ColDef<CustomerInterface>[] = [
         { field: 'id' },
         { field: 'name', headerName: 'Name' },
         {
@@ -28,7 +28,7 @@ const Suppliers = () => {
 
     const actions = [
         {
-            name: 'New Supplier',
+            name: 'New Customer',
             icon: 'add_outlined',
             onClick: () => {
                 navigate("new")
@@ -40,11 +40,11 @@ const Suppliers = () => {
         <Inventory
             addEditButton
             speedDialActions={actions}
-            url='/supplier'
-            fileName='supplier_list'
+            url='/customer'
+            fileName='customer_list'
             columnDefs={columnDefs}
         />
     )
 }
 
-export default Suppliers
+export default Customers

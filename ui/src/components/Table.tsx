@@ -6,9 +6,11 @@ import { Fetch, useAuth } from '../services'
 import { Box, Skeleton } from '@mui/material'
 import { ColDef } from 'ag-grid-community'
 
-interface TableInterface extends FetchInterface, AgGridReactProps { }
+export interface TableInterface extends FetchInterface, AgGridReactProps {
+    fileName?: string;
+}
 
-function Table<Type>({ columnDefs, url, options, ...otherProps }: TableInterface) {
+function Table<Type>({ columnDefs, url, options, fileName, ...otherProps }: TableInterface) {
     const [rowData, setRowData] = useState<Type[]>()
     const gridRef = useRef<AgGridReact<Type>>(null);
 
@@ -25,7 +27,7 @@ function Table<Type>({ columnDefs, url, options, ...otherProps }: TableInterface
 
     useEffect(() => {
         fetchData()
-    }, [rowData])
+    }, [])
 
     const defaultColDef = useMemo((): ColDef => ({
 		sortable: true,
@@ -60,6 +62,11 @@ function Table<Type>({ columnDefs, url, options, ...otherProps }: TableInterface
                         columnTypes={columnTypes}
                         onGridReady={() => {
                             gridRef.current?.api.sizeColumnsToFit()
+                        }}
+                        defaultExcelExportParams={{
+                            fileName: fileName ? fileName + '.xlsx' : 'export.xlsx',
+                            columnKeys: columnDefs?.filter((column: ColDef<Type>) => column.field !== '#')
+                                        .map((column: ColDef<Type>) => (column.field ? column.field : ''))
                         }}
                         {...otherProps}
                     />

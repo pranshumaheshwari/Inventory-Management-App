@@ -3,33 +3,33 @@ import { ColDef } from 'ag-grid-community';
 import { useNavigate } from 'react-router-dom';
 import { Inventory } from '../common';
 
-export interface RawMaterialInterface {
+export interface FinishedGoodsInterface {
     id: string;
     description: string;
-    dtplCode: string;
     category: string;
-	supplierId: string;
-    unit: string;
+	customerId: string;
     price: number;
     storeStock: number;
-    iqcPendingStock: number;
-    lineStock: number;
+    manPower: number;
+    overheads: number;
+    bom: {
+        rmId: string;
+        quantity: number;
+    }[]
 }
 
-const RawMaterial = () => {
+const FinishedGoods = () => {
     const navigate = useNavigate()
-	const columnDefs: ColDef<RawMaterialInterface>[] = [
+	const columnDefs: ColDef<FinishedGoodsInterface>[] = [
 		{ field: 'id', headerName: 'Part Number' },
 		{ field: 'description', headerName: 'Description' },
-		{ field: 'dtplCode', headerName: 'DTPL Part Number' },
 		{ field: 'category', headerName: 'Category' },
-		{ field: 'iqcPendingStock', headerName: 'IQC Pending Stock', type: 'numberColumn' },
 		{ field: 'storeStock', headerName: 'Store Stock', type: 'numberColumn' },
-		{ field: 'lineStock', headerName: 'Line Stock', type: 'numberColumn' },
+		{ field: 'price', headerName: 'Price', type: 'numberColumn' },
 	]
     const actions = [
         {
-            name: 'New Raw Material',
+            name: 'New Finished Good',
             icon: 'add_outlined',
             onClick: () => {
                 navigate("new")
@@ -38,14 +38,21 @@ const RawMaterial = () => {
     ]
 
 	return (
-        <Inventory<RawMaterialInterface>
+        <Inventory<FinishedGoodsInterface>
             columnDefs={columnDefs}
             addEditButton
             speedDialActions={actions}
-            url='/rawmaterial'
-            fileName='rawmaterial_inventory'
+            url='/finishedgoods'
+            options={{
+                params: {
+                    include: JSON.stringify({
+                        bom: true
+                    })
+                }
+            }}
+            fileName='finishedgoods_inventory'
         />
 	)
 }
 
-export default RawMaterial
+export default FinishedGoods

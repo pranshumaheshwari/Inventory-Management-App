@@ -11,6 +11,7 @@ const dashboard: ItemInterface = {
             type: 'item',
             url: '/',
             icon: 'grid_view_outlined',
+            urls: ['/']
         }
     ]
 }
