@@ -1,8 +1,7 @@
-import { lazy } from 'react'
-import { RouteObject } from 'react-router-dom'
-
 import { Loadable } from '../components'
 import { MainLayout } from '../layout'
+import { RouteObject } from 'react-router-dom'
+import { lazy } from 'react'
 
 const Dashboard = Loadable(lazy(() => import('../pages/Dashboard/Dashboard')))
 
@@ -11,12 +10,16 @@ const RawMaterial = Loadable(lazy(() => import('../pages/RawMaterial/RawMaterial
 const NewRawMaterial = Loadable(lazy(() => import('../pages/RawMaterial/New')))
 const Suppliers = Loadable(lazy(() => import('../pages/Suppliers/Suppliers')))
 const NewSupplier = Loadable(lazy(() => import('../pages/Suppliers/New')))
+const PurchaseOrders = Loadable(lazy(() => import('../pages/PurchaseOrders/PurchaseOrders')))
+const NewPurchaseOrders = Loadable(lazy(() => import('../pages/PurchaseOrders/New')))
 
 // Finished Goods
 const FinishedGood = Loadable(lazy(() => import('../pages/FinishedGood/FinishedGood')))
 const NewFinishedGood = Loadable(lazy(() => import('../pages/FinishedGood/New')))
 const Customers = Loadable(lazy(() => import('../pages/Customer/Customers')))
 const NewCustomers = Loadable(lazy(() => import('../pages/Customer/New')))
+const SalesOrders = Loadable(lazy(() => import('../pages/SalesOrders/SalesOrders')))
+const NewSalesOrders = Loadable(lazy(() => import('../pages/SalesOrders/New')))
 
 const MainRoutes: RouteObject = {
     path: '/',
@@ -91,6 +94,40 @@ const MainRoutes: RouteObject = {
                 {
                     path: 'edit',
                     element: <NewCustomers />
+                }
+            ]
+        },
+        {
+            path: 'salesOrders',
+            children: [
+                {
+                    index: true,
+                    element: <SalesOrders />
+                },
+                {
+                    path: 'new',
+                    element: <NewSalesOrders />
+                },
+                {
+                    path: 'edit',
+                    element: <NewSalesOrders />
+                }
+            ]
+        },
+        {
+            path: 'purchaseOrders',
+            children: [
+                {
+                    index: true,
+                    element: <PurchaseOrders />
+                },
+                {
+                    path: 'new',
+                    element: <NewPurchaseOrders />
+                },
+                {
+                    path: 'edit',
+                    element: <NewPurchaseOrders />
                 }
             ]
         }

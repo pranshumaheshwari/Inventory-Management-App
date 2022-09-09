@@ -2,16 +2,16 @@ import * as Yup from 'yup'
 
 import { Autocomplete, Button, Divider, FormHelperText, Grid, InputLabel, OutlinedInput, SelectChangeEvent, Skeleton, Step, StepLabel, Stepper, TextField, Typography } from '@mui/material'
 import { Fetch, useAuth } from '../../../services'
-import { Field, FieldArray, Formik, FormikHelpers, insert } from 'formik'
-import React, { ChangeEvent, SyntheticEvent, useEffect, useMemo, useState } from 'react'
+import { Field, FieldArray, Formik, FormikHelpers } from 'formik'
+import React, { ChangeEvent, SyntheticEvent, useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-import { FinishedGoodsInterface } from '../FinishedGood'
+import { FinishedGoodsInterface } from '../../FinishedGood/FinishedGood'
 import { FormInput } from '../../../components'
 import FormSelect from '../../../components/FormSelect'
-import { RawMaterialInterface } from '../../RawMaterial/RawMaterial'
+import { SalesOrdersInterface } from '../SalesOrders'
 
-interface FormValues extends Required<FinishedGoodsInterface> {
+interface FormValues extends Required<SalesOrdersInterface> {
     submit: null;
 }
 
@@ -23,22 +23,20 @@ const Form = () => {
     const [customer, setCustomer] = useState<{ value: string }[] | null>()
     const [error, setError] = useState('')
     const [activeStep, setActiveStep] = React.useState(0)
-    const [rawmaterial, setRawmaterial] = useState<Partial<RawMaterialInterface>[]>()
-    const [rawmaterialIdentifier, setRawmaterialIdentifier] = useState<keyof RawMaterialInterface>('description')
-    const [selectedRm, setSelectedRm] = useState<{ rm: Partial<RawMaterialInterface>, quantity: number }>({
-        rm: {},
+    const [finishedgoods, setFinishedGoods] = useState<Partial<FinishedGoodsInterface>[]>()
+    const [finishedgoodsIdentifier, setFinishedGoodsIdentifier] = useState<keyof FinishedGoodsInterface>('description')
+    const [selectedFg, setSelectedFg] = useState<{ fg: Partial<FinishedGoodsInterface>, quantity: number }>({
+        fg: {},
         quantity: 0
     })
     let initialValues: FormValues = {
         id: '',
-        description: '',
-        category: '',
-        price: 0,
-        manPower: 0,
-        overheads: 0,
-        storeStock: 0,
         customerId: '',
-        bom: [],
+        status: 'Open',
+        soDetails: [],
+        customer: {
+            name: ''
+        },
         submit: null
     }
 
@@ -59,11 +57,16 @@ const Form = () => {
 
     const onSubmit = async (values: FormValues, { setErrors, setStatus, setSubmitting }: FormikHelpers<FormValues>) => {
         try {
-            const resp = await Fetch({
-                url: '/finishedgoods' + (isEdit ? '/' + encodeURIComponent(initialValues.id) : ''),
+            const postData: Partial<FormValues> = {
+                id: values.id,
+                customerId: values.customerId,
+                soDetails: values.soDetails
+            }
+            await Fetch({
+                url: '/salesorders' + (isEdit ? '/' + encodeURIComponent(initialValues.id) : ''),
                 options: {
                     method: isEdit ? "PUT" : "POST",
-                    body: values,
+                    body: postData,
                     authToken: token
                 }
             })
@@ -76,8 +79,8 @@ const Form = () => {
     }
     const onDelete = async () => {
         try {
-            const data = await Fetch({
-                url: `/finishedgoods/${encodeURIComponent(initialValues.id)}`,
+            await Fetch({
+                url: `/salesorders/${encodeURIComponent(initialValues.id)}`,
                 options: {
                     method: "DELETE",
                     authToken: token
@@ -111,22 +114,21 @@ const Form = () => {
         }
     }
 
-    const getRawmaterials = async () => {
+    const getFinishedGoods = async () => {
         try {
             const data = await Fetch({
-                url: '/rawmaterial',
+                url: '/finishedgoods',
                 options: {
                     authToken: token,
                     params: {
                         select: JSON.stringify({
                             id: true,
                             description: true,
-                            dtplCode: true,
                         })
                     }
                 }
             })
-            setRawmaterial(data)
+            setFinishedGoods(data)
         } catch (e) {
             setError((e as Error).message)
         }
@@ -135,7 +137,7 @@ const Form = () => {
     useEffect(() => {
         Promise.all([
             getCustomers(),
-            getRawmaterials(),
+            getFinishedGoods(),
         ])
     })
 
@@ -145,7 +147,7 @@ const Form = () => {
         </Grid>
     }
 
-    if (!customer || !rawmaterial) {
+    if (!customer || !finishedgoods) {
         return (
             <Skeleton width="90vw" height="100%" />
         )
@@ -157,15 +159,9 @@ const Form = () => {
             validationSchema={
                 Yup.object().shape({
                     id: Yup.string().required('Unique ID is required'),
-                    description: Yup.string().required('Description is required'),
-                    category: Yup.string().required('Category is required'),
                     customerId: Yup.string().required('Customer is required'),
-                    price: Yup.number().moreThan(0).required('Price is required'),
-                    storeStock: Yup.number().min(0),
-                    manPower: Yup.number().min(0),
-                    overheads: Yup.number().min(0),
-                    bom: Yup.array().of(Yup.object().shape({
-                        rmId: Yup.string().required('Raw Material Identifier is required'),
+                    soDetails: Yup.array().min(1).of(Yup.object().shape({
+                        fgId: Yup.string().required('Finished Goods Identifier is required'),
                         quantity: Yup.number().min(0).required('Quantity is required')
                     }))
                 })
@@ -179,16 +175,11 @@ const Form = () => {
                         <Grid item xs={6}>
                             <Stepper activeStep={activeStep}>
                                 {
-                                    ["Basic Details", "Bill of Material"].map((label, index) => {
+                                    ["Basic Details", "List of Finished Goods"].map((label, index) => {
                                         const stepProps: { completed?: boolean } = {}
                                         const labelProps: {
                                             optional?: React.ReactNode
                                         } = {}
-                                        if (index === 1) {
-                                            labelProps.optional = (
-                                                <Typography variant="caption">Optional</Typography>
-                                            )
-                                        }
                                         return (
                                             <Step key={label} {...stepProps}>
                                                 <StepLabel {...labelProps}>{label}</StepLabel>
@@ -205,18 +196,10 @@ const Form = () => {
                                     <Field
                                         name="id"
                                         component={FormInput}
-                                        xs={4}
+                                        xs={6}
                                         type="text"
                                         label="ID"
                                         placeholder="Enter ID"
-                                    />
-                                    <Field
-                                        name="description"
-                                        component={FormInput}
-                                        xs={8}
-                                        type="text"
-                                        label="Description"
-                                        placeholder="Enter Description"
                                     />
                                     <Field
                                         name="customerId"
@@ -225,74 +208,6 @@ const Form = () => {
                                         label="Customer"
                                         placeholder="Select Customer"
                                         items={customer}
-                                    />
-                                    <Field
-                                        name="category"
-                                        component={FormSelect}
-                                        xs={6}
-                                        label="Category"
-                                        placeholder="Select Category"
-                                        items={[
-                                            {
-                                                value: 'Fuse_Box',
-                                                label: 'Fuse Box'
-                                            },
-                                            {
-                                                value: 'Indicator',
-                                            },
-                                            {
-                                                value: 'Magneto',
-                                            },
-                                            {
-                                                value: 'Battery_Cable',
-                                                label: 'Battery Cable'
-                                            },
-                                            {
-                                                value: 'Lead_Wire',
-                                                label: 'Lead Wire'
-                                            },
-                                            {
-                                                value: 'Piaggio',
-                                            },
-                                            {
-                                                value: 'Pigtail',
-                                            },
-                                            {
-                                                value: 'SPD',
-                                            }
-                                        ]}
-                                    />
-                                    <Field
-                                        name="price"
-                                        component={FormInput}
-                                        xs={3}
-                                        type="number"
-                                        label="Price"
-                                        placeholder="Enter Price"
-                                    />
-                                    <Field
-                                        name="storeStock"
-                                        component={FormInput}
-                                        xs={3}
-                                        type="number"
-                                        label="Store Stock"
-                                        placeholder="Enter Store Stock"
-                                    />
-                                    <Field
-                                        name="manPower"
-                                        component={FormInput}
-                                        xs={3}
-                                        type="number"
-                                        label="Man Power"
-                                        placeholder="Enter Man Power"
-                                    />
-                                    <Field
-                                        name="overheads"
-                                        component={FormInput}
-                                        xs={3}
-                                        type="number"
-                                        label="Overheads"
-                                        placeholder="Enter Overheads"
                                     />
                                     <Grid item xs={12}>
                                         <Button
@@ -311,44 +226,41 @@ const Form = () => {
                             )
                         } {
                             activeStep === 1 && (
-                                <FieldArray name="bom">
+                                <FieldArray name="soDetails">
                                     {({ remove, push }) => (
                                         <>
                                             <Grid item xs={1} />
                                             <Field
-                                                name="RmSelect"
+                                                name="FgSelect"
                                                 component={FormSelect}
                                                 xs={4}
-                                                label="Raw Material Field"
-                                                placeholder="Select Raw Material Field"
+                                                label="Finished Goods Field"
+                                                placeholder="Select Finished Goods Field"
                                                 defaultValue="description"
                                                 items={[
                                                     {
                                                         value: "description",
                                                         label: "Description"
                                                     }, {
-                                                        value: "rmId",
+                                                        value: "id",
                                                         label: "ID"
-                                                    }, {
-                                                        label: "DTPL Part Number",
-                                                        value: "dtplCode"
                                                     }
                                                 ]}
-                                                onChange={(e: SelectChangeEvent) => setRawmaterialIdentifier(e.target?.value as keyof RawMaterialInterface)}
+                                                onChange={(e: SelectChangeEvent) => setFinishedGoodsIdentifier(e.target?.value as keyof FinishedGoodsInterface)}
                                             />
                                             <Grid item xs={4}>
-                                                <InputLabel htmlFor='rmId'>Raw Material</InputLabel>
+                                                <InputLabel htmlFor='rmId'>Finished Good</InputLabel>
                                                 <Autocomplete
-                                                    id='rmId'
-                                                    options={rawmaterial}
-                                                    getOptionLabel={(option) => option[rawmaterialIdentifier] as string}
+                                                    id='fgId'
+                                                    options={finishedgoods}
+                                                    getOptionLabel={(option) => option[finishedgoodsIdentifier] as string}
                                                     disablePortal
-                                                    onChange={(e: SyntheticEvent, value) => setSelectedRm((selectedRm) => {
+                                                    onChange={(e: SyntheticEvent, value) => setSelectedFg((selectedFg) => {
                                                         if (value) return {
-                                                            ...selectedRm,
-                                                            rm: value
+                                                            ...selectedFg,
+                                                            fg: value
                                                         }
-                                                        return selectedRm
+                                                        return selectedFg
                                                     })}
                                                     renderInput={(params) => <TextField {...params} />}
                                                 />
@@ -360,8 +272,8 @@ const Form = () => {
                                                 type="number"
                                                 label="Quantity"
                                                 placeholder="Enter Quantity"
-                                                onChange={(e: ChangeEvent<HTMLInputElement>) => setSelectedRm((selectedRm) => ({
-                                                    ...selectedRm,
+                                                onChange={(e: ChangeEvent<HTMLInputElement>) => setSelectedFg((selectedFg) => ({
+                                                    ...selectedFg,
                                                     quantity: parseFloat(e.target?.value)
                                                 }))}
                                             />
@@ -375,26 +287,26 @@ const Form = () => {
                                                     variant="contained"
                                                     color="primary"
                                                     onClick={() => {
-                                                        if (selectedRm.quantity && selectedRm.rm && selectedRm.rm.id) {
+                                                        if (selectedFg.quantity && selectedFg.fg && selectedFg.fg.id) {
                                                             push({
-                                                                rmId: selectedRm.rm.id,
-                                                                quantity: selectedRm.quantity
+                                                                fgId: selectedFg.fg.id,
+                                                                quantity: selectedFg.quantity
                                                             })
                                                         }
                                                     }}
                                                 >
-                                                    Add to BOM
+                                                    Add to Sales Order
                                                 </Button>
                                             </Grid>
                                             <Grid item xs={12}>
                                                 <Divider  />
                                             </Grid>
                                             {
-                                                values.bom.length !== 0 && (
+                                                values.soDetails.length !== 0 && (
                                                     <Grid item xs={12} container>
                                                         <Grid item xs={4}>
                                                             <Typography variant='h6'>
-                                                                Raw Material Identifier
+                                                                Finished Goods Identifier
                                                             </Typography>
                                                         </Grid>
                                                         <Grid item xs={4}>
@@ -407,14 +319,14 @@ const Form = () => {
                                                 )
                                             }
                                             {
-                                                values.bom.map((item, index) => (
+                                                values.soDetails.map((item, index) => (
                                                     <Grid item xs={12} container key={index}>
                                                         <Grid item xs={4}>
                                                             <OutlinedInput
                                                                 name={`bom.${index}.rmId`}
                                                                 type='text'
                                                                 disabled
-                                                                value={item.rmId}
+                                                                value={item.fgId}
                                                             />
                                                         </Grid>
                                                         <Grid item xs={4}>

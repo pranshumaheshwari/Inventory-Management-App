@@ -1,8 +1,9 @@
+import { FormHelperText, Grid, InputLabel, OutlinedInput, OutlinedInputProps, RegularBreakpoints, Stack } from '@mui/material'
 import React, { ChangeEvent } from 'react'
-import { FormHelperText, Grid, InputLabel, OutlinedInput, RegularBreakpoints, Stack } from '@mui/material'
+
 import { FieldProps } from 'formik'
 
-interface FormInputInterface extends FieldProps {
+interface FormInputInterface extends FieldProps, OutlinedInputProps {
     xs: RegularBreakpoints["xs"];
     label: string;
     type: string;
@@ -10,7 +11,7 @@ interface FormInputInterface extends FieldProps {
     onChange?: (e: ChangeEvent) => void;
 }
 
-const FormInput = ({ xs, label, type, placeholder, field, form, onChange }: FormInputInterface) => {
+const FormInput = ({ xs, label, type, placeholder, field, form, onChange, ...props }: FormInputInterface) => {
     const meta = form.getFieldMeta(field.name)
     return (
         <Grid item xs={xs}>
@@ -26,6 +27,7 @@ const FormInput = ({ xs, label, type, placeholder, field, form, onChange }: Form
                     placeholder={placeholder}
                     fullWidth
                     error={Boolean(meta.touched && meta.error)}
+                    {...props}
                 />
                 {meta.touched && meta.error && (
                     <FormHelperText error id={"standard-weight-helper-text-" + field.name}>

@@ -1,4 +1,5 @@
 import express, { Request, Response, Router } from 'express'
+
 import { Prisma } from '@prisma/client'
 import { PrismaService } from '../service'
 
@@ -7,7 +8,15 @@ const prisma = PrismaService.po
 
 
 app.get('/', async (req: Request, res: Response) => {
-    const data = await prisma.findMany()
+    const args: Prisma.PoFindManyArgs = {}
+    const { select, include } = req.query
+    if (select) {
+        args.select = JSON.parse(select as string)
+    }
+    if (include) {
+        args.include = JSON.parse(include as string)
+    }
+    const data = await prisma.findMany(args)
     res.json(data)
 })
 
@@ -16,10 +25,10 @@ app.post('/', async (req: Request, res: Response) => {
         id,
         supplierId,
         status,
-        details
+        poDetails
     } = req.body
 
-    const poDetails = details.map((rm: Prisma.PoDetailsUncheckedCreateInput) => {
+    const details = poDetails.map((rm: Prisma.PoDetailsUncheckedCreateInput) => {
         return {
             rmId: rm.rmId,
             quantity: rm.quantity
@@ -33,7 +42,7 @@ app.post('/', async (req: Request, res: Response) => {
                 supplierId,
                 status,
                 poDetails: {
-                    create: poDetails
+                    create: details
                 }
             }
         })
@@ -57,35 +66,51 @@ app.get('/:id', async (req: Request, res: Response) => {
 
 app.put('/:id', async (req: Request, res: Response) => {
     const {
+        id: updatedId,
         supplierId,
         status,
-        details
+        poDetails
     } = req.body
 
     const { id } = req.params
 
-    const poDetails = details.map((rm: Prisma.PoDetailsUncheckedCreateInput) => {
+    const details = poDetails.map((rm: Prisma.PoDetailsUncheckedCreateInput) => {
         return {
             rmId: rm.rmId,
             quantity: rm.quantity
         }
     })
 
+    const currentDetails = await PrismaService.poDetails.findMany({
+        where: {
+            poId: id
+        }
+    })
+
     try {
+        const del = await PrismaService.poDetails.deleteMany({
+            where: {
+                poId: id
+            }
+        })
         const result = await prisma.update({
             where: {
                 id,
             },
             data: {
+                id: updatedId,
                 supplierId,
                 status,
                 poDetails: {
-                    upsert: poDetails
+                    create: details
                 }
             }
         })
         res.json(result)
     } catch (e) {
+        const recreate = await PrismaService.poDetails.createMany({
+            data: currentDetails
+        })
         res.status(500).json({
             message: (e as Error).message
         })

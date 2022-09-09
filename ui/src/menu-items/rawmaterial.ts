@@ -20,6 +20,14 @@ const dashboard: ItemInterface = {
             url: '/suppliers',
             icon: 'local_shipping_outlined',
             urls: ['/suppliers', '/suppliers/new', '/suppliers/edit']
+        },
+        {
+            id: 'rawmaterial-purchaseOrders',
+            title: 'Purchase Orders',
+            type: 'item',
+            url: '/purchaseOrders',
+            icon: 'local_offer_outlined',
+            urls: ['/purchaseOrders', '/purchaseOrders/new', '/purchaseOrders/edit']
         }
     ]
 }

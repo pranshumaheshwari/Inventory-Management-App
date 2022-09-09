@@ -100,7 +100,6 @@ CREATE TABLE `bom` (
 CREATE TABLE `po` (
     `id` VARCHAR(191) NOT NULL,
     `supplier_id` VARCHAR(191) NOT NULL,
-    `month` VARCHAR(191) NOT NULL,
     `status` ENUM('Open', 'Closed') NULL DEFAULT 'Open',
     `created_at` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
 
@@ -253,7 +252,6 @@ CREATE TABLE `dispatch` (
 CREATE TABLE `so` (
     `id` VARCHAR(191) NOT NULL,
     `customer_id` VARCHAR(191) NOT NULL,
-    `month` VARCHAR(191) NOT NULL,
     `status` ENUM('Open', 'Closed') NULL DEFAULT 'Open',
     `created_at` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
 
@@ -285,13 +283,13 @@ ALTER TABLE `bom` ADD CONSTRAINT `bom_fg_id_fkey` FOREIGN KEY (`fg_id`) REFERENC
 ALTER TABLE `bom` ADD CONSTRAINT `bom_rm_id_fkey` FOREIGN KEY (`rm_id`) REFERENCES `rm`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `po` ADD CONSTRAINT `po_supplier_id_fkey` FOREIGN KEY (`supplier_id`) REFERENCES `supplier`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `po` ADD CONSTRAINT `po_supplier_id_fkey` FOREIGN KEY (`supplier_id`) REFERENCES `supplier`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `po_details` ADD CONSTRAINT `po_details_po_id_fkey` FOREIGN KEY (`po_id`) REFERENCES `po`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `po_details` ADD CONSTRAINT `po_details_po_id_fkey` FOREIGN KEY (`po_id`) REFERENCES `po`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `po_details` ADD CONSTRAINT `po_details_rm_id_fkey` FOREIGN KEY (`rm_id`) REFERENCES `rm`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `po_details` ADD CONSTRAINT `po_details_rm_id_fkey` FOREIGN KEY (`rm_id`) REFERENCES `rm`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `invoice_inwards` ADD CONSTRAINT `invoice_inwards_supplier_id_fkey` FOREIGN KEY (`supplier_id`) REFERENCES `supplier`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

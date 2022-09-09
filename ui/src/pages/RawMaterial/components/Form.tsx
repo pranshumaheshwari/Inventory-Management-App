@@ -54,7 +54,7 @@ const Form = () => {
     const getSuppliers = async () => {
         try {
             const data = await Fetch({
-                url: '/supplier',
+                url: '/suppliers',
                 options: {
                     authToken: token
                 }

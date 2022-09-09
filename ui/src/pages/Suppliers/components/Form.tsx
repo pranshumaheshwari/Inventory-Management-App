@@ -20,7 +20,7 @@ const Form = () => {
     const onSubmit = async (values: FormValues, { setErrors, setStatus, setSubmitting }: FormikHelpers<FormValues>) => {
         try {
             const resp = await Fetch({
-                url: '/supplier' + (isEdit ? '/' + encodeURIComponent((location.state as FormValues).id) : ''),
+                url: '/suppliers' + (isEdit ? '/' + encodeURIComponent((location.state as FormValues).id) : ''),
                 options: {
                     method: isEdit ? "PUT" : "POST",
                     body: values,
@@ -37,7 +37,7 @@ const Form = () => {
     const onDelete = async () => {
         try {
             const data = await Fetch({
-                url: `/supplier/${encodeURIComponent((location.state as FormValues).id)}`,
+                url: `/suppliers/${encodeURIComponent((location.state as FormValues).id)}`,
                 options: {
                     method: "DELETE",
                     authToken: token

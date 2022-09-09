@@ -1,4 +1,5 @@
 import express, { Request, Response, Router } from 'express'
+
 import { Prisma } from '@prisma/client'
 import { PrismaService } from '../service'
 
@@ -7,7 +8,15 @@ const prisma = PrismaService.so
 
 
 app.get('/', async (req: Request, res: Response) => {
-    const data = await prisma.findMany()
+    const args: Prisma.SoFindManyArgs = {}
+    const { select, include } = req.query
+    if (select) {
+        args.select = JSON.parse(select as string)
+    }
+    if (include) {
+        args.include = JSON.parse(include as string)
+    }
+    const data = await prisma.findMany(args)
     res.json(data)
 })
 
@@ -15,11 +24,10 @@ app.post('/', async (req: Request, res: Response) => {
     const {
         id,
         customerId,
-        status,
-        details
+        soDetails
     } = req.body
 
-    const soDetails = details.map((fg: Prisma.SoDetailsUncheckedCreateInput) => {
+    const details = soDetails.map((fg: Prisma.SoDetailsUncheckedCreateInput) => {
         return {
             fgId: fg.fgId,
             quantity: fg.quantity
@@ -31,9 +39,8 @@ app.post('/', async (req: Request, res: Response) => {
             data: {
                 id,
                 customerId,
-                status,
                 soDetails: {
-                    create: soDetails
+                    create: details
                 }
             }
         })
@@ -57,35 +64,50 @@ app.get('/:id', async (req: Request, res: Response) => {
 
 app.put('/:id', async (req: Request, res: Response) => {
     const {
+        id: updatedId,
         customerId,
         status,
-        details
+        soDetails
     } = req.body
 
     const { id } = req.params
 
-    const soDetails = details.map((fg: Prisma.SoDetailsUncheckedCreateInput) => {
+    const details = soDetails.map((fg: Prisma.SoDetailsUncheckedCreateInput) => {
         return {
             fgId: fg.fgId,
             quantity: fg.quantity
         }
     })
 
+    const currentDetails = await PrismaService.soDetails.findMany({
+        where: {
+            soId: id
+        }
+    })
     try {
+        const del = await PrismaService.soDetails.deleteMany({
+            where: {
+                soId: id
+            }
+        })
         const result = await prisma.update({
             where: {
                 id,
             },
             data: {
+                id: updatedId,
                 customerId,
                 status,
                 soDetails: {
-                    upsert: soDetails
+                    create: details
                 }
             }
         })
         res.json(result)
     } catch (e) {
+        const recreate = await PrismaService.soDetails.createMany({
+            data: currentDetails
+        })
         res.status(500).json({
             message: (e as Error).message
         })
@@ -95,6 +117,11 @@ app.put('/:id', async (req: Request, res: Response) => {
 app.delete('/:id', async (req: Request, res: Response) => {
     const { id } = req.params
     try {
+        const del = await PrismaService.soDetails.deleteMany({
+            where: {
+                soId: id
+            }
+        })
         const result = await prisma.delete({
             where: {
                 id

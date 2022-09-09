@@ -1,4 +1,5 @@
 import express, { Request, Response, Router } from 'express'
+
 import { Prisma } from '@prisma/client'
 import { PrismaService } from '../service'
 
@@ -97,7 +98,12 @@ app.put('/:id', async (req: Request, res: Response) => {
             quantity: rm.quantity
         }
     })
-
+    
+    const currentBOM = await PrismaService.bom.findMany({
+        where: {
+            fgId: id
+        }
+    })
     try {
         const del = await PrismaService.bom.deleteMany({
             where: {
@@ -124,6 +130,9 @@ app.put('/:id', async (req: Request, res: Response) => {
         })
         res.json(result)
     } catch (e) {
+        const recreate = await PrismaService.bom.createMany({
+            data: currentBOM
+        })
         res.status(500).json({
             message: (e as Error).message
         })

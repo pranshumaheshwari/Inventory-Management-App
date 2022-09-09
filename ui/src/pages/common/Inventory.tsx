@@ -1,11 +1,12 @@
-import React, { useMemo } from 'react'
 import { Button, Typography } from '@mui/material';
-import { ColDef } from 'ag-grid-community'
-import { useNavigate } from 'react-router-dom'
+import React, { useMemo } from 'react'
 import { SpeedDial, Table } from '../../components'
+
+import { ColDef } from 'ag-grid-community'
+import { FetchInterface } from '../../services/fetch';
 import { SpeedDialInterface } from '../../components/SpeedDial';
 import { TableInterface } from '../../components/Table';
-import { FetchInterface } from '../../services/fetch';
+import { useNavigate } from 'react-router-dom'
 
 interface InventoryInterface extends TableInterface {
     columnDefs: ColDef<any>[];
@@ -46,7 +47,7 @@ function Inventory<Type>({ columnDefs, addEditButton, speedDialActions, url, fil
         }
 
         return columnDefs
-    }, [])
+    }, [columnDefs, addEditButton, navigate])
 
     return (
         <>

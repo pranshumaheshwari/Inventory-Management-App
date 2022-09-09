@@ -40,7 +40,7 @@ const Suppliers = () => {
         <Inventory
             addEditButton
             speedDialActions={actions}
-            url='/supplier'
+            url='/suppliers'
             fileName='supplier_list'
             columnDefs={columnDefs}
         />

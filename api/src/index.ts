@@ -21,13 +21,13 @@ app.use(cookierParser())
 app.use(bodyParser.urlencoded({ extended: true }))
 
 app.use('/attendance', AuthService, Attendance)
-app.use('/customer', AuthService, Customer)
+app.use('/customers', AuthService, Customer)
 app.use('/finishedgoods', AuthService, Fg)
 app.use('/', Login)
-app.use('/po', AuthService, Po)
+app.use('/purchaseorders', AuthService, Po)
 app.use('/rawmaterial', AuthService, Rm)
-app.use('/so', AuthService, So)
-app.use('/supplier', AuthService, Supplier)
+app.use('/salesorders', AuthService, So)
+app.use('/suppliers', AuthService, Supplier)
 app.use('/users', AuthService, Users)
 
 app.get('/', (req: Request, res: Response) => {

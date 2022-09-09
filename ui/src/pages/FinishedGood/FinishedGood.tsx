@@ -23,7 +23,9 @@ const FinishedGoods = () => {
 	const columnDefs: ColDef<FinishedGoodsInterface>[] = [
 		{ field: 'id', headerName: 'Part Number' },
 		{ field: 'description', headerName: 'Description' },
-		{ field: 'category', headerName: 'Category' },
+		{ field: 'category', headerName: 'Category', valueGetter: (value => {
+            return value.data?.category.replaceAll('_', ' ')
+        }) },
 		{ field: 'storeStock', headerName: 'Store Stock', type: 'numberColumn' },
 		{ field: 'price', headerName: 'Price', type: 'numberColumn' },
 	]

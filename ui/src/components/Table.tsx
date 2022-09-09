@@ -1,10 +1,10 @@
+import { AgGridReact, AgGridReactProps } from 'ag-grid-react'
+import { Box, Skeleton } from '@mui/material'
+import { Fetch, useAuth } from '../services'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 
-import { AgGridReact, AgGridReactProps } from 'ag-grid-react'
-import { FetchInterface } from '../services/fetch'
-import { Fetch, useAuth } from '../services'
-import { Box, Skeleton } from '@mui/material'
 import { ColDef } from 'ag-grid-community'
+import { FetchInterface } from '../services/fetch'
 
 export interface TableInterface extends FetchInterface, AgGridReactProps {
     fileName?: string;
@@ -14,7 +14,7 @@ function Table<Type>({ columnDefs, url, options, fileName, ...otherProps }: Tabl
     const [rowData, setRowData] = useState<Type[]>()
     const gridRef = useRef<AgGridReact<Type>>(null);
 
-    if (options == undefined) {
+    if (options === undefined) {
         options = {}
     }
 
@@ -27,7 +27,7 @@ function Table<Type>({ columnDefs, url, options, fileName, ...otherProps }: Tabl
 
     useEffect(() => {
         fetchData()
-    }, [])
+    })
 
     const defaultColDef = useMemo((): ColDef => ({
 		sortable: true,

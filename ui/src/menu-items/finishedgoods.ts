@@ -20,6 +20,14 @@ const dashboard: ItemInterface = {
             url: '/customers',
             icon: 'local_shipping_outlined',
             urls: ['/customers', '/customers/new', '/customers/edit']
+        },
+        {
+            id: 'finishedgood-salesOrders',
+            title: 'Sales Orders',
+            type: 'item',
+            url: '/salesOrders',
+            icon: 'discount_outlined',
+            urls: ['/salesOrders', '/salesOrders/new', '/salesOrders/edit']
         }
     ]
 }
