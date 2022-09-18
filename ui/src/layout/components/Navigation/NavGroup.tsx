@@ -1,10 +1,10 @@
 import { Accordion, AccordionDetails, AccordionSummary, Box, List, Typography } from '@mui/material'
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import { useContext } from 'react'
-import { DrawerContext } from '../../../context'
-import { ItemInterface } from '../../../menu-items'
 
+import { DrawerContext } from '../../../context'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import { ItemInterface } from '../../../menu-items'
 import NavItem from './NavItem'
+import { useContext } from 'react'
 import { useLocation } from 'react-router-dom'
 
 const NavGroup = ({ item }: { item: ItemInterface }) => {
@@ -12,10 +12,29 @@ const NavGroup = ({ item }: { item: ItemInterface }) => {
     const { open: drawerOpen } = useContext(DrawerContext)
 
     const navCollapse = item.children?.map((menuItem) => {
-        return <NavItem key={menuItem.id} item={menuItem} level={1} />
+        if (menuItem.type === 'item' ) {
+            return <NavItem key={menuItem.id} item={menuItem} level={1} />
+        } else {
+            return <NavGroup key={menuItem.id} item={menuItem} />
+        }
     })
 
-    const isSelected = item.children?.map(item => item.urls ? item.urls.indexOf(location.pathname) > -1 : false).reduce((acc, cur) => acc || cur)
+    const calculateIsSelected = (item: ItemInterface): boolean => {
+        let isSelected = false
+        if(item.children) {
+            for(let i of item.children) {
+                if (i.type === 'group') {
+                    isSelected = isSelected || calculateIsSelected(i)
+                } else {
+                    isSelected = isSelected || (i.urls ? i.urls.indexOf(location.pathname) > -1 : false)
+                }
+            }
+        }
+
+        return isSelected
+    }
+
+    const isSelected = calculateIsSelected(item)
     const textColor = 'text.primary'
     const selectedColor = 'primary.main'
 

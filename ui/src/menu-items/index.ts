@@ -1,6 +1,6 @@
 import dashboard from './dashboard'
-import rawmaterial from './rawmaterial'
 import finishedgoods from './finishedgoods'
+import rawmaterial from './rawmaterial'
 
 const menuItems: MenuItemsInterface = {
     items: [dashboard, rawmaterial, finishedgoods]
@@ -11,7 +11,7 @@ export default menuItems
 export interface ItemInterface {
     id: string;
     title: string;
-    type: 'collapse' | 'item' | 'group';
+    type: 'item' | 'group';
     children?: ItemInterface[];
     url?: string;
     icon?: string

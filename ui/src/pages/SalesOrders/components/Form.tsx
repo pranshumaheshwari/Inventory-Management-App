@@ -139,7 +139,7 @@ const Form = () => {
             getCustomers(),
             getFinishedGoods(),
         ])
-    })
+    }, [])
 
     if (error) {
         <Grid item xs={12}>

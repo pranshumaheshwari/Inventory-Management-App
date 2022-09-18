@@ -137,7 +137,7 @@ const Form = () => {
             getCustomers(),
             getRawmaterials(),
         ])
-    })
+    }, [])
 
     if (error) {
         <Grid item xs={12}>

@@ -1,10 +1,11 @@
+import { Attendance, Customer, Fg, Inwards, Login, Po, Rm, So, Supplier, Users } from './routes'
 import express, { Express, Request, Response } from 'express'
+
+import { AuthService } from './service'
+import bodyParser from 'body-parser'
+import cookierParser from 'cookie-parser'
 import cors from 'cors'
 import dotenv from 'dotenv'
-import cookierParser from 'cookie-parser'
-import bodyParser from 'body-parser'
-import { AuthService } from './service'
-import { Attendance, Customer, Fg, Login, Po, Rm, So, Supplier, Users } from './routes'
 
 dotenv.config()
 
@@ -23,6 +24,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use('/attendance', AuthService, Attendance)
 app.use('/customers', AuthService, Customer)
 app.use('/finishedgoods', AuthService, Fg)
+app.use('/inwards', AuthService, Inwards)
 app.use('/', Login)
 app.use('/purchaseorders', AuthService, Po)
 app.use('/rawmaterial', AuthService, Rm)

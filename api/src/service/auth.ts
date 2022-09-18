@@ -7,7 +7,7 @@ export default (req: Request, res: Response, next: NextFunction) => {
     if (token == undefined) return res.sendStatus(401)
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET as Secret, (err, user) => {
       if (err) res.sendStatus(403)
-      req.user = user as JwtPayload
+      req.user = user as {username : string}
       next()
     })
   }

@@ -30,6 +30,13 @@ const PurchaseOrders = () => {
             onClick: () => {
                 navigate("new")
             }
+        },
+        {
+            name: 'Create Purchase Order From Sales Order',
+            icon: 'create_outlined',
+            onClick: () => {
+                navigate("newFromSalesOrder")
+            }
         }
     ]
 

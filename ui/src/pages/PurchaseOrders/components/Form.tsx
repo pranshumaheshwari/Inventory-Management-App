@@ -140,7 +140,7 @@ const Form = () => {
             getSuppliers(),
             getRawMaterials(),
         ])
-    })
+    }, [])
 
     if (error) {
         <Grid item xs={12}>

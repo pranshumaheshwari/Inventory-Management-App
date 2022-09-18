@@ -1,5 +1,6 @@
 import express, { Request, Response, Router } from 'express'
 import jwt, { Secret } from 'jsonwebtoken'
+
 import { PrismaService } from '../service'
 
 const app: Router = express.Router()

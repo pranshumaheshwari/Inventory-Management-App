@@ -28,6 +28,21 @@ const dashboard: ItemInterface = {
             url: '/purchaseOrders',
             icon: 'local_offer_outlined',
             urls: ['/purchaseOrders', '/purchaseOrders/new', '/purchaseOrders/edit']
+        },
+        {
+            id: 'rawmaterial-inwards',
+            title: 'Inwards',
+            type: 'group',
+            children: [
+                {
+                    id: 'rawmaterial-inwards-invoice',
+                    title: 'Invoice',
+                    type: 'item',
+                    url: '/inwards/invoice',
+                    icon: 'description_outlined',
+                    urls: ['/inwards/invoice', '/inwards/invoice/new', '/inwards/invoice/edit']
+                }
+            ],
         }
     ]
 }

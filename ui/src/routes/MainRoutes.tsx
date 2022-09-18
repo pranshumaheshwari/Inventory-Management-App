@@ -1,6 +1,7 @@
+import { Navigate, RouteObject } from 'react-router-dom'
+
 import { Loadable } from '../components'
 import { MainLayout } from '../layout'
-import { RouteObject } from 'react-router-dom'
 import { lazy } from 'react'
 
 const Dashboard = Loadable(lazy(() => import('../pages/Dashboard/Dashboard')))
@@ -12,6 +13,9 @@ const Suppliers = Loadable(lazy(() => import('../pages/Suppliers/Suppliers')))
 const NewSupplier = Loadable(lazy(() => import('../pages/Suppliers/New')))
 const PurchaseOrders = Loadable(lazy(() => import('../pages/PurchaseOrders/PurchaseOrders')))
 const NewPurchaseOrders = Loadable(lazy(() => import('../pages/PurchaseOrders/New')))
+const NewPurchaseOrdersFromSalesOrder = Loadable(lazy(() => import('../pages/PurchaseOrders/NewFromSalesOrder')))
+const Invoice = Loadable(lazy(() => import('../pages/Inwards/Invoice/Invoice')))
+const NewInvoice = Loadable(lazy(() => import('../pages/Inwards/Invoice/New')))
 
 // Finished Goods
 const FinishedGood = Loadable(lazy(() => import('../pages/FinishedGood/FinishedGood')))
@@ -126,8 +130,38 @@ const MainRoutes: RouteObject = {
                     element: <NewPurchaseOrders />
                 },
                 {
+                    path: 'newFromSalesOrder',
+                    element: <NewPurchaseOrdersFromSalesOrder />
+                },
+                {
                     path: 'edit',
                     element: <NewPurchaseOrders />
+                }
+            ]
+        },
+        {
+            path: 'inwards',
+            children: [
+                {
+                    index: true,
+                    element: <Navigate replace={true} to='invoice' />
+                },
+                {
+                    path: 'invoice',
+                    children: [
+                        {
+                            index: true,
+                            element: <Invoice />
+                        },
+                        {
+                            path: 'new',
+                            element: <NewInvoice />
+                        },
+                        {
+                            path: 'edit',
+                            element: <NewInvoice />
+                        }
+                    ]
                 }
             ]
         }

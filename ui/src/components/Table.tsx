@@ -27,7 +27,7 @@ function Table<Type>({ columnDefs, url, options, fileName, ...otherProps }: Tabl
 
     useEffect(() => {
         fetchData()
-    })
+    }, [])
 
     const defaultColDef = useMemo((): ColDef => ({
 		sortable: true,
