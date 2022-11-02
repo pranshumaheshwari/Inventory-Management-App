@@ -6,7 +6,8 @@ export interface FetchInterface {
         method?: "GET" | "POST" | "PUT" | "DELETE",
         body?: { [key: string]: any },
         params?: { [key: string]: any },
-        authToken?: string
+        authToken?: string,
+        postFetch?: (data: any[]) => any[]
     }
 }
 
@@ -27,6 +28,11 @@ const FetchService = async ({ url, options }: FetchInterface) => {
             return data
         }
         throw Error(JSON.stringify(data))
+    }).then(async data => {
+        if(options?.postFetch) {
+            return options.postFetch(data)
+        }
+        return data
     })
     .catch(err => {
         throw Error(err)

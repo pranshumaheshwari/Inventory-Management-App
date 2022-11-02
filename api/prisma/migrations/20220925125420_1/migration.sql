@@ -59,6 +59,7 @@ CREATE TABLE `rm` (
     `price` DOUBLE NOT NULL DEFAULT 0.00,
     `store_stock` DOUBLE NOT NULL DEFAULT 0.00,
     `iqc_pending_stock` DOUBLE NOT NULL DEFAULT 0.00,
+    `po_pending_stock` DOUBLE NOT NULL DEFAULT 0.00,
     `line_stock` DOUBLE NOT NULL DEFAULT 0.00,
     `created_at` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
 
@@ -124,10 +125,16 @@ CREATE TABLE `invoice_inwards` (
     `supplier_id` VARCHAR(191) NOT NULL,
     `invoice_number` VARCHAR(191) NOT NULL,
     `status` ENUM('PO', 'IQC', 'IN') NULL DEFAULT 'PO',
+    `rm_id` VARCHAR(191) NOT NULL,
+    `quantity` DOUBLE NOT NULL,
+    `store_stock_before` DOUBLE NULL,
+    `iqc_pending_stock_before` DOUBLE NULL,
+    `po_pending_stock_before` DOUBLE NULL,
+    `line_stock_before` DOUBLE NULL,
     `created_at` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     INDEX `user`(`user`),
-    PRIMARY KEY (`supplier_id`, `invoice_number`)
+    PRIMARY KEY (`supplier_id`, `invoice_number`, `rm_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
@@ -140,6 +147,7 @@ CREATE TABLE `po_inwards` (
     `quantity` DOUBLE NOT NULL,
     `status` ENUM('IQC', 'IN') NULL DEFAULT 'IQC',
     `store_stock_before` DOUBLE NULL,
+    `po_pending_stock_before` DOUBLE NULL,
     `iqc_pending_stock_before` DOUBLE NULL,
     `line_stock_before` DOUBLE NULL,
     `created_at` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -159,6 +167,7 @@ CREATE TABLE `iqc_inwards` (
     `rm_id` VARCHAR(191) NOT NULL,
     `quantity` DOUBLE NOT NULL,
     `store_stock_before` DOUBLE NULL,
+    `po_pending_stock_before` DOUBLE NULL,
     `iqc_pending_stock_before` DOUBLE NULL,
     `line_stock_before` DOUBLE NULL,
     `created_at` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -298,6 +307,9 @@ ALTER TABLE `invoice_inwards` ADD CONSTRAINT `invoice_inwards_supplier_id_fkey` 
 ALTER TABLE `invoice_inwards` ADD CONSTRAINT `invoice_inwards_user_fkey` FOREIGN KEY (`user`) REFERENCES `users`(`username`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE `invoice_inwards` ADD CONSTRAINT `invoice_inwards_rm_id_fkey` FOREIGN KEY (`rm_id`) REFERENCES `rm`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE `po_inwards` ADD CONSTRAINT `po_inwards_po_id_fkey` FOREIGN KEY (`po_id`) REFERENCES `po`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -310,7 +322,7 @@ ALTER TABLE `po_inwards` ADD CONSTRAINT `po_inwards_rm_id_fkey` FOREIGN KEY (`rm
 ALTER TABLE `po_inwards` ADD CONSTRAINT `po_inwards_supplier_id_fkey` FOREIGN KEY (`supplier_id`) REFERENCES `supplier`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `po_inwards` ADD CONSTRAINT `po_inwards_supplier_id_invoice_number_fkey` FOREIGN KEY (`supplier_id`, `invoice_number`) REFERENCES `invoice_inwards`(`supplier_id`, `invoice_number`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `po_inwards` ADD CONSTRAINT `po_inwards_supplier_id_invoice_number_rm_id_fkey` FOREIGN KEY (`supplier_id`, `invoice_number`, `rm_id`) REFERENCES `invoice_inwards`(`supplier_id`, `invoice_number`, `rm_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `po_inwards` ADD CONSTRAINT `po_inwards_user_fkey` FOREIGN KEY (`user`) REFERENCES `users`(`username`) ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -328,7 +340,7 @@ ALTER TABLE `iqc_inwards` ADD CONSTRAINT `iqc_inwards_rm_id_fkey` FOREIGN KEY (`
 ALTER TABLE `iqc_inwards` ADD CONSTRAINT `iqc_inwards_supplier_id_fkey` FOREIGN KEY (`supplier_id`) REFERENCES `supplier`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `iqc_inwards` ADD CONSTRAINT `iqc_inwards_supplier_id_invoice_number_fkey` FOREIGN KEY (`supplier_id`, `invoice_number`) REFERENCES `invoice_inwards`(`supplier_id`, `invoice_number`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `iqc_inwards` ADD CONSTRAINT `iqc_inwards_supplier_id_invoice_number_rm_id_fkey` FOREIGN KEY (`supplier_id`, `invoice_number`, `rm_id`) REFERENCES `invoice_inwards`(`supplier_id`, `invoice_number`, `rm_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `iqc_inwards` ADD CONSTRAINT `iqc_inwards_user_fkey` FOREIGN KEY (`user`) REFERENCES `users`(`username`) ON DELETE RESTRICT ON UPDATE CASCADE;

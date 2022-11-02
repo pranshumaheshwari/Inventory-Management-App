@@ -10,6 +10,10 @@ export interface InvoiceInterface {
 	}
 	invoiceNumber: string;
 	status: string;
+	rm: {
+		rmId: string;
+		quantity: number;
+	}[]
 }
 
 const Invoice = () => {
@@ -41,7 +45,38 @@ const Invoice = () => {
                     include: JSON.stringify({
                         supplier: true
                     })
-                }
+                },
+				postFetch: (data) => {
+					const invoice: InvoiceInterface[] = []
+					for (const d of data) {
+						let index = invoice.findIndex(val => {
+							if((val as InvoiceInterface).invoiceNumber === d.invoiceNumber) {
+								return true
+							}
+							return false
+						})
+						if(index !== -1) {
+							invoice[index].rm.push({
+								rmId: d.rmId,
+								quantity: d.quantity
+							})
+						} else {
+							invoice.push({
+								invoiceNumber: d.invoiceNumber,
+								rm: [{
+									rmId: d.rmId,
+									quantity: d.quantity
+								}],
+								status: d.status,
+								supplier: {
+									name: d.supplier.name
+								},
+								supplierId: d.supplier.id
+							})
+						}
+					}
+					return invoice
+				}
             }}
 		/>
 	)

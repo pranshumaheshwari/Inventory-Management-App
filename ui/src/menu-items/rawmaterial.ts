@@ -29,6 +29,7 @@ const dashboard: ItemInterface = {
             icon: 'local_offer_outlined',
             urls: ['/purchaseOrders', '/purchaseOrders/new', '/purchaseOrders/edit']
         },
+        
         {
             id: 'rawmaterial-inwards',
             title: 'Inwards',
@@ -41,6 +42,14 @@ const dashboard: ItemInterface = {
                     url: '/inwards/invoice',
                     icon: 'description_outlined',
                     urls: ['/inwards/invoice', '/inwards/invoice/new', '/inwards/invoice/edit']
+                },
+                {
+                    id: 'rawmaterial-inwards-purchaseOrder',
+                    title: 'Against Purchase Order',
+                    type: 'item',
+                    url: '/inwards/purchaseOrder',
+                    icon: 'add_box_outlined',
+                    urls: ['/inwards/purchaseOrder']
                 }
             ],
         }

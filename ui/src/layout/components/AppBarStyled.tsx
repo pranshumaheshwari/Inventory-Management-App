@@ -1,7 +1,7 @@
-import { styled, Theme } from '@mui/material/styles'
 import AppBar, { AppBarProps } from '@mui/material/AppBar'
+import { Theme, styled } from '@mui/material/styles'
 
-const drawerWidth = 260
+const drawerWidth = 310
 
 interface AppBarStyledInterface extends AppBarProps {
     open: boolean;

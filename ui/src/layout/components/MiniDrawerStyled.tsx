@@ -1,7 +1,7 @@
-import { alpha, styled } from '@mui/material/styles'
 import { Drawer, DrawerProps, Theme } from '@mui/material'
+import { alpha, styled } from '@mui/material/styles'
 
-const drawerWidth = 260
+const drawerWidth = 310
 
 const openedMixin = (theme: Theme) => ({
     width: drawerWidth,

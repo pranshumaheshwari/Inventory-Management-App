@@ -75,12 +75,14 @@ model Rm {
     price              Float                @default(0.00)
     storeStock         Float                @default(0.00) @map("store_stock")
     iqcPendingStock    Float                @default(0.00) @map("iqc_pending_stock")
+    poPendingStock     Float                @default(0.00) @map("po_pending_stock")
     lineStock          Float                @default(0.00) @map("line_stock")
     createdAt          DateTime?            @default(now()) @map("created_at")
     supplier           Supplier             @relation(fields: [supplierId], references: [id], onDelete: Restrict, onUpdate: Cascade)
     bom                Bom[]
     iqcInwards         IqcInwards[]
     poDetails          PoDetails[]
+    invoiceInwards     InvoiceInwards[]
     poInwards          PoInwards[]
     requisitionOutward RequisitionOutward[]
     rmProductionLog    RmProductionLog[]    @relation("rmTorm_production_log")
@@ -153,17 +155,24 @@ model PoDetails {
 }
 
 model InvoiceInwards {
-    user          String
-    supplierId    String                @map("supplier_id")
-    invoiceNumber String                @map("invoice_number")
-    status        InvoiceInwardsStatus? @default(PO)
-    createdAt     DateTime?             @default(now()) @map("created_at")
-    supplier      Supplier              @relation(fields: [supplierId], references: [id])
-    users         Users                 @relation(fields: [user], references: [username])
-    iqcInwards    IqcInwards[]
-    poInwards     PoInwards[]
+    user                  String
+    supplierId            String                @map("supplier_id")
+    invoiceNumber         String                @map("invoice_number")
+    status                InvoiceInwardsStatus? @default(PO)
+    rmId                  String                @map("rm_id")
+    quantity              Float
+    storeStockBefore      Float?                @map("store_stock_before")
+    iqcPendingStockBefore Float?                @map("iqc_pending_stock_before")
+    poPendingStockBefore  Float?                @map("po_pending_stock_before")
+    lineStockBefore       Float?                @map("line_stock_before")
+    createdAt             DateTime?             @default(now()) @map("created_at")
+    supplier              Supplier              @relation(fields: [supplierId], references: [id])
+    users                 Users                 @relation(fields: [user], references: [username])
+    rm                    Rm                    @relation(fields: [rmId], references: [id])
+    iqcInwards            IqcInwards[]
+    poInwards             PoInwards[]
 
-    @@id([supplierId, invoiceNumber])
+    @@id([supplierId, invoiceNumber, rmId])
     @@index([user], name: "user")
     @@map("invoice_inwards")
 }
@@ -177,6 +186,7 @@ model PoInwards {
     quantity              Float
     status                PoInwardsStatus? @default(IQC)
     storeStockBefore      Float?           @map("store_stock_before")
+    poPendingStockBefore  Float?           @map("po_pending_stock_before")
     iqcPendingStockBefore Float?           @map("iqc_pending_stock_before")
     lineStockBefore       Float?           @map("line_stock_before")
     createdAt             DateTime?        @default(now()) @map("created_at")
@@ -184,7 +194,7 @@ model PoInwards {
     poDetails             PoDetails        @relation("po_detailsTopo_inwards", fields: [poId, rmId], references: [poId, rmId])
     rm                    Rm               @relation(fields: [rmId], references: [id])
     supplier              Supplier         @relation(fields: [supplierId], references: [id])
-    invoiceInwards        InvoiceInwards   @relation(fields: [supplierId, invoiceNumber], references: [supplierId, invoiceNumber])
+    invoiceInwards        InvoiceInwards   @relation(fields: [supplierId, invoiceNumber, rmId], references: [supplierId, invoiceNumber, rmId])
     users                 Users            @relation(fields: [user], references: [username])
 
     @@id([supplierId, invoiceNumber, rmId])
@@ -202,6 +212,7 @@ model IqcInwards {
     rmId                  String         @map("rm_id")
     quantity              Float
     storeStockBefore      Float?         @map("store_stock_before")
+    poPendingStockBefore  Float?         @map("po_pending_stock_before")
     iqcPendingStockBefore Float?         @map("iqc_pending_stock_before")
     lineStockBefore       Float?         @map("line_stock_before")
     createdAt             DateTime?      @default(now()) @map("created_at")
@@ -209,7 +220,7 @@ model IqcInwards {
     poDetails             PoDetails      @relation("iqc_inwardsTopo_details", fields: [poId, rmId], references: [poId, rmId])
     rm                    Rm             @relation(fields: [rmId], references: [id])
     supplier              Supplier       @relation(fields: [supplierId], references: [id])
-    invoiceInwards        InvoiceInwards @relation(fields: [supplierId, invoiceNumber], references: [supplierId, invoiceNumber])
+    invoiceInwards        InvoiceInwards @relation(fields: [supplierId, invoiceNumber, rmId], references: [supplierId, invoiceNumber, rmId])
     users                 Users          @relation(fields: [user], references: [username])
 
     @@id([supplierId, invoiceNumber, rmId])

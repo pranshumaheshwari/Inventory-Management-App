@@ -1,13 +1,12 @@
-import { useMemo } from 'react'
-
-import { useTheme } from '@mui/material/styles'
 import { Box, Drawer, useMediaQuery } from '@mui/material'
 
-import DrawerHeader from './DrawerHeader'
 import DrawerContent from './DrawerContent'
+import DrawerHeader from './DrawerHeader'
 import MiniDrawerStyled from './MiniDrawerStyled'
+import { useMemo } from 'react'
+import { useTheme } from '@mui/material/styles'
 
-const drawerWidth = 260
+const drawerWidth = 310
 
 const MainDrawer = ({ open, setOpen }: MainDrawerInterface) => {
     const theme = useTheme()

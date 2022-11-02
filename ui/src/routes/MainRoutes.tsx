@@ -16,6 +16,8 @@ const NewPurchaseOrders = Loadable(lazy(() => import('../pages/PurchaseOrders/Ne
 const NewPurchaseOrdersFromSalesOrder = Loadable(lazy(() => import('../pages/PurchaseOrders/NewFromSalesOrder')))
 const Invoice = Loadable(lazy(() => import('../pages/Inwards/Invoice/Invoice')))
 const NewInvoice = Loadable(lazy(() => import('../pages/Inwards/Invoice/New')))
+const AgainstPurchaseOrder = Loadable(lazy(() => import('../pages/Inwards/PurchaseOrder/PurchaseOrder')))
+
 
 // Finished Goods
 const FinishedGood = Loadable(lazy(() => import('../pages/FinishedGood/FinishedGood')))
@@ -160,6 +162,15 @@ const MainRoutes: RouteObject = {
                         {
                             path: 'edit',
                             element: <NewInvoice />
+                        }
+                    ]
+                },
+                {
+                    path: 'purchaseOrder',
+                    children: [
+                        {
+                            index: true,
+                            element: <AgainstPurchaseOrder />
                         }
                     ]
                 }
