@@ -82,18 +82,11 @@ const Form = () => {
         { setErrors, setStatus, setSubmitting }: FormikHelpers<FormValues>
     ) => {
         try {
-            const postData: Partial<FormValues> = {
-                id: values.id,
-                supplierId: values.supplierId,
-                poDetails: values.poDetails,
-            }
             await Fetch({
-                url:
-                    '/purchaseorders' +
-                    (isEdit ? '/' + encodeURIComponent(initialValues.id) : ''),
+                url: '/purchaseorders',
                 options: {
                     method: isEdit ? 'PUT' : 'POST',
-                    body: postData,
+                    body: values,
                     authToken: token,
                 },
             })
@@ -104,16 +97,36 @@ const Form = () => {
             setSubmitting(false)
         }
     }
+
     const onDelete = async () => {
         try {
             await Fetch({
-                url: `/purchaseorders/${encodeURIComponent(initialValues.id)}`,
+                url: `/purchaseorders`,
                 options: {
                     method: 'DELETE',
                     authToken: token,
+                    body: initialValues,
                 },
             })
             navigate('..')
+        } catch (e) {
+            setError((e as Error).message)
+        }
+    }
+
+    const onDeleteRm = async (rmId: string) => {
+        try {
+            await Fetch({
+                url: `/purchaseorders/details`,
+                options: {
+                    method: 'DELETE',
+                    authToken: token,
+                    body: {
+                        poId: initialValues.id,
+                        rmId,
+                    },
+                },
+            })
         } catch (e) {
             setError((e as Error).message)
         }
@@ -272,11 +285,11 @@ const Form = () => {
                                                 },
                                                 {
                                                     value: 'id',
-                                                    label: 'ID',
+                                                    label: 'Part Number',
                                                 },
                                                 {
                                                     value: 'dtplCode',
-                                                    label: 'DTPL Code',
+                                                    label: 'DTPL Part Number',
                                                 },
                                             ]}
                                             onChange={(e: SelectChangeEvent) =>
@@ -380,7 +393,7 @@ const Form = () => {
                                             <Grid item xs={12} container>
                                                 <Grid item xs={4}>
                                                     <Typography variant="h6">
-                                                        Raw Material Identifier
+                                                        Raw Material Part Number
                                                     </Typography>
                                                 </Grid>
                                                 <Grid item xs={4}>
@@ -398,23 +411,21 @@ const Form = () => {
                                                 container
                                                 key={index}
                                             >
-                                                <Grid item xs={4}>
-                                                    <OutlinedInput
-                                                        name={`bom.${index}.rmId`}
-                                                        type="text"
-                                                        disabled
-                                                        value={item.rmId}
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={4}>
-                                                    <OutlinedInput
-                                                        name={`bom.${index}.quantity`}
-                                                        type="number"
-                                                        disabled
-                                                        value={item.quantity}
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={4}>
+                                                <Field
+                                                    name={`poDetails.${index}.rmId`}
+                                                    component={FormInput}
+                                                    xs={4}
+                                                    type="text"
+                                                    disabled
+                                                />
+                                                <Field
+                                                    name={`poDetails.${index}.quantity`}
+                                                    component={FormInput}
+                                                    xs={4}
+                                                    type="number"
+                                                />
+                                                <Grid item xs={1} />
+                                                <Grid item xs={2}>
                                                     <Button
                                                         disableElevation
                                                         disabled={isSubmitting}
@@ -422,13 +433,17 @@ const Form = () => {
                                                         size="small"
                                                         variant="contained"
                                                         color="error"
-                                                        onClick={() =>
+                                                        onClick={() => {
                                                             remove(index)
-                                                        }
+                                                            onDeleteRm(
+                                                                item.rmId
+                                                            )
+                                                        }}
                                                     >
                                                         DELETE
                                                     </Button>
                                                 </Grid>
+                                                <Grid item xs={1} />
                                             </Grid>
                                         ))}
                                     </>

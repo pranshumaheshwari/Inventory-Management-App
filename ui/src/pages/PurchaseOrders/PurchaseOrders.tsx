@@ -54,7 +54,12 @@ const PurchaseOrders = () => {
                                 name: true
                             }
                         },
-                        poDetails: true
+                        poDetails: {
+                            select: {
+                                rmId: true,
+                                quantity: true
+                            }
+                        }
                     })
                 }
             }}

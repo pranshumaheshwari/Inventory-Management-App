@@ -59,7 +59,9 @@ CREATE TABLE `rm` (
     `price` DOUBLE NOT NULL DEFAULT 0.00,
     `store_stock` DOUBLE NOT NULL DEFAULT 0.00,
     `iqc_pending_stock` DOUBLE NOT NULL DEFAULT 0.00,
+    `iqc_rejected_stock` DOUBLE NOT NULL DEFAULT 0.00,
     `po_pending_stock` DOUBLE NOT NULL DEFAULT 0.00,
+    `po_rejected_stock` DOUBLE NOT NULL DEFAULT 0.00,
     `line_stock` DOUBLE NOT NULL DEFAULT 0.00,
     `created_at` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
 
@@ -75,6 +77,7 @@ CREATE TABLE `fg` (
     `customer_id` VARCHAR(191) NOT NULL,
     `description` VARCHAR(191) NOT NULL,
     `store_stock` INTEGER NOT NULL DEFAULT 0,
+    `oqc_pending_stock` INTEGER NOT NULL DEFAULT 0,
     `category` ENUM('Fuse_Box', 'Indicator', 'Magneto', 'Battery_Cable', 'Lead_Wire', 'Piaggio', 'Pigtail', 'SPD') NOT NULL,
     `price` DOUBLE NOT NULL DEFAULT 0,
     `man_power` DOUBLE NOT NULL DEFAULT 0,
@@ -99,6 +102,7 @@ CREATE TABLE `bom` (
 
 -- CreateTable
 CREATE TABLE `po` (
+    `user` VARCHAR(191) NOT NULL,
     `id` VARCHAR(191) NOT NULL,
     `supplier_id` VARCHAR(191) NOT NULL,
     `status` ENUM('Open', 'Closed') NULL DEFAULT 'Open',
@@ -120,62 +124,41 @@ CREATE TABLE `po_details` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `invoice_inwards` (
+CREATE TABLE `invoice` (
     `user` VARCHAR(191) NOT NULL,
+    `id` VARCHAR(191) NOT NULL,
     `supplier_id` VARCHAR(191) NOT NULL,
-    `invoice_number` VARCHAR(191) NOT NULL,
-    `status` ENUM('PO', 'IQC', 'IN') NULL DEFAULT 'PO',
-    `rm_id` VARCHAR(191) NOT NULL,
-    `quantity` DOUBLE NOT NULL,
-    `store_stock_before` DOUBLE NULL,
-    `iqc_pending_stock_before` DOUBLE NULL,
-    `po_pending_stock_before` DOUBLE NULL,
-    `line_stock_before` DOUBLE NULL,
+    `status` ENUM('Open', 'Closed') NULL DEFAULT 'Open',
     `created_at` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
 
-    INDEX `user`(`user`),
-    PRIMARY KEY (`supplier_id`, `invoice_number`, `rm_id`)
+    INDEX `supplier_id`(`supplier_id`),
+    PRIMARY KEY (`id`, `supplier_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `po_inwards` (
-    `user` VARCHAR(191) NOT NULL,
-    `po_id` VARCHAR(191) NOT NULL,
+CREATE TABLE `invoice_details` (
+    `invoice_id` VARCHAR(191) NOT NULL,
     `supplier_id` VARCHAR(191) NOT NULL,
-    `invoice_number` VARCHAR(191) NOT NULL,
     `rm_id` VARCHAR(191) NOT NULL,
     `quantity` DOUBLE NOT NULL,
-    `status` ENUM('IQC', 'IN') NULL DEFAULT 'IQC',
-    `store_stock_before` DOUBLE NULL,
-    `po_pending_stock_before` DOUBLE NULL,
-    `iqc_pending_stock_before` DOUBLE NULL,
-    `line_stock_before` DOUBLE NULL,
     `created_at` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
 
-    INDEX `po_id_rm_id`(`po_id`, `rm_id`),
     INDEX `rm_id`(`rm_id`),
-    INDEX `user`(`user`),
-    PRIMARY KEY (`supplier_id`, `invoice_number`, `rm_id`)
+    PRIMARY KEY (`invoice_id`, `supplier_id`, `rm_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `iqc_inwards` (
+CREATE TABLE `Inwards` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
     `user` VARCHAR(191) NOT NULL,
-    `po_id` VARCHAR(191) NOT NULL,
     `supplier_id` VARCHAR(191) NOT NULL,
-    `invoice_number` VARCHAR(191) NOT NULL,
+    `invoice_id` VARCHAR(191) NOT NULL,
     `rm_id` VARCHAR(191) NOT NULL,
     `quantity` DOUBLE NOT NULL,
-    `store_stock_before` DOUBLE NULL,
-    `po_pending_stock_before` DOUBLE NULL,
-    `iqc_pending_stock_before` DOUBLE NULL,
-    `line_stock_before` DOUBLE NULL,
-    `created_at` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `status` ENUM('PendingPoVerification', 'PendingIqcVerification', 'Verified', 'Rejected', 'Closed') NOT NULL DEFAULT 'PendingPoVerification',
+    `poId` VARCHAR(191) NULL,
 
-    INDEX `po_id`(`po_id`, `rm_id`),
-    INDEX `rm_id`(`rm_id`),
-    INDEX `user`(`user`),
-    PRIMARY KEY (`supplier_id`, `invoice_number`, `rm_id`)
+    PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
@@ -190,7 +173,6 @@ CREATE TABLE `requisition` (
 
     INDEX `fg_id`(`fg_id`),
     INDEX `so_id`(`so_id`),
-    INDEX `user`(`user`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -208,7 +190,6 @@ CREATE TABLE `requisition_outward` (
 
     INDEX `requisition_id`(`requisition_id`),
     INDEX `rm_id`(`rm_id`),
-    INDEX `user`(`user`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -224,7 +205,6 @@ CREATE TABLE `production` (
 
     INDEX `fg_id`(`fg_id`),
     INDEX `so_id`(`so_id`),
-    INDEX `user`(`user`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -253,7 +233,6 @@ CREATE TABLE `dispatch` (
 
     INDEX `fg_id`(`fg_id`),
     INDEX `so_id`(`so_id`),
-    INDEX `user`(`user`),
     PRIMARY KEY (`invoice_number`, `fg_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -295,55 +274,49 @@ ALTER TABLE `bom` ADD CONSTRAINT `bom_rm_id_fkey` FOREIGN KEY (`rm_id`) REFERENC
 ALTER TABLE `po` ADD CONSTRAINT `po_supplier_id_fkey` FOREIGN KEY (`supplier_id`) REFERENCES `supplier`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE `po` ADD CONSTRAINT `po_user_fkey` FOREIGN KEY (`user`) REFERENCES `users`(`username`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE `po_details` ADD CONSTRAINT `po_details_po_id_fkey` FOREIGN KEY (`po_id`) REFERENCES `po`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `po_details` ADD CONSTRAINT `po_details_rm_id_fkey` FOREIGN KEY (`rm_id`) REFERENCES `rm`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `invoice_inwards` ADD CONSTRAINT `invoice_inwards_supplier_id_fkey` FOREIGN KEY (`supplier_id`) REFERENCES `supplier`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `invoice` ADD CONSTRAINT `invoice_supplier_id_fkey` FOREIGN KEY (`supplier_id`) REFERENCES `supplier`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `invoice_inwards` ADD CONSTRAINT `invoice_inwards_user_fkey` FOREIGN KEY (`user`) REFERENCES `users`(`username`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `invoice` ADD CONSTRAINT `invoice_user_fkey` FOREIGN KEY (`user`) REFERENCES `users`(`username`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `invoice_inwards` ADD CONSTRAINT `invoice_inwards_rm_id_fkey` FOREIGN KEY (`rm_id`) REFERENCES `rm`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `invoice_details` ADD CONSTRAINT `invoice_details_supplier_id_fkey` FOREIGN KEY (`supplier_id`) REFERENCES `supplier`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `po_inwards` ADD CONSTRAINT `po_inwards_po_id_fkey` FOREIGN KEY (`po_id`) REFERENCES `po`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `invoice_details` ADD CONSTRAINT `invoice_details_rm_id_fkey` FOREIGN KEY (`rm_id`) REFERENCES `rm`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `po_inwards` ADD CONSTRAINT `po_inwards_po_id_rm_id_fkey` FOREIGN KEY (`po_id`, `rm_id`) REFERENCES `po_details`(`po_id`, `rm_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `invoice_details` ADD CONSTRAINT `invoice_details_invoice_id_supplier_id_fkey` FOREIGN KEY (`invoice_id`, `supplier_id`) REFERENCES `invoice`(`id`, `supplier_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `po_inwards` ADD CONSTRAINT `po_inwards_rm_id_fkey` FOREIGN KEY (`rm_id`) REFERENCES `rm`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Inwards` ADD CONSTRAINT `Inwards_rm_id_fkey` FOREIGN KEY (`rm_id`) REFERENCES `rm`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `po_inwards` ADD CONSTRAINT `po_inwards_supplier_id_fkey` FOREIGN KEY (`supplier_id`) REFERENCES `supplier`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Inwards` ADD CONSTRAINT `Inwards_invoice_id_supplier_id_fkey` FOREIGN KEY (`invoice_id`, `supplier_id`) REFERENCES `invoice`(`id`, `supplier_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `po_inwards` ADD CONSTRAINT `po_inwards_supplier_id_invoice_number_rm_id_fkey` FOREIGN KEY (`supplier_id`, `invoice_number`, `rm_id`) REFERENCES `invoice_inwards`(`supplier_id`, `invoice_number`, `rm_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Inwards` ADD CONSTRAINT `Inwards_supplier_id_fkey` FOREIGN KEY (`supplier_id`) REFERENCES `supplier`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `po_inwards` ADD CONSTRAINT `po_inwards_user_fkey` FOREIGN KEY (`user`) REFERENCES `users`(`username`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Inwards` ADD CONSTRAINT `Inwards_user_fkey` FOREIGN KEY (`user`) REFERENCES `users`(`username`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `iqc_inwards` ADD CONSTRAINT `iqc_inwards_po_id_fkey` FOREIGN KEY (`po_id`) REFERENCES `po`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Inwards` ADD CONSTRAINT `Inwards_poId_fkey` FOREIGN KEY (`poId`) REFERENCES `po`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `iqc_inwards` ADD CONSTRAINT `iqc_inwards_po_id_rm_id_fkey` FOREIGN KEY (`po_id`, `rm_id`) REFERENCES `po_details`(`po_id`, `rm_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Inwards` ADD CONSTRAINT `Inwards_poId_rm_id_fkey` FOREIGN KEY (`poId`, `rm_id`) REFERENCES `po_details`(`po_id`, `rm_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `iqc_inwards` ADD CONSTRAINT `iqc_inwards_rm_id_fkey` FOREIGN KEY (`rm_id`) REFERENCES `rm`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `iqc_inwards` ADD CONSTRAINT `iqc_inwards_supplier_id_fkey` FOREIGN KEY (`supplier_id`) REFERENCES `supplier`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `iqc_inwards` ADD CONSTRAINT `iqc_inwards_supplier_id_invoice_number_rm_id_fkey` FOREIGN KEY (`supplier_id`, `invoice_number`, `rm_id`) REFERENCES `invoice_inwards`(`supplier_id`, `invoice_number`, `rm_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `iqc_inwards` ADD CONSTRAINT `iqc_inwards_user_fkey` FOREIGN KEY (`user`) REFERENCES `users`(`username`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Inwards` ADD CONSTRAINT `Inwards_invoice_id_supplier_id_rm_id_fkey` FOREIGN KEY (`invoice_id`, `supplier_id`, `rm_id`) REFERENCES `invoice_details`(`invoice_id`, `supplier_id`, `rm_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `requisition` ADD CONSTRAINT `requisition_fg_id_fkey` FOREIGN KEY (`fg_id`) REFERENCES `fg`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

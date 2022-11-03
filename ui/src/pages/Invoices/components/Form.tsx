@@ -16,15 +16,15 @@ import {
     TextField,
     Typography,
 } from '@mui/material'
-import { Fetch, useAuth } from '../../../../services'
+import { Fetch, useAuth } from '../../../services'
 import { Field, FieldArray, Formik, FormikHelpers } from 'formik'
 import React, { ChangeEvent, SyntheticEvent, useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-import { FormInput } from '../../../../components'
-import FormSelect from '../../../../components/FormSelect'
+import { FormInput } from '../../../components'
+import FormSelect from '../../../components/FormSelect'
 import { InvoiceInterface } from '../Invoice'
-import { RawMaterialInterface } from '../../../RawMaterial/RawMaterial'
+import { RawMaterialInterface } from '../../RawMaterial/RawMaterial'
 
 interface FormValues extends Required<InvoiceInterface> {
     submit: null
@@ -53,13 +53,13 @@ const Form = () => {
     const [supplier, setSupplier] = useState<{ value: string }[] | null>()
     const [error, setError] = useState('')
     let initialValues: FormValues = {
-        invoiceNumber: '',
+        id: '',
         supplierId: '',
         supplier: {
             name: '',
         },
-        status: 'PO',
-        rm: [],
+        status: 'Open',
+        invoiceDetails: [],
         submit: null,
     }
 
@@ -83,25 +83,12 @@ const Form = () => {
         { setErrors, setStatus, setSubmitting }: FormikHelpers<FormValues>
     ) => {
         try {
-            const data = Array.from(values.rm).map((val) => ({
-                ...val,
-                supplierId: values.supplierId,
-                invoiceNumber: values.invoiceNumber,
-                status: values.status,
-            }))
-            console.log(data)
             await Fetch({
                 url:
-                    '/inwards/invoice' +
-                    (isEdit
-                        ? '/' +
-                          encodeURIComponent(initialValues.supplierId) +
-                          '/' +
-                          encodeURIComponent(initialValues.invoiceNumber)
-                        : 's'),
+                    '/invoice',
                 options: {
                     method: isEdit ? 'PUT' : 'POST',
-                    body: data,
+                    body: values,
                     authToken: token,
                 },
             })
@@ -116,12 +103,11 @@ const Form = () => {
     const onDelete = async () => {
         try {
             await Fetch({
-                url: `/inwards/invoice/${encodeURIComponent(
-                    initialValues.supplierId
-                )}/${encodeURIComponent(initialValues.invoiceNumber)}`,
+                url: `/invoice`,
                 options: {
                     method: 'DELETE',
                     authToken: token,
+                    body: initialValues
                 },
             })
             navigate('..')
@@ -197,14 +183,15 @@ const Form = () => {
     const deleteRm = async (rmId: string) => {
         try {
             await Fetch({
-                url: `/inwards/invoice/${encodeURIComponent(
-                    initialValues.supplierId
-                )}/${encodeURIComponent(
-                    initialValues.invoiceNumber
-                )}/${encodeURIComponent(rmId)}`,
+                url: `/invoice/details`,
                 options: {
                     authToken: token,
                     method: 'DELETE',
+                    body: {
+                        invoiceId: initialValues.id,
+                        supplierId: initialValues.supplierId,
+                        rmId
+                    }
                 },
             })
         } catch (e) {
@@ -230,7 +217,7 @@ const Form = () => {
         <Formik
             initialValues={initialValues}
             validationSchema={Yup.object().shape({
-                invoiceNumber: Yup.string().required('Invoice No is required'),
+                id: Yup.string().required('Invoice ID is required'),
                 supplierId: Yup.string().required('Supplier is required'),
                 status: Yup.string().required('Status is required'),
             })}
@@ -277,12 +264,12 @@ const Form = () => {
                                     }}
                                 />
                                 <Field
-                                    name="invoiceNumber"
+                                    name="id"
                                     component={FormInput}
                                     xs={4}
                                     type="text"
-                                    label="Invoice Number"
-                                    placeholder="Enter Invoice Number"
+                                    label="Invoice ID"
+                                    placeholder="Enter Invoice ID"
                                 />
                                 <Field
                                     name="status"
@@ -290,17 +277,14 @@ const Form = () => {
                                     xs={2}
                                     label="Status"
                                     placeholder="Select Status"
-                                    defaultValue="PO"
+                                    defaultValue="Open"
                                     items={[
                                         {
-                                            value: 'PO',
+                                            value: 'Open',
                                         },
                                         {
-                                            value: 'IQC',
-                                        },
-                                        {
-                                            value: 'IN',
-                                        },
+                                            value: 'Closed',
+                                        }
                                     ]}
                                 />
                                 <Grid item xs={12}>
@@ -319,7 +303,7 @@ const Form = () => {
                             </>
                         )}
                         {activeStep === 1 && (
-                            <FieldArray name="rm">
+                            <FieldArray name="invoiceDetails">
                                 {({ remove, push }) => (
                                     <>
                                         <Grid item xs={1} />
@@ -337,7 +321,7 @@ const Form = () => {
                                                 },
                                                 {
                                                     value: 'id',
-                                                    label: 'ID',
+                                                    label: 'Part Number',
                                                 },
                                                 {
                                                     label: 'DTPL Part Number',
@@ -418,7 +402,7 @@ const Form = () => {
                                                         selectedRm.rm.id
                                                     ) {
                                                         if (
-                                                            !values.rm.find(
+                                                            !values.invoiceDetails.find(
                                                                 (r) =>
                                                                     r.rmId ===
                                                                     selectedRm
@@ -438,21 +422,21 @@ const Form = () => {
                                                 Add
                                             </Button>
                                         </Grid>
-                                        {errors.rm && (
+                                        {errors.invoiceDetails && (
                                             <Grid item xs={12}>
                                                 <FormHelperText error>
-                                                    {errors.rm as string}
+                                                    {errors.invoiceDetails as string}
                                                 </FormHelperText>
                                             </Grid>
                                         )}
                                         <Grid item xs={12}>
                                             <Divider />
                                         </Grid>
-                                        {values.rm.length !== 0 && (
+                                        {values.invoiceDetails.length !== 0 && (
                                             <Grid item xs={12} container>
                                                 <Grid item xs={4}>
                                                     <Typography variant="h6">
-                                                        Raw Material Identifier
+                                                        Raw Material Part Number
                                                     </Typography>
                                                 </Grid>
                                                 <Grid item xs={4}>
@@ -463,30 +447,28 @@ const Form = () => {
                                                 <Grid item xs={4} />
                                             </Grid>
                                         )}
-                                        {values.rm.map((item, index) => (
+                                        {values.invoiceDetails.map((item, index) => (
                                             <Grid
                                                 item
                                                 xs={12}
                                                 container
                                                 key={index}
                                             >
-                                                <Grid item xs={4}>
-                                                    <OutlinedInput
-                                                        name={`bom.${index}.rmId`}
-                                                        type="text"
-                                                        disabled
-                                                        value={item.rmId}
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={4}>
-                                                    <OutlinedInput
-                                                        name={`bom.${index}.quantity`}
-                                                        type="number"
-                                                        disabled
-                                                        value={item.quantity}
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={4}>
+                                                <Field
+                                                    name={`invoiceDetails.${index}.rmId`}
+                                                    component={FormInput}
+                                                    xs={4}
+                                                    type="text"
+                                                    disabled
+                                                />
+                                                <Field
+                                                    name={`invoiceDetails.${index}.quantity`}
+                                                    component={FormInput}
+                                                    xs={4}
+                                                    type="number"
+                                                />
+                                                <Grid item xs={1} />
+                                                <Grid item xs={2}>
                                                     <Button
                                                         disableElevation
                                                         disabled={isSubmitting}
@@ -502,6 +484,7 @@ const Form = () => {
                                                         DELETE
                                                     </Button>
                                                 </Grid>
+                                                <Grid item xs={1} />
                                             </Grid>
                                         ))}
                                     </>

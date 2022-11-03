@@ -6,10 +6,9 @@ import { PrismaService } from '../service'
 const app: Router = express.Router()
 const prisma = PrismaService.po
 
-
 app.get('/', async (req: Request, res: Response) => {
     const args: Prisma.PoFindManyArgs = {}
-    const { select, include, where } = req.query
+    const { select, include, where, distinct } = req.query
     if (select) {
         args.select = JSON.parse(select as string)
     }
@@ -19,33 +18,43 @@ app.get('/', async (req: Request, res: Response) => {
     if (where) {
         args.where = JSON.parse(where as string)
     }
+    if (distinct) {
+        args.distinct = JSON.parse(distinct as string)
+    }
     const data = await prisma.findMany(args)
     res.json(data)
 })
 
 app.post('/', async (req: Request, res: Response) => {
     const {
-        id,
         supplierId,
-        status,
-        poDetails
+        id,
+        poDetails,
+        status
     } = req.body
 
-    const details = poDetails.map((rm: Prisma.PoDetailsUncheckedCreateInput) => {
-        return {
-            rmId: rm.rmId,
-            quantity: rm.quantity
-        }
-    })
-
     try {
-        const result = await prisma.create({
-            data: {
-                id,
+        const result = await prisma.upsert({
+            where: {
+                id
+            },
+            create: {
+                user: req.user ? req.user.username : '',
                 supplierId,
+                id,
                 status,
                 poDetails: {
-                    create: details
+                    createMany: {
+                        data: poDetails
+                    }
+                }
+            },
+            update: {
+                poDetails: {
+                    createMany: {
+                        data: poDetails,
+                        skipDuplicates: true
+                    }
                 }
             }
         })
@@ -57,75 +66,77 @@ app.post('/', async (req: Request, res: Response) => {
     }
 })
 
-app.get('/:id', async (req: Request, res: Response) => {
-    const { id } = req.params
-    const data = await prisma.findUnique({
-        where: {
-            id
-        }
-    })
-    res.json(data)
-})
-
-app.put('/:id', async (req: Request, res: Response) => {
+app.put('/', async (req: Request, res: Response) => {
     const {
-        id: updatedId,
         supplierId,
-        status,
-        poDetails
+        id,
+        poDetails,
+        status
     } = req.body
 
-    const { id } = req.params
-
-    const details = poDetails.map((rm: Prisma.PoDetailsUncheckedCreateInput) => {
-        return {
-            rmId: rm.rmId,
-            quantity: rm.quantity
-        }
-    })
-
-    const currentDetails = await PrismaService.poDetails.findMany({
-        where: {
-            poId: id
-        }
-    })
-
     try {
-        const del = await PrismaService.poDetails.deleteMany({
-            where: {
-                poId: id
-            }
-        })
         const result = await prisma.update({
             where: {
                 id,
             },
             data: {
-                id: updatedId,
+                id,
                 supplierId,
                 status,
                 poDetails: {
-                    create: details
-                }
+                    updateMany: await poDetails.map(({rmId, quantity}: {
+                        rmId: string, quantity: number
+                    }) => {
+                        return {
+                            where: {
+                                poId: id,
+                                rmId
+                            },
+                            data: {
+                                quantity
+                            }
+                        }
+                    }),
+                    createMany: {
+                        data: poDetails,
+                        skipDuplicates: true
+                    }
+                },
             }
         })
         res.json(result)
     } catch (e) {
-        const recreate = await PrismaService.poDetails.createMany({
-            data: currentDetails
-        })
         res.status(500).json({
             message: (e as Error).message
         })
     }
 })
 
-app.delete('/:id', async (req: Request, res: Response) => {
-    const { id } = req.params
+app.delete('/', async (req: Request, res: Response) => {
+    const { id } = req.body
     try {
         const result = await prisma.delete({
             where: {
-                id
+                id: id as string,
+            }
+        })
+        res.json(result)
+    } catch (e) {
+        res.status(500).json({
+            message: (e as Error).message
+        })
+    }
+})
+
+app.delete('/details', async (req: Request, res: Response) => {
+    const { poId, rmId } = req.body
+    try {
+        const result = await PrismaService.poDetails.delete({
+            where: {
+                poId_rmId: {
+                    poId: poId as string,
+                    rmId: rmId as string
+                }
             }
         })
         res.json(result)

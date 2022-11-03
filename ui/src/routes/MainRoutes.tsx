@@ -14,8 +14,8 @@ const NewSupplier = Loadable(lazy(() => import('../pages/Suppliers/New')))
 const PurchaseOrders = Loadable(lazy(() => import('../pages/PurchaseOrders/PurchaseOrders')))
 const NewPurchaseOrders = Loadable(lazy(() => import('../pages/PurchaseOrders/New')))
 const NewPurchaseOrdersFromSalesOrder = Loadable(lazy(() => import('../pages/PurchaseOrders/NewFromSalesOrder')))
-const Invoice = Loadable(lazy(() => import('../pages/Inwards/Invoice/Invoice')))
-const NewInvoice = Loadable(lazy(() => import('../pages/Inwards/Invoice/New')))
+const Invoice = Loadable(lazy(() => import('../pages/Invoices/Invoice')))
+const NewInvoice = Loadable(lazy(() => import('../pages/Invoices/New')))
 const AgainstPurchaseOrder = Loadable(lazy(() => import('../pages/Inwards/PurchaseOrder/PurchaseOrder')))
 
 
@@ -142,28 +142,28 @@ const MainRoutes: RouteObject = {
             ]
         },
         {
+            path: 'invoices',
+            children: [
+                {
+                    index: true,
+                    element: <Invoice />
+                },
+                {
+                    path: 'new',
+                    element: <NewInvoice />
+                },
+                {
+                    path: 'edit',
+                    element: <NewInvoice />
+                }
+            ]
+        },
+        {
             path: 'inwards',
             children: [
                 {
                     index: true,
-                    element: <Navigate replace={true} to='invoice' />
-                },
-                {
-                    path: 'invoice',
-                    children: [
-                        {
-                            index: true,
-                            element: <Invoice />
-                        },
-                        {
-                            path: 'new',
-                            element: <NewInvoice />
-                        },
-                        {
-                            path: 'edit',
-                            element: <NewInvoice />
-                        }
-                    ]
+                    element: <Navigate replace={true} to='purchaseOrder' />
                 },
                 {
                     path: 'purchaseOrder',

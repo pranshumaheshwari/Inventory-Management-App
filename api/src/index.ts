@@ -1,4 +1,4 @@
-import { Attendance, Customer, Fg, Inwards, Login, Po, Rm, So, Supplier, Users } from './routes'
+import { Attendance, Customer, Fg, Invoice, Inwards, Login, Po, Rm, So, Supplier, Users } from './routes'
 import express, { Express, Request, Response } from 'express'
 
 import { AuthService } from './service'
@@ -27,6 +27,7 @@ app.use('/finishedgoods', AuthService, Fg)
 app.use('/inwards', AuthService, Inwards)
 app.use('/', Login)
 app.use('/purchaseorders', AuthService, Po)
+app.use('/invoice', AuthService, Invoice)
 app.use('/rawmaterial', AuthService, Rm)
 app.use('/salesorders', AuthService, So)
 app.use('/suppliers', AuthService, Supplier)
