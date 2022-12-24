@@ -78,6 +78,7 @@ CREATE TABLE `fg` (
     `description` VARCHAR(191) NOT NULL,
     `store_stock` INTEGER NOT NULL DEFAULT 0,
     `oqc_pending_stock` INTEGER NOT NULL DEFAULT 0,
+    `oqc_rejected_stock` INTEGER NOT NULL DEFAULT 0,
     `category` ENUM('Fuse_Box', 'Indicator', 'Magneto', 'Battery_Cable', 'Lead_Wire', 'Piaggio', 'Pigtail', 'SPD') NOT NULL,
     `price` DOUBLE NOT NULL DEFAULT 0,
     `man_power` DOUBLE NOT NULL DEFAULT 0,
@@ -251,6 +252,7 @@ CREATE TABLE `production` (
     `store_stock_before` DOUBLE NULL,
     `oqc_pending_stock_before` DOUBLE NULL,
     `created_at` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `status` ENUM('Accepted', 'PendingOqcVerification', 'RejectedOqcVerification', 'Dispatched', 'Rejected') NOT NULL DEFAULT 'PendingOqcVerification',
 
     INDEX `fg_id`(`fg_id`),
     INDEX `so_id`(`so_id`),
@@ -258,18 +260,33 @@ CREATE TABLE `production` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
+CREATE TABLE `outwards_quality_check` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `user` VARCHAR(191) NOT NULL,
+    `production_id` INTEGER NOT NULL,
+    `fg_id` VARCHAR(191) NOT NULL,
+    `quantity` INTEGER NOT NULL,
+    `store_stock_before` DOUBLE NULL,
+    `oqc_pending_stock_before` DOUBLE NULL,
+    `created_at` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `status` ENUM('Accepted', 'PendingOqcVerification', 'RejectedOqcVerification', 'Dispatched', 'Rejected') NOT NULL DEFAULT 'Accepted',
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
 CREATE TABLE `dispatch` (
     `user` VARCHAR(191) NOT NULL,
     `invoice_number` VARCHAR(191) NOT NULL,
-    `so_id` VARCHAR(191) NOT NULL,
     `fg_id` VARCHAR(191) NOT NULL,
     `quantity` INTEGER NOT NULL,
-    `oqcStatus` ENUM('Pending', 'Finished') NULL DEFAULT 'Pending',
+    `outwardQualityCheckId` INTEGER NOT NULL,
     `store_stock_before` DOUBLE NULL,
+    `oqc_pending_stock_before` DOUBLE NULL,
     `created_at` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `soId` VARCHAR(191) NULL,
 
     INDEX `fg_id`(`fg_id`),
-    INDEX `so_id`(`so_id`),
     PRIMARY KEY (`invoice_number`, `fg_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -386,13 +403,22 @@ ALTER TABLE `production` ADD CONSTRAINT `production_so_id_fkey` FOREIGN KEY (`so
 ALTER TABLE `production` ADD CONSTRAINT `production_user_fkey` FOREIGN KEY (`user`) REFERENCES `users`(`username`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE `outwards_quality_check` ADD CONSTRAINT `outwards_quality_check_production_id_fkey` FOREIGN KEY (`production_id`) REFERENCES `production`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `outwards_quality_check` ADD CONSTRAINT `outwards_quality_check_fg_id_fkey` FOREIGN KEY (`fg_id`) REFERENCES `fg`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `outwards_quality_check` ADD CONSTRAINT `outwards_quality_check_user_fkey` FOREIGN KEY (`user`) REFERENCES `users`(`username`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE `dispatch` ADD CONSTRAINT `dispatch_fg_id_fkey` FOREIGN KEY (`fg_id`) REFERENCES `fg`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `dispatch` ADD CONSTRAINT `dispatch_so_id_fkey` FOREIGN KEY (`so_id`) REFERENCES `so`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `dispatch` ADD CONSTRAINT `dispatch_user_fkey` FOREIGN KEY (`user`) REFERENCES `users`(`username`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `dispatch` ADD CONSTRAINT `dispatch_user_fkey` FOREIGN KEY (`user`) REFERENCES `users`(`username`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `dispatch` ADD CONSTRAINT `dispatch_outwardQualityCheckId_fkey` FOREIGN KEY (`outwardQualityCheckId`) REFERENCES `outwards_quality_check`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `so` ADD CONSTRAINT `so_customer_id_fkey` FOREIGN KEY (`customer_id`) REFERENCES `customer`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

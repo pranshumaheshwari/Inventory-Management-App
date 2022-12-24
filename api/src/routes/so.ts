@@ -52,12 +52,21 @@ app.post('/', async (req: Request, res: Response) => {
     }
 })
 
-app.get('/:id', async (req: Request, res: Response) => {
-    const { id } = req.params
-    const data = await prisma.findUnique({
+app.get('/:soId', async (req: Request, res: Response) => {
+    const { soId } = req.params
+    const args: Prisma.SoDetailsFindManyArgs = {}
+    const { select, include } = req.query
+    if (select) {
+        args.select = JSON.parse(select as string)
+    }
+    if (include) {
+        args.include = JSON.parse(include as string)
+    }
+    const data = await PrismaService.soDetails.findMany({
         where: {
-            id
-        }
+            soId
+        },
+        ...args
     })
     res.json(data)
 })

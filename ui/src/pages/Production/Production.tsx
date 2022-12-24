@@ -21,6 +21,7 @@ interface ProductionInterface {
     date: Dayjs
     fgId: string
     quantity: number
+    soId: string
 }
 
 interface FormValues extends Required<ProductionInterface> {
@@ -33,10 +34,13 @@ const Production = () => {
         token: { token },
     } = useAuth()
     const [error, setError] = useState('')
-    const [finishedGood, setFinishedGood] =
-        useState<Partial<FinishedGoodsInterface>[]>()
+    const [finishedGood, setFinishedGood] = useState<
+        Partial<FinishedGoodsInterface>[]
+    >([])
     const [finishedGoodIndentifier, setFinishedGoodIdentifier] =
         useState<keyof FinishedGoodsInterface>('description')
+    const [customer, setCustomer] = useState<{ value: string }[] | null>()
+    const [salesOrder, setSalesOrder] = useState<{ value: string }[] | null>([])
 
     const onSubmit = async (
         values: FormValues,
@@ -51,11 +55,12 @@ const Production = () => {
                         quantity: values.quantity,
                         fgId: values.fgId,
                         createAt: dateToString(values.date),
+                        soId: values.soId,
                     },
                     authToken: token,
                 },
             })
-            navigate('..')
+            navigate(0)
         } catch (err) {
             setStatus({ success: false })
             setErrors({ submit: (err as Error).message })
@@ -63,28 +68,79 @@ const Production = () => {
         }
     }
 
-    const getFinishedGoods = async () => {
+    const getCustomers = async () => {
         try {
             const data = await Fetch({
-                url: '/finishedgoods',
+                url: '/customers',
+                options: {
+                    authToken: token,
+                },
+            }).then((data) => {
+                return data.map((customer: { name: string; id: string }) => ({
+                    label: customer.name,
+                    value: customer.id,
+                }))
+            })
+            setCustomer(data)
+        } catch (e) {
+            setError((e as Error).message)
+        }
+    }
+
+    const getFinishedGoods = async (soId: string) => {
+        try {
+            const data = await Fetch({
+                url: `/salesorders/${soId}`,
                 options: {
                     authToken: token,
                     params: {
                         select: JSON.stringify({
-                            id: true,
-                            description: true,
+                            fg: {
+                                select: {
+                                    id: true,
+                                    description: true,
+                                },
+                            },
                         }),
                     },
                 },
-            })
+            }).then((data) =>
+                data.map((d: { fg: { id: string; description: string } }) => ({
+                    ...d.fg,
+                }))
+            )
             setFinishedGood(data)
         } catch (e) {
             setError((e as Error).message)
         }
     }
 
+    const getSalesOrders = async (customerId: string) => {
+        try {
+            const data = await Fetch({
+                url: '/salesorders',
+                options: {
+                    authToken: token,
+                    params: {
+                        select: JSON.stringify({
+                            id: true,
+                        }),
+                        where: JSON.stringify({
+                            customerId,
+                        }),
+                    },
+                },
+            }).then((data) =>
+                data.map((d: { id: string }) => ({ value: d.id }))
+            )
+            setSalesOrder(data)
+        } catch (e) {
+            setError((e as Error).message)
+        }
+    }
+
     useEffect(() => {
-        getFinishedGoods()
+        getCustomers()
     }, [])
 
     const dateToString = (date: Dayjs) => {
@@ -97,7 +153,7 @@ const Production = () => {
         </Grid>
     }
 
-    if (!finishedGood) {
+    if (!customer) {
         return <Skeleton width="90vw" height="100%" />
     }
 
@@ -106,18 +162,50 @@ const Production = () => {
             initialValues={{
                 submit: null,
                 fgId: '',
+                soId: '',
                 quantity: 0,
                 date: dayjs(),
             }}
             validationSchema={Yup.object().shape({
                 fgId: Yup.string().required('Finished Good is required'),
                 quantity: Yup.number().min(1).required('Quantity is required'),
+                soId: Yup.string().required('Sales Order is required'),
             })}
             onSubmit={onSubmit}
         >
-            {({ errors, handleSubmit, isSubmitting, setValues, values }) => (
+            {({
+                errors,
+                handleSubmit,
+                isSubmitting,
+                setValues,
+                values,
+                handleChange,
+            }) => (
                 <form noValidate onSubmit={handleSubmit}>
                     <Grid container spacing={3}>
+                        <Field
+                            name="customerId"
+                            component={FormSelect}
+                            xs={6}
+                            label="Customer"
+                            placeholder="Select Customer"
+                            items={customer}
+                            onChange={(e: SelectChangeEvent) => {
+                                getSalesOrders(e.target.value)
+                            }}
+                        />
+                        <Field
+                            name="soId"
+                            component={FormSelect}
+                            xs={6}
+                            label="Sales Order"
+                            placeholder="Select Sales Order"
+                            items={salesOrder}
+                            onChange={(e: SelectChangeEvent) => {
+                                handleChange(e)
+                                getFinishedGoods(e.target.value)
+                            }}
+                        />
                         <Field
                             name="FgSelect"
                             component={FormSelect}

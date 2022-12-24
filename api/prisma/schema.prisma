@@ -16,19 +16,20 @@ model Attendance {
 }
 
 model Users {
-    username           String               @id
-    password           String
-    type               UsersType
-    name               String
-    createdAt          DateTime?            @default(now()) @map("created_at")
-    dispatch           Dispatch[]
-    production         Production[]
-    requisition        Requisition[]
-    requisitionOutward RequisitionOutward[] @relation("requisition_outwardTousers")
-    po                 Po[]
-    invoice            Invoice[]
-    inwardsPO          InwardsIQCPending[]
-    inwardsIQC         InwardsVerified[]
+    username             String                 @id
+    password             String
+    type                 UsersType
+    name                 String
+    createdAt            DateTime?              @default(now()) @map("created_at")
+    dispatch             Dispatch[]
+    production           Production[]
+    requisition          Requisition[]
+    requisitionOutward   RequisitionOutward[]   @relation("requisition_outwardTousers")
+    po                   Po[]
+    invoice              Invoice[]
+    inwardsPO            InwardsIQCPending[]
+    inwardsIQC           InwardsVerified[]
+    OutwardsQualityCheck OutwardsQualityCheck[]
 
     @@map("users")
 }
@@ -93,22 +94,24 @@ model Rm {
 }
 
 model Fg {
-    id              String        @id
-    customerId      String        @map("customer_id")
-    description     String        @unique
-    storeStock      Int           @default(0) @map("store_stock")
-    oqcPendingStock Int           @default(0) @map("oqc_pending_stock")
-    category        FgCategory
-    price           Float         @default(0)
-    manPower        Float         @default(0) @map("man_power")
-    overheads       Float         @default(0)
-    createdAt       DateTime?     @default(now()) @map("created_at")
-    customer        Customer      @relation(fields: [customerId], references: [id], onDelete: Restrict, onUpdate: Cascade)
-    bom             Bom[]
-    dispatch        Dispatch[]
-    production      Production[]
-    requisition     Requisition[]
-    soDetails       SoDetails[]
+    id                   String                 @id
+    customerId           String                 @map("customer_id")
+    description          String                 @unique
+    storeStock           Int                    @default(0) @map("store_stock")
+    oqcPendingStock      Int                    @default(0) @map("oqc_pending_stock")
+    oqcRejectedStock     Int                    @default(0) @map("oqc_rejected_stock")
+    category             FgCategory
+    price                Float                  @default(0)
+    manPower             Float                  @default(0) @map("man_power")
+    overheads            Float                  @default(0)
+    createdAt            DateTime?              @default(now()) @map("created_at")
+    customer             Customer               @relation(fields: [customerId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    bom                  Bom[]
+    dispatch             Dispatch[]
+    production           Production[]
+    requisition          Requisition[]
+    soDetails            SoDetails[]
+    OutwardsQualityCheck OutwardsQualityCheck[]
 
     @@index([customerId], name: "customer_id")
     @@map("fg")
@@ -296,39 +299,63 @@ model RequisitionOutward {
 }
 
 model Production {
-    id                    Int       @id @default(autoincrement())
+    id                    Int            @id @default(autoincrement())
     user                  String
-    soId                  String    @map("so_id")
-    fgId                  String    @map("fg_id")
+    soId                  String         @map("so_id")
+    fgId                  String         @map("fg_id")
     quantity              Int
-    storeStockBefore      Float?    @map("store_stock_before")
-    oqcPendingStockBefore Float?    @map("oqc_pending_stock_before")
-    createdAt             DateTime? @default(now()) @map("created_at")
-    fg                    Fg        @relation(fields: [fgId], references: [id])
-    so                    So        @relation("productionToso", fields: [soId], references: [id])
-    users                 Users     @relation(fields: [user], references: [username])
+    storeStockBefore      Float?         @map("store_stock_before")
+    oqcPendingStockBefore Float?         @map("oqc_pending_stock_before")
+    createdAt             DateTime?      @default(now()) @map("created_at")
+    status                OutwardsStatus @default(PendingOqcVerification)
+
+    fg                   Fg                     @relation(fields: [fgId], references: [id])
+    so                   So                     @relation("productionToso", fields: [soId], references: [id])
+    users                Users                  @relation(fields: [user], references: [username])
+    outwardsQualityCheck OutwardsQualityCheck[]
 
     @@index([fgId], name: "fg_id")
     @@index([soId], name: "so_id")
     @@map("production")
 }
 
+model OutwardsQualityCheck {
+    id                    Int            @id @default(autoincrement())
+    user                  String
+    productionId          Int            @map("production_id")
+    fgId                  String         @map("fg_id")
+    quantity              Int
+    storeStockBefore      Float?         @map("store_stock_before")
+    oqcPendingStockBefore Float?         @map("oqc_pending_stock_before")
+    createdAt             DateTime?      @default(now()) @map("created_at")
+    status                OutwardsStatus @default(Accepted)
+
+    production Production @relation(fields: [productionId], references: [id])
+    fg         Fg         @relation(fields: [fgId], references: [id])
+    users      Users      @relation(fields: [user], references: [username])
+    Dispatch   Dispatch[]
+
+    @@map("outwards_quality_check")
+}
+
 model Dispatch {
-    user             String
-    invoiceNumber    String             @map("invoice_number")
-    soId             String             @map("so_id")
-    fgId             String             @map("fg_id")
-    quantity         Int
-    oqcStatus        DispatchOqcStatus? @default(Pending)
-    storeStockBefore Float?             @map("store_stock_before")
-    createdAt        DateTime?          @default(now()) @map("created_at")
-    fg               Fg                 @relation(fields: [fgId], references: [id])
-    so               So                 @relation("dispatchToso", fields: [soId], references: [id])
-    users            Users              @relation(fields: [user], references: [username])
+    user                  String
+    invoiceNumber         String @map("invoice_number")
+    fgId                  String @map("fg_id")
+    quantity              Int
+    outwardQualityCheckId Int
+
+    storeStockBefore      Float?    @map("store_stock_before")
+    oqcPendingStockBefore Float?    @map("oqc_pending_stock_before")
+    createdAt             DateTime? @default(now()) @map("created_at")
+
+    fg                   Fg                   @relation(fields: [fgId], references: [id])
+    users                Users                @relation(fields: [user], references: [username])
+    outwardsQualityCheck OutwardsQualityCheck @relation(fields: [outwardQualityCheckId], references: [id])
+    soId                 String?
 
     @@id([invoiceNumber, fgId])
     @@index([fgId], name: "fg_id")
-    @@index([soId], name: "so_id")
     @@map("dispatch")
 }
 
@@ -338,7 +365,6 @@ model So {
     status      BinaryStatus? @default(Open)
     createdAt   DateTime?     @default(now()) @map("created_at")
     customer    Customer      @relation(fields: [customerId], references: [id])
-    dispatch    Dispatch[]    @relation("dispatchToso")
     production  Production[]  @relation("productionToso")
     requisition Requisition[] @relation("requisitionToso")
     soDetails   SoDetails[]
@@ -372,6 +398,16 @@ enum BinaryStatus {
     Closed
 
     @@map("binary_status")
+}
+
+enum OutwardsStatus {
+    Accepted
+    PendingOqcVerification
+    RejectedOqcVerification
+    Dispatched
+    Rejected
+
+    @@map("outwards_status")
 }
 
 enum InwardsStatus {
