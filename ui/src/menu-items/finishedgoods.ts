@@ -28,6 +28,13 @@ const dashboard: ItemInterface = {
             url: '/salesOrders',
             icon: 'discount_outlined',
             urls: ['/salesOrders', '/salesOrders/new', '/salesOrders/edit']
+        },
+        {
+            id: 'finishedgood-production',
+            title: 'Production',
+            type: 'item',
+            url: '/production',
+            icon: 'precision_manufacturing'
         }
     ]
 }

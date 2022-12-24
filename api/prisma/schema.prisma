@@ -84,7 +84,6 @@ model Rm {
     bom                Bom[]
     poDetails          PoDetails[]
     requisitionOutward RequisitionOutward[]
-    rmProductionLog    RmProductionLog[]    @relation("rmTorm_production_log")
     inwardsPoPending   InwardsPoPending[]
     inwardsIQCPENDING  InwardsIQCPending[]
     inwardsVerified    InwardsVerified[]
@@ -174,12 +173,19 @@ model Invoice {
 }
 
 model InwardsPoPending {
-    id                Int                 @unique @default(autoincrement())
-    invoiceId         String              @map("invoice_id")
-    supplierId        String              @map("supplier_id")
-    rmId              String              @map("rm_id")
-    quantity          Float
-    createdAt         DateTime?           @default(now()) @map("created_at")
+    id                     Int       @unique @default(autoincrement())
+    invoiceId              String    @map("invoice_id")
+    supplierId             String    @map("supplier_id")
+    rmId                   String    @map("rm_id")
+    quantity               Float
+    createdAt              DateTime? @default(now()) @map("created_at")
+    storeStockBefore       Float?    @map("store_stock_before")
+    lineStockBefore        Float?    @map("line_stock_before")
+    poPendingStockBefore   Float?    @map("po_pending_stock_before")
+    iqcPendingStockBefore  Float?    @map("iqc_pending_stock_before")
+    iqcRejectedStockBefore Float?    @map("iqc_rejected_stock_before")
+    poRejectedStockBefore  Float?    @map("po_rejected_stock_before")
+
     status            InwardsStatus       @default(PendingPoVerification)
     supplier          Supplier            @relation(fields: [supplierId], references: [id], onDelete: Cascade, onUpdate: Cascade)
     rm                Rm                  @relation(fields: [rmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -204,12 +210,19 @@ model InvoicePO {
 }
 
 model InwardsIQCPending {
-    id                 Int           @id @default(autoincrement())
-    user               String
-    status             InwardsStatus @default(PendingIqcVerification)
-    inwardsPoPendingId Int           @map("inwards_po_id")
-    rmId               String        @map("rm_id")
-    quantity           Float
+    id                     Int           @id @default(autoincrement())
+    user                   String
+    status                 InwardsStatus @default(PendingIqcVerification)
+    inwardsPoPendingId     Int           @map("inwards_po_id")
+    rmId                   String        @map("rm_id")
+    quantity               Float
+    createdAt              DateTime?     @default(now()) @map("created_at")
+    storeStockBefore       Float?        @map("store_stock_before")
+    lineStockBefore        Float?        @map("line_stock_before")
+    poPendingStockBefore   Float?        @map("po_pending_stock_before")
+    iqcPendingStockBefore  Float?        @map("iqc_pending_stock_before")
+    iqcRejectedStockBefore Float?        @map("iqc_rejected_stock_before")
+    poRejectedStockBefore  Float?        @map("po_rejected_stock_before")
 
     users            Users             @relation(fields: [user], references: [username])
     inwardsPoPending InwardsPoPending  @relation(fields: [inwardsPoPendingId], references: [id])
@@ -220,12 +233,19 @@ model InwardsIQCPending {
 }
 
 model InwardsVerified {
-    id                  Int           @id @default(autoincrement())
-    user                String
-    status              InwardsStatus @default(Accepted)
-    inwardsIQCPendingId Int           @map("inwards_po_id")
-    rmId                String        @map("rm_id")
-    quantity            Float
+    id                     Int           @id @default(autoincrement())
+    user                   String
+    status                 InwardsStatus @default(Accepted)
+    inwardsIQCPendingId    Int           @map("inwards_po_id")
+    rmId                   String        @map("rm_id")
+    quantity               Float
+    createdAt              DateTime?     @default(now()) @map("created_at")
+    storeStockBefore       Float?        @map("store_stock_before")
+    lineStockBefore        Float?        @map("line_stock_before")
+    poPendingStockBefore   Float?        @map("po_pending_stock_before")
+    iqcPendingStockBefore  Float?        @map("iqc_pending_stock_before")
+    iqcRejectedStockBefore Float?        @map("iqc_rejected_stock_before")
+    poRejectedStockBefore  Float?        @map("po_rejected_stock_before")
 
     users             Users             @relation(fields: [user], references: [username])
     rm                Rm                @relation(fields: [rmId], references: [id])
@@ -253,18 +273,22 @@ model Requisition {
 }
 
 model RequisitionOutward {
-    id                    Int         @id @default(autoincrement())
-    user                  String
-    requisitionId         Int         @map("requisition_id")
-    rmId                  String      @map("rm_id")
-    quantity              Float
-    storeStockBefore      Float?      @map("store_stock_before")
-    iqcPendingStockBefore Float?      @map("iqc_pending_stock_before")
-    lineStockBefore       Float?      @map("line_stock_before")
-    createdAt             DateTime?   @default(now()) @map("created_at")
-    requisition           Requisition @relation("requisitionTorequisition_outward_requisition_id", fields: [requisitionId], references: [id])
-    rm                    Rm          @relation(fields: [rmId], references: [id])
-    users                 Users       @relation("requisition_outwardTousers", fields: [user], references: [username])
+    id                     Int       @id @default(autoincrement())
+    user                   String
+    requisitionId          Int       @map("requisition_id")
+    rmId                   String    @map("rm_id")
+    quantity               Float
+    createdAt              DateTime? @default(now()) @map("created_at")
+    storeStockBefore       Float?    @map("store_stock_before")
+    lineStockBefore        Float?    @map("line_stock_before")
+    poPendingStockBefore   Float?    @map("po_pending_stock_before")
+    iqcPendingStockBefore  Float?    @map("iqc_pending_stock_before")
+    iqcRejectedStockBefore Float?    @map("iqc_rejected_stock_before")
+    poRejectedStockBefore  Float?    @map("po_rejected_stock_before")
+
+    requisition Requisition @relation("requisitionTorequisition_outward_requisition_id", fields: [requisitionId], references: [id])
+    rm          Rm          @relation(fields: [rmId], references: [id])
+    users       Users       @relation("requisition_outwardTousers", fields: [user], references: [username])
 
     @@index([requisitionId], name: "requisition_id")
     @@index([rmId], name: "rm_id")
@@ -272,35 +296,21 @@ model RequisitionOutward {
 }
 
 model Production {
-    id               Int               @id @default(autoincrement())
-    user             String
-    soId             String            @map("so_id")
-    fgId             String            @map("fg_id")
-    quantity         Int
-    storeStockBefore Float?            @map("store_stock_before")
-    createdAt        DateTime?         @default(now()) @map("created_at")
-    fg               Fg                @relation(fields: [fgId], references: [id])
-    so               So                @relation("productionToso", fields: [soId], references: [id])
-    users            Users             @relation(fields: [user], references: [username])
-    rmProductionLog  RmProductionLog[]
+    id                    Int       @id @default(autoincrement())
+    user                  String
+    soId                  String    @map("so_id")
+    fgId                  String    @map("fg_id")
+    quantity              Int
+    storeStockBefore      Float?    @map("store_stock_before")
+    oqcPendingStockBefore Float?    @map("oqc_pending_stock_before")
+    createdAt             DateTime? @default(now()) @map("created_at")
+    fg                    Fg        @relation(fields: [fgId], references: [id])
+    so                    So        @relation("productionToso", fields: [soId], references: [id])
+    users                 Users     @relation(fields: [user], references: [username])
 
     @@index([fgId], name: "fg_id")
     @@index([soId], name: "so_id")
     @@map("production")
-}
-
-model RmProductionLog {
-    rmId                  String     @map("rm_id")
-    productionId          Int        @map("production_id")
-    storeStockBefore      Float?     @map("store_stock_before")
-    iqcPendingStockBefore Float?     @map("iqc_pending_stock_before")
-    lineStockBefore       Float?     @map("line_stock_before")
-    production            Production @relation(fields: [productionId], references: [id])
-    rm                    Rm         @relation("rmTorm_production_log", fields: [rmId], references: [id])
-
-    @@id([rmId, productionId])
-    @@index([productionId], name: "production_id")
-    @@map("rm_production_log")
 }
 
 model Dispatch {

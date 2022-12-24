@@ -1,31 +1,43 @@
-import React, { useState } from 'react'
 import * as Yup from 'yup'
-import { Formik, FormikHelpers, Field } from 'formik'
-import { Button, CircularProgress, FormHelperText, Grid, InputLabel, OutlinedInput, Stack } from '@mui/material';
+
+import { Button, CircularProgress, FormHelperText, Grid } from '@mui/material'
 import { Fetch, useAuth } from '../../../services'
+import { Field, Formik, FormikHelpers } from 'formik'
+import React, { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { SupplierInterface } from '../Suppliers'
+
 import { FormInput } from '../../../components'
+import { SupplierInterface } from '../Suppliers'
 
 interface FormValues extends Required<SupplierInterface> {
-    submit: null;
+    submit: null
 }
 
 const Form = () => {
     const navigate = useNavigate()
     const location = useLocation()
     const isEdit = location.state ? true : false
-    const { token: {token} } = useAuth()
+    const {
+        token: { token },
+    } = useAuth()
     const [error, setError] = useState('')
-    const onSubmit = async (values: FormValues, { setErrors, setStatus, setSubmitting }: FormikHelpers<FormValues>) => {
+    const onSubmit = async (
+        values: FormValues,
+        { setErrors, setStatus, setSubmitting }: FormikHelpers<FormValues>
+    ) => {
         try {
             const resp = await Fetch({
-                url: '/suppliers' + (isEdit ? '/' + encodeURIComponent((location.state as FormValues).id) : ''),
+                url:
+                    '/suppliers' +
+                    (isEdit
+                        ? '/' +
+                          encodeURIComponent((location.state as FormValues).id)
+                        : ''),
                 options: {
-                    method: isEdit ? "PUT" : "POST",
+                    method: isEdit ? 'PUT' : 'POST',
                     body: values,
-                    authToken: token
-                }
+                    authToken: token,
+                },
             })
             navigate('..')
         } catch (err) {
@@ -37,11 +49,13 @@ const Form = () => {
     const onDelete = async () => {
         try {
             const data = await Fetch({
-                url: `/suppliers/${encodeURIComponent((location.state as FormValues).id)}`,
+                url: `/suppliers/${encodeURIComponent(
+                    (location.state as FormValues).id
+                )}`,
                 options: {
-                    method: "DELETE",
-                    authToken: token
-                }
+                    method: 'DELETE',
+                    authToken: token,
+                },
             })
             navigate('..')
         } catch (e) {
@@ -50,89 +64,101 @@ const Form = () => {
     }
 
     if (error) {
-        <Grid item xs={12}>
+        ;<Grid item xs={12}>
             <FormHelperText error>{error}</FormHelperText>
         </Grid>
     }
 
     return (
         <Formik
-            initialValues={isEdit ? location.state as FormValues : {
-                id: '',
-                name: '',
-                address1: '',
-                address2: '',
-                city: '',
-                state: '',
-                gst: '',
-                submit: null
-            }}
-            validationSchema={
-                Yup.object().shape({
-                    id: Yup.string().required('Unique ID is required'),
-                    name: Yup.string().required('Name is required'),
-                    address1: Yup.string(),
-                    address2: Yup.string(),
-                    city: Yup.string().required('City is required'),
-                    state: Yup.string().required('State is required'),
-                    gst: Yup.string().length(15).required('GST No. with length of 15 is required')
-                })
+            initialValues={
+                isEdit
+                    ? (location.state as FormValues)
+                    : {
+                          id: '',
+                          name: '',
+                          address1: '',
+                          address2: '',
+                          city: '',
+                          state: '',
+                          gst: '',
+                          submit: null,
+                      }
             }
+            validationSchema={Yup.object().shape({
+                id: Yup.string().required('Unique ID is required'),
+                name: Yup.string().required('Name is required'),
+                address1: Yup.string(),
+                address2: Yup.string(),
+                city: Yup.string().required('City is required'),
+                state: Yup.string().required('State is required'),
+                gst: Yup.string()
+                    .length(15)
+                    .required('GST No. with length of 15 is required'),
+            })}
             onSubmit={onSubmit}
         >
-            {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
+            {({
+                errors,
+                handleBlur,
+                handleChange,
+                handleSubmit,
+                isSubmitting,
+                touched,
+                values,
+            }) => (
                 <form noValidate onSubmit={handleSubmit}>
                     <Grid container spacing={3}>
-                        <Field 
-                            name="id" 
+                        <Field
+                            name="id"
                             component={FormInput}
                             xs={4}
                             type="text"
                             label="ID"
                             placeholder="Enter ID"
                         />
-                        <Field 
-                            name="name" 
+                        <Field
+                            name="name"
                             component={FormInput}
                             xs={8}
                             type="text"
                             label="Name"
                             placeholder="Enter name"
                         />
-                        <Field 
-                            name="address1" 
+                        <Field
+                            name="address1"
                             component={FormInput}
                             xs={6}
                             type="text"
                             label="Address 1"
                             placeholder="Address 1"
                         />
-                        <Field 
-                            name="address2" 
+                        <Field
+                            name="address2"
                             component={FormInput}
                             xs={6}
                             type="text"
                             label="Address 2"
                             placeholder="Address 2"
                         />
-                        <Field 
-                            name="city" 
+                        <Field
+                            name="city"
                             component={FormInput}
                             xs={4}
                             type="text"
                             label="City"
                             placeholder="City"
                         />
-                        <Field 
-                            name="state" 
+                        <Field
+                            name="state"
                             component={FormInput}
                             xs={4}
                             type="text"
                             label="State"
                             placeholder="State"
                         />
-                        <Field 
-                            name="gst" 
+                        <Field
+                            name="gst"
                             component={FormInput}
                             xs={4}
                             type="text"
@@ -141,7 +167,9 @@ const Form = () => {
                         />
                         {errors.submit && (
                             <Grid item xs={12}>
-                                <FormHelperText error>{errors.submit}</FormHelperText>
+                                <FormHelperText error>
+                                    {errors.submit}
+                                </FormHelperText>
                             </Grid>
                         )}
                         <Grid item xs={12}>
@@ -154,7 +182,7 @@ const Form = () => {
                                 variant="contained"
                                 color="primary"
                             >
-                                {isEdit ? "Update" : "Create"}
+                                {isEdit ? 'Update' : 'Create'}
                             </Button>
                             {isSubmitting && (
                                 <CircularProgress
@@ -170,30 +198,28 @@ const Form = () => {
                                 />
                             )}
                         </Grid>
-                        {
-                            isEdit && (
-                                <Grid item xs={12}>
-                                    <Grid
-                                        container
-                                        justifyContent='center'
-                                        alignItems='center'
+                        {isEdit && (
+                            <Grid item xs={12}>
+                                <Grid
+                                    container
+                                    justifyContent="center"
+                                    alignItems="center"
+                                >
+                                    <Button
+                                        disableElevation
+                                        disabled={isSubmitting}
+                                        size="large"
+                                        variant="contained"
+                                        color="error"
+                                        onClick={() => {
+                                            onDelete()
+                                        }}
                                     >
-                                        <Button
-                                            disableElevation
-                                            disabled={isSubmitting}
-                                            size="large"
-                                            variant="contained"
-                                            color="error"
-                                            onClick={() => {
-                                                onDelete()
-                                            }}
-                                        >
-                                            DELETE
-                                        </Button>
-                                    </Grid>
+                                        DELETE
+                                    </Button>
                                 </Grid>
-                            )
-                        }
+                            </Grid>
+                        )}
                     </Grid>
                 </form>
             )}

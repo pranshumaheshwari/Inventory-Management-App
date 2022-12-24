@@ -144,10 +144,17 @@ CREATE TABLE `inwards_po_pending` (
     `rm_id` VARCHAR(191) NOT NULL,
     `quantity` DOUBLE NOT NULL,
     `created_at` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `store_stock_before` DOUBLE NULL,
+    `line_stock_before` DOUBLE NULL,
+    `po_pending_stock_before` DOUBLE NULL,
+    `iqc_pending_stock_before` DOUBLE NULL,
+    `iqc_rejected_stock_before` DOUBLE NULL,
+    `po_rejected_stock_before` DOUBLE NULL,
     `status` ENUM('Accepted', 'PendingPoVerification', 'PendingIqcVerification', 'RejectedPoVerification', 'RejectedIqcVerification', 'Rejected', 'Done') NOT NULL DEFAULT 'PendingPoVerification',
 
     UNIQUE INDEX `inwards_po_pending_id_key`(`id`),
     INDEX `rm_id`(`rm_id`),
+    INDEX `supplier_id`(`supplier_id`),
     PRIMARY KEY (`invoice_id`, `supplier_id`, `rm_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -169,6 +176,13 @@ CREATE TABLE `inwards_iqc_pending` (
     `inwards_po_id` INTEGER NOT NULL,
     `rm_id` VARCHAR(191) NOT NULL,
     `quantity` DOUBLE NOT NULL,
+    `created_at` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `store_stock_before` DOUBLE NULL,
+    `line_stock_before` DOUBLE NULL,
+    `po_pending_stock_before` DOUBLE NULL,
+    `iqc_pending_stock_before` DOUBLE NULL,
+    `iqc_rejected_stock_before` DOUBLE NULL,
+    `po_rejected_stock_before` DOUBLE NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -181,6 +195,13 @@ CREATE TABLE `inwards_verified` (
     `inwards_po_id` INTEGER NOT NULL,
     `rm_id` VARCHAR(191) NOT NULL,
     `quantity` DOUBLE NOT NULL,
+    `created_at` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `store_stock_before` DOUBLE NULL,
+    `line_stock_before` DOUBLE NULL,
+    `po_pending_stock_before` DOUBLE NULL,
+    `iqc_pending_stock_before` DOUBLE NULL,
+    `iqc_rejected_stock_before` DOUBLE NULL,
+    `po_rejected_stock_before` DOUBLE NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -207,10 +228,13 @@ CREATE TABLE `requisition_outward` (
     `requisition_id` INTEGER NOT NULL,
     `rm_id` VARCHAR(191) NOT NULL,
     `quantity` DOUBLE NOT NULL,
-    `store_stock_before` DOUBLE NULL,
-    `iqc_pending_stock_before` DOUBLE NULL,
-    `line_stock_before` DOUBLE NULL,
     `created_at` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `store_stock_before` DOUBLE NULL,
+    `line_stock_before` DOUBLE NULL,
+    `po_pending_stock_before` DOUBLE NULL,
+    `iqc_pending_stock_before` DOUBLE NULL,
+    `iqc_rejected_stock_before` DOUBLE NULL,
+    `po_rejected_stock_before` DOUBLE NULL,
 
     INDEX `requisition_id`(`requisition_id`),
     INDEX `rm_id`(`rm_id`),
@@ -225,23 +249,12 @@ CREATE TABLE `production` (
     `fg_id` VARCHAR(191) NOT NULL,
     `quantity` INTEGER NOT NULL,
     `store_stock_before` DOUBLE NULL,
+    `oqc_pending_stock_before` DOUBLE NULL,
     `created_at` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     INDEX `fg_id`(`fg_id`),
     INDEX `so_id`(`so_id`),
     PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `rm_production_log` (
-    `rm_id` VARCHAR(191) NOT NULL,
-    `production_id` INTEGER NOT NULL,
-    `store_stock_before` DOUBLE NULL,
-    `iqc_pending_stock_before` DOUBLE NULL,
-    `line_stock_before` DOUBLE NULL,
-
-    INDEX `production_id`(`production_id`),
-    PRIMARY KEY (`rm_id`, `production_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
@@ -371,12 +384,6 @@ ALTER TABLE `production` ADD CONSTRAINT `production_so_id_fkey` FOREIGN KEY (`so
 
 -- AddForeignKey
 ALTER TABLE `production` ADD CONSTRAINT `production_user_fkey` FOREIGN KEY (`user`) REFERENCES `users`(`username`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `rm_production_log` ADD CONSTRAINT `rm_production_log_production_id_fkey` FOREIGN KEY (`production_id`) REFERENCES `production`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `rm_production_log` ADD CONSTRAINT `rm_production_log_rm_id_fkey` FOREIGN KEY (`rm_id`) REFERENCES `rm`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `dispatch` ADD CONSTRAINT `dispatch_fg_id_fkey` FOREIGN KEY (`fg_id`) REFERENCES `fg`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
