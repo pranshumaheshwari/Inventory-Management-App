@@ -1,5 +1,5 @@
 import { ColDef } from 'ag-grid-community';
-import { Inventory } from '../common';
+import { Inventory } from '../../common';
 import React from 'react'
 import { useNavigate } from 'react-router-dom';
 

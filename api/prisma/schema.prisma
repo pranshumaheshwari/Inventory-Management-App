@@ -22,30 +22,30 @@ model Users {
     name               String
     createdAt          DateTime?            @default(now()) @map("created_at")
     dispatch           Dispatch[]
-    inwards            Inwards[]
     production         Production[]
     requisition        Requisition[]
     requisitionOutward RequisitionOutward[] @relation("requisition_outwardTousers")
-    Po                 Po[]
-    Invoice            Invoice[]
+    po                 Po[]
+    invoice            Invoice[]
+    inwardsPO          InwardsIQCPending[]
+    inwardsIQC         InwardsVerified[]
 
     @@map("users")
 }
 
 model Supplier {
-    id             String           @id
-    name           String           @unique
+    id             String             @id
+    name           String             @unique
     address1       String?
     address2       String?
     city           String
     state          String
     gst            String
-    createdAt      DateTime?        @default(now()) @map("created_at")
-    inwards        Inwards[]
+    createdAt      DateTime?          @default(now()) @map("created_at")
     po             Po[]
     rm             Rm[]
     invoice        Invoice[]
-    invoiceDetails InvoiceDetails[]
+    invoiceDetails InwardsPoPending[]
 
     @@map("supplier")
 }
@@ -83,10 +83,11 @@ model Rm {
     supplier           Supplier             @relation(fields: [supplierId], references: [id], onDelete: Restrict, onUpdate: Cascade)
     bom                Bom[]
     poDetails          PoDetails[]
-    inwards            Inwards[]
     requisitionOutward RequisitionOutward[]
     rmProductionLog    RmProductionLog[]    @relation("rmTorm_production_log")
-    InvoiceDetails     InvoiceDetails[]
+    inwardsPoPending   InwardsPoPending[]
+    inwardsIQCPENDING  InwardsIQCPending[]
+    inwardsVerified    InwardsVerified[]
 
     @@index([supplierId], name: "supplier_id")
     @@map("rm")
@@ -135,8 +136,8 @@ model Po {
     createdAt  DateTime?     @default(now()) @map("created_at")
     supplier   Supplier      @relation(fields: [supplierId], references: [id], onDelete: Cascade, onUpdate: Cascade)
     poDetails  PoDetails[]
-    inwards    Inwards[]
     users      Users         @relation(fields: [user], references: [username])
+    invoicePO  InvoicePO[]
 
     @@index([supplierId], name: "supplier_id")
     @@map("po")
@@ -145,11 +146,11 @@ model Po {
 model PoDetails {
     poId      String    @map("po_id")
     rmId      String    @map("rm_id")
+    price     Float
     quantity  Float
     createdAt DateTime? @default(now()) @map("created_at")
     po        Po        @relation(fields: [poId], references: [id], onDelete: Cascade, onUpdate: Cascade)
     rm        Rm        @relation(fields: [rmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    inwards   Inwards[]
 
     @@id([poId, rmId])
     @@index([rmId], name: "rm_id")
@@ -159,52 +160,78 @@ model PoDetails {
 model Invoice {
     user           String
     id             String
-    supplierId     String           @map("supplier_id")
-    status         BinaryStatus?    @default(Open)
-    createdAt      DateTime?        @default(now()) @map("created_at")
-    supplier       Supplier         @relation(fields: [supplierId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    invoiceDetails InvoiceDetails[]
-    inwards        Inwards[]
-    users          Users            @relation(fields: [user], references: [username])
+    supplierId     String             @map("supplier_id")
+    status         BinaryStatus?      @default(Open)
+    createdAt      DateTime?          @default(now()) @map("created_at")
+    supplier       Supplier           @relation(fields: [supplierId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    invoiceDetails InwardsPoPending[]
+    users          Users              @relation(fields: [user], references: [username])
+    invoicePO      InvoicePO[]
 
     @@id([id, supplierId])
     @@index([supplierId], name: "supplier_id")
     @@map("invoice")
 }
 
-model InvoiceDetails {
-    invoiceId  String    @map("invoice_id")
-    supplierId String    @map("supplier_id")
-    rmId       String    @map("rm_id")
-    quantity   Float
-    createdAt  DateTime? @default(now()) @map("created_at")
-    supplier   Supplier  @relation(fields: [supplierId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    rm         Rm        @relation(fields: [rmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    invoice    Invoice   @relation(fields: [invoiceId, supplierId], references: [id, supplierId])
-    Inwards    Inwards[]
+model InwardsPoPending {
+    id                Int                 @unique @default(autoincrement())
+    invoiceId         String              @map("invoice_id")
+    supplierId        String              @map("supplier_id")
+    rmId              String              @map("rm_id")
+    quantity          Float
+    createdAt         DateTime?           @default(now()) @map("created_at")
+    status            InwardsStatus       @default(PendingPoVerification)
+    supplier          Supplier            @relation(fields: [supplierId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    rm                Rm                  @relation(fields: [rmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    invoice           Invoice             @relation(fields: [invoiceId, supplierId], references: [id, supplierId])
+    inwardsIQCPending InwardsIQCPending[]
 
     @@id([invoiceId, supplierId, rmId])
     @@index([rmId], name: "rm_id")
-    @@map("invoice_details")
+    @@index([supplierId], name: "supplier_id")
+    @@map("inwards_po_pending")
 }
 
-model Inwards {
-    id         Int           @id @default(autoincrement())
-    user       String
-    supplierId String        @map("supplier_id")
-    invoiceId  String        @map("invoice_id")
-    rmId       String        @map("rm_id")
-    quantity   Float
-    status     InwardsStatus @default(PendingPoVerification)
-    poId       String?
+model InvoicePO {
+    id         Int     @id @default(autoincrement())
+    supplierId String  @map("supplier_id")
+    invoiceId  String  @map("invoice_id")
+    poId       String  @map("po_id")
+    invoice    Invoice @relation(fields: [invoiceId, supplierId], references: [id, supplierId])
+    po         Po      @relation(fields: [poId], references: [id])
 
-    rm             Rm              @relation(fields: [rmId], references: [id])
-    invoice        Invoice         @relation(fields: [invoiceId, supplierId], references: [id, supplierId])
-    supplier       Supplier        @relation(fields: [supplierId], references: [id])
-    users          Users           @relation(fields: [user], references: [username])
-    po             Po?             @relation(fields: [poId], references: [id])
-    poDetails      PoDetails?      @relation(fields: [poId, rmId], references: [poId, rmId])
-    invoiceDetails InvoiceDetails? @relation(fields: [invoiceId, supplierId, rmId], references: [invoiceId, supplierId, rmId])
+    @@map("invoice_po")
+}
+
+model InwardsIQCPending {
+    id                 Int           @id @default(autoincrement())
+    user               String
+    status             InwardsStatus @default(PendingIqcVerification)
+    inwardsPoPendingId Int           @map("inwards_po_id")
+    rmId               String        @map("rm_id")
+    quantity           Float
+
+    users            Users             @relation(fields: [user], references: [username])
+    inwardsPoPending InwardsPoPending  @relation(fields: [inwardsPoPendingId], references: [id])
+    rm               Rm                @relation(fields: [rmId], references: [id])
+    inwardsVerified  InwardsVerified[]
+
+    @@map("inwards_iqc_pending")
+}
+
+model InwardsVerified {
+    id                  Int           @id @default(autoincrement())
+    user                String
+    status              InwardsStatus @default(Accepted)
+    inwardsIQCPendingId Int           @map("inwards_po_id")
+    rmId                String        @map("rm_id")
+    quantity            Float
+
+    users             Users             @relation(fields: [user], references: [username])
+    rm                Rm                @relation(fields: [rmId], references: [id])
+    inwardsIQCPending InwardsIQCPending @relation(fields: [inwardsIQCPendingId], references: [id])
+
+    @@map("inwards_verified")
 }
 
 model Requisition {
@@ -298,7 +325,7 @@ model Dispatch {
 model So {
     id          String        @id
     customerId  String        @map("customer_id")
-    status      SoStatus?     @default(Open)
+    status      BinaryStatus? @default(Open)
     createdAt   DateTime?     @default(now()) @map("created_at")
     customer    Customer      @relation(fields: [customerId], references: [id])
     dispatch    Dispatch[]    @relation("dispatchToso")
@@ -330,36 +357,23 @@ enum DispatchOqcStatus {
     @@map("dispatch_oqc_status")
 }
 
-enum InvoiceInwardsStatus {
-    PO
-    IQC
-    IN
-
-    @@map("invoice_inwards_status")
-}
-
 enum BinaryStatus {
     Open
     Closed
 
-    @@map("po_status")
+    @@map("binary_status")
 }
 
 enum InwardsStatus {
+    Accepted
     PendingPoVerification
     PendingIqcVerification
-    Verified
+    RejectedPoVerification
+    RejectedIqcVerification
     Rejected
-    Closed
+    Done
 
     @@map("inwards_status")
-}
-
-enum PoInwardsStatus {
-    IQC
-    IN
-
-    @@map("po_inwards_status")
 }
 
 enum RequisitionStatus {
@@ -368,13 +382,6 @@ enum RequisitionStatus {
     Closed
 
     @@map("requisition_status")
-}
-
-enum SoStatus {
-    Open
-    Closed
-
-    @@map("so_status")
 }
 
 enum UsersType {

@@ -30,18 +30,18 @@ const dashboard: ItemInterface = {
             urls: ['/purchaseOrders', '/purchaseOrders/new', '/purchaseOrders/edit']
         },
         {
-            id: 'rawmaterial-invoices',
-            title: 'Invoices',
-            type: 'item',
-            url: '/invoices',
-            icon: 'note_outlined',
-            urls: ['/invoices', '/invoices/new', '/invoices/edit']
-        },
-        {
             id: 'rawmaterial-inwards',
             title: 'Inwards',
             type: 'group',
             children: [
+                {
+                    id: 'rawmaterial-inwards-invoice',
+                    title: 'Invoice',
+                    type: 'item',
+                    url: '/inwards/invoice',
+                    icon: 'note_outlined',
+                    urls: ['/inwards/invoice', '/inwards/invoice/new', '/inwards/invoice/edit']
+                },
                 {
                     id: 'rawmaterial-inwards-purchaseOrder',
                     title: 'Against Purchase Order',
@@ -49,6 +49,14 @@ const dashboard: ItemInterface = {
                     url: '/inwards/purchaseOrder',
                     icon: 'add_box_outlined',
                     urls: ['/inwards/purchaseOrder']
+                },
+                {
+                    id: 'rawmaterial-inwards-quanlityCheck',
+                    title: 'Quality Check',
+                    type: 'item',
+                    url: '/inwards/qualityCheck',
+                    icon: 'check_outlined',
+                    urls: ['/inwards/qualityCheck']
                 }
             ],
         }

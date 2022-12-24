@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from 'react'
 import * as Yup from 'yup'
-import { Formik, FormikHelpers, Field } from 'formik'
-import { Button, CircularProgress, FormHelperText, Grid, InputLabel, OutlinedInput, Skeleton, Stack } from '@mui/material';
+
+import { Button, CircularProgress, FormHelperText, Grid, Skeleton } from '@mui/material';
 import { Fetch, useAuth } from '../../../services'
+import { Field, Formik, FormikHelpers } from 'formik'
+import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { RawMaterialInterface } from '../RawMaterial'
+
 import { FormInput } from '../../../components'
 import FormSelect from '../../../components/FormSelect'
+import { RawMaterialInterface } from '../RawMaterial'
 
 interface FormValues extends Required<RawMaterialInterface> {
     submit: null;
@@ -21,7 +23,7 @@ const Form = () => {
     const [error, setError] = useState('')
     const onSubmit = async (values: FormValues, { setErrors, setStatus, setSubmitting }: FormikHelpers<FormValues>) => {
         try {
-            const resp = await Fetch({
+            await Fetch({
                 url: '/rawmaterial' + (isEdit ? '/' + encodeURIComponent((location.state as FormValues).id) : ''),
                 options: {
                     method: isEdit ? "PUT" : "POST",
@@ -38,7 +40,7 @@ const Form = () => {
     }
     const onDelete = async () => {
         try {
-            const data = await Fetch({
+            await Fetch({
                 url: `/rawmaterial/${encodeURIComponent((location.state as FormValues).id)}`,
                 options: {
                     method: "DELETE",
@@ -100,6 +102,7 @@ const Form = () => {
                 price: 0,
                 storeStock: 0,
                 iqcPendingStock: 0,
+                poPendingStock: 0,
                 lineStock: 0,
                 supplierId: '',
                 submit: null

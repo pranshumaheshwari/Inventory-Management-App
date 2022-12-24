@@ -26,53 +26,32 @@ app.get('/', async (req: Request, res: Response) => {
 })
 
 app.post('/', async (req: Request, res: Response) => {
-    const {
-        supplierId,
-        id,
-        poDetails,
-        status
-    } = req.body
+    const { supplierId, id, poDetails, status } = req.body
 
     try {
-        const result = await prisma.upsert({
-            where: {
-                id
-            },
-            create: {
+        const result = await prisma.create({
+            data: {
                 user: req.user ? req.user.username : '',
                 supplierId,
                 id,
                 status,
                 poDetails: {
                     createMany: {
-                        data: poDetails
-                    }
-                }
-            },
-            update: {
-                poDetails: {
-                    createMany: {
                         data: poDetails,
-                        skipDuplicates: true
-                    }
-                }
-            }
+                    },
+                },
+            },
         })
         res.json(result)
     } catch (e) {
         res.status(500).json({
-            message: (e as Error).message
+            message: (e as Error).message,
         })
     }
 })
 
 app.put('/', async (req: Request, res: Response) => {
-    const {
-        supplierId,
-        id,
-        poDetails,
-        status
-    } = req.body
+    const { supplierId, id, poDetails, status } = req.body
 
     try {
         const result = await prisma.update({
@@ -84,30 +63,39 @@ app.put('/', async (req: Request, res: Response) => {
                 supplierId,
                 status,
                 poDetails: {
-                    updateMany: await poDetails.map(({rmId, quantity}: {
-                        rmId: string, quantity: number
-                    }) => {
-                        return {
-                            where: {
-                                poId: id,
-                                rmId
-                            },
-                            data: {
-                                quantity
+                    updateMany: await poDetails.map(
+                        ({
+                            rmId,
+                            quantity,
+                            price,
+                        }: {
+                            rmId: string
+                            quantity: number
+                            price: number
+                        }) => {
+                            return {
+                                where: {
+                                    poId: id,
+                                    rmId,
+                                },
+                                data: {
+                                    quantity,
+                                    price,
+                                },
                             }
                         }
-                    }),
+                    ),
                     createMany: {
                         data: poDetails,
-                        skipDuplicates: true
-                    }
+                        skipDuplicates: true,
+                    },
                 },
-            }
+            },
         })
         res.json(result)
     } catch (e) {
         res.status(500).json({
-            message: (e as Error).message
+            message: (e as Error).message,
         })
     }
 })
@@ -118,12 +106,12 @@ app.delete('/', async (req: Request, res: Response) => {
         const result = await prisma.delete({
             where: {
                 id: id as string,
-            }
+            },
         })
         res.json(result)
     } catch (e) {
         res.status(500).json({
-            message: (e as Error).message
+            message: (e as Error).message,
         })
     }
 })
@@ -135,14 +123,14 @@ app.delete('/details', async (req: Request, res: Response) => {
             where: {
                 poId_rmId: {
                     poId: poId as string,
-                    rmId: rmId as string
-                }
-            }
+                    rmId: rmId as string,
+                },
+            },
         })
         res.json(result)
     } catch (e) {
         res.status(500).json({
-            message: (e as Error).message
+            message: (e as Error).message,
         })
     }
 })

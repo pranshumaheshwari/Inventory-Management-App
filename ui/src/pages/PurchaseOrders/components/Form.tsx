@@ -7,7 +7,6 @@ import {
     FormHelperText,
     Grid,
     InputLabel,
-    OutlinedInput,
     SelectChangeEvent,
     Skeleton,
     Step,
@@ -47,9 +46,11 @@ const Form = () => {
     const [selectedRm, setSelectedRm] = useState<{
         rm: Partial<RawMaterialInterface>
         quantity: number
+        price: number
     }>({
         rm: {},
         quantity: 0,
+        price: 0,
     })
     let initialValues: FormValues = {
         id: '',
@@ -162,6 +163,7 @@ const Form = () => {
                             id: true,
                             description: true,
                             dtplCode: true,
+                            price: true,
                         }),
                     },
                 },
@@ -202,6 +204,9 @@ const Form = () => {
                             quantity: Yup.number()
                                 .min(0)
                                 .required('Quantity is required'),
+                            price: Yup.number()
+                                .min(0)
+                                .required('Raw Material Price required'),
                         })
                     ),
             })}
@@ -270,7 +275,6 @@ const Form = () => {
                             <FieldArray name="poDetails">
                                 {({ remove, push }) => (
                                     <>
-                                        <Grid item xs={1} />
                                         <Field
                                             name="RmSelect"
                                             component={FormSelect}
@@ -322,6 +326,7 @@ const Form = () => {
                                                                 return {
                                                                     ...selectedRm,
                                                                     rm: value,
+                                                                    price: value.price ? value.price : 0
                                                                 }
                                                             return selectedRm
                                                         }
@@ -350,7 +355,35 @@ const Form = () => {
                                                 }))
                                             }
                                         />
-                                        <Grid item xs={1} />
+                                        <Field
+                                            name="price"
+                                            component={FormInput}
+                                            xs={2}
+                                            type="number"
+                                            label="Price"
+                                            placeholder="Enter Price"
+                                            value={
+                                                selectedRm
+                                                    ? selectedRm.rm.price
+                                                    : 0
+                                            }
+                                            onChange={(
+                                                e: ChangeEvent<HTMLInputElement>
+                                            ) =>
+                                                setSelectedRm((selectedRm) => ({
+                                                    ...selectedRm,
+                                                    price: parseFloat(
+                                                        e.target?.value
+                                                    ),
+                                                    rm: {
+                                                        ...selectedRm.rm,
+                                                        price: parseInt(
+                                                            e.target.value
+                                                        ),
+                                                    },
+                                                }))
+                                            }
+                                        />
                                         <Grid item xs={12}>
                                             <Button
                                                 disableElevation
@@ -378,6 +411,7 @@ const Form = () => {
                                                                     .rm.id,
                                                                 quantity:
                                                                     selectedRm.quantity,
+                                                                price: selectedRm.price,
                                                             })
                                                         }
                                                     }
@@ -401,7 +435,11 @@ const Form = () => {
                                                         Quantity
                                                     </Typography>
                                                 </Grid>
-                                                <Grid item xs={4} />
+                                                <Grid item xs={4}>
+                                                    <Typography variant="h6">
+                                                        Price
+                                                    </Typography>
+                                                </Grid>
                                             </Grid>
                                         )}
                                         {values.poDetails.map((item, index) => (
@@ -414,14 +452,20 @@ const Form = () => {
                                                 <Field
                                                     name={`poDetails.${index}.rmId`}
                                                     component={FormInput}
-                                                    xs={4}
+                                                    xs={3}
                                                     type="text"
                                                     disabled
                                                 />
                                                 <Field
                                                     name={`poDetails.${index}.quantity`}
                                                     component={FormInput}
-                                                    xs={4}
+                                                    xs={3}
+                                                    type="number"
+                                                />
+                                                <Field
+                                                    name={`poDetails.${index}.price`}
+                                                    component={FormInput}
+                                                    xs={3}
                                                     type="number"
                                                 />
                                                 <Grid item xs={1} />
@@ -443,7 +487,6 @@ const Form = () => {
                                                         DELETE
                                                     </Button>
                                                 </Grid>
-                                                <Grid item xs={1} />
                                             </Grid>
                                         ))}
                                     </>

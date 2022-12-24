@@ -1,6 +1,6 @@
+import { BinaryStatus, Prisma } from '@prisma/client'
 import express, { Request, Response, Router } from 'express'
 
-import { Prisma } from '@prisma/client'
 import { PrismaService } from '../service'
 
 const app: Router = express.Router()
@@ -26,62 +26,50 @@ app.get('/', async (req: Request, res: Response) => {
 })
 
 app.post('/', async (req: Request, res: Response) => {
-    const { supplierId, id, invoiceDetails, status } = req.body
+    const {
+        supplierId,
+        id,
+        invoiceDetails,
+        status,
+    }: {
+        supplierId: string
+        id: string
+        status: BinaryStatus
+        invoiceDetails: {
+            rmId: string
+            quantity: number
+        }[]
+    } = req.body
 
     try {
-        const result = await prisma.upsert({
-            where: {
-                id_supplierId: {
-                    id,
+        const result = await PrismaService.$transaction([
+            prisma.create({
+                data: {
+                    user: req.user ? req.user.username : '',
                     supplierId,
-                },
-            },
-            create: {
-                user: req.user ? req.user.username : '',
-                supplierId,
-                id,
-                status,
-                invoiceDetails: {
-                    createMany: {
-                        data: invoiceDetails,
+                    id,
+                    status,
+                    invoiceDetails: {
+                        createMany: {
+                            data: invoiceDetails,
+                        },
                     },
                 },
-                inwards: {
-                    createMany: {
-                        data: await invoiceDetails.map(
-                            (
-                                invoiceDetail: Partial<Prisma.InwardsCreateManyInvoiceInput>
-                            ) => ({
-                                ...invoiceDetail,
-                                user: req.user?.username,
-                            })
-                        ),
+            }),
+            ...invoiceDetails.map(({rmId, quantity}) => {
+                return PrismaService.rm.update({
+                    where: {
+                        id: rmId
                     },
-                },
-            },
-            update: {
-                invoiceDetails: {
-                    createMany: {
-                        data: invoiceDetails,
-                        skipDuplicates: true,
-                    },
-                },
-                inwards: {
-                    createMany: {
-                        data: await invoiceDetails.map(
-                            (
-                                invoiceDetail: Partial<Prisma.InwardsCreateManyInvoiceInput>
-                            ) => ({
-                                ...invoiceDetail,
-                                user: req.user?.username,
-                            })
-                        ),
-                    },
-                },
-            },
-        })
+                    data: {
+                        poPendingStock: {
+                            increment: quantity
+                        }
+                    }
+                })
+            })
+        ])
         res.json(result)
-        // TODO - Update the RM quantity here
     } catch (e) {
         res.status(500).json({
             message: (e as Error).message,
@@ -162,7 +150,7 @@ app.delete('/', async (req: Request, res: Response) => {
 app.delete('/details', async (req: Request, res: Response) => {
     const { invoiceId, supplierId, rmId } = req.body
     try {
-        const result = await PrismaService.invoiceDetails.delete({
+        const result = await PrismaService.inwardsPoPending.delete({
             where: {
                 invoiceId_supplierId_rmId: {
                     invoiceId: invoiceId as string,

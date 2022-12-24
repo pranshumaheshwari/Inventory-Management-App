@@ -10,6 +10,7 @@ export interface PurchaseOrdersInterface {
     poDetails: {
         rmId: string;
         quantity: number;
+        price: number;
     }[];
     supplier: {
         name: string;
@@ -57,7 +58,8 @@ const PurchaseOrders = () => {
                         poDetails: {
                             select: {
                                 rmId: true,
-                                quantity: true
+                                quantity: true,
+                                price: true
                             }
                         }
                     })

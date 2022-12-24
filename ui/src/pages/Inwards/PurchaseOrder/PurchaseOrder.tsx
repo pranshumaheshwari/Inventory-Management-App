@@ -25,6 +25,8 @@ export interface InwardsPurchaseOrderInterface {
     details: {
         rmId: string
         quantity: number
+        poPrice: number
+        poQuantity: number
     }[]
 }
 
@@ -39,7 +41,18 @@ const PurchaseOrder = () => {
     } = useAuth()
     const [supplier, setSupplier] = useState<{ value: string }[] | null>()
     const [invoice, setInvoice] = useState<{ value: string }[] | null>([])
-    const [po, setPo] = useState<{ value: string }[] | null>([])
+    const [po, setPo] = useState<
+        | {
+              value: string
+              id: string
+              poDetails: {
+                  rmId: string
+                  quantity: number
+                  price: number
+              }[]
+          }[]
+        | null
+    >([])
     const [error, setError] = useState('')
     let initialValues: FormValues = {
         supplierId: '',
@@ -49,35 +62,61 @@ const PurchaseOrder = () => {
         submit: null,
     }
 
-    const rejectRm = async () => {}
-
-    const onSubmit = async (
+    const rejectPo = async (
         values: FormValues,
-        { setErrors, setStatus, setSubmitting }: FormikHelpers<FormValues>
+        {
+            setErrors,
+            setStatus,
+            setSubmitting,
+        }: Partial<FormikHelpers<FormValues>>
     ) => {
-        try {
-            const data = Array.from(values.details).map((val) => ({
-                ...val,
-                poId: values.poId,
-                supplierId: values.supplierId,
-                invoiceId: values.invoiceId,
-                status: 'PendingIqcVerification',
-            }))
-            await Fetch({
-                url: '/inwards',
-                options: {
-                    method: 'POST',
-                    body: {
-                        data,
+        if (setSubmitting && setStatus && setErrors) {
+            setSubmitting(true)
+            try {
+                await Fetch({
+                    url: '/inwards/rejectPO',
+                    options: {
+                        authToken: token,
+                        method: 'PUT',
+                        body: values,
                     },
-                    authToken: token,
-                },
-            })
-            navigate('..')
-        } catch (err) {
-            setStatus({ success: false })
-            setErrors({ submit: (err as Error).message })
-            setSubmitting(false)
+                })
+                setStatus({ success: true })
+                navigate(0)
+            } catch (err) {
+                setStatus({ success: false })
+                setErrors({ submit: (err as Error).message })
+                setSubmitting(false)
+            }
+        }
+    }
+
+    const acceptPo = async (
+        values: FormValues,
+        {
+            setErrors,
+            setStatus,
+            setSubmitting,
+        }: Partial<FormikHelpers<FormValues>>
+    ) => {
+        if (setSubmitting && setStatus && setErrors) {
+            setSubmitting(true)
+            try {
+                await Fetch({
+                    url: '/inwards/acceptPO',
+                    options: {
+                        authToken: token,
+                        method: 'PUT',
+                        body: values,
+                    },
+                })
+                setStatus({ success: true })
+                navigate(0)
+            } catch (err) {
+                setStatus({ success: false })
+                setErrors({ submit: (err as Error).message })
+                setSubmitting(false)
+            }
         }
     }
 
@@ -89,9 +128,9 @@ const PurchaseOrder = () => {
                     authToken: token,
                 },
             }).then((data) => {
-                return data.map((customer: { name: string; id: string }) => ({
-                    label: customer.name,
-                    value: customer.id,
+                return data.map((supplier: { name: string; id: string }) => ({
+                    label: supplier.name,
+                    value: supplier.id,
                 }))
             })
             setSupplier(data)
@@ -103,22 +142,25 @@ const PurchaseOrder = () => {
     const updateInvoice = async (supplierId: string) => {
         try {
             const data = await Fetch({
-                url: '/invoice',
+                url: '/inwards/po',
                 options: {
                     authToken: token,
                     params: {
                         where: JSON.stringify({
                             supplierId,
+                            status: 'PendingPoVerification',
                         }),
                         select: JSON.stringify({
+                            invoiceId: true,
                             id: true,
-                        })
+                        }),
+                        distinct: JSON.stringify(['invoiceId']),
                     },
                 },
             }).then((data) => {
-                return data.map((invoice: { id: string }) => ({
-                    value: invoice.id,
-                    ...invoice
+                return data.map((invoice: { invoiceId: string }) => ({
+                    value: invoice.invoiceId,
+                    ...invoice,
                 }))
             })
             setInvoice(data)
@@ -139,12 +181,20 @@ const PurchaseOrder = () => {
                         }),
                         select: JSON.stringify({
                             id: true,
+                            poDetails: {
+                                select: {
+                                    rmId: true,
+                                    quantity: true,
+                                    price: true,
+                                },
+                            },
                         }),
                     },
                 },
             }).then((data) => {
                 return data.map((po: { id: string }) => ({
                     value: po.id,
+                    ...po,
                 }))
             })
             setPo(data)
@@ -158,8 +208,46 @@ const PurchaseOrder = () => {
         updatePo(supplierId)
     }
 
-	const getRawMaterials = async (supplierId: string, id: string, values: FormValues, setValues: FormikHelpers<FormValues>["setValues"]) => {
-		try {
+    const updatePoValues = async (
+        poId: string,
+        values: FormValues,
+        setValues: FormikHelpers<FormValues>['setValues']
+    ) => {
+        try {
+            if (values.invoiceId && values.details) {
+                values.details = await values.details.map((d) => {
+                    const poDetails = po
+                        ?.find(({ id }) => id === poId)
+                        ?.poDetails.find(({ rmId }) => rmId === d.rmId)
+                    if (poDetails) {
+                        return {
+                            ...d,
+                            poQuantity: poDetails.quantity,
+                            poPrice: poDetails.price,
+                        }
+                    }
+                    return d
+                })
+                setValues({
+                    ...values,
+                })
+            }
+            setValues({
+                ...values,
+                poId,
+            })
+        } catch (e) {
+            setError((e as Error).message)
+        }
+    }
+
+    const getRawMaterials = async (
+        supplierId: string,
+        id: string,
+        values: FormValues,
+        setValues: FormikHelpers<FormValues>['setValues']
+    ) => {
+        try {
             const data = await Fetch({
                 url: '/invoice',
                 options: {
@@ -167,28 +255,46 @@ const PurchaseOrder = () => {
                     params: {
                         where: JSON.stringify({
                             supplierId,
-                            id
+                            id,
                         }),
                         select: JSON.stringify({
                             invoiceDetails: {
                                 select: {
                                     rmId: true,
-                                    quantity: true
-                                }
-                            }
-                        })
+                                    quantity: true,
+                                },
+                            },
+                        }),
                     },
                 },
-            }).then(data => data[0]['invoiceDetails'])
-			setValues({
-				...values,
-				details: data,
-				invoiceId: id
-			})
+            })
+                .then((data) => data[0]['invoiceDetails'])
+                .then(async (data: FormValues['details']) => {
+                    return await data.map((d) => {
+                        if (values.poId) {
+                            const poDetails = po
+                                ?.find(({ id }) => id === values.poId)
+                                ?.poDetails.find(({ rmId }) => rmId === d.rmId)
+                            if (poDetails) {
+                                return {
+                                    ...d,
+                                    poQuantity: poDetails.quantity,
+                                    poPrice: poDetails.price,
+                                }
+                            }
+                        }
+                        return d
+                    })
+                })
+            setValues({
+                ...values,
+                details: data,
+                invoiceId: id,
+            })
         } catch (e) {
             setError((e as Error).message)
         }
-	}
+    }
 
     useEffect(() => {
         Promise.all([getSupplier()])
@@ -223,9 +329,19 @@ const PurchaseOrder = () => {
                     })
                 ),
             })}
-            onSubmit={onSubmit}
+            onSubmit={() => {}}
         >
-            {({ values, errors, handleSubmit, isSubmitting, handleChange, setValues }) => (
+            {({
+                values,
+                errors,
+                handleSubmit,
+                isSubmitting,
+                handleChange,
+                setValues,
+                setErrors,
+                setStatus,
+                setSubmitting,
+            }) => (
                 <form noValidate onSubmit={handleSubmit}>
                     <Grid container spacing={3}>
                         <Field
@@ -247,6 +363,14 @@ const PurchaseOrder = () => {
                             label="Purchase Order"
                             placeholder="Select Purchase Order"
                             items={po}
+                            onChange={(e: SelectChangeEvent) => {
+                                handleChange(e)
+                                updatePoValues(
+                                    e.target.value,
+                                    values,
+                                    setValues
+                                )
+                            }}
                         />
                         <Field
                             name="invoiceId"
@@ -255,10 +379,15 @@ const PurchaseOrder = () => {
                             label="Invoice"
                             placeholder="Select Invoice"
                             items={invoice}
-							onChange={(e: SelectChangeEvent) => {
-								handleChange(e)
-								getRawMaterials(values.supplierId, e.target.value, values, setValues)
-							}}
+                            onChange={(e: SelectChangeEvent) => {
+                                handleChange(e)
+                                getRawMaterials(
+                                    values.supplierId,
+                                    e.target.value,
+                                    values,
+                                    setValues
+                                )
+                            }}
                         />
                         <Field
                             name="status"
@@ -277,17 +406,26 @@ const PurchaseOrder = () => {
                                     </Grid>
                                     {values.details.length !== 0 && (
                                         <Grid item xs={12} container>
-                                            <Grid item xs={6}>
+                                            <Grid item xs={3}>
                                                 <Typography variant="h6">
                                                     Raw Material Part Number
                                                 </Typography>
                                             </Grid>
-                                            <Grid item xs={6}>
+                                            <Grid item xs={3}>
                                                 <Typography variant="h6">
-                                                    Quantity
+                                                    Invoice Quantity
                                                 </Typography>
                                             </Grid>
-                                            <Grid item xs={4} />
+                                            <Grid item xs={3}>
+                                                <Typography variant="h6">
+                                                    PO Quantity
+                                                </Typography>
+                                            </Grid>
+                                            <Grid item xs={3}>
+                                                <Typography variant="h6">
+                                                    PO Price
+                                                </Typography>
+                                            </Grid>
                                         </Grid>
                                     )}
                                     {values.details.map((item, index) => (
@@ -297,7 +435,7 @@ const PurchaseOrder = () => {
                                             container
                                             key={index}
                                         >
-                                            <Grid item xs={6}>
+                                            <Grid item xs={3}>
                                                 <OutlinedInput
                                                     name={`details.${index}.rmId`}
                                                     type="text"
@@ -305,12 +443,28 @@ const PurchaseOrder = () => {
                                                     value={item.rmId}
                                                 />
                                             </Grid>
-                                            <Grid item xs={6}>
+                                            <Grid item xs={3}>
                                                 <OutlinedInput
                                                     name={`details.${index}.quantity`}
                                                     type="number"
                                                     disabled
                                                     value={item.quantity}
+                                                />
+                                            </Grid>
+                                            <Grid item xs={3}>
+                                                <OutlinedInput
+                                                    name={`details.${index}.poQuantity`}
+                                                    type="number"
+                                                    disabled
+                                                    value={item.poQuantity}
+                                                />
+                                            </Grid>
+                                            <Grid item xs={3}>
+                                                <OutlinedInput
+                                                    name={`details.${index}.poPrice`}
+                                                    type="number"
+                                                    disabled
+                                                    value={item.poPrice}
                                                 />
                                             </Grid>
                                         </Grid>
@@ -338,7 +492,11 @@ const PurchaseOrder = () => {
                                         variant="contained"
                                         color="error"
                                         onClick={() => {
-                                            rejectRm()
+                                            rejectPo(values, {
+                                                setErrors,
+                                                setStatus,
+                                                setSubmitting,
+                                            })
                                         }}
                                     >
                                         Reject
@@ -351,9 +509,16 @@ const PurchaseOrder = () => {
                                         disabled={isSubmitting}
                                         fullWidth
                                         size="large"
-                                        type="submit"
+                                        type="button"
                                         variant="contained"
                                         color="primary"
+                                        onClick={() => {
+                                            acceptPo(values, {
+                                                setErrors,
+                                                setStatus,
+                                                setSubmitting,
+                                            })
+                                        }}
                                     >
                                         Approve
                                     </Button>

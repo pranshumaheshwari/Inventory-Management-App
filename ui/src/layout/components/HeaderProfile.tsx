@@ -1,8 +1,4 @@
-import React, { useRef, useState } from 'react'
-
-import { useTheme } from '@mui/material/styles'
 import {
-    alpha,
     Avatar,
     Box,
     ButtonBase,
@@ -13,15 +9,18 @@ import {
     Paper,
     Popper,
     Stack,
-    Typography
+    Typography,
+    alpha
 } from '@mui/material'
+import React, { useRef, useState } from 'react'
 
-import avatar1 from '../../assets/images/avatar.png'
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined'
-import Transitions from '../../components/Transition'
 import MainCard from '../../components/MainCard'
+import Transitions from '../../components/Transition'
+import avatar1 from '../../assets/images/avatar.png'
 import { useAuth } from '../../services'
 import { useNavigate } from 'react-router-dom'
+import { useTheme } from '@mui/material/styles'
 
 const Profile = () => {
     const theme = useTheme()

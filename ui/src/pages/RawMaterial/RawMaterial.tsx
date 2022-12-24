@@ -1,7 +1,7 @@
-import React from 'react'
 import { ColDef } from 'ag-grid-community';
-import { useNavigate } from 'react-router-dom';
 import { Inventory } from '../common';
+import React from 'react'
+import { useNavigate } from 'react-router-dom';
 
 export interface RawMaterialInterface {
     id: string;
@@ -13,6 +13,7 @@ export interface RawMaterialInterface {
     price: number;
     storeStock: number;
     iqcPendingStock: number;
+    poPendingStock: number;
     lineStock: number;
 }
 
@@ -23,6 +24,7 @@ const RawMaterial = () => {
 		{ field: 'description', headerName: 'Description' },
 		{ field: 'dtplCode', headerName: 'DTPL Part Number' },
 		{ field: 'category', headerName: 'Category' },
+		{ field: 'poPendingStock', headerName: 'PO Verification Pending Stock', type: 'numberColumn' },
 		{ field: 'iqcPendingStock', headerName: 'IQC Pending Stock', type: 'numberColumn' },
 		{ field: 'storeStock', headerName: 'Store Stock', type: 'numberColumn' },
 		{ field: 'lineStock', headerName: 'Line Stock', type: 'numberColumn' },
