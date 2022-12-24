@@ -169,22 +169,22 @@ app.put('/acceptPO', async (req: Request, res: Response) => {
 
 app.put('/rejectIQCs', async (req: Request, res: Response) => {
     const {
-        id,
         details,
     }: {
         id: number
         details: {
             rmId: string
             quantity: number
+            inwardsIQCPendingId: number
         }[]
     } = req.body
 
     try {
         const result = await PrismaService.$transaction([
-            ...details.map(({ rmId, quantity }) => {
+            ...details.map(({ rmId, quantity, inwardsIQCPendingId }) => {
                 return PrismaService.inwardsIQCPending.update({
                     where: {
-                        id,
+                        id: inwardsIQCPendingId,
                     },
                     data: {
                         status: 'RejectedIqcVerification',
@@ -212,22 +212,21 @@ app.put('/rejectIQCs', async (req: Request, res: Response) => {
 
 app.put('/acceptIQCs', async (req: Request, res: Response) => {
     const {
-        id,
         details,
     }: {
-        id: number
         details: {
             rmId: string
             quantity: number
+            inwardsIQCPendingId: number
         }[]
     } = req.body
 
     try {
         const result = await PrismaService.$transaction([
-            ...details.map(({ rmId, quantity }) => {
+            ...details.map(({ rmId, quantity, inwardsIQCPendingId }) => {
                 return PrismaService.inwardsIQCPending.update({
                     where: {
-                        id,
+                        id: inwardsIQCPendingId,
                     },
                     data: {
                         status: 'RejectedIqcVerification',
