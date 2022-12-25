@@ -17,13 +17,21 @@ import {
 } from '@mui/material'
 import { Fetch, useAuth } from '../../../../services'
 import { Field, FieldArray, Formik, FormikHelpers } from 'formik'
-import React, { ChangeEvent, SyntheticEvent, useEffect, useState } from 'react'
+import React, {
+    ChangeEvent,
+    SyntheticEvent,
+    useContext,
+    useEffect,
+    useState,
+} from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
+import { AlertContext } from '../../../../context'
 import { FormInput } from '../../../../components'
 import FormSelect from '../../../../components/FormSelect'
 import { InvoiceInterface } from '../Invoice'
 import { RawMaterialInterface } from '../../../RawMaterial/RawMaterial'
+import { useConfirm } from 'material-ui-confirm'
 
 interface FormValues extends Required<InvoiceInterface> {
     submit: null
@@ -32,7 +40,9 @@ interface FormValues extends Required<InvoiceInterface> {
 const Form = () => {
     const navigate = useNavigate()
     const location = useLocation()
+    const { setAlert } = useContext(AlertContext)
     const isEdit = location.state ? true : false
+    const confirm = useConfirm()
     const {
         token: { token },
     } = useAuth()
@@ -79,19 +89,38 @@ const Form = () => {
 
     const onSubmit = async (
         values: FormValues,
-        { setErrors, setStatus, setSubmitting }: FormikHelpers<FormValues>
+        {
+            setErrors,
+            setStatus,
+            setSubmitting,
+            resetForm,
+        }: FormikHelpers<FormValues>
     ) => {
         try {
-            await Fetch({
-                url:
-                    '/invoice',
+            const resp = await Fetch({
+                url: '/invoice',
                 options: {
                     method: isEdit ? 'PUT' : 'POST',
                     body: values,
                     authToken: token,
                 },
             })
-            navigate('..')
+            setAlert({
+                type: 'success',
+                children: (
+                    <Typography>
+                        Successfully {isEdit ? 'updated' : 'created'} invoice{' '}
+                        {resp[0].id}
+                    </Typography>
+                ),
+            })
+            resetForm()
+            setActiveStep(0)
+            setRawmaterial([])
+            setSelectedRm({
+                rm: {},
+                quantity: 0,
+            })
         } catch (err) {
             setStatus({ success: false })
             setErrors({ submit: (err as Error).message })
@@ -100,19 +129,41 @@ const Form = () => {
     }
 
     const onDelete = async () => {
-        try {
-            await Fetch({
-                url: `/invoice`,
-                options: {
-                    method: 'DELETE',
-                    authToken: token,
-                    body: initialValues
-                },
+        confirm({
+            description: `This will delete Invoice ${initialValues.id}`,
+        })
+            .then(async () => {
+                try {
+                    const resp = await Fetch({
+                        url: `/invoice`,
+                        options: {
+                            method: 'DELETE',
+                            authToken: token,
+                            body: initialValues,
+                        },
+                    })
+                    setAlert({
+                        type: 'warning',
+                        children: (
+                            <Typography>
+                                Successfully deleted invoice {resp.id}
+                            </Typography>
+                        ),
+                    })
+                    setAlert({
+                        type: 'warning',
+                        children: (
+                            <Typography>
+                                Successfully deleetd invoice {resp[0].id}
+                            </Typography>
+                        ),
+                    })
+                    navigate('..')
+                } catch (e) {
+                    setError((e as Error).message)
+                }
             })
-            navigate('..')
-        } catch (e) {
-            setError((e as Error).message)
-        }
+            .catch(() => {})
     }
 
     const getSupplier = async () => {
@@ -129,27 +180,6 @@ const Form = () => {
                 }))
             })
             setSupplier(data)
-        } catch (e) {
-            setError((e as Error).message)
-        }
-    }
-
-    const getRawmaterials = async () => {
-        try {
-            const data = await Fetch({
-                url: '/rawmaterial',
-                options: {
-                    authToken: token,
-                    params: {
-                        select: JSON.stringify({
-                            id: true,
-                            description: true,
-                            dtplCode: true,
-                        }),
-                    },
-                },
-            })
-            setRawmaterial(data)
         } catch (e) {
             setError((e as Error).message)
         }
@@ -180,33 +210,33 @@ const Form = () => {
     }
 
     const deleteRm = async (rmId: string) => {
-        try {
-            await Fetch({
-                url: `/invoice/details`,
-                options: {
-                    authToken: token,
-                    method: 'DELETE',
-                    body: {
-                        invoiceId: initialValues.id,
-                        supplierId: initialValues.supplierId,
-                        rmId
-                    }
-                },
+        confirm({
+            description: `This will delete raw material ${rmId} from Invoice ${initialValues.id}`,
+        })
+            .then(async () => {
+                try {
+                    await Fetch({
+                        url: `/invoice/details`,
+                        options: {
+                            authToken: token,
+                            method: 'DELETE',
+                            body: {
+                                invoiceId: initialValues.id,
+                                supplierId: initialValues.supplierId,
+                                rmId,
+                            },
+                        },
+                    })
+                } catch (e) {
+                    setError((e as Error).message)
+                }
             })
-        } catch (e) {
-            setError((e as Error).message)
-        }
+            .catch(() => {})
     }
 
     useEffect(() => {
-        Promise.all([getSupplier(), getRawmaterials()])
+        getSupplier()
     }, [])
-
-    if (error) {
-        ;<Grid item xs={12}>
-            <FormHelperText error>{error}</FormHelperText>
-        </Grid>
-    }
 
     if (!supplier) {
         return <Skeleton width="90vw" height="100%" />
@@ -283,7 +313,7 @@ const Form = () => {
                                         },
                                         {
                                             value: 'Closed',
-                                        }
+                                        },
                                     ]}
                                 />
                                 <Grid item xs={12}>
@@ -424,7 +454,9 @@ const Form = () => {
                                         {errors.invoiceDetails && (
                                             <Grid item xs={12}>
                                                 <FormHelperText error>
-                                                    {errors.invoiceDetails as string}
+                                                    {
+                                                        errors.invoiceDetails as string
+                                                    }
                                                 </FormHelperText>
                                             </Grid>
                                         )}
@@ -446,55 +478,66 @@ const Form = () => {
                                                 <Grid item xs={4} />
                                             </Grid>
                                         )}
-                                        {values.invoiceDetails.map((item, index) => (
-                                            <Grid
-                                                item
-                                                xs={12}
-                                                container
-                                                key={index}
-                                            >
-                                                <Field
-                                                    name={`invoiceDetails.${index}.rmId`}
-                                                    component={FormInput}
-                                                    xs={4}
-                                                    type="text"
-                                                    disabled
-                                                />
-                                                <Field
-                                                    name={`invoiceDetails.${index}.quantity`}
-                                                    component={FormInput}
-                                                    xs={4}
-                                                    type="number"
-                                                />
-                                                <Grid item xs={1} />
-                                                <Grid item xs={2}>
-                                                    <Button
-                                                        disableElevation
-                                                        disabled={isSubmitting}
-                                                        fullWidth
-                                                        size="small"
-                                                        variant="contained"
-                                                        color="error"
-                                                        onClick={() => {
-                                                            remove(index)
-                                                            deleteRm(item.rmId)
-                                                        }}
-                                                    >
-                                                        DELETE
-                                                    </Button>
+                                        {values.invoiceDetails.map(
+                                            (item, index) => (
+                                                <Grid
+                                                    item
+                                                    xs={12}
+                                                    container
+                                                    key={index}
+                                                >
+                                                    <Field
+                                                        name={`invoiceDetails.${index}.rmId`}
+                                                        component={FormInput}
+                                                        xs={4}
+                                                        type="text"
+                                                        disabled
+                                                    />
+                                                    <Field
+                                                        name={`invoiceDetails.${index}.quantity`}
+                                                        component={FormInput}
+                                                        xs={4}
+                                                        type="number"
+                                                    />
+                                                    <Grid item xs={1} />
+                                                    <Grid item xs={2}>
+                                                        <Button
+                                                            disableElevation
+                                                            disabled={
+                                                                isSubmitting
+                                                            }
+                                                            fullWidth
+                                                            size="small"
+                                                            variant="contained"
+                                                            color="error"
+                                                            onClick={() => {
+                                                                remove(index)
+                                                                deleteRm(
+                                                                    item.rmId
+                                                                )
+                                                            }}
+                                                        >
+                                                            DELETE
+                                                        </Button>
+                                                    </Grid>
+                                                    <Grid item xs={1} />
                                                 </Grid>
-                                                <Grid item xs={1} />
-                                            </Grid>
-                                        ))}
+                                            )
+                                        )}
                                     </>
                                 )}
                             </FieldArray>
                         )}
-                        {activeStep === 1 && errors.submit && (
+                        {errors.submit && (
                             <Grid item xs={12}>
                                 <FormHelperText error>
                                     {errors.submit}
                                 </FormHelperText>
+                            </Grid>
+                        )}
+                        {error && (
+                            <Grid item xs={12}>
+                                <FormHelperText error>{error}</FormHelperText>
                             </Grid>
                         )}
                         {activeStep === 1 && (

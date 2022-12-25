@@ -30,7 +30,13 @@ const MainLayout = () => {
             >
                 <Toolbar />
                 <BreadCrumbs />
-                <Collapse in={alertChildern ? true : false}>
+                <Collapse
+                    in={alertChildern ? true : false}
+                    sx={{
+                        mt: 2,
+                        mb: 1,
+                    }}
+                >
                     <Alert
                         severity={type}
                         action={

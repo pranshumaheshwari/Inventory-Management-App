@@ -12,11 +12,12 @@ import {
 } from '@mui/material'
 import { Fetch, useAuth } from '../../../services'
 import { Field, FieldArray, Formik, FormikHelpers } from 'formik'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 
+import { AlertContext } from '../../../context'
 import { FormInput } from '../../../components'
 import FormSelect from '../../../components/FormSelect'
-import { useNavigate } from 'react-router-dom'
+import { useConfirm } from 'material-ui-confirm'
 
 export interface InwardsPurchaseOrderInterface {
     supplierId: string
@@ -35,7 +36,8 @@ interface FormValues extends Required<InwardsPurchaseOrderInterface> {
 }
 
 const PurchaseOrder = () => {
-    const navigate = useNavigate()
+    const confirm = useConfirm()
+    const { setAlert } = useContext(AlertContext)
     const {
         token: { token },
     } = useAuth()
@@ -68,27 +70,44 @@ const PurchaseOrder = () => {
             setErrors,
             setStatus,
             setSubmitting,
+            resetForm,
         }: Partial<FormikHelpers<FormValues>>
     ) => {
-        if (setSubmitting && setStatus && setErrors) {
-            setSubmitting(true)
-            try {
-                await Fetch({
-                    url: '/inwards/rejectPO',
-                    options: {
-                        authToken: token,
-                        method: 'PUT',
-                        body: values,
-                    },
-                })
-                setStatus({ success: true })
-                navigate(0)
-            } catch (err) {
-                setStatus({ success: false })
-                setErrors({ submit: (err as Error).message })
-                setSubmitting(false)
-            }
-        }
+        confirm({
+            description: `This will reject PO check`,
+            confirmationText: 'Reject',
+        })
+            .then(async () => {
+                if (setSubmitting && setStatus && setErrors && resetForm) {
+                    setSubmitting(true)
+                    try {
+                        const resp = await Fetch({
+                            url: '/inwards/rejectPO',
+                            options: {
+                                authToken: token,
+                                method: 'PUT',
+                                body: values,
+                            },
+                        })
+                        setAlert({
+                            type: 'warning',
+                            children: (
+                                <Typography>
+                                    Rejected PO check with ID - {resp[0].id}
+                                </Typography>
+                            ),
+                        })
+                        resetForm()
+                        setPo([])
+                        setInvoice([])
+                    } catch (err) {
+                        setStatus({ success: false })
+                        setErrors({ submit: (err as Error).message })
+                        setSubmitting(false)
+                    }
+                }
+            })
+            .catch(() => {})
     }
 
     const acceptPo = async (
@@ -97,12 +116,13 @@ const PurchaseOrder = () => {
             setErrors,
             setStatus,
             setSubmitting,
+            resetForm,
         }: Partial<FormikHelpers<FormValues>>
     ) => {
-        if (setSubmitting && setStatus && setErrors) {
+        if (setSubmitting && setStatus && setErrors && resetForm) {
             setSubmitting(true)
             try {
-                await Fetch({
+                const resp = await Fetch({
                     url: '/inwards/acceptPO',
                     options: {
                         authToken: token,
@@ -110,8 +130,17 @@ const PurchaseOrder = () => {
                         body: values,
                     },
                 })
-                setStatus({ success: true })
-                navigate(0)
+                setAlert({
+                    type: 'success',
+                    children: (
+                        <Typography>
+                            Accpected PO check with ID - {resp[0].id}
+                        </Typography>
+                    ),
+                })
+                resetForm()
+                setPo([])
+                setInvoice([])
             } catch (err) {
                 setStatus({ success: false })
                 setErrors({ submit: (err as Error).message })
@@ -297,14 +326,8 @@ const PurchaseOrder = () => {
     }
 
     useEffect(() => {
-        Promise.all([getSupplier()])
+        getSupplier()
     }, [])
-
-    if (error) {
-        ;<Grid item xs={12}>
-            <FormHelperText error>{error}</FormHelperText>
-        </Grid>
-    }
 
     if (!supplier) {
         return <Skeleton width="90vw" height="100%" />
@@ -341,6 +364,7 @@ const PurchaseOrder = () => {
                 setErrors,
                 setStatus,
                 setSubmitting,
+                resetForm,
             }) => (
                 <form noValidate onSubmit={handleSubmit}>
                     <Grid container spacing={3}>
@@ -480,6 +504,11 @@ const PurchaseOrder = () => {
                                 </FormHelperText>
                             </Grid>
                         )}
+                        {error && (
+                            <Grid item xs={12}>
+                                <FormHelperText error>{error}</FormHelperText>
+                            </Grid>
+                        )}
                         {
                             <>
                                 <Grid item xs={2}>
@@ -496,6 +525,7 @@ const PurchaseOrder = () => {
                                                 setErrors,
                                                 setStatus,
                                                 setSubmitting,
+                                                resetForm,
                                             })
                                         }}
                                     >
@@ -517,6 +547,7 @@ const PurchaseOrder = () => {
                                                 setErrors,
                                                 setStatus,
                                                 setSubmitting,
+                                                resetForm,
                                             })
                                         }}
                                     >

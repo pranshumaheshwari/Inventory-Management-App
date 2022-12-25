@@ -12,11 +12,12 @@ import {
 } from '@mui/material'
 import { Fetch, useAuth } from '../../../services'
 import { Field, FieldArray, Formik, FormikHelpers } from 'formik'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 
+import { AlertContext } from '../../../context'
 import { FormInput } from '../../../components'
 import FormSelect from '../../../components/FormSelect'
-import { useNavigate } from 'react-router-dom'
+import { useConfirm } from 'material-ui-confirm'
 
 export interface InwardsQualityCheck {
     supplierId: string
@@ -33,7 +34,8 @@ interface FormValues extends Required<InwardsQualityCheck> {
 }
 
 const QualityCheck = () => {
-    const navigate = useNavigate()
+    const confirm = useConfirm()
+    const { setAlert } = useContext(AlertContext)
     const {
         token: { token },
     } = useAuth()
@@ -53,27 +55,43 @@ const QualityCheck = () => {
             setErrors,
             setStatus,
             setSubmitting,
+            resetForm,
         }: Partial<FormikHelpers<FormValues>>
     ) => {
-        if (setSubmitting && setStatus && setErrors) {
-            setSubmitting(true)
-            try {
-                await Fetch({
-                    url: '/inwards/rejectIQCs',
-                    options: {
-                        authToken: token,
-                        method: 'PUT',
-                        body: values,
-                    },
-                })
-                setStatus({ success: true })
-                navigate(0)
-            } catch (err) {
-                setStatus({ success: false })
-                setErrors({ submit: (err as Error).message })
-                setSubmitting(false)
-            }
-        }
+        confirm({
+            description: 'This will reject based on Inwards Quality Check',
+            confirmationText: 'Reject',
+        })
+            .then(async () => {
+                if (setSubmitting && setStatus && setErrors && resetForm) {
+                    setSubmitting(true)
+                    try {
+                        const resp = await Fetch({
+                            url: '/inwards/rejectIQCs',
+                            options: {
+                                authToken: token,
+                                method: 'PUT',
+                                body: values,
+                            },
+                        })
+                        setAlert({
+                            type: 'warning',
+                            children: (
+                                <Typography>
+                                    Rejected IQC check with ID - {resp[0].id}
+                                </Typography>
+                            ),
+                        })
+                        resetForm()
+                        setInvoice([])
+                    } catch (err) {
+                        setStatus({ success: false })
+                        setErrors({ submit: (err as Error).message })
+                        setSubmitting(false)
+                    }
+                }
+            })
+            .catch(() => {})
     }
 
     const acceptIqc = async (
@@ -82,12 +100,13 @@ const QualityCheck = () => {
             setErrors,
             setStatus,
             setSubmitting,
+            resetForm,
         }: Partial<FormikHelpers<FormValues>>
     ) => {
-        if (setSubmitting && setStatus && setErrors) {
+        if (setSubmitting && setStatus && setErrors && resetForm) {
             setSubmitting(true)
             try {
-                await Fetch({
+                const resp = await Fetch({
                     url: '/inwards/acceptIQCs',
                     options: {
                         authToken: token,
@@ -95,8 +114,16 @@ const QualityCheck = () => {
                         body: values,
                     },
                 })
-                setStatus({ success: true })
-                navigate(0)
+                setAlert({
+                    type: 'success',
+                    children: (
+                        <Typography>
+                            Accepted IQC check with ID - {resp[0].id}
+                        </Typography>
+                    ),
+                })
+                resetForm()
+                setInvoice([])
             } catch (err) {
                 setStatus({ success: false })
                 setErrors({ submit: (err as Error).message })
@@ -218,12 +245,6 @@ const QualityCheck = () => {
         getSupplier()
     }, [])
 
-    if (error) {
-        ;<Grid item xs={12}>
-            <FormHelperText error>{error}</FormHelperText>
-        </Grid>
-    }
-
     if (!supplier) {
         return <Skeleton width="90vw" height="100%" />
     }
@@ -257,6 +278,7 @@ const QualityCheck = () => {
                 setErrors,
                 setStatus,
                 setSubmitting,
+                resetForm,
             }) => (
                 <form noValidate onSubmit={handleSubmit}>
                     <Grid container spacing={3}>
@@ -369,6 +391,12 @@ const QualityCheck = () => {
                                 </FormHelperText>
                             </Grid>
                         )}
+
+                        {error && (
+                            <Grid item xs={12}>
+                                <FormHelperText error>{error}</FormHelperText>
+                            </Grid>
+                        )}
                         {
                             <>
                                 <Grid item xs={2}>
@@ -385,6 +413,7 @@ const QualityCheck = () => {
                                                 setErrors,
                                                 setStatus,
                                                 setSubmitting,
+                                                resetForm,
                                             })
                                         }}
                                     >
@@ -406,6 +435,7 @@ const QualityCheck = () => {
                                                 setErrors,
                                                 setStatus,
                                                 setSubmitting,
+                                                resetForm,
                                             })
                                         }}
                                     >
