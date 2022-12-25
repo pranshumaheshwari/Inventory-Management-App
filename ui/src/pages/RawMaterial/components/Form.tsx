@@ -1,35 +1,63 @@
 import * as Yup from 'yup'
 
-import { Button, CircularProgress, FormHelperText, Grid, Skeleton } from '@mui/material';
+import {
+    Button,
+    CircularProgress,
+    FormHelperText,
+    Grid,
+    Skeleton,
+    Typography,
+} from '@mui/material'
 import { Fetch, useAuth } from '../../../services'
 import { Field, Formik, FormikHelpers } from 'formik'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
+import { AlertContext } from '../../../context'
 import { FormInput } from '../../../components'
 import FormSelect from '../../../components/FormSelect'
 import { RawMaterialInterface } from '../RawMaterial'
 
 interface FormValues extends Required<RawMaterialInterface> {
-    submit: null;
+    submit: null
 }
 
 const Form = () => {
+    const { setAlert } = useContext(AlertContext)
     const navigate = useNavigate()
     const location = useLocation()
     const isEdit = location.state ? true : false
-    const { token: { token } } = useAuth()
+    const {
+        token: { token },
+    } = useAuth()
     const [supplier, setSupplier] = useState<{ value: string }[] | null>()
     const [error, setError] = useState('')
-    const onSubmit = async (values: FormValues, { setErrors, setStatus, setSubmitting }: FormikHelpers<FormValues>) => {
+    const onSubmit = async (
+        values: FormValues,
+        { setErrors, setStatus, setSubmitting }: FormikHelpers<FormValues>
+    ) => {
         try {
-            await Fetch({
-                url: '/rawmaterial' + (isEdit ? '/' + encodeURIComponent((location.state as FormValues).id) : ''),
+            const resp = await Fetch({
+                url:
+                    '/rawmaterial' +
+                    (isEdit
+                        ? '/' +
+                          encodeURIComponent((location.state as FormValues).id)
+                        : ''),
                 options: {
-                    method: isEdit ? "PUT" : "POST",
+                    method: isEdit ? 'PUT' : 'POST',
                     body: values,
-                    authToken: token
-                }
+                    authToken: token,
+                },
+            })
+            setAlert({
+                type: 'success',
+                children: (
+                    <Typography>
+                        Succesfully {isEdit ? 'edited' : 'created'} raw material
+                        with ID - {resp.id}
+                    </Typography>
+                ),
             })
             navigate('..')
         } catch (err) {
@@ -40,12 +68,22 @@ const Form = () => {
     }
     const onDelete = async () => {
         try {
-            await Fetch({
-                url: `/rawmaterial/${encodeURIComponent((location.state as FormValues).id)}`,
+            const resp = await Fetch({
+                url: `/rawmaterial/${encodeURIComponent(
+                    (location.state as FormValues).id
+                )}`,
                 options: {
-                    method: "DELETE",
-                    authToken: token
-                }
+                    method: 'DELETE',
+                    authToken: token,
+                },
+            })
+            setAlert({
+                type: 'warning',
+                children: (
+                    <Typography>
+                        Succesfully deleted raw material with ID - {resp.id}
+                    </Typography>
+                ),
             })
             navigate('..')
         } catch (e) {
@@ -58,15 +96,12 @@ const Form = () => {
             const data = await Fetch({
                 url: '/suppliers',
                 options: {
-                    authToken: token
-                }
-            }).then(data => {
-                return data.map((supplier: {
-                    name: string;
-                    id: string;
-                }) => ({
+                    authToken: token,
+                },
+            }).then((data) => {
+                return data.map((supplier: { name: string; id: string }) => ({
                     label: supplier.name,
-                    value: supplier.id
+                    value: supplier.id,
                 }))
             })
             setSupplier(data)
@@ -80,47 +115,47 @@ const Form = () => {
     }, [])
 
     if (error) {
-        <Grid item xs={12}>
+        ;<Grid item xs={12}>
             <FormHelperText error>{error}</FormHelperText>
         </Grid>
     }
 
     if (!supplier) {
-        return (
-            <Skeleton width="90vw" height="100%" />
-        )
+        return <Skeleton width="90vw" height="100%" />
     }
 
     return (
         <Formik
-            initialValues={isEdit ? location.state as FormValues : {
-                id: '',
-                description: '',
-                dtplCode: '',
-                category: '',
-                unit: '',
-                price: 0,
-                storeStock: 0,
-                iqcPendingStock: 0,
-                poPendingStock: 0,
-                lineStock: 0,
-                supplierId: '',
-                submit: null
-            }}
-            validationSchema={
-                Yup.object().shape({
-                    id: Yup.string().required('Unique ID is required'),
-                    description: Yup.string().required('Description is required'),
-                    dtplCode: Yup.string().required('DTPL Part Number is required'),
-                    category: Yup.string().required('Category is required'),
-                    supplierId: Yup.string().required('Supplier is required'),
-                    unit: Yup.string().required('Unit is required'),
-                    price: Yup.number().moreThan(0).required('Price is required'),
-                    iqcPendingStock: Yup.number().min(0),
-                    storeStock: Yup.number().min(0),
-                    lineStock: Yup.number().min(0),
-                })
+            initialValues={
+                isEdit
+                    ? (location.state as FormValues)
+                    : {
+                          id: '',
+                          description: '',
+                          dtplCode: '',
+                          category: '',
+                          unit: '',
+                          price: 0,
+                          storeStock: 0,
+                          iqcPendingStock: 0,
+                          poPendingStock: 0,
+                          lineStock: 0,
+                          supplierId: '',
+                          submit: null,
+                      }
             }
+            validationSchema={Yup.object().shape({
+                id: Yup.string().required('Unique ID is required'),
+                description: Yup.string().required('Description is required'),
+                dtplCode: Yup.string().required('DTPL Part Number is required'),
+                category: Yup.string().required('Category is required'),
+                supplierId: Yup.string().required('Supplier is required'),
+                unit: Yup.string().required('Unit is required'),
+                price: Yup.number().moreThan(0).required('Price is required'),
+                iqcPendingStock: Yup.number().min(0),
+                storeStock: Yup.number().min(0),
+                lineStock: Yup.number().min(0),
+            })}
             onSubmit={onSubmit}
         >
             {({ errors, handleSubmit, isSubmitting }) => (
@@ -242,7 +277,9 @@ const Form = () => {
                         />
                         {errors.submit && (
                             <Grid item xs={12}>
-                                <FormHelperText error>{errors.submit}</FormHelperText>
+                                <FormHelperText error>
+                                    {errors.submit}
+                                </FormHelperText>
                             </Grid>
                         )}
                         <Grid item xs={12}>
@@ -255,7 +292,7 @@ const Form = () => {
                                 variant="contained"
                                 color="primary"
                             >
-                                {isEdit ? "Update" : "Create"}
+                                {isEdit ? 'Update' : 'Create'}
                             </Button>
                             {isSubmitting && (
                                 <CircularProgress
@@ -271,30 +308,28 @@ const Form = () => {
                                 />
                             )}
                         </Grid>
-                        {
-                            isEdit && (
-                                <Grid item xs={12}>
-                                    <Grid
-                                        container
-                                        justifyContent='center'
-                                        alignItems='center'
+                        {isEdit && (
+                            <Grid item xs={12}>
+                                <Grid
+                                    container
+                                    justifyContent="center"
+                                    alignItems="center"
+                                >
+                                    <Button
+                                        disableElevation
+                                        disabled={isSubmitting}
+                                        size="large"
+                                        variant="contained"
+                                        color="error"
+                                        onClick={() => {
+                                            onDelete()
+                                        }}
                                     >
-                                        <Button
-                                            disableElevation
-                                            disabled={isSubmitting}
-                                            size="large"
-                                            variant="contained"
-                                            color="error"
-                                            onClick={() => {
-                                                onDelete()
-                                            }}
-                                        >
-                                            DELETE
-                                        </Button>
-                                    </Grid>
+                                        DELETE
+                                    </Button>
                                 </Grid>
-                            )
-                        }
+                            </Grid>
+                        )}
                     </Grid>
                 </form>
             )}

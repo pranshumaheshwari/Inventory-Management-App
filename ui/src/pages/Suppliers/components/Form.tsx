@@ -1,11 +1,18 @@
 import * as Yup from 'yup'
 
-import { Button, CircularProgress, FormHelperText, Grid } from '@mui/material'
+import {
+    Button,
+    CircularProgress,
+    FormHelperText,
+    Grid,
+    Typography,
+} from '@mui/material'
 import { Fetch, useAuth } from '../../../services'
 import { Field, Formik, FormikHelpers } from 'formik'
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
+import { AlertContext } from '../../../context'
 import { FormInput } from '../../../components'
 import { SupplierInterface } from '../Suppliers'
 
@@ -14,6 +21,7 @@ interface FormValues extends Required<SupplierInterface> {
 }
 
 const Form = () => {
+    const { setAlert } = useContext(AlertContext)
     const navigate = useNavigate()
     const location = useLocation()
     const isEdit = location.state ? true : false
@@ -39,6 +47,15 @@ const Form = () => {
                     authToken: token,
                 },
             })
+            setAlert({
+                type: 'success',
+                children: (
+                    <Typography>
+                        Succesfully {isEdit ? 'edited' : 'created'} supplier
+                        with ID - {resp.id}
+                    </Typography>
+                ),
+            })
             navigate('..')
         } catch (err) {
             setStatus({ success: false })
@@ -48,7 +65,7 @@ const Form = () => {
     }
     const onDelete = async () => {
         try {
-            const data = await Fetch({
+            const resp = await Fetch({
                 url: `/suppliers/${encodeURIComponent(
                     (location.state as FormValues).id
                 )}`,
@@ -56,6 +73,15 @@ const Form = () => {
                     method: 'DELETE',
                     authToken: token,
                 },
+            })
+            setAlert({
+                type: 'warning',
+                children: (
+                    <Typography>
+                        Succesfully {isEdit ? 'edited' : 'created'} supplier
+                        with ID - {resp.id}
+                    </Typography>
+                ),
             })
             navigate('..')
         } catch (e) {

@@ -35,6 +35,29 @@ const dashboard: ItemInterface = {
             type: 'item',
             url: '/production',
             icon: 'precision_manufacturing'
+        },
+        {
+            id: 'finishedgood-outwards',
+            title: 'Outwards',
+            type: 'group',
+            children: [
+                {
+                    id: 'finishedgood-outwards-qualityCheck',
+                    title: 'Quality Check',
+                    type: 'item',
+                    url: '/outwards/qualityCheck',
+                    icon: 'check_outlined',
+                    urls: ['/outwards/qualityCheck']
+                },
+                {
+                    id: 'finishedgood-outwards-dispatch',
+                    title: 'Dispatch',
+                    type: 'item',
+                    url: '/outwards/dispatch',
+                    icon: 'note_outlined',
+                    urls: ['/outwards/dispatch']
+                },
+            ],
         }
     ]
 }

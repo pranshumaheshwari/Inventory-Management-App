@@ -18,9 +18,16 @@ import {
 } from '@mui/material'
 import { Fetch, useAuth } from '../../../services'
 import { Field, FieldArray, Formik, FormikHelpers } from 'formik'
-import React, { ChangeEvent, SyntheticEvent, useEffect, useState } from 'react'
+import React, {
+    ChangeEvent,
+    SyntheticEvent,
+    useContext,
+    useEffect,
+    useState,
+} from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
+import { AlertContext } from '../../../context'
 import { FinishedGoodsInterface } from '../FinishedGood'
 import { FormInput } from '../../../components'
 import FormSelect from '../../../components/FormSelect'
@@ -31,6 +38,7 @@ interface FormValues extends Required<FinishedGoodsInterface> {
 }
 
 const Form = () => {
+    const { setAlert } = useContext(AlertContext)
     const navigate = useNavigate()
     const location = useLocation()
     const isEdit = location.state ? true : false
@@ -94,6 +102,15 @@ const Form = () => {
                     authToken: token,
                 },
             })
+            setAlert({
+                type: 'success',
+                children: (
+                    <Typography>
+                        Succesfully {isEdit ? 'edited' : 'created'} finished
+                        good with ID - {resp.id}
+                    </Typography>
+                ),
+            })
             navigate('..')
         } catch (err) {
             setStatus({ success: false })
@@ -103,12 +120,20 @@ const Form = () => {
     }
     const onDelete = async () => {
         try {
-            const data = await Fetch({
+            const resp = await Fetch({
                 url: `/finishedgoods/${encodeURIComponent(initialValues.id)}`,
                 options: {
                     method: 'DELETE',
                     authToken: token,
                 },
+            })
+            setAlert({
+                type: 'warning',
+                children: (
+                    <Typography>
+                        Succesfully deleted finished good with ID - {resp.id}
+                    </Typography>
+                ),
             })
             navigate('..')
         } catch (e) {

@@ -1,3 +1,4 @@
+export { default as Alert } from './Alert'
 export { default as BreadCrumbs } from './BreadCrumbs'
 export { default as FormInput } from './FormInput'
 export { default as Loadable } from './Loadable'

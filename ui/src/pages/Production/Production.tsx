@@ -1,11 +1,18 @@
 import * as Yup from 'yup'
 
-import { Button, CircularProgress, FormHelperText, Grid } from '@mui/material'
+import {
+    Button,
+    CircularProgress,
+    FormHelperText,
+    Grid,
+    Typography,
+} from '@mui/material'
 import { Fetch, useAuth } from '../../services'
 import { Field, Formik, FormikHelpers } from 'formik'
-import React, { SyntheticEvent, useEffect, useState } from 'react'
+import React, { SyntheticEvent, useContext, useEffect, useState } from 'react'
 import dayjs, { Dayjs } from 'dayjs'
 
+import { AlertContext } from '../../context'
 import Autocomplete from '@mui/material/Autocomplete'
 import DatePicker from '../../components/DatePicker'
 import { FinishedGoodsInterface } from '../FinishedGood/FinishedGood'
@@ -15,13 +22,13 @@ import InputLabel from '@mui/material/InputLabel'
 import { SelectChangeEvent } from '@mui/material/Select'
 import Skeleton from '@mui/material/Skeleton'
 import TextField from '@mui/material/TextField'
-import { useNavigate } from 'react-router-dom'
 
 interface ProductionInterface {
     date: Dayjs
     fgId: string
     quantity: number
     soId: string
+    customerId: string
 }
 
 interface FormValues extends Required<ProductionInterface> {
@@ -29,10 +36,10 @@ interface FormValues extends Required<ProductionInterface> {
 }
 
 const Production = () => {
-    const navigate = useNavigate()
     const {
         token: { token },
     } = useAuth()
+    const { setAlert } = useContext(AlertContext)
     const [error, setError] = useState('')
     const [finishedGood, setFinishedGood] = useState<
         Partial<FinishedGoodsInterface>[]
@@ -44,10 +51,15 @@ const Production = () => {
 
     const onSubmit = async (
         values: FormValues,
-        { setErrors, setStatus, setSubmitting }: FormikHelpers<FormValues>
+        {
+            setErrors,
+            setStatus,
+            setSubmitting,
+            resetForm,
+        }: FormikHelpers<FormValues>
     ) => {
         try {
-            await Fetch({
+            const resp = await Fetch({
                 url: '/production',
                 options: {
                     method: 'POST',
@@ -60,7 +72,18 @@ const Production = () => {
                     authToken: token,
                 },
             })
-            navigate(0)
+            resetForm()
+            setSalesOrder([])
+            setFinishedGood([])
+            setSubmitting(false)
+            setAlert({
+                type: 'success',
+                children: (
+                    <Typography>
+                        Succesfully created new record with ID - {resp[0].id}
+                    </Typography>
+                ),
+            })
         } catch (err) {
             setStatus({ success: false })
             setErrors({ submit: (err as Error).message })
@@ -164,6 +187,7 @@ const Production = () => {
                 fgId: '',
                 soId: '',
                 quantity: 0,
+                customerId: '',
                 date: dayjs(),
             }}
             validationSchema={Yup.object().shape({
@@ -191,6 +215,7 @@ const Production = () => {
                             placeholder="Select Customer"
                             items={customer}
                             onChange={(e: SelectChangeEvent) => {
+                                handleChange(e)
                                 getSalesOrders(e.target.value)
                             }}
                         />
@@ -236,11 +261,14 @@ const Production = () => {
                             </InputLabel>
                             <Autocomplete
                                 id="fgId"
+                                key={finishedGood[0]?.id}
                                 options={finishedGood}
                                 getOptionLabel={(option) =>
                                     option[finishedGoodIndentifier] as string
                                 }
-                                disablePortal
+                                isOptionEqualToValue={(option, value) => {
+                                    return option['id'] === value['id']
+                                }}
                                 onChange={(e: SyntheticEvent, value) =>
                                     setValues((values) => ({
                                         ...values,
@@ -248,7 +276,7 @@ const Production = () => {
                                     }))
                                 }
                                 renderInput={(params) => (
-                                    <TextField {...params} />
+                                    <TextField {...params} name="fgId" />
                                 )}
                             />
                         </Grid>

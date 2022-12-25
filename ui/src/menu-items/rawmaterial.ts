@@ -51,7 +51,7 @@ const dashboard: ItemInterface = {
                     urls: ['/inwards/purchaseOrder']
                 },
                 {
-                    id: 'rawmaterial-inwards-quanlityCheck',
+                    id: 'rawmaterial-inwards-qualityCheck',
                     title: 'Quality Check',
                     type: 'item',
                     url: '/inwards/qualityCheck',

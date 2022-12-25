@@ -17,9 +17,16 @@ import {
 } from '@mui/material'
 import { Fetch, useAuth } from '../../../services'
 import { Field, FieldArray, Formik, FormikHelpers } from 'formik'
-import React, { ChangeEvent, SyntheticEvent, useEffect, useState } from 'react'
+import React, {
+    ChangeEvent,
+    SyntheticEvent,
+    useContext,
+    useEffect,
+    useState,
+} from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
+import { AlertContext } from '../../../context'
 import { FormInput } from '../../../components'
 import FormSelect from '../../../components/FormSelect'
 import { PurchaseOrdersInterface } from '../PurchaseOrders'
@@ -30,6 +37,7 @@ interface FormValues extends Required<PurchaseOrdersInterface> {
 }
 
 const Form = () => {
+    const { setAlert } = useContext(AlertContext)
     const navigate = useNavigate()
     const location = useLocation()
     const isEdit = location.state ? true : false
@@ -83,13 +91,22 @@ const Form = () => {
         { setErrors, setStatus, setSubmitting }: FormikHelpers<FormValues>
     ) => {
         try {
-            await Fetch({
+            const resp = await Fetch({
                 url: '/purchaseorders',
                 options: {
                     method: isEdit ? 'PUT' : 'POST',
                     body: values,
                     authToken: token,
                 },
+            })
+            setAlert({
+                type: 'success',
+                children: (
+                    <Typography>
+                        Succesfully {isEdit ? 'edited' : 'created'} Purchase
+                        Order with ID - {resp.id}
+                    </Typography>
+                ),
             })
             navigate('..')
         } catch (err) {
@@ -101,13 +118,21 @@ const Form = () => {
 
     const onDelete = async () => {
         try {
-            await Fetch({
+            const resp = await Fetch({
                 url: `/purchaseorders`,
                 options: {
                     method: 'DELETE',
                     authToken: token,
                     body: initialValues,
                 },
+            })
+            setAlert({
+                type: 'warning',
+                children: (
+                    <Typography>
+                        Succesfully deleted Purchase Order with ID - {resp.id}
+                    </Typography>
+                ),
             })
             navigate('..')
         } catch (e) {
@@ -326,7 +351,9 @@ const Form = () => {
                                                                 return {
                                                                     ...selectedRm,
                                                                     rm: value,
-                                                                    price: value.price ? value.price : 0
+                                                                    price: value.price
+                                                                        ? value.price
+                                                                        : 0,
                                                                 }
                                                             return selectedRm
                                                         }
