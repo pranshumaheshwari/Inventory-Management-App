@@ -48,9 +48,11 @@ const Production = Loadable(
     lazy(() => import('../pages/Production/Production'))
 )
 const OutwardsQualityCheck = Loadable(
-    lazy(() => import('../pages/Outwards/QualityCheck'))
+    lazy(() => import('../pages/Outwards/QualityCheck/QualityCheck'))
 )
-const Dispatch = Loadable(lazy(() => import('../pages/Outwards/Dispatch')))
+const Dispatch = Loadable(
+    lazy(() => import('../pages/Outwards/Dispatch/Dispatch'))
+)
 
 const MainRoutes: RouteObject = {
     path: '/',

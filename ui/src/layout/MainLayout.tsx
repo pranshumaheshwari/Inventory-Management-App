@@ -8,6 +8,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import Collapse from '@mui/material/Collapse'
 import IconButton from '@mui/material/IconButton'
 import { Outlet } from 'react-router-dom'
+import { alertType } from '../context/AlertContext'
 import { useContext } from 'react'
 
 const MainLayout = () => {
@@ -45,10 +46,10 @@ const MainLayout = () => {
                                 color="inherit"
                                 size="small"
                                 onClick={() => {
-                                    setAlert({
-                                        type: 'success',
+                                    setAlert((prevState: alertType) => ({
+                                        ...prevState,
                                         children: null,
-                                    })
+                                    }))
                                 }}
                             >
                                 <CloseIcon fontSize="inherit" />

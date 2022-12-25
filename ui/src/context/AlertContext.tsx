@@ -1,12 +1,14 @@
 import { AlertColor } from '@mui/material/Alert'
 import { createContext } from 'react'
 
+export interface alertType {
+    type: AlertColor
+    children: React.ReactNode
+}
+
 interface alertContextInterface {
-    data: {
-        type: AlertColor
-        children: React.ReactNode
-    }
-    setAlert: (data: { type: AlertColor; children: React.ReactNode }) => void
+    data: alertType
+    setAlert: (data: alertType | ((prevState: alertType) => alertType)) => void
 }
 
 const alertContext = createContext<alertContextInterface>({
@@ -14,6 +16,6 @@ const alertContext = createContext<alertContextInterface>({
         type: 'success',
         children: null,
     },
-    setAlert: (data) => {},
+    setAlert: (data: alertType | ((prevState: alertType) => alertType)) => {},
 })
 export default alertContext
