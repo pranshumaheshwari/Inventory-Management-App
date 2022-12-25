@@ -15,6 +15,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { AlertContext } from '../../../context'
 import { FormInput } from '../../../components'
 import { SupplierInterface } from '../Suppliers'
+import { useConfirm } from 'material-ui-confirm'
 
 interface FormValues extends Required<SupplierInterface> {
     submit: null
@@ -24,6 +25,7 @@ const Form = () => {
     const { setAlert } = useContext(AlertContext)
     const navigate = useNavigate()
     const location = useLocation()
+    const confirm = useConfirm()
     const isEdit = location.state ? true : false
     const {
         token: { token },
@@ -64,35 +66,37 @@ const Form = () => {
         }
     }
     const onDelete = async () => {
-        try {
-            const resp = await Fetch({
-                url: `/suppliers/${encodeURIComponent(
-                    (location.state as FormValues).id
-                )}`,
-                options: {
-                    method: 'DELETE',
-                    authToken: token,
-                },
+        confirm({
+            description: `This will delete supplier ${
+                (location.state as FormValues).id
+            }`,
+        })
+            .then(async () => {
+                try {
+                    const resp = await Fetch({
+                        url: `/suppliers/${encodeURIComponent(
+                            (location.state as FormValues).id
+                        )}`,
+                        options: {
+                            method: 'DELETE',
+                            authToken: token,
+                        },
+                    })
+                    setAlert({
+                        type: 'warning',
+                        children: (
+                            <Typography>
+                                Succesfully {isEdit ? 'edited' : 'created'}{' '}
+                                supplier with ID - {resp.id}
+                            </Typography>
+                        ),
+                    })
+                    navigate('..')
+                } catch (e) {
+                    setError((e as Error).message)
+                }
             })
-            setAlert({
-                type: 'warning',
-                children: (
-                    <Typography>
-                        Succesfully {isEdit ? 'edited' : 'created'} supplier
-                        with ID - {resp.id}
-                    </Typography>
-                ),
-            })
-            navigate('..')
-        } catch (e) {
-            setError((e as Error).message)
-        }
-    }
-
-    if (error) {
-        ;<Grid item xs={12}>
-            <FormHelperText error>{error}</FormHelperText>
-        </Grid>
+            .catch(() => {})
     }
 
     return (
@@ -196,6 +200,11 @@ const Form = () => {
                                 <FormHelperText error>
                                     {errors.submit}
                                 </FormHelperText>
+                            </Grid>
+                        )}
+                        {error && (
+                            <Grid item xs={12}>
+                                <FormHelperText error>{error}</FormHelperText>
                             </Grid>
                         )}
                         <Grid item xs={12}>

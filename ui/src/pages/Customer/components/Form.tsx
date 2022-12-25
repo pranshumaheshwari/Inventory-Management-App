@@ -15,6 +15,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { AlertContext } from '../../../context'
 import { CustomerInterface } from '../Customers'
 import { FormInput } from '../../../components'
+import { useConfirm } from 'material-ui-confirm'
 
 interface FormValues extends Required<CustomerInterface> {
     submit: null
@@ -23,6 +24,7 @@ interface FormValues extends Required<CustomerInterface> {
 const Form = () => {
     const { setAlert } = useContext(AlertContext)
     const navigate = useNavigate()
+    const confirm = useConfirm()
     const location = useLocation()
     const isEdit = location.state ? true : false
     const {
@@ -64,34 +66,36 @@ const Form = () => {
         }
     }
     const onDelete = async () => {
-        try {
-            const resp = await Fetch({
-                url: `/customers/${encodeURIComponent(
-                    (location.state as FormValues).id
-                )}`,
-                options: {
-                    method: 'DELETE',
-                    authToken: token,
-                },
+        confirm({
+            description: `This will delete customer ${
+                (location.state as FormValues).id
+            }`,
+        })
+            .then(async () => {
+                try {
+                    const resp = await Fetch({
+                        url: `/customers/${encodeURIComponent(
+                            (location.state as FormValues).id
+                        )}`,
+                        options: {
+                            method: 'DELETE',
+                            authToken: token,
+                        },
+                    })
+                    setAlert({
+                        type: 'warning',
+                        children: (
+                            <Typography>
+                                Succesfully deleted customer with ID - {resp.id}
+                            </Typography>
+                        ),
+                    })
+                    navigate('..')
+                } catch (e) {
+                    setError((e as Error).message)
+                }
             })
-            setAlert({
-                type: 'warning',
-                children: (
-                    <Typography>
-                        Succesfully deleted customer with ID - {resp.id}
-                    </Typography>
-                ),
-            })
-            navigate('..')
-        } catch (e) {
-            setError((e as Error).message)
-        }
-    }
-
-    if (error) {
-        ;<Grid item xs={12}>
-            <FormHelperText error>{error}</FormHelperText>
-        </Grid>
+            .catch(() => {})
     }
 
     return (
@@ -187,6 +191,11 @@ const Form = () => {
                                 <FormHelperText error>
                                     {errors.submit}
                                 </FormHelperText>
+                            </Grid>
+                        )}
+                        {error && (
+                            <Grid item xs={12}>
+                                <FormHelperText error>{error}</FormHelperText>
                             </Grid>
                         )}
                         <Grid item xs={12}>

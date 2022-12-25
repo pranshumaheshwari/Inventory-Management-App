@@ -32,6 +32,7 @@ import { FinishedGoodsInterface } from '../../FinishedGood/FinishedGood'
 import { FormInput } from '../../../components'
 import FormSelect from '../../../components/FormSelect'
 import { SalesOrdersInterface } from '../SalesOrders'
+import { useConfirm } from 'material-ui-confirm'
 
 interface FormValues extends Required<SalesOrdersInterface> {
     submit: null
@@ -41,6 +42,7 @@ const Form = () => {
     const { setAlert } = useContext(AlertContext)
     const navigate = useNavigate()
     const location = useLocation()
+    const confirm = useConfirm()
     const isEdit = location.state ? true : false
     const {
         token: { token },
@@ -122,26 +124,35 @@ const Form = () => {
         }
     }
     const onDelete = async () => {
-        try {
-            const resp = await Fetch({
-                url: `/salesorders/${encodeURIComponent(initialValues.id)}`,
-                options: {
-                    method: 'DELETE',
-                    authToken: token,
-                },
+        confirm({
+            description: `This will delete sales order ${initialValues.id}`,
+        })
+            .then(async () => {
+                try {
+                    const resp = await Fetch({
+                        url: `/salesorders/${encodeURIComponent(
+                            initialValues.id
+                        )}`,
+                        options: {
+                            method: 'DELETE',
+                            authToken: token,
+                        },
+                    })
+                    setAlert({
+                        type: 'warning',
+                        children: (
+                            <Typography>
+                                Succesfully deleted sales order with ID -{' '}
+                                {resp.id}
+                            </Typography>
+                        ),
+                    })
+                    navigate('..')
+                } catch (e) {
+                    setError((e as Error).message)
+                }
             })
-            setAlert({
-                type: 'warning',
-                children: (
-                    <Typography>
-                        Succesfully deleted sales order with ID - {resp.id}
-                    </Typography>
-                ),
-            })
-            navigate('..')
-        } catch (e) {
-            setError((e as Error).message)
-        }
+            .catch(() => {})
     }
 
     const getCustomers = async () => {
@@ -186,12 +197,6 @@ const Form = () => {
     useEffect(() => {
         Promise.all([getCustomers(), getFinishedGoods()])
     }, [])
-
-    if (error) {
-        ;<Grid item xs={12}>
-            <FormHelperText error>{error}</FormHelperText>
-        </Grid>
-    }
 
     if (!customer || !finishedgoods) {
         return <Skeleton width="90vw" height="100%" />
@@ -447,11 +452,16 @@ const Form = () => {
                                 )}
                             </FieldArray>
                         )}
-                        {activeStep === 1 && errors.submit && (
+                        {errors.submit && (
                             <Grid item xs={12}>
                                 <FormHelperText error>
                                     {errors.submit}
                                 </FormHelperText>
+                            </Grid>
+                        )}
+                        {error && (
+                            <Grid item xs={12}>
+                                <FormHelperText error>{error}</FormHelperText>
                             </Grid>
                         )}
                         {activeStep === 1 && (

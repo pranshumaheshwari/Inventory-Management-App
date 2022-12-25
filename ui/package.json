@@ -22,6 +22,7 @@
         "ag-grid-react": "^28.1.1",
         "dayjs": "^1.11.7",
         "formik": "^2.2.9",
+        "material-ui-confirm": "^3.0.7",
         "react": "^18.2.0",
         "react-device-detect": "^2.2.2",
         "react-dom": "^18.2.0",

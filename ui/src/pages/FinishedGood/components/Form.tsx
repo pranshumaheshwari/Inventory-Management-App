@@ -32,6 +32,7 @@ import { FinishedGoodsInterface } from '../FinishedGood'
 import { FormInput } from '../../../components'
 import FormSelect from '../../../components/FormSelect'
 import { RawMaterialInterface } from '../../RawMaterial/RawMaterial'
+import { useConfirm } from 'material-ui-confirm'
 
 interface FormValues extends Required<FinishedGoodsInterface> {
     submit: null
@@ -40,6 +41,7 @@ interface FormValues extends Required<FinishedGoodsInterface> {
 const Form = () => {
     const { setAlert } = useContext(AlertContext)
     const navigate = useNavigate()
+    const confirm = useConfirm()
     const location = useLocation()
     const isEdit = location.state ? true : false
     const {
@@ -119,26 +121,35 @@ const Form = () => {
         }
     }
     const onDelete = async () => {
-        try {
-            const resp = await Fetch({
-                url: `/finishedgoods/${encodeURIComponent(initialValues.id)}`,
-                options: {
-                    method: 'DELETE',
-                    authToken: token,
-                },
+        confirm({
+            description: `This will delete finished good ${initialValues.id}`,
+        })
+            .then(async () => {
+                try {
+                    const resp = await Fetch({
+                        url: `/finishedgoods/${encodeURIComponent(
+                            initialValues.id
+                        )}`,
+                        options: {
+                            method: 'DELETE',
+                            authToken: token,
+                        },
+                    })
+                    setAlert({
+                        type: 'warning',
+                        children: (
+                            <Typography>
+                                Succesfully deleted finished good with ID -{' '}
+                                {resp.id}
+                            </Typography>
+                        ),
+                    })
+                    navigate('..')
+                } catch (e) {
+                    setError((e as Error).message)
+                }
             })
-            setAlert({
-                type: 'warning',
-                children: (
-                    <Typography>
-                        Succesfully deleted finished good with ID - {resp.id}
-                    </Typography>
-                ),
-            })
-            navigate('..')
-        } catch (e) {
-            setError((e as Error).message)
-        }
+            .catch(() => {})
     }
 
     const getCustomers = async () => {
@@ -184,12 +195,6 @@ const Form = () => {
     useEffect(() => {
         Promise.all([getCustomers(), getRawmaterials()])
     }, [])
-
-    if (error) {
-        ;<Grid item xs={12}>
-            <FormHelperText error>{error}</FormHelperText>
-        </Grid>
-    }
 
     if (!customer || !rawmaterial) {
         return <Skeleton width="90vw" height="100%" />
@@ -551,11 +556,16 @@ const Form = () => {
                                 )}
                             </FieldArray>
                         )}
-                        {activeStep === 1 && errors.submit && (
+                        {errors.submit && (
                             <Grid item xs={12}>
                                 <FormHelperText error>
                                     {errors.submit}
                                 </FormHelperText>
+                            </Grid>
+                        )}
+                        {error && (
+                            <Grid item xs={12}>
+                                <FormHelperText error>{error}</FormHelperText>
                             </Grid>
                         )}
                         {activeStep === 1 && (

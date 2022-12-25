@@ -17,6 +17,7 @@ import { AlertContext } from '../../../context'
 import { FormInput } from '../../../components'
 import FormSelect from '../../../components/FormSelect'
 import { RawMaterialInterface } from '../RawMaterial'
+import { useConfirm } from 'material-ui-confirm'
 
 interface FormValues extends Required<RawMaterialInterface> {
     submit: null
@@ -26,6 +27,7 @@ const Form = () => {
     const { setAlert } = useContext(AlertContext)
     const navigate = useNavigate()
     const location = useLocation()
+    const confirm = useConfirm()
     const isEdit = location.state ? true : false
     const {
         token: { token },
@@ -67,28 +69,37 @@ const Form = () => {
         }
     }
     const onDelete = async () => {
-        try {
-            const resp = await Fetch({
-                url: `/rawmaterial/${encodeURIComponent(
-                    (location.state as FormValues).id
-                )}`,
-                options: {
-                    method: 'DELETE',
-                    authToken: token,
-                },
+        confirm({
+            description: `This will delete raw naterial ${
+                (location.state as FormValues).id
+            }`,
+        })
+            .then(async () => {
+                try {
+                    const resp = await Fetch({
+                        url: `/rawmaterial/${encodeURIComponent(
+                            (location.state as FormValues).id
+                        )}`,
+                        options: {
+                            method: 'DELETE',
+                            authToken: token,
+                        },
+                    })
+                    setAlert({
+                        type: 'warning',
+                        children: (
+                            <Typography>
+                                Succesfully deleted raw material with ID -{' '}
+                                {resp.id}
+                            </Typography>
+                        ),
+                    })
+                    navigate('..')
+                } catch (e) {
+                    setError((e as Error).message)
+                }
             })
-            setAlert({
-                type: 'warning',
-                children: (
-                    <Typography>
-                        Succesfully deleted raw material with ID - {resp.id}
-                    </Typography>
-                ),
-            })
-            navigate('..')
-        } catch (e) {
-            setError((e as Error).message)
-        }
+            .catch(() => {})
     }
 
     const getSuppliers = async () => {
@@ -113,12 +124,6 @@ const Form = () => {
     useEffect(() => {
         getSuppliers()
     }, [])
-
-    if (error) {
-        ;<Grid item xs={12}>
-            <FormHelperText error>{error}</FormHelperText>
-        </Grid>
-    }
 
     if (!supplier) {
         return <Skeleton width="90vw" height="100%" />
@@ -280,6 +285,11 @@ const Form = () => {
                                 <FormHelperText error>
                                     {errors.submit}
                                 </FormHelperText>
+                            </Grid>
+                        )}
+                        {error && (
+                            <Grid item xs={12}>
+                                <FormHelperText error>{error}</FormHelperText>
                             </Grid>
                         )}
                         <Grid item xs={12}>

@@ -31,6 +31,7 @@ import { FormInput } from '../../../components'
 import FormSelect from '../../../components/FormSelect'
 import { PurchaseOrdersInterface } from '../PurchaseOrders'
 import { RawMaterialInterface } from '../../RawMaterial/RawMaterial'
+import { useConfirm } from 'material-ui-confirm'
 
 interface FormValues extends Required<PurchaseOrdersInterface> {
     submit: null
@@ -40,6 +41,7 @@ const Form = () => {
     const { setAlert } = useContext(AlertContext)
     const navigate = useNavigate()
     const location = useLocation()
+    const confirm = useConfirm()
     const isEdit = location.state ? true : false
     const {
         token: { token },
@@ -117,45 +119,58 @@ const Form = () => {
     }
 
     const onDelete = async () => {
-        try {
-            const resp = await Fetch({
-                url: `/purchaseorders`,
-                options: {
-                    method: 'DELETE',
-                    authToken: token,
-                    body: initialValues,
-                },
+        confirm({
+            description: `This will delete Purchase Order ${initialValues.id}`,
+        })
+            .then(async () => {
+                try {
+                    const resp = await Fetch({
+                        url: `/purchaseorders`,
+                        options: {
+                            method: 'DELETE',
+                            authToken: token,
+                            body: initialValues,
+                        },
+                    })
+                    setAlert({
+                        type: 'warning',
+                        children: (
+                            <Typography>
+                                Succesfully deleted Purchase Order with ID -{' '}
+                                {resp.id}
+                            </Typography>
+                        ),
+                    })
+                    navigate('..')
+                } catch (e) {
+                    setError((e as Error).message)
+                }
             })
-            setAlert({
-                type: 'warning',
-                children: (
-                    <Typography>
-                        Succesfully deleted Purchase Order with ID - {resp.id}
-                    </Typography>
-                ),
-            })
-            navigate('..')
-        } catch (e) {
-            setError((e as Error).message)
-        }
+            .catch(() => {})
     }
 
     const onDeleteRm = async (rmId: string) => {
-        try {
-            await Fetch({
-                url: `/purchaseorders/details`,
-                options: {
-                    method: 'DELETE',
-                    authToken: token,
-                    body: {
-                        poId: initialValues.id,
-                        rmId,
-                    },
-                },
+        confirm({
+            description: `This will delete raw material ${rmId} from Purchase Order ${initialValues.id}`,
+        })
+            .then(async () => {
+                try {
+                    await Fetch({
+                        url: `/purchaseorders/details`,
+                        options: {
+                            method: 'DELETE',
+                            authToken: token,
+                            body: {
+                                poId: initialValues.id,
+                                rmId,
+                            },
+                        },
+                    })
+                } catch (e) {
+                    setError((e as Error).message)
+                }
             })
-        } catch (e) {
-            setError((e as Error).message)
-        }
+            .catch(() => {})
     }
 
     const getSuppliers = async () => {
@@ -202,12 +217,6 @@ const Form = () => {
     useEffect(() => {
         Promise.all([getSuppliers(), getRawMaterials()])
     }, [])
-
-    if (error) {
-        ;<Grid item xs={12}>
-            <FormHelperText error>{error}</FormHelperText>
-        </Grid>
-    }
 
     if (!supplier || !rawMaterial) {
         return <Skeleton width="90vw" height="100%" />
@@ -520,11 +529,16 @@ const Form = () => {
                                 )}
                             </FieldArray>
                         )}
-                        {activeStep === 1 && errors.submit && (
+                        {errors.submit && (
                             <Grid item xs={12}>
                                 <FormHelperText error>
                                     {errors.submit}
                                 </FormHelperText>
+                            </Grid>
+                        )}
+                        {error && (
+                            <Grid item xs={12}>
+                                <FormHelperText error>{error}</FormHelperText>
                             </Grid>
                         )}
                         {activeStep === 1 && (
