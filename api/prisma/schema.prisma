@@ -340,6 +340,7 @@ model OutwardsQualityCheck {
 model Dispatch {
     user          String
     invoiceNumber String @map("invoice_number")
+    soId          String @map("so_id")
     fgId          String @map("fg_id")
     quantity      Int
 
@@ -347,9 +348,10 @@ model Dispatch {
     oqcPendingStockBefore Float?    @map("oqc_pending_stock_before")
     createdAt             DateTime? @default(now()) @map("created_at")
 
-    fg    Fg      @relation(fields: [fgId], references: [id])
-    users Users   @relation(fields: [user], references: [username])
-    soId  String?
+    fg       Fg        @relation(fields: [fgId], references: [id])
+    users    Users     @relation(fields: [user], references: [username])
+    so       So        @relation(fields: [soId], references: [id])
+    soDetail SoDetails @relation(fields: [soId, fgId], references: [soId, fgId])
 
     @@id([invoiceNumber, fgId])
     @@index([fgId], name: "fg_id")
@@ -365,18 +367,20 @@ model So {
     production  Production[]  @relation("productionToso")
     requisition Requisition[] @relation("requisitionToso")
     soDetails   SoDetails[]
+    Dispatch    Dispatch[]
 
     @@index([customerId], name: "customer_id")
     @@map("so")
 }
 
 model SoDetails {
-    soId      String    @map("so_id")
-    fgId      String    @map("fg_id")
+    soId      String     @map("so_id")
+    fgId      String     @map("fg_id")
     quantity  Float
-    createdAt DateTime? @default(now()) @map("created_at")
-    fg        Fg        @relation(fields: [fgId], references: [id])
-    so        So        @relation(fields: [soId], references: [id])
+    createdAt DateTime?  @default(now()) @map("created_at")
+    fg        Fg         @relation(fields: [fgId], references: [id])
+    so        So         @relation(fields: [soId], references: [id])
+    Dispatch  Dispatch[]
 
     @@id([soId, fgId])
     @@index([fgId], name: "fg_id")

@@ -22,7 +22,6 @@ const NewPurchaseOrders = Loadable(
 const NewPurchaseOrdersFromSalesOrder = Loadable(
     lazy(() => import('../pages/PurchaseOrders/NewFromSalesOrder'))
 )
-const Invoice = Loadable(lazy(() => import('../pages/Inwards/Invoice/Invoice')))
 const NewInvoice = Loadable(lazy(() => import('../pages/Inwards/Invoice/New')))
 const AgainstPurchaseOrder = Loadable(
     lazy(() => import('../pages/Inwards/PurchaseOrder/PurchaseOrder'))

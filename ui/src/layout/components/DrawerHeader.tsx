@@ -1,7 +1,7 @@
-import { useTheme } from '@mui/material/styles'
-import { Stack, Chip, Typography } from '@mui/material'
+import { Stack, Typography } from '@mui/material'
 
 import DrawerHeaderStyled from './DrawerHeaderStyled'
+import { useTheme } from '@mui/material/styles'
 
 const DrawerHeader = ({ open }: { open: boolean }) => {
     const theme = useTheme()

@@ -270,32 +270,43 @@ app.post('/oqc/reject', async (req: Request, res: Response) => {
 app.post('/dispatch', async (req: Request, res: Response) => {
     const {
         invoiceNumber,
-        fgId,
-        quantity,
-        createdAt
+        soId,
+        details,
+        createdAt,
     } = req.body
 
     try {
         const result = await PrismaService.$transaction([
-            PrismaService.dispatch.create({
-                data: {
-                    quantity,
-                    createdAt,
-                    fgId,
-                    user: req.user ? req.user.username : '',
-                    invoiceNumber
-                }
-            }),
-            PrismaService.fg.update({
-                where: {
-                    id: fgId
-                },
-                data: {
-                    storeStock: {
-                        decrement: quantity
+            ...await details.map(({fgId, quantity}: {
+                fgId: string,
+                quantity: number
+            }) => 
+                PrismaService.dispatch.create({
+                    data: {
+                        quantity,
+                        createdAt,
+                        fgId,
+                        user: req.user ? req.user.username : '',
+                        soId,
+                        invoiceNumber
                     }
-                }
-            }),
+                })
+            ),
+            ...await details.map(({fgId, quantity}: {
+                fgId: string,
+                quantity: number
+            }) => 
+                PrismaService.fg.update({
+                    where: {
+                        id: fgId
+                    },
+                    data: {
+                        storeStock: {
+                            decrement: quantity
+                        }
+                    }
+                })
+            )
         ])
         
         res.json(result)
