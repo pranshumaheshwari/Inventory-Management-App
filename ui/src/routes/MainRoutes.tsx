@@ -45,7 +45,7 @@ const SalesOrders = Loadable(
 )
 const NewSalesOrders = Loadable(lazy(() => import('../pages/SalesOrders/New')))
 const Production = Loadable(
-    lazy(() => import('../pages/Production/Production'))
+    lazy(() => import('../pages/Outwards/Production/Production'))
 )
 const OutwardsQualityCheck = Loadable(
     lazy(() => import('../pages/Outwards/QualityCheck/QualityCheck'))
@@ -213,20 +213,20 @@ const MainRoutes: RouteObject = {
             ],
         },
         {
-            path: 'production',
-            children: [
-                {
-                    index: true,
-                    element: <Production />,
-                },
-            ],
-        },
-        {
             path: 'outwards',
             children: [
                 {
                     index: true,
-                    element: <Navigate replace={true} to="qualityCheck" />,
+                    element: <Navigate replace={true} to="production" />,
+                },
+                {
+                    path: 'production',
+                    children: [
+                        {
+                            index: true,
+                            element: <Production />,
+                        },
+                    ],
                 },
                 {
                     path: 'qualityCheck',

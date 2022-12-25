@@ -192,7 +192,7 @@ const QualityCheck = () => {
     const getFinishedGoods = async (soId: string) => {
         try {
             const data = await Fetch({
-                url: '/production',
+                url: '/outwards/production',
                 options: {
                     authToken: token,
                     params: {

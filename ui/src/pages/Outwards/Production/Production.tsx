@@ -7,17 +7,17 @@ import {
     Grid,
     Typography,
 } from '@mui/material'
-import { Fetch, useAuth } from '../../services'
+import { Fetch, useAuth } from '../../../services'
 import { Field, Formik, FormikHelpers } from 'formik'
 import React, { SyntheticEvent, useContext, useEffect, useState } from 'react'
 import dayjs, { Dayjs } from 'dayjs'
 
-import { AlertContext } from '../../context'
+import { AlertContext } from '../../../context'
 import Autocomplete from '@mui/material/Autocomplete'
-import DatePicker from '../../components/DatePicker'
-import { FinishedGoodsInterface } from '../FinishedGood/FinishedGood'
-import { FormInput } from '../../components'
-import FormSelect from '../../components/FormSelect'
+import DatePicker from '../../../components/DatePicker'
+import { FinishedGoodsInterface } from '../../FinishedGood/FinishedGood'
+import { FormInput } from '../../../components'
+import FormSelect from '../../../components/FormSelect'
 import InputLabel from '@mui/material/InputLabel'
 import { SelectChangeEvent } from '@mui/material/Select'
 import Skeleton from '@mui/material/Skeleton'
@@ -60,7 +60,7 @@ const Production = () => {
     ) => {
         try {
             const resp = await Fetch({
-                url: '/production',
+                url: '/outwards/production',
                 options: {
                     method: 'POST',
                     body: {

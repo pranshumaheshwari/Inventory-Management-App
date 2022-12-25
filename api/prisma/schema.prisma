@@ -333,26 +333,23 @@ model OutwardsQualityCheck {
     production Production @relation(fields: [productionId], references: [id])
     fg         Fg         @relation(fields: [fgId], references: [id])
     users      Users      @relation(fields: [user], references: [username])
-    Dispatch   Dispatch[]
 
     @@map("outwards_quality_check")
 }
 
 model Dispatch {
-    user                  String
-    invoiceNumber         String @map("invoice_number")
-    fgId                  String @map("fg_id")
-    quantity              Int
-    outwardQualityCheckId Int
+    user          String
+    invoiceNumber String @map("invoice_number")
+    fgId          String @map("fg_id")
+    quantity      Int
 
     storeStockBefore      Float?    @map("store_stock_before")
     oqcPendingStockBefore Float?    @map("oqc_pending_stock_before")
     createdAt             DateTime? @default(now()) @map("created_at")
 
-    fg                   Fg                   @relation(fields: [fgId], references: [id])
-    users                Users                @relation(fields: [user], references: [username])
-    outwardsQualityCheck OutwardsQualityCheck @relation(fields: [outwardQualityCheckId], references: [id])
-    soId                 String?
+    fg    Fg      @relation(fields: [fgId], references: [id])
+    users Users   @relation(fields: [user], references: [username])
+    soId  String?
 
     @@id([invoiceNumber, fgId])
     @@index([fgId], name: "fg_id")
@@ -404,7 +401,6 @@ enum OutwardsStatus {
     Accepted
     PendingOqcVerification
     RejectedOqcVerification
-    Dispatched
     Rejected
 
     @@map("outwards_status")
