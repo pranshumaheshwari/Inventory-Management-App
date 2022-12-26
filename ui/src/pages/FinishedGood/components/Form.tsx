@@ -31,6 +31,7 @@ import { AlertContext } from '../../../context'
 import { FinishedGoodsInterface } from '../FinishedGood'
 import { FormInput } from '../../../components'
 import FormSelect from '../../../components/FormSelect'
+import { InputAutoComplete } from '../../common'
 import { RawMaterialInterface } from '../../RawMaterial/RawMaterial'
 import { useConfirm } from 'material-ui-confirm'
 
@@ -52,8 +53,6 @@ const Form = () => {
     const [activeStep, setActiveStep] = React.useState(0)
     const [rawmaterial, setRawmaterial] =
         useState<Partial<RawMaterialInterface>[]>()
-    const [rawmaterialIdentifier, setRawmaterialIdentifier] =
-        useState<keyof RawMaterialInterface>('description')
     const [selectedRm, setSelectedRm] = useState<{
         rm: Partial<RawMaterialInterface>
         quantity: number
@@ -371,21 +370,18 @@ const Form = () => {
                             <FieldArray name="bom">
                                 {({ remove, push }) => (
                                     <>
-                                        <Grid item xs={1} />
-                                        <Field
-                                            name="RmSelect"
-                                            component={FormSelect}
-                                            xs={4}
-                                            label="Raw Material Field"
-                                            placeholder="Select Raw Material Field"
-                                            defaultValue="description"
-                                            items={[
+                                        <InputAutoComplete<
+                                            Partial<RawMaterialInterface>
+                                        >
+                                            identifierXs={4}
+                                            defaultIdentifier="description"
+                                            identifierItems={[
                                                 {
                                                     value: 'description',
                                                     label: 'Description',
                                                 },
                                                 {
-                                                    value: 'rmId',
+                                                    value: 'id',
                                                     label: 'ID',
                                                 },
                                                 {
@@ -393,46 +389,26 @@ const Form = () => {
                                                     value: 'dtplCode',
                                                 },
                                             ]}
-                                            onChange={(e: SelectChangeEvent) =>
-                                                setRawmaterialIdentifier(
-                                                    e.target
-                                                        ?.value as keyof RawMaterialInterface
-                                                )
+                                            itemXs={6}
+                                            label="Raw Material"
+                                            name="rmId"
+                                            options={rawmaterial}
+                                            uniqueIdentifier="id"
+                                            placeholder="Select Raw Material"
+                                            onChange={(
+                                                e: SyntheticEvent,
+                                                value
+                                            ) =>
+                                                setSelectedRm((selectedRm) => {
+                                                    if (value)
+                                                        return {
+                                                            ...selectedRm,
+                                                            rm: value,
+                                                        }
+                                                    return selectedRm
+                                                })
                                             }
                                         />
-                                        <Grid item xs={4}>
-                                            <InputLabel htmlFor="rmId">
-                                                Raw Material
-                                            </InputLabel>
-                                            <Autocomplete
-                                                id="rmId"
-                                                options={rawmaterial}
-                                                getOptionLabel={(option) =>
-                                                    option[
-                                                        rawmaterialIdentifier
-                                                    ] as string
-                                                }
-                                                disablePortal
-                                                onChange={(
-                                                    e: SyntheticEvent,
-                                                    value
-                                                ) =>
-                                                    setSelectedRm(
-                                                        (selectedRm) => {
-                                                            if (value)
-                                                                return {
-                                                                    ...selectedRm,
-                                                                    rm: value,
-                                                                }
-                                                            return selectedRm
-                                                        }
-                                                    )
-                                                }
-                                                renderInput={(params) => (
-                                                    <TextField {...params} />
-                                                )}
-                                            />
-                                        </Grid>
                                         <Field
                                             name="quantity"
                                             component={FormInput}
@@ -544,6 +520,7 @@ const Form = () => {
                                                         variant="contained"
                                                         color="error"
                                                         onClick={() =>
+                                                            // TODO - if isEdit then make a DELETE call to bom
                                                             remove(index)
                                                         }
                                                     >

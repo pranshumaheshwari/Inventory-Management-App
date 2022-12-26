@@ -1,6 +1,7 @@
 import express, { Request, Response, Router } from 'express'
+
+import { Prisma } from '@prisma/client'
 import { PrismaService } from '../service'
-import {Prisma} from '@prisma/client'
 
 const app: Router = express.Router()
 const prisma = PrismaService.rm
@@ -8,12 +9,18 @@ const prisma = PrismaService.rm
 
 app.get('/', async (req: Request, res: Response) => {
     const args: Prisma.RmFindManyArgs = {}
-    const { select, include } = req.query
+    const { select, include, where, distinct } = req.query
     if (select) {
         args.select = JSON.parse(select as string)
     }
     if (include) {
         args.include = JSON.parse(include as string)
+    }
+    if (where) {
+        args.where = JSON.parse(where as string)
+    }
+    if (distinct) {
+        args.distinct = JSON.parse(distinct as string)
     }
     const data = await prisma.findMany(args)
     res.json(data)

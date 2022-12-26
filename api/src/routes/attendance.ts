@@ -1,4 +1,5 @@
 import express, { Request, Response, Router } from 'express'
+
 import { PrismaService } from '../service'
 
 const app: Router = express.Router()
@@ -31,27 +32,27 @@ app.post('/', async (req: Request, res: Response) => {
     }
 })
 
-app.get('/:date', async (req: Request, res: Response) => {
-    const { date } = req.params
+app.get('/:id', async (req: Request, res: Response) => {
+    const { id } = req.params
     const data = await prisma.findUnique({
         where: {
-            date
+            id: parseInt(id)
         }
     })
     res.json(data)
 })
 
-app.put('/:date', async (req: Request, res: Response) => {
+app.put('/:id', async (req: Request, res: Response) => {
     const {
         number
     } = req.body
 
-    const { date } = req.params
+    const { id } = req.params
 
     try {
         const result = await prisma.update({
             where: {
-                date,
+                id: parseInt(id),
             },
             data: {
                 number
@@ -65,12 +66,12 @@ app.put('/:date', async (req: Request, res: Response) => {
     }
 })
 
-app.delete('/:date', async (req: Request, res: Response) => {
-    const { date } = req.params
+app.delete('/:id', async (req: Request, res: Response) => {
+    const { id } = req.params
     try {
         const result = await prisma.delete({
             where: {
-                date
+                id: parseInt(id)
             }
         })
         res.json(result)
