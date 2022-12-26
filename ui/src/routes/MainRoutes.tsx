@@ -29,6 +29,10 @@ const AgainstPurchaseOrder = Loadable(
 const InwardsQualityCheck = Loadable(
     lazy(() => import('../pages/Inwards/QualityCheck/QualityCheck'))
 )
+const NewRequisition = Loadable(lazy(() => import('../pages/Requisition/New')))
+const IssueRequisition = Loadable(
+    lazy(() => import('../pages/Requisition/Issue'))
+)
 
 // Finished Goods
 const FinishedGood = Loadable(
@@ -52,6 +56,9 @@ const OutwardsQualityCheck = Loadable(
 const Dispatch = Loadable(
     lazy(() => import('../pages/Outwards/Dispatch/Dispatch'))
 )
+
+// ManPower
+const Attendance = Loadable(lazy(() => import('../pages/ManPower/Attendance')))
 
 const MainRoutes: RouteObject = {
     path: '/',
@@ -244,6 +251,36 @@ const MainRoutes: RouteObject = {
                             element: <Dispatch />,
                         },
                     ],
+                },
+            ],
+        },
+        {
+            path: 'requisition',
+            children: [
+                {
+                    index: true,
+                    element: <Navigate replace={true} to="new" />,
+                },
+                {
+                    path: 'new',
+                    element: <NewRequisition />,
+                },
+                {
+                    path: 'issue',
+                    element: <IssueRequisition />,
+                },
+            ],
+        },
+        {
+            path: 'manPower',
+            children: [
+                {
+                    index: true,
+                    element: <Navigate replace={true} to="attendance" />,
+                },
+                {
+                    path: 'attendance',
+                    element: <Attendance />,
                 },
             ],
         },

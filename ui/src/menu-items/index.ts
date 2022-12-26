@@ -1,9 +1,10 @@
 import dashboard from './dashboard'
 import finishedgoods from './finishedgoods'
+import manpower from './manpower'
 import rawmaterial from './rawmaterial'
 
 const menuItems: MenuItemsInterface = {
-    items: [dashboard, rawmaterial, finishedgoods]
+    items: [dashboard, rawmaterial, finishedgoods, manpower]
 }
 
 export default menuItems

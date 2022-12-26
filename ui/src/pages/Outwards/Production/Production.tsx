@@ -1,27 +1,26 @@
 import * as Yup from 'yup'
 
 import {
+    Autocomplete,
     Button,
     CircularProgress,
     FormHelperText,
     Grid,
+    InputLabel,
+    Skeleton,
+    TextField,
     Typography,
 } from '@mui/material'
+import { DatePicker, FormInput, FormSelect } from '../../../components'
 import { Fetch, useAuth } from '../../../services'
 import { Field, Formik, FormikHelpers } from 'formik'
 import React, { SyntheticEvent, useContext, useEffect, useState } from 'react'
 import dayjs, { Dayjs } from 'dayjs'
 
 import { AlertContext } from '../../../context'
-import Autocomplete from '@mui/material/Autocomplete'
-import DatePicker from '../../../components/DatePicker'
 import { FinishedGoodsInterface } from '../../FinishedGood/FinishedGood'
-import { FormInput } from '../../../components'
-import FormSelect from '../../../components/FormSelect'
-import InputLabel from '@mui/material/InputLabel'
+import { InputAutoComplete } from '../../common'
 import { SelectChangeEvent } from '@mui/material/Select'
-import Skeleton from '@mui/material/Skeleton'
-import TextField from '@mui/material/TextField'
 
 interface ProductionInterface {
     date: Dayjs
@@ -44,8 +43,6 @@ const Production = () => {
     const [finishedGood, setFinishedGood] = useState<
         Partial<FinishedGoodsInterface>[]
     >([])
-    const [finishedGoodIndentifier, setFinishedGoodIdentifier] =
-        useState<keyof FinishedGoodsInterface>('description')
     const [customer, setCustomer] = useState<{ value: string }[] | null>()
     const [salesOrder, setSalesOrder] = useState<{ value: string }[] | null>([])
 
@@ -66,7 +63,7 @@ const Production = () => {
                     body: {
                         quantity: values.quantity,
                         fgId: values.fgId,
-                        createAt: dateToString(values.date),
+                        createAt: values.date.toISOString(),
                         soId: values.soId,
                     },
                     authToken: token,
@@ -166,16 +163,6 @@ const Production = () => {
         getCustomers()
     }, [])
 
-    const dateToString = (date: Dayjs) => {
-        return date.format('DD/MM/YYYY').toString()
-    }
-
-    if (error) {
-        ;<Grid item xs={12}>
-            <FormHelperText error>{error}</FormHelperText>
-        </Grid>
-    }
-
     if (!customer) {
         return <Skeleton width="90vw" height="100%" />
     }
@@ -231,14 +218,10 @@ const Production = () => {
                                 getFinishedGoods(e.target.value)
                             }}
                         />
-                        <Field
-                            name="FgSelect"
-                            component={FormSelect}
-                            xs={4}
-                            label="Finished Good Field"
-                            placeholder="Select Finished Good Field"
-                            defaultValue="description"
-                            items={[
+                        <InputAutoComplete<Partial<FinishedGoodsInterface>>
+                            identifierXs={4}
+                            defaultIdentifier="description"
+                            identifierItems={[
                                 {
                                     value: 'description',
                                     label: 'Description',
@@ -248,38 +231,20 @@ const Production = () => {
                                     label: 'Part Number',
                                 },
                             ]}
-                            onChange={(e: SelectChangeEvent) =>
-                                setFinishedGoodIdentifier(
-                                    e.target
-                                        ?.value as keyof FinishedGoodsInterface
-                                )
+                            itemXs={8}
+                            label="Finished Good"
+                            name="fgId"
+                            options={finishedGood}
+                            uniqueIdentifier="id"
+                            itemKey={finishedGood[0]?.id}
+                            onChange={(e: SyntheticEvent, value) =>
+                                setValues((values) => ({
+                                    ...values,
+                                    fgId: value?.id ? value.id : '',
+                                }))
                             }
+                            placeholder="Select Finished Good"
                         />
-                        <Grid item xs={8}>
-                            <InputLabel htmlFor="fgId">
-                                Finished Good
-                            </InputLabel>
-                            <Autocomplete
-                                id="fgId"
-                                key={finishedGood[0]?.id}
-                                options={finishedGood}
-                                getOptionLabel={(option) =>
-                                    option[finishedGoodIndentifier] as string
-                                }
-                                isOptionEqualToValue={(option, value) => {
-                                    return option['id'] === value['id']
-                                }}
-                                onChange={(e: SyntheticEvent, value) =>
-                                    setValues((values) => ({
-                                        ...values,
-                                        fgId: value?.id ? value?.id : '',
-                                    }))
-                                }
-                                renderInput={(params) => (
-                                    <TextField {...params} name="fgId" />
-                                )}
-                            />
-                        </Grid>
                         <Field
                             name="quantity"
                             component={FormInput}
@@ -293,10 +258,12 @@ const Production = () => {
                             label="Date"
                             value={values.date}
                             onChange={(value: Dayjs | null) => {
-                                setValues((values) => ({
-                                    ...values,
-                                    date: value ? value : dayjs(),
-                                }))
+                                if (value) {
+                                    setValues((values) => ({
+                                        ...values,
+                                        date: value,
+                                    }))
+                                }
                             }}
                             name="date"
                         />
@@ -305,6 +272,11 @@ const Production = () => {
                                 <FormHelperText error>
                                     {errors.submit}
                                 </FormHelperText>
+                            </Grid>
+                        )}
+                        {error && (
+                            <Grid item xs={12}>
+                                <FormHelperText error>{error}</FormHelperText>
                             </Grid>
                         )}
                         <Grid item xs={12}>

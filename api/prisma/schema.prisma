@@ -8,8 +8,9 @@ datasource db {
 }
 
 model Attendance {
-    number    Int       @default(0)
-    date      DateTime  @id @default(now())
+    id        Int       @id @default(autoincrement())
+    number    Int
+    date      DateTime  @default(now())
     createdAt DateTime? @default(now()) @map("created_at")
 
     @@map("attendance")
