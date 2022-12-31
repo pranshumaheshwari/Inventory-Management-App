@@ -1,6 +1,5 @@
 import { Grid, RegularBreakpoints } from '@mui/material'
 
-import { Dayjs } from 'dayjs'
 import { DesktopDatePicker } from '@mui/x-date-pickers'
 import InputLabel from '@mui/material/InputLabel'
 import React from 'react'
@@ -11,9 +10,9 @@ interface DatePickerInterface {
     xs: RegularBreakpoints['xs']
     label: string
     name: string
-    value: Dayjs
+    value: Date
     onChange: (
-        value: Dayjs | null,
+        value: Date | null,
         keyboardInputValue?: string | undefined
     ) => void
 }
@@ -30,7 +29,7 @@ const DatePicker = ({
             <Stack spacing={1}>
                 <InputLabel htmlFor={label}>{label}</InputLabel>
                 <DesktopDatePicker
-                    inputFormat="DD/MM/YYYY"
+                    inputFormat="dd/MM/yyyy"
                     renderInput={(params) => (
                         <TextField
                             {...params}

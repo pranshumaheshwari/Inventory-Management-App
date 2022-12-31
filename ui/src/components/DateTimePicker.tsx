@@ -1,7 +1,6 @@
 import { Grid, RegularBreakpoints } from '@mui/material'
 
 import { DateTimePicker } from '@mui/x-date-pickers'
-import { Dayjs } from 'dayjs'
 import InputLabel from '@mui/material/InputLabel'
 import React from 'react'
 import Stack from '@mui/material/Stack'
@@ -11,9 +10,9 @@ interface DateTimePickerInterface {
     xs: RegularBreakpoints['xs']
     label: string
     name: string
-    value: Dayjs
+    value: Date
     onChange: (
-        value: Dayjs | null,
+        value: Date | null,
         keyboardInputValue?: string | undefined
     ) => void
 }

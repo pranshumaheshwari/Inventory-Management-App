@@ -20,7 +20,6 @@ import React, {
     useEffect,
     useState,
 } from 'react'
-import dayjs, { Dayjs } from 'dayjs'
 
 import { AlertContext } from '../../../context'
 import DatePicker from '../../../components/DatePicker'
@@ -37,7 +36,7 @@ export interface OutwardsDispatch {
     customerId: string
     invoiceNumber: string
     soId: string
-    createdAt: Dayjs
+    createdAt: Date
     details: {
         fgId: string
         quantity: number
@@ -74,7 +73,7 @@ const Dispatch = () => {
         soId: '',
         invoiceNumber: '',
         details: [],
-        createdAt: dayjs(),
+        createdAt: new Date(),
         submit: null,
     }
 
@@ -286,11 +285,13 @@ const Dispatch = () => {
                                     xs={6}
                                     label="Date"
                                     value={values.createdAt}
-                                    onChange={(value: Dayjs | null) => {
-                                        setValues((values) => ({
-                                            ...values,
-                                            createdAt: value ? value : dayjs(),
-                                        }))
+                                    onChange={(value: Date | null) => {
+                                        if (value) {
+                                            setValues((values) => ({
+                                                ...values,
+                                                createdAt: value,
+                                            }))
+                                        }
                                     }}
                                     name="createdAt"
                                 />

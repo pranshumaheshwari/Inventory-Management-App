@@ -1,44 +1,20 @@
 import { AgGridReact, AgGridReactProps } from 'ag-grid-react'
 import { Box, Skeleton } from '@mui/material'
-import { Fetch, useAuth } from '../services'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useMemo, useRef } from 'react'
 
 import { ColDef } from 'ag-grid-community'
-import { FetchInterface } from '../services/fetch'
 
-export interface TableInterface extends FetchInterface, AgGridReactProps {
+export interface TableInterface<T> extends AgGridReactProps<T> {
     fileName?: string
 }
 
 function Table<Type>({
     columnDefs,
-    url,
-    options,
     fileName,
+    rowData,
     ...otherProps
-}: TableInterface) {
-    const [rowData, setRowData] = useState<Type[]>()
+}: TableInterface<Type>) {
     const gridRef = useRef<AgGridReact<Type>>(null)
-    const {
-        token: { token },
-    } = useAuth()
-
-    if (options === undefined) {
-        options = {}
-    }
-
-    if (!options['authToken']) {
-        options.authToken = token
-    }
-
-    const fetchData = async () => {
-        const data = await Fetch({ url, options })
-        setRowData(data)
-    }
-
-    useEffect(() => {
-        fetchData()
-    }, [])
 
     const defaultColDef = useMemo(
         () => ({

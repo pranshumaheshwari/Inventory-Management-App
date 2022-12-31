@@ -10,20 +10,14 @@
         "@mui/icons-material": "^5.10.3",
         "@mui/material": "^5.10.2",
         "@mui/x-date-pickers": "^5.0.11",
-        "@testing-library/jest-dom": "^5.14.1",
-        "@testing-library/react": "^13.0.0",
-        "@testing-library/user-event": "^13.2.1",
-        "@types/jest": "^27.0.1",
-        "@types/node": "^16.7.13",
-        "@types/react": "^18.0.0",
-        "@types/react-dom": "^18.0.0",
         "ag-grid-community": "^28.1.1",
         "ag-grid-enterprise": "^28.1.3",
         "ag-grid-react": "^28.1.1",
-        "dayjs": "^1.11.7",
+        "date-fns": "^2.29.3",
         "formik": "^2.2.9",
         "material-ui-confirm": "^3.0.7",
         "react": "^18.2.0",
+        "react-date-range": "^1.4.0",
         "react-device-detect": "^2.2.2",
         "react-dom": "^18.2.0",
         "react-router-dom": "^6.3.0",
@@ -59,5 +53,15 @@
             "last 1 firefox version",
             "last 1 safari version"
         ]
+    },
+    "devDependencies": {
+        "@types/react-date-range": "^1.4.4",
+        "@types/jest": "^27.0.1",
+        "@types/node": "^16.7.13",
+        "@types/react": "^18.0.0",
+        "@types/react-dom": "^18.0.0",
+        "@testing-library/jest-dom": "^5.14.1",
+        "@testing-library/react": "^13.0.0",
+        "@testing-library/user-event": "^13.2.1"
     }
 }

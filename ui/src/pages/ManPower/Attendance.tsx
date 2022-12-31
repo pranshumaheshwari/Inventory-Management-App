@@ -11,12 +11,11 @@ import { DatePicker, FormInput } from '../../components'
 import { Fetch, useAuth } from '../../services'
 import { Field, Formik, FormikHelpers } from 'formik'
 import React, { useContext } from 'react'
-import dayjs, { Dayjs } from 'dayjs'
 
 import { AlertContext } from '../../context'
 
 interface AttendanceInterface {
-    date: Dayjs
+    date: Date
     number: number
 }
 
@@ -74,7 +73,7 @@ const Attendance = () => {
             initialValues={{
                 submit: null,
                 number: 0,
-                date: dayjs(),
+                date: new Date(),
             }}
             validationSchema={Yup.object().shape({
                 date: Yup.date().required('Date is required'),
@@ -105,11 +104,13 @@ const Attendance = () => {
                             xs={6}
                             label="Date"
                             value={values.date}
-                            onChange={(value: Dayjs | null) => {
-                                setValues((values) => ({
-                                    ...values,
-                                    date: value ? value : dayjs(),
-                                }))
+                            onChange={(value: Date | null) => {
+                                if (value) {
+                                    setValues((values) => ({
+                                        ...values,
+                                        date: value,
+                                    }))
+                                }
                             }}
                         />
                         {errors.submit && (

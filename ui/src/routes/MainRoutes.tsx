@@ -59,6 +59,9 @@ const Dispatch = Loadable(
 
 // ManPower
 const Attendance = Loadable(lazy(() => import('../pages/ManPower/Attendance')))
+const AttendanceReport = Loadable(
+    lazy(() => import('../pages/ManPower/Report/Report'))
+)
 
 const MainRoutes: RouteObject = {
     path: '/',
@@ -281,6 +284,10 @@ const MainRoutes: RouteObject = {
                 {
                     path: 'attendance',
                     element: <Attendance />,
+                },
+                {
+                    path: 'report',
+                    element: <AttendanceReport />,
                 },
             ],
         },

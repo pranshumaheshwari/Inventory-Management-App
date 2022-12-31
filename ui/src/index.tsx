@@ -7,6 +7,8 @@ import 'ag-grid-enterprise'
 import 'ag-grid-community/styles/ag-grid.css' // Core grid CSS, always needed
 import 'ag-grid-community/styles/ag-theme-alpine.css' // Optional theme CSS
 import 'simplebar/src/simplebar.css'
+import 'react-date-range/dist/styles.css' // main style file
+import 'react-date-range/dist/theme/default.css' // theme css file
 
 import App from './App'
 import { BrowserRouter } from 'react-router-dom'

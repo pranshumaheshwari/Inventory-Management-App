@@ -15,7 +15,6 @@ import { DatePicker, FormInput, FormSelect } from '../../../components'
 import { Fetch, useAuth } from '../../../services'
 import { Field, Formik, FormikHelpers } from 'formik'
 import React, { SyntheticEvent, useContext, useEffect, useState } from 'react'
-import dayjs, { Dayjs } from 'dayjs'
 
 import { AlertContext } from '../../../context'
 import { FinishedGoodsInterface } from '../../FinishedGood/FinishedGood'
@@ -23,7 +22,7 @@ import { InputAutoComplete } from '../../common'
 import { SelectChangeEvent } from '@mui/material/Select'
 
 interface ProductionInterface {
-    date: Dayjs
+    date: Date
     fgId: string
     quantity: number
     soId: string
@@ -175,7 +174,7 @@ const Production = () => {
                 soId: '',
                 quantity: 0,
                 customerId: '',
-                date: dayjs(),
+                date: new Date(),
             }}
             validationSchema={Yup.object().shape({
                 fgId: Yup.string().required('Finished Good is required'),
@@ -257,7 +256,7 @@ const Production = () => {
                             xs={6}
                             label="Date"
                             value={values.date}
-                            onChange={(value: Dayjs | null) => {
+                            onChange={(value: Date | null) => {
                                 if (value) {
                                     setValues((values) => ({
                                         ...values,

@@ -13,14 +13,13 @@ import { DatePicker, FormInput, FormSelect } from '../../components'
 import { Fetch, useAuth } from '../../services'
 import { Field, Formik, FormikHelpers } from 'formik'
 import React, { SyntheticEvent, useContext, useEffect, useState } from 'react'
-import dayjs, { Dayjs } from 'dayjs'
 
 import { AlertContext } from '../../context'
 import { FinishedGoodsInterface } from '../FinishedGood/FinishedGood'
 import { InputAutoComplete } from '../common'
 
 interface NewRequisitionInterface {
-    date: Dayjs
+    date: Date
     fgId: string
     customerId: string
     soId: string
@@ -173,7 +172,7 @@ const NewRequisition = () => {
                 soId: '',
                 customerId: '',
                 quantity: 0,
-                date: dayjs(),
+                date: new Date(),
             }}
             validationSchema={Yup.object().shape({
                 fgId: Yup.string().required('Finished Good is required'),
@@ -255,7 +254,7 @@ const NewRequisition = () => {
                             xs={6}
                             label="Date"
                             value={values.date}
-                            onChange={(value: Dayjs | null) => {
+                            onChange={(value: Date | null) => {
                                 if (value) {
                                     setValues((values) => ({
                                         ...values,
