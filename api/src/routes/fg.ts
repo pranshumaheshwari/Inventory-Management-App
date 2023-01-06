@@ -9,12 +9,18 @@ const prisma = PrismaService.fg
 
 app.get('/', async (req: Request, res: Response) => {
     const args: Prisma.FgFindManyArgs = {}
-    const { select, include } = req.query
+    const { select, include, where, distinct } = req.query
     if (select) {
         args.select = JSON.parse(select as string)
     }
     if (include) {
         args.include = JSON.parse(include as string)
+    }
+    if (where) {
+        args.where = JSON.parse(where as string)
+    }
+    if (distinct) {
+        args.distinct = JSON.parse(distinct as string)
     }
     const data = await prisma.findMany(args)
     res.json(data)
@@ -78,6 +84,8 @@ app.get('/:id', async (req: Request, res: Response) => {
     res.json(data)
 })
 
+// TODO - make this upsert
+
 app.put('/:id', async (req: Request, res: Response) => {
     const {
         id: updatedId,
@@ -138,6 +146,8 @@ app.put('/:id', async (req: Request, res: Response) => {
         })
     }
 })
+
+// TODO - Add a bom delete route
 
 app.delete('/:id', async (req: Request, res: Response) => {
     const { id } = req.params

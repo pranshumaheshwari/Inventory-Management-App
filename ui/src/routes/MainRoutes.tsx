@@ -22,13 +22,16 @@ const NewPurchaseOrders = Loadable(
 const NewPurchaseOrdersFromSalesOrder = Loadable(
     lazy(() => import('../pages/PurchaseOrders/NewFromSalesOrder'))
 )
-const Invoice = Loadable(lazy(() => import('../pages/Inwards/Invoice/Invoice')))
 const NewInvoice = Loadable(lazy(() => import('../pages/Inwards/Invoice/New')))
 const AgainstPurchaseOrder = Loadable(
     lazy(() => import('../pages/Inwards/PurchaseOrder/PurchaseOrder'))
 )
 const InwardsQualityCheck = Loadable(
     lazy(() => import('../pages/Inwards/QualityCheck/QualityCheck'))
+)
+const NewRequisition = Loadable(lazy(() => import('../pages/Requisition/New')))
+const IssueRequisition = Loadable(
+    lazy(() => import('../pages/Requisition/Issue'))
 )
 
 // Finished Goods
@@ -45,12 +48,20 @@ const SalesOrders = Loadable(
 )
 const NewSalesOrders = Loadable(lazy(() => import('../pages/SalesOrders/New')))
 const Production = Loadable(
-    lazy(() => import('../pages/Production/Production'))
+    lazy(() => import('../pages/Outwards/Production/Production'))
 )
 const OutwardsQualityCheck = Loadable(
-    lazy(() => import('../pages/Outwards/QualityCheck'))
+    lazy(() => import('../pages/Outwards/QualityCheck/QualityCheck'))
 )
-const Dispatch = Loadable(lazy(() => import('../pages/Outwards/Dispatch')))
+const Dispatch = Loadable(
+    lazy(() => import('../pages/Outwards/Dispatch/Dispatch'))
+)
+
+// ManPower
+const Attendance = Loadable(lazy(() => import('../pages/ManPower/Attendance')))
+const AttendanceReport = Loadable(
+    lazy(() => import('../pages/ManPower/Report/Report'))
+)
 
 const MainRoutes: RouteObject = {
     path: '/',
@@ -211,20 +222,20 @@ const MainRoutes: RouteObject = {
             ],
         },
         {
-            path: 'production',
-            children: [
-                {
-                    index: true,
-                    element: <Production />,
-                },
-            ],
-        },
-        {
             path: 'outwards',
             children: [
                 {
                     index: true,
-                    element: <Navigate replace={true} to="qualityCheck" />,
+                    element: <Navigate replace={true} to="production" />,
+                },
+                {
+                    path: 'production',
+                    children: [
+                        {
+                            index: true,
+                            element: <Production />,
+                        },
+                    ],
                 },
                 {
                     path: 'qualityCheck',
@@ -243,6 +254,40 @@ const MainRoutes: RouteObject = {
                             element: <Dispatch />,
                         },
                     ],
+                },
+            ],
+        },
+        {
+            path: 'requisition',
+            children: [
+                {
+                    index: true,
+                    element: <Navigate replace={true} to="new" />,
+                },
+                {
+                    path: 'new',
+                    element: <NewRequisition />,
+                },
+                {
+                    path: 'issue',
+                    element: <IssueRequisition />,
+                },
+            ],
+        },
+        {
+            path: 'manPower',
+            children: [
+                {
+                    index: true,
+                    element: <Navigate replace={true} to="attendance" />,
+                },
+                {
+                    path: 'attendance',
+                    element: <Attendance />,
+                },
+                {
+                    path: 'report',
+                    element: <AttendanceReport />,
                 },
             ],
         },

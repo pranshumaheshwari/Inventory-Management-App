@@ -1,10 +1,11 @@
 -- CreateTable
 CREATE TABLE `attendance` (
-    `number` INTEGER NOT NULL DEFAULT 0,
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `number` INTEGER NOT NULL,
     `date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `created_at` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
 
-    PRIMARY KEY (`date`)
+    PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
@@ -252,7 +253,7 @@ CREATE TABLE `production` (
     `store_stock_before` DOUBLE NULL,
     `oqc_pending_stock_before` DOUBLE NULL,
     `created_at` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `status` ENUM('Accepted', 'PendingOqcVerification', 'RejectedOqcVerification', 'Dispatched', 'Rejected') NOT NULL DEFAULT 'PendingOqcVerification',
+    `status` ENUM('Accepted', 'PendingOqcVerification', 'RejectedOqcVerification', 'Rejected') NOT NULL DEFAULT 'PendingOqcVerification',
 
     INDEX `fg_id`(`fg_id`),
     INDEX `so_id`(`so_id`),
@@ -269,7 +270,7 @@ CREATE TABLE `outwards_quality_check` (
     `store_stock_before` DOUBLE NULL,
     `oqc_pending_stock_before` DOUBLE NULL,
     `created_at` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `status` ENUM('Accepted', 'PendingOqcVerification', 'RejectedOqcVerification', 'Dispatched', 'Rejected') NOT NULL DEFAULT 'Accepted',
+    `status` ENUM('Accepted', 'PendingOqcVerification', 'RejectedOqcVerification', 'Rejected') NOT NULL DEFAULT 'Accepted',
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -278,13 +279,12 @@ CREATE TABLE `outwards_quality_check` (
 CREATE TABLE `dispatch` (
     `user` VARCHAR(191) NOT NULL,
     `invoice_number` VARCHAR(191) NOT NULL,
+    `so_id` VARCHAR(191) NOT NULL,
     `fg_id` VARCHAR(191) NOT NULL,
     `quantity` INTEGER NOT NULL,
-    `outwardQualityCheckId` INTEGER NOT NULL,
     `store_stock_before` DOUBLE NULL,
     `oqc_pending_stock_before` DOUBLE NULL,
     `created_at` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `soId` VARCHAR(191) NULL,
 
     INDEX `fg_id`(`fg_id`),
     PRIMARY KEY (`invoice_number`, `fg_id`)
@@ -418,7 +418,10 @@ ALTER TABLE `dispatch` ADD CONSTRAINT `dispatch_fg_id_fkey` FOREIGN KEY (`fg_id`
 ALTER TABLE `dispatch` ADD CONSTRAINT `dispatch_user_fkey` FOREIGN KEY (`user`) REFERENCES `users`(`username`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `dispatch` ADD CONSTRAINT `dispatch_outwardQualityCheckId_fkey` FOREIGN KEY (`outwardQualityCheckId`) REFERENCES `outwards_quality_check`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `dispatch` ADD CONSTRAINT `dispatch_so_id_fkey` FOREIGN KEY (`so_id`) REFERENCES `so`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `dispatch` ADD CONSTRAINT `dispatch_so_id_fg_id_fkey` FOREIGN KEY (`so_id`, `fg_id`) REFERENCES `so_details`(`so_id`, `fg_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `so` ADD CONSTRAINT `so_customer_id_fkey` FOREIGN KEY (`customer_id`) REFERENCES `customer`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

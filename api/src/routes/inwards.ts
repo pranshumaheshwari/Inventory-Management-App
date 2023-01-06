@@ -42,7 +42,7 @@ app.get('/iqc', async (req: Request, res: Response) => {
     const data = await PrismaService.inwardsIQCPending.findMany(args)
     res.json(data)
 })
-// TODO - Check if PO is complete
+
 app.put('/rejectPO', async (req: Request, res: Response) => {
     const {
         supplierId,
@@ -60,16 +60,6 @@ app.put('/rejectPO', async (req: Request, res: Response) => {
     } = req.body
     try {
         const result = await PrismaService.$transaction([
-            PrismaService.invoicePO.create({
-                data: {
-                    supplierId,
-                    invoiceId,
-                    poId,
-                },
-                select: {
-                    id: true,
-                },
-            }),
             ...details.map(({ rmId, quantity }) => {
                 return PrismaService.inwardsPoPending.update({
                     where: {
@@ -81,6 +71,11 @@ app.put('/rejectPO', async (req: Request, res: Response) => {
                     },
                     data: {
                         status: 'RejectedPoVerification',
+                        po: {
+                            connect: {
+                                id: poId,
+                            },
+                        },
                         rm: {
                             update: {
                                 poPendingStock: {
@@ -120,13 +115,6 @@ app.put('/acceptPO', async (req: Request, res: Response) => {
     } = req.body
     try {
         const result = await PrismaService.$transaction([
-            PrismaService.invoicePO.create({
-                data: {
-                    supplierId,
-                    invoiceId,
-                    poId,
-                },
-            }),
             ...details.map(({ rmId, quantity }) => {
                 return PrismaService.inwardsPoPending.update({
                     where: {
@@ -155,6 +143,11 @@ app.put('/acceptPO', async (req: Request, res: Response) => {
                                 },
                             },
                         },
+                        po: {
+                            connect: {
+                                id: poId,
+                            },
+                        },
                     },
                 })
             }),
@@ -181,7 +174,7 @@ app.put('/rejectIQCs', async (req: Request, res: Response) => {
 
     try {
         const result = await PrismaService.$transaction([
-            ...details.map(({ rmId, quantity, inwardsIQCPendingId }) => {
+            ...details.map(({ quantity, inwardsIQCPendingId }) => {
                 return PrismaService.inwardsIQCPending.update({
                     where: {
                         id: inwardsIQCPendingId,

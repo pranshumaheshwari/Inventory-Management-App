@@ -16,7 +16,7 @@ const AuthService = () => {
         const userToken = JSON.parse(tokenString);
         return userToken
     }
-    const [token, setToken] = useState<tokenInterface>(getToken())
+    const [token] = useState<tokenInterface>(getToken())
     const saveToken = (token: any) => {
         localStorage.setItem("token", JSON.stringify(token))
     }

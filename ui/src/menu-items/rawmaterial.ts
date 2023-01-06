@@ -59,6 +59,27 @@ const dashboard: ItemInterface = {
                     urls: ['/inwards/qualityCheck']
                 }
             ],
+        },
+        {
+            id: 'rawmaterial-requisition',
+            title: 'Requisition',
+            type: 'group',
+            children: [
+                {
+                    id: 'rawmaterial-requisition-new',
+                    title: 'New Requisition',
+                    type: 'item',
+                    url: '/requisition/new',
+                    icon: 'add_outlined',
+                }, 
+                {
+                    id: 'rawmaterial-requisition-issue',
+                    title: 'Issue Against Requisition',
+                    type: 'item',
+                    url: '/requisition/issue',
+                    icon: 'call_missed_outgoing_outlined',
+                }
+            ]
         }
     ]
 }

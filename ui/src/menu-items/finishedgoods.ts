@@ -30,17 +30,17 @@ const dashboard: ItemInterface = {
             urls: ['/salesOrders', '/salesOrders/new', '/salesOrders/edit']
         },
         {
-            id: 'finishedgood-production',
-            title: 'Production',
-            type: 'item',
-            url: '/production',
-            icon: 'precision_manufacturing'
-        },
-        {
             id: 'finishedgood-outwards',
             title: 'Outwards',
             type: 'group',
             children: [
+                {
+                    id: 'finishedgood-outwards-production',
+                    title: 'Production',
+                    type: 'item',
+                    url: '/outwards/production',
+                    icon: 'precision_manufacturing'
+                },
                 {
                     id: 'finishedgood-outwards-qualityCheck',
                     title: 'Quality Check',

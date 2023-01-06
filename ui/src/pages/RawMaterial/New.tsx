@@ -1,13 +1,14 @@
-import React from 'react'
 import { Container } from '@mui/material'
 import Form from './components/Form'
+import React from 'react'
 
-const NewSupplier = () => {
-	return (
-		<Container>
-			<Form />
-		</Container>
-	)
+const NewRawMaterial = () => {
+    // TODO: Add other content such as the bom, po etc
+    return (
+        <Container>
+            <Form />
+        </Container>
+    )
 }
 
-export default NewSupplier
+export default NewRawMaterial

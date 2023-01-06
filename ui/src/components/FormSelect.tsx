@@ -1,20 +1,41 @@
+import {
+    FormHelperText,
+    Grid,
+    InputLabel,
+    MenuItem,
+    RegularBreakpoints,
+    Select,
+    SelectChangeEvent,
+    Stack,
+} from '@mui/material'
 import React, { ReactNode } from 'react'
-import { FormHelperText, Grid, InputLabel, MenuItem, RegularBreakpoints, Select, SelectChangeEvent, Stack } from '@mui/material'
+
 import { FieldProps } from 'formik'
 
 interface FormSelectInterface extends FieldProps {
-    xs: RegularBreakpoints["xs"];
-    label: string;
-    placeholder: string;
-    defaultValue?: string;
+    xs: RegularBreakpoints['xs']
+    label: string
+    placeholder: string
+    defaultValue?: string
     items: {
-        value: string | number;
-        label?: string;
-    }[];
-    onChange?: ((event: SelectChangeEvent, child: ReactNode) => void) | undefined;
+        value: string | number
+        label?: string
+    }[]
+    onChange?:
+        | ((event: SelectChangeEvent, child: ReactNode) => void)
+        | undefined
 }
 
-const FormSelect = ({ xs, label, field, form, items, placeholder, defaultValue, onChange }: FormSelectInterface) => {
+const FormSelect = ({
+    xs,
+    label,
+    field,
+    form,
+    items,
+    placeholder,
+    defaultValue,
+    onChange,
+}: FormSelectInterface) => {
     const meta = form.getFieldMeta(field.name)
     return (
         <Grid item xs={xs}>
@@ -31,23 +52,21 @@ const FormSelect = ({ xs, label, field, form, items, placeholder, defaultValue, 
                     error={Boolean(meta.touched && meta.error)}
                     defaultValue={defaultValue}
                 >
-                    <MenuItem
-                        value=""
-                        disabled
-                        selected
-                    >
+                    <MenuItem value="" disabled selected>
                         {placeholder}
                     </MenuItem>
-                    {
-                        items.map(item => (
+                    {items &&
+                        items.map((item) => (
                             <MenuItem value={item.value} key={item.value}>
                                 {item.label ? item.label : item.value}
                             </MenuItem>
-                        ))
-                    }
+                        ))}
                 </Select>
                 {meta.touched && meta.error && (
-                    <FormHelperText error id={"standard-weight-helper-text-" + field.name}>
+                    <FormHelperText
+                        error
+                        id={'standard-weight-helper-text-' + field.name}
+                    >
                         {meta.error}
                     </FormHelperText>
                 )}

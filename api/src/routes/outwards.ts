@@ -5,6 +5,129 @@ import { PrismaService } from '../service'
 
 const app: Router = express.Router()
 
+
+
+app.get('/production', async (req: Request, res: Response) => {
+    const args: Prisma.ProductionFindManyArgs = {}
+    const { select, include, where, distinct } = req.query
+    if (select) {
+        args.select = JSON.parse(select as string)
+    }
+    if (include) {
+        args.include = JSON.parse(include as string)
+    }
+    if (where) {
+        args.where = JSON.parse(where as string)
+    }
+    if (distinct) {
+        args.distinct = JSON.parse(distinct as string)
+    }
+    const data = await PrismaService.production.findMany(args)
+    res.json(data)
+})
+
+app.post('/production', async (req: Request, res: Response) => {
+    const {
+        fgId,
+        soId,
+        quantity,
+        createdAt
+    } = req.body
+
+    try {
+        const bom = await PrismaService.bom.findMany({
+            where: {
+                fgId
+            }
+        })
+        const result = await PrismaService.$transaction([
+            PrismaService.production.create({
+                data: {
+                    soId,
+                    fgId,
+                    quantity,
+                    createdAt,
+                    user: req.user ? req.user.username : '',
+                }
+            }),
+            PrismaService.fg.update({
+                where: {
+                    id: fgId
+                },
+                data: {
+                    oqcPendingStock: {
+                        increment: quantity
+                    },
+                }
+            }),
+            ...bom.map(bom => {
+                return PrismaService.rm.update({
+                    where: {
+                        id: bom.rmId
+                    },
+                    data: {
+                        lineStock: {
+                            decrement: quantity * bom.quantity
+                        }
+                    }
+                })
+            })
+        ])
+        
+        res.json(result)
+    } catch (e) {
+        res.status(500).json({
+            message: (e as Error).message
+        })
+    }
+})
+
+app.put('/production/:id', async (req: Request, res: Response) => {
+    const {
+        fgId,
+        soId,
+        quantity,
+        createdAt
+    } = req.body
+
+    const { id } = req.params
+
+    try {
+        const result = await PrismaService.production.update({
+            where: {
+                id: parseInt(id),
+            },
+            data: {
+                fgId,
+                soId,
+                quantity,
+                createdAt
+            }
+        })
+        res.json(result)
+    } catch (e) {
+        res.status(500).json({
+            message: (e as Error).message
+        })
+    }
+})
+
+app.delete('/production/:id', async (req: Request, res: Response) => {
+    const { id } = req.params
+    try {
+        const result = await PrismaService.production.delete({
+            where: {
+                id: parseInt(id)
+            }
+        })
+        res.json(result)
+    } catch (e) {
+        res.status(500).json({
+            message: (e as Error).message
+        })
+    }
+})
+
 app.get('/oqc', async (req: Request, res: Response) => {
     const args: Prisma.OutwardsQualityCheckFindManyArgs = {}
     const { select, include, where, distinct } = req.query
@@ -147,47 +270,43 @@ app.post('/oqc/reject', async (req: Request, res: Response) => {
 app.post('/dispatch', async (req: Request, res: Response) => {
     const {
         invoiceNumber,
-        fgId,
-        quantity,
-        outwardQualityCheckId,
-        createdAt
+        soId,
+        details,
+        createdAt,
     } = req.body
 
     try {
         const result = await PrismaService.$transaction([
-            PrismaService.dispatch.create({
-                data: {
-                    quantity,
-                    createdAt,
-                    fgId,
-                    outwardQualityCheckId,
-                    user: req.user ? req.user.username : '',
-                    invoiceNumber
-                }
-            }),
-            PrismaService.outwardsQualityCheck.update({
-                where: {
-                    id: outwardQualityCheckId
-                },
-                data: {
-                    status: 'Dispatched',
-                    production: {
-                        update: {
-                            status: 'Dispatched'
+            ...await details.map(({fgId, quantity}: {
+                fgId: string,
+                quantity: number
+            }) => 
+                PrismaService.dispatch.create({
+                    data: {
+                        quantity,
+                        createdAt,
+                        fgId,
+                        user: req.user ? req.user.username : '',
+                        soId,
+                        invoiceNumber
+                    }
+                })
+            ),
+            ...await details.map(({fgId, quantity}: {
+                fgId: string,
+                quantity: number
+            }) => 
+                PrismaService.fg.update({
+                    where: {
+                        id: fgId
+                    },
+                    data: {
+                        storeStock: {
+                            decrement: quantity
                         }
                     }
-                }
-            }),
-            PrismaService.fg.update({
-                where: {
-                    id: fgId
-                },
-                data: {
-                    storeStock: {
-                        decrement: quantity
-                    }
-                }
-            }),
+                })
+            )
         ])
         
         res.json(result)
@@ -232,7 +351,6 @@ app.put('/dispatch/:invoiceNumber/:fgId', async (req: Request, res: Response) =>
     const {
         quantity,
         createdAt,
-        outwardQualityCheckId,
         fgId: updatedFgId,
         invoiceNumber: updatedInvoiceNumber
     } = req.body
@@ -250,7 +368,6 @@ app.put('/dispatch/:invoiceNumber/:fgId', async (req: Request, res: Response) =>
             data: {
                 quantity,
                 createdAt,
-                outwardQualityCheckId,
                 fgId: updatedFgId,
                 invoiceNumber: updatedInvoiceNumber
             }

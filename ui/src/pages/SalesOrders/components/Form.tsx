@@ -123,6 +123,7 @@ const Form = () => {
             setSubmitting(false)
         }
     }
+
     const onDelete = async () => {
         confirm({
             description: `This will delete sales order ${initialValues.id}`,
@@ -324,6 +325,10 @@ const Form = () => {
                                                     ] as string
                                                 }
                                                 disablePortal
+                                                isOptionEqualToValue={(
+                                                    option,
+                                                    value
+                                                ) => option.id === value.id}
                                                 onChange={(
                                                     e: SyntheticEvent,
                                                     value
@@ -417,7 +422,7 @@ const Form = () => {
                                             >
                                                 <Grid item xs={4}>
                                                     <OutlinedInput
-                                                        name={`bom.${index}.rmId`}
+                                                        name={`soDetails.${index}.fgId`}
                                                         type="text"
                                                         disabled
                                                         value={item.fgId}
@@ -425,7 +430,7 @@ const Form = () => {
                                                 </Grid>
                                                 <Grid item xs={4}>
                                                     <OutlinedInput
-                                                        name={`bom.${index}.quantity`}
+                                                        name={`soDetails.${index}.quantity`}
                                                         type="number"
                                                         disabled
                                                         value={item.quantity}

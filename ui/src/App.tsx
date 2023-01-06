@@ -3,7 +3,7 @@ import './App.css'
 import { AlertContext, DrawerContext } from './context'
 import React, { useState } from 'react'
 
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
 import { AlertColor } from '@mui/material/Alert'
 import CustomTheme from './themes'
 import { LocalizationProvider } from '@mui/x-date-pickers'
@@ -20,7 +20,7 @@ function App() {
         children: null,
     })
     return (
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
             <CustomTheme>
                 <ScrollTop>
                     <DrawerContext.Provider value={{ open, setOpen }}>
