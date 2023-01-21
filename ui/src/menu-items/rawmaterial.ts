@@ -11,7 +11,7 @@ const dashboard: ItemInterface = {
             type: 'item',
             url: '/rawmaterial',
             icon: 'bar_chart_outlined',
-            urls: ['/rawmaterial', '/rawmaterial/new', '/rawmaterial/edit']
+            urls: ['/rawMaterial', '/rawMaterial/new', '/rawMaterial/edit'],
         },
         {
             id: 'rawmaterial-suppliers',
@@ -19,7 +19,7 @@ const dashboard: ItemInterface = {
             type: 'item',
             url: '/suppliers',
             icon: 'local_shipping_outlined',
-            urls: ['/suppliers', '/suppliers/new', '/suppliers/edit']
+            urls: ['/suppliers', '/suppliers/new', '/suppliers/edit'],
         },
         {
             id: 'rawmaterial-purchaseOrders',
@@ -27,7 +27,11 @@ const dashboard: ItemInterface = {
             type: 'item',
             url: '/purchaseOrders',
             icon: 'local_offer_outlined',
-            urls: ['/purchaseOrders', '/purchaseOrders/new', '/purchaseOrders/edit']
+            urls: [
+                '/purchaseOrders',
+                '/purchaseOrders/new',
+                '/purchaseOrders/edit',
+            ],
         },
         {
             id: 'rawmaterial-inwards',
@@ -40,7 +44,11 @@ const dashboard: ItemInterface = {
                     type: 'item',
                     url: '/inwards/invoice',
                     icon: 'note_outlined',
-                    urls: ['/inwards/invoice', '/inwards/invoice/new', '/inwards/invoice/edit']
+                    urls: [
+                        '/inwards/invoice',
+                        '/inwards/invoice/new',
+                        '/inwards/invoice/edit',
+                    ],
                 },
                 {
                     id: 'rawmaterial-inwards-purchaseOrder',
@@ -48,7 +56,7 @@ const dashboard: ItemInterface = {
                     type: 'item',
                     url: '/inwards/purchaseOrder',
                     icon: 'add_box_outlined',
-                    urls: ['/inwards/purchaseOrder']
+                    urls: ['/inwards/purchaseOrder'],
                 },
                 {
                     id: 'rawmaterial-inwards-qualityCheck',
@@ -56,8 +64,8 @@ const dashboard: ItemInterface = {
                     type: 'item',
                     url: '/inwards/qualityCheck',
                     icon: 'check_outlined',
-                    urls: ['/inwards/qualityCheck']
-                }
+                    urls: ['/inwards/qualityCheck'],
+                },
             ],
         },
         {
@@ -71,17 +79,30 @@ const dashboard: ItemInterface = {
                     type: 'item',
                     url: '/requisition/new',
                     icon: 'add_outlined',
-                }, 
+                },
                 {
                     id: 'rawmaterial-requisition-issue',
                     title: 'Issue Against Requisition',
                     type: 'item',
                     url: '/requisition/issue',
                     icon: 'call_missed_outgoing_outlined',
-                }
-            ]
-        }
-    ]
+                },
+            ],
+        },
+        {
+            id: 'rawmaterial-report',
+            title: 'Reports',
+            type: 'group',
+            children: [
+                {
+                    id: 'rawmaterial-report-indiviual',
+                    title: 'By Unique Identifier',
+                    type: 'item',
+                    url: '/rawMaterial/report/id',
+                },
+            ],
+        },
+    ],
 }
 
 export default dashboard

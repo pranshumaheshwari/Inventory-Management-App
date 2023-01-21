@@ -33,6 +33,9 @@ const NewRequisition = Loadable(lazy(() => import('../pages/Requisition/New')))
 const IssueRequisition = Loadable(
     lazy(() => import('../pages/Requisition/Issue'))
 )
+const RawMaterialReportById = Loadable(
+    lazy(() => import('../pages/RawMaterial/Report/ById'))
+)
 
 // Finished Goods
 const FinishedGood = Loadable(
@@ -85,6 +88,15 @@ const MainRoutes: RouteObject = {
                 {
                     path: 'edit',
                     element: <NewRawMaterial />,
+                },
+                {
+                    path: 'report',
+                    children: [
+                        {
+                            path: 'id',
+                            element: <RawMaterialReportById />,
+                        },
+                    ],
                 },
             ],
         },
