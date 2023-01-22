@@ -6,7 +6,6 @@ import { PrismaService } from '../service'
 const app: Router = express.Router()
 const prisma = PrismaService.rm
 
-
 app.get('/', async (req: Request, res: Response) => {
     const args: Prisma.RmFindManyArgs = {}
     const { select, include, where, distinct } = req.query
@@ -36,7 +35,7 @@ app.post('/', async (req: Request, res: Response) => {
         unit,
         price,
         storeStock,
-        lineStock
+        lineStock,
     } = req.body
 
     try {
@@ -50,13 +49,13 @@ app.post('/', async (req: Request, res: Response) => {
                 unit,
                 price,
                 storeStock,
-                lineStock
-            }
+                lineStock,
+            },
         })
         res.json(result)
     } catch (e) {
         res.status(500).json({
-            message: (e as Error).message
+            message: (e as Error).message,
         })
     }
 })
@@ -65,8 +64,8 @@ app.get('/:id', async (req: Request, res: Response) => {
     const { id } = req.params
     const data = await prisma.findUnique({
         where: {
-            id
-        }
+            id,
+        },
     })
     res.json(data)
 })
@@ -80,7 +79,7 @@ app.put('/:id', async (req: Request, res: Response) => {
         unit,
         price,
         storeStock,
-        lineStock
+        lineStock,
     } = req.body
 
     const { id } = req.params
@@ -98,13 +97,13 @@ app.put('/:id', async (req: Request, res: Response) => {
                 unit,
                 price,
                 storeStock,
-                lineStock
-            }
+                lineStock,
+            },
         })
         res.json(result)
     } catch (e) {
         res.status(500).json({
-            message: (e as Error).message
+            message: (e as Error).message,
         })
     }
 })
@@ -114,13 +113,13 @@ app.delete('/:id', async (req: Request, res: Response) => {
     try {
         const result = await prisma.delete({
             where: {
-                id
-            }
+                id,
+            },
         })
         res.json(result)
     } catch (e) {
         res.status(500).json({
-            message: (e as Error).message
+            message: (e as Error).message,
         })
     }
 })

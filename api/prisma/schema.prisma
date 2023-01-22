@@ -31,6 +31,7 @@ model Users {
     inwardsPO            InwardsIQCPending[]
     inwardsIQC           InwardsVerified[]
     OutwardsQualityCheck OutwardsQualityCheck[]
+    ProductionLog        ProductionLog[]
 
     @@map("users")
 }
@@ -87,8 +88,9 @@ model Rm {
     poDetails          PoDetails[]
     requisitionOutward RequisitionOutward[]
     inwardsPoPending   InwardsPoPending[]
-    inwardsIQCPENDING  InwardsIQCPending[]
+    inwardsIqcPending  InwardsIQCPending[]
     inwardsVerified    InwardsVerified[]
+    ProductionLog      ProductionLog[]
 
     @@index([supplierId], name: "supplier_id")
     @@map("rm")
@@ -113,18 +115,20 @@ model Fg {
     requisition          Requisition[]
     soDetails            SoDetails[]
     OutwardsQualityCheck OutwardsQualityCheck[]
+    ProductionLog        ProductionLog[]
 
     @@index([customerId], name: "customer_id")
     @@map("fg")
 }
 
 model Bom {
-    fgId      String    @map("fg_id")
-    rmId      String    @map("rm_id")
-    quantity  Float
-    createdAt DateTime? @default(now()) @map("created_at")
-    fg        Fg        @relation(fields: [fgId], references: [id], onDelete: Restrict, onUpdate: Cascade)
-    rm        Rm        @relation(fields: [rmId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    fgId          String          @map("fg_id")
+    rmId          String          @map("rm_id")
+    quantity      Float
+    createdAt     DateTime?       @default(now()) @map("created_at")
+    fg            Fg              @relation(fields: [fgId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    rm            Rm              @relation(fields: [rmId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    productionLog ProductionLog[]
 
     @@id([fgId, rmId])
     @@index([rmId], name: "rm_id")
@@ -304,10 +308,35 @@ model Production {
     so                   So                     @relation("productionToso", fields: [soId], references: [id])
     users                Users                  @relation(fields: [user], references: [username])
     outwardsQualityCheck OutwardsQualityCheck[]
+    productionLog        ProductionLog[]
 
     @@index([fgId], name: "fg_id")
     @@index([soId], name: "so_id")
     @@map("production")
+}
+
+model ProductionLog {
+    productionId           Int       @map("production_id")
+    user                   String
+    fgId                   String    @map("fg_id")
+    rmId                   String    @map("rm_id")
+    quantity               Float
+    createdAt              DateTime? @default(now()) @map("created_at")
+    storeStockBefore       Float?    @map("store_stock_before")
+    lineStockBefore        Float?    @map("line_stock_before")
+    poPendingStockBefore   Float?    @map("po_pending_stock_before")
+    iqcPendingStockBefore  Float?    @map("iqc_pending_stock_before")
+    iqcRejectedStockBefore Float?    @map("iqc_rejected_stock_before")
+    poRejectedStockBefore  Float?    @map("po_rejected_stock_before")
+
+    fg         Fg         @relation(fields: [fgId], references: [id])
+    bom        Bom        @relation(fields: [rmId, fgId], references: [rmId, fgId])
+    production Production @relation(fields: [productionId], references: [id])
+    rm         Rm         @relation(fields: [rmId], references: [id])
+    Users      Users      @relation(fields: [user], references: [username])
+
+    @@id([rmId, productionId])
+    @@map("production_log")
 }
 
 model OutwardsQualityCheck {
