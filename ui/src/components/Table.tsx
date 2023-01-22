@@ -12,17 +12,19 @@ function Table<Type>({
     columnDefs,
     fileName,
     rowData,
+    defaultColDef,
     ...otherProps
 }: TableInterface<Type>) {
     const gridRef = useRef<AgGridReact<Type>>(null)
 
-    const defaultColDef = useMemo(
+    const cDefaultColDef = useMemo(
         () => ({
             sortable: true,
             filter: true,
             resizable: true,
+            ...defaultColDef,
         }),
-        []
+        [defaultColDef]
     )
 
     const columnTypes = useMemo(
@@ -52,7 +54,7 @@ function Table<Type>({
                     ref={gridRef}
                     columnDefs={columnDefs}
                     rowData={rowData}
-                    defaultColDef={defaultColDef}
+                    defaultColDef={cDefaultColDef}
                     paginationAutoPageSize
                     pagination
                     columnTypes={columnTypes}

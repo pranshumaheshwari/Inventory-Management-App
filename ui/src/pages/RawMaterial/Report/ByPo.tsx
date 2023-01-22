@@ -4,48 +4,45 @@ import {
     Container,
     FormHelperText,
     Grid,
+    SelectChangeEvent,
     Skeleton,
     Step,
     StepLabel,
     Stepper,
 } from '@mui/material'
-import { DateRangePicker, Table } from '../../../components'
 import { Fetch, useAuth } from '../../../services'
-import React, { SyntheticEvent, useEffect, useState } from 'react'
-import { addDays, format, parseISO } from 'date-fns'
+import { Field, Formik } from 'formik'
+import { FormSelect, Table } from '../../../components'
+import React, { useEffect, useState } from 'react'
+import { format, parseISO } from 'date-fns'
 
 import { ColDef } from 'ag-grid-community'
-import { Formik } from 'formik'
-import { InputAutoComplete } from '../../common'
-import { RawMaterialInterface } from '../RawMaterial'
 
 interface RecordInterface {
     createdAt: string
 }
 
-function ById() {
+function ByPo() {
     const {
         token: { token },
     } = useAuth()
     const [error, setError] = useState('')
     const [activeStep, setActiveStep] = useState(0)
     const [records, setRecords] = useState<RecordInterface[]>([])
-    const [rawmaterial, setRawmaterial] =
-        useState<Partial<RawMaterialInterface>[]>()
-    const [selectedRm, setSelectedRm] = useState<{
-        rm: Partial<RawMaterialInterface>
-    }>({
-        rm: {},
-    })
-    const [value, setValue] = useState<{
-        startDate: Date
-        endDate: Date
-        key: string
-    }>({
-        startDate: new Date(),
-        endDate: new Date(),
-        key: 'daterange',
-    })
+    const [supplier, setSupplier] = useState<{ value: string }[] | null>()
+    const [selectedPo, setSelectedPo] = useState<string>()
+    const [po, setPo] = useState<
+        | {
+              value: string
+              id: string
+              poDetails: {
+                  rmId: string
+                  quantity: number
+                  price: number
+              }[]
+          }[]
+        | null
+    >([])
 
     const handleNext = () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1)
@@ -53,6 +50,25 @@ function ById() {
 
     const handleBack = () => {
         setActiveStep((prevActiveStep) => prevActiveStep - 1)
+    }
+
+    const getSupplier = async () => {
+        try {
+            const data = await Fetch({
+                url: '/suppliers',
+                options: {
+                    authToken: token,
+                },
+            }).then((data) => {
+                return data.map((supplier: { name: string; id: string }) => ({
+                    label: supplier.name,
+                    value: supplier.id,
+                }))
+            })
+            setSupplier(data)
+        } catch (e) {
+            setError((e as Error).message)
+        }
     }
 
     const columnDefs: ColDef<RecordInterface>[] = [
@@ -68,93 +84,74 @@ function ById() {
             },
         },
         { field: 'quantity', headerName: 'Quantity', type: 'numberColumn' },
+        {
+            field: 'invoiceId',
+            headerName: 'Invoice',
+        },
+        {
+            field: 'rmId',
+            headerName: 'Raw Material Identifier',
+        },
     ]
 
-    const getRawmaterials = async () => {
+    useEffect(() => {
+        getSupplier()
+    }, [])
+
+    if (!supplier) {
+        return <Skeleton width="90vw" height="100%" />
+    }
+
+    const updatePo = async (supplierId: string) => {
         try {
             const data = await Fetch({
-                url: '/rawmaterial',
+                url: '/purchaseorders',
                 options: {
                     authToken: token,
                     params: {
+                        where: JSON.stringify({
+                            supplierId,
+                        }),
                         select: JSON.stringify({
                             id: true,
-                            description: true,
-                            dtplCode: true,
+                            poDetails: {
+                                select: {
+                                    rmId: true,
+                                    quantity: true,
+                                    price: true,
+                                },
+                            },
                         }),
                     },
                 },
+            }).then((data) => {
+                return data.map((po: { id: string }) => ({
+                    value: po.id,
+                    ...po,
+                }))
             })
-            setRawmaterial(data)
+            setPo(data)
         } catch (e) {
             setError((e as Error).message)
         }
     }
 
-    useEffect(() => {
-        getRawmaterials()
-    }, [])
-
-    if (!rawmaterial) {
-        return <Skeleton width="90vw" height="100%" />
-    }
-
     const fetchRecords = async () => {
         try {
-            const query = {
-                where: JSON.stringify({
-                    rmId: selectedRm.rm.id,
-                    AND: [
-                        {
-                            createdAt: {
-                                gte: value.startDate,
+            const data = await Fetch({
+                url: '/inwards/po',
+                options: {
+                    authToken: token,
+                    params: {
+                        where: JSON.stringify({
+                            poId: selectedPo,
+                            status: {
+                                in: ['Accepted', 'RejectedPoVerification'],
                             },
-                        },
-                        {
-                            createdAt: {
-                                lte: addDays(value.endDate, 1),
-                            },
-                        },
-                    ],
-                }),
-            }
-
-            const production = await Fetch({
-                url: '/outwards/productionlog',
-                options: {
-                    authToken: token,
-                    params: {
-                        ...query,
+                        }),
                     },
                 },
             })
-
-            const inwardsVerified = await Fetch({
-                url: '/inwards/verified',
-                options: {
-                    authToken: token,
-                    params: {
-                        ...query,
-                    },
-                },
-            })
-
-            const requisitionOutwards = await Fetch({
-                url: '/requisition/issue',
-                options: {
-                    authToken: token,
-                    params: {
-                        ...query,
-                    },
-                },
-            })
-
-            const data = [
-                ...production,
-                ...inwardsVerified,
-                ...requisitionOutwards,
-            ]
-            data.sort((a, b) => b.createdAt - a.createdAt)
             setRecords(data)
         } catch (e) {
             setError((e as Error).message)
@@ -188,66 +185,33 @@ function ById() {
                     <Grid item xs={3} />
                     {activeStep === 0 && (
                         <>
-                            <InputAutoComplete<Partial<RawMaterialInterface>>
-                                identifierXs={6}
-                                defaultIdentifier="description"
-                                identifierItems={[
-                                    {
-                                        value: 'description',
-                                        label: 'Description',
-                                    },
-                                    {
-                                        value: 'id',
-                                        label: 'ID',
-                                    },
-                                    {
-                                        label: 'DTPL Part Number',
-                                        value: 'dtplCode',
-                                    },
-                                ]}
-                                itemXs={6}
-                                label="Raw Material"
-                                name="rmId"
-                                options={rawmaterial}
-                                uniqueIdentifier="id"
-                                placeholder="Select Raw Material"
-                                onChange={(e: SyntheticEvent, value) =>
-                                    setSelectedRm((selectedRm) => {
-                                        if (value)
-                                            return {
-                                                rm: value,
-                                            }
-                                        return selectedRm
-                                    })
-                                }
-                            />
-                            <Grid item xs={3} />
-                            <DateRangePicker
+                            <Field
+                                name="supplierId"
+                                component={FormSelect}
                                 xs={6}
-                                range={value}
-                                onChange={(value) => {
-                                    let val = value['daterange']
-                                    if (
-                                        val &&
-                                        val.startDate &&
-                                        val.endDate &&
-                                        val.key
-                                    ) {
-                                        setValue({
-                                            startDate: val.startDate,
-                                            endDate: val.endDate,
-                                            key: val.key,
-                                        })
-                                    }
+                                label="Supplier"
+                                placeholder="Select Supplier"
+                                items={supplier}
+                                onChange={(e: SelectChangeEvent) => {
+                                    updatePo(e.target?.value)
                                 }}
                             />
-                            <Grid item xs={3} />
-                            <Grid item xs={3} />
+                            <Field
+                                name="poId"
+                                component={FormSelect}
+                                xs={6}
+                                label="Purchase Order"
+                                placeholder="Select Purchase Order"
+                                items={po}
+                                onChange={(e: SelectChangeEvent) => {
+                                    setSelectedPo(e.target.value)
+                                }}
+                            />
 
-                            <Grid item xs={6}>
+                            <Grid item xs={12}>
                                 <Button
                                     disableElevation
-                                    disabled={!value.endDate}
+                                    disabled={!selectedPo}
                                     fullWidth
                                     size="large"
                                     variant="contained"
@@ -308,4 +272,4 @@ function ById() {
     )
 }
 
-export default ById
+export default ByPo

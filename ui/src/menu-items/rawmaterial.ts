@@ -95,10 +95,16 @@ const dashboard: ItemInterface = {
             type: 'group',
             children: [
                 {
-                    id: 'rawmaterial-report-indiviual',
+                    id: 'rawmaterial-report-byid',
                     title: 'By Unique Identifier',
                     type: 'item',
-                    url: '/rawMaterial/report/id',
+                    url: '/rawMaterial/report/byId',
+                },
+                {
+                    id: 'rawmaterial-report-bypo',
+                    title: 'By Purchase Order',
+                    type: 'item',
+                    url: '/rawMaterial/report/byPo',
                 },
             ],
         },
