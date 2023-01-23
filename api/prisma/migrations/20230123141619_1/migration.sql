@@ -145,6 +145,7 @@ CREATE TABLE `inwards_po_pending` (
     `supplier_id` VARCHAR(191) NOT NULL,
     `rm_id` VARCHAR(191) NOT NULL,
     `quantity` DOUBLE NOT NULL,
+    `po_id` VARCHAR(191) NULL,
     `created_at` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
     `store_stock_before` DOUBLE NULL,
     `line_stock_before` DOUBLE NULL,
@@ -158,16 +159,6 @@ CREATE TABLE `inwards_po_pending` (
     INDEX `rm_id`(`rm_id`),
     INDEX `supplier_id`(`supplier_id`),
     PRIMARY KEY (`invoice_id`, `supplier_id`, `rm_id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `invoice_po` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `supplier_id` VARCHAR(191) NOT NULL,
-    `invoice_id` VARCHAR(191) NOT NULL,
-    `po_id` VARCHAR(191) NOT NULL,
-
-    PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
@@ -258,6 +249,24 @@ CREATE TABLE `production` (
     INDEX `fg_id`(`fg_id`),
     INDEX `so_id`(`so_id`),
     PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `production_log` (
+    `production_id` INTEGER NOT NULL,
+    `user` VARCHAR(191) NOT NULL,
+    `fg_id` VARCHAR(191) NOT NULL,
+    `rm_id` VARCHAR(191) NOT NULL,
+    `quantity` DOUBLE NOT NULL,
+    `created_at` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `store_stock_before` DOUBLE NULL,
+    `line_stock_before` DOUBLE NULL,
+    `po_pending_stock_before` DOUBLE NULL,
+    `iqc_pending_stock_before` DOUBLE NULL,
+    `iqc_rejected_stock_before` DOUBLE NULL,
+    `po_rejected_stock_before` DOUBLE NULL,
+
+    PRIMARY KEY (`rm_id`, `production_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
@@ -352,10 +361,7 @@ ALTER TABLE `inwards_po_pending` ADD CONSTRAINT `inwards_po_pending_rm_id_fkey` 
 ALTER TABLE `inwards_po_pending` ADD CONSTRAINT `inwards_po_pending_invoice_id_supplier_id_fkey` FOREIGN KEY (`invoice_id`, `supplier_id`) REFERENCES `invoice`(`id`, `supplier_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `invoice_po` ADD CONSTRAINT `invoice_po_invoice_id_supplier_id_fkey` FOREIGN KEY (`invoice_id`, `supplier_id`) REFERENCES `invoice`(`id`, `supplier_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `invoice_po` ADD CONSTRAINT `invoice_po_po_id_fkey` FOREIGN KEY (`po_id`) REFERENCES `po`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `inwards_po_pending` ADD CONSTRAINT `inwards_po_pending_po_id_fkey` FOREIGN KEY (`po_id`) REFERENCES `po`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `inwards_iqc_pending` ADD CONSTRAINT `inwards_iqc_pending_user_fkey` FOREIGN KEY (`user`) REFERENCES `users`(`username`) ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -403,6 +409,21 @@ ALTER TABLE `production` ADD CONSTRAINT `production_so_id_fkey` FOREIGN KEY (`so
 ALTER TABLE `production` ADD CONSTRAINT `production_user_fkey` FOREIGN KEY (`user`) REFERENCES `users`(`username`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE `production_log` ADD CONSTRAINT `production_log_fg_id_fkey` FOREIGN KEY (`fg_id`) REFERENCES `fg`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `production_log` ADD CONSTRAINT `production_log_rm_id_fg_id_fkey` FOREIGN KEY (`rm_id`, `fg_id`) REFERENCES `bom`(`rm_id`, `fg_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `production_log` ADD CONSTRAINT `production_log_production_id_fkey` FOREIGN KEY (`production_id`) REFERENCES `production`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `production_log` ADD CONSTRAINT `production_log_rm_id_fkey` FOREIGN KEY (`rm_id`) REFERENCES `rm`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `production_log` ADD CONSTRAINT `production_log_user_fkey` FOREIGN KEY (`user`) REFERENCES `users`(`username`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE `outwards_quality_check` ADD CONSTRAINT `outwards_quality_check_production_id_fkey` FOREIGN KEY (`production_id`) REFERENCES `production`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -431,3 +452,91 @@ ALTER TABLE `so_details` ADD CONSTRAINT `so_details_fg_id_fkey` FOREIGN KEY (`fg
 
 -- AddForeignKey
 ALTER TABLE `so_details` ADD CONSTRAINT `so_details_so_id_fkey` FOREIGN KEY (`so_id`) REFERENCES `so`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+DELIMITER $$
+
+CREATE TRIGGER `inwards_po_pending_set_stock`
+BEFORE INSERT
+ON inwards_po_pending FOR EACH ROW
+BEGIN
+	SET NEW.store_stock_before = (SELECT store_stock FROM rm WHERE id=NEW.rm_id);
+	SET NEW.line_stock_before = (SELECT line_stock FROM rm WHERE id=NEW.rm_id);
+	SET NEW.po_pending_stock_before = (SELECT po_pending_stock FROM rm WHERE id=NEW.rm_id);
+	SET NEW.po_rejected_stock_before = (SELECT po_rejected_stock FROM rm WHERE id=NEW.rm_id);
+	SET NEW.iqc_pending_stock_before = (SELECT iqc_pending_stock FROM rm WHERE id=NEW.rm_id);
+	SET NEW.iqc_rejected_stock_before = (SELECT iqc_rejected_stock FROM rm WHERE id=NEW.rm_id);
+END$$
+
+CREATE TRIGGER `inwards_iqc_pending_set_stock`
+BEFORE INSERT
+ON inwards_iqc_pending FOR EACH ROW
+BEGIN
+	SET NEW.store_stock_before = (SELECT store_stock FROM rm WHERE id=NEW.rm_id);
+	SET NEW.line_stock_before = (SELECT line_stock FROM rm WHERE id=NEW.rm_id);
+	SET NEW.po_pending_stock_before = (SELECT po_pending_stock FROM rm WHERE id=NEW.rm_id);
+	SET NEW.po_rejected_stock_before = (SELECT po_rejected_stock FROM rm WHERE id=NEW.rm_id);
+	SET NEW.iqc_pending_stock_before = (SELECT iqc_pending_stock FROM rm WHERE id=NEW.rm_id);
+	SET NEW.iqc_rejected_stock_before = (SELECT iqc_rejected_stock FROM rm WHERE id=NEW.rm_id);
+END$$
+
+CREATE TRIGGER `inwards_verified_set_stock`
+BEFORE INSERT
+ON inwards_verified FOR EACH ROW
+BEGIN
+	SET NEW.store_stock_before = (SELECT store_stock FROM rm WHERE id=NEW.rm_id);
+	SET NEW.line_stock_before = (SELECT line_stock FROM rm WHERE id=NEW.rm_id);
+	SET NEW.po_pending_stock_before = (SELECT po_pending_stock FROM rm WHERE id=NEW.rm_id);
+	SET NEW.po_rejected_stock_before = (SELECT po_rejected_stock FROM rm WHERE id=NEW.rm_id);
+	SET NEW.iqc_pending_stock_before = (SELECT iqc_pending_stock FROM rm WHERE id=NEW.rm_id);
+	SET NEW.iqc_rejected_stock_before = (SELECT iqc_rejected_stock FROM rm WHERE id=NEW.rm_id);
+END$$
+
+CREATE TRIGGER `requisition_outward_set_stock`
+BEFORE INSERT
+ON requisition_outward FOR EACH ROW
+BEGIN
+	SET NEW.store_stock_before = (SELECT store_stock FROM rm WHERE id=NEW.rm_id);
+	SET NEW.line_stock_before = (SELECT line_stock FROM rm WHERE id=NEW.rm_id);
+	SET NEW.po_pending_stock_before = (SELECT po_pending_stock FROM rm WHERE id=NEW.rm_id);
+	SET NEW.po_rejected_stock_before = (SELECT po_rejected_stock FROM rm WHERE id=NEW.rm_id);
+	SET NEW.iqc_pending_stock_before = (SELECT iqc_pending_stock FROM rm WHERE id=NEW.rm_id);
+	SET NEW.iqc_rejected_stock_before = (SELECT iqc_rejected_stock FROM rm WHERE id=NEW.rm_id);
+END$$
+
+CREATE TRIGGER `production_set_rm_stock`
+BEFORE INSERT
+ON production_log FOR EACH ROW
+BEGIN
+	SET NEW.store_stock_before = (SELECT store_stock FROM rm WHERE id=NEW.rm_id);
+	SET NEW.line_stock_before = (SELECT line_stock FROM rm WHERE id=NEW.rm_id);
+	SET NEW.po_pending_stock_before = (SELECT po_pending_stock FROM rm WHERE id=NEW.rm_id);
+	SET NEW.po_rejected_stock_before = (SELECT po_rejected_stock FROM rm WHERE id=NEW.rm_id);
+	SET NEW.iqc_pending_stock_before = (SELECT iqc_pending_stock FROM rm WHERE id=NEW.rm_id);
+	SET NEW.iqc_rejected_stock_before = (SELECT iqc_rejected_stock FROM rm WHERE id=NEW.rm_id);
+END$$
+
+CREATE TRIGGER `production_set_fg_stock`
+BEFORE INSERT
+ON production FOR EACH ROW
+BEGIN
+	SET NEW.store_stock_before = (SELECT store_stock FROM fg WHERE id=NEW.fg_id);
+	SET NEW.oqc_pending_stock_before = (SELECT oqc_pending_stock FROM fg WHERE id=NEW.fg_id);
+END$$
+
+CREATE TRIGGER `outwards_quality_check_set_stock`
+BEFORE INSERT
+ON outwards_quality_check FOR EACH ROW
+BEGIN
+	SET NEW.store_stock_before = (SELECT store_stock FROM fg WHERE id=NEW.fg_id);
+	SET NEW.oqc_pending_stock_before = (SELECT oqc_pending_stock FROM fg WHERE id=NEW.fg_id);
+END$$
+
+CREATE TRIGGER `dispatch_set_stock`
+BEFORE INSERT
+ON dispatch FOR EACH ROW
+BEGIN
+	SET NEW.store_stock_before = (SELECT store_stock FROM fg WHERE id=NEW.fg_id);
+	SET NEW.oqc_pending_stock_before = (SELECT oqc_pending_stock FROM fg WHERE id=NEW.fg_id);
+END$$
+
+DELIMITER ;
