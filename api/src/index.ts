@@ -1,11 +1,27 @@
-import { Attendance, Customer, Fg, Invoice, Inwards, Login, Outwards, Po, Requisition, Rm, So, Supplier, Users } from './routes'
-import express, { Express, Request, Response } from 'express'
+import {
+    Attendance,
+    Customer,
+    Fg,
+    Invoice,
+    Inwards,
+    Login,
+    Outwards,
+    Po,
+    Requisition,
+    Rm,
+    So,
+    Supplier,
+    Users,
+} from './routes'
+import express, { Express } from 'express'
 
 import { AuthService } from './service'
 import bodyParser from 'body-parser'
 import cookierParser from 'cookie-parser'
 import cors from 'cors'
 import dotenv from 'dotenv'
+import fs from 'fs'
+import https from 'https'
 import morganBody from 'morgan-body'
 
 dotenv.config()
@@ -14,11 +30,13 @@ const app: Express = express()
 const port = process.env.PORT
 
 app.use(express.json())
-app.use(cors({
-  origin: "*",
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true
-}))
+app.use(
+    cors({
+        origin: '*',
+        methods: ['GET', 'POST', 'PUT', 'DELETE'],
+        credentials: true,
+    })
+)
 app.use(cookierParser())
 app.use(bodyParser.urlencoded({ extended: true }))
 morganBody(app)
@@ -37,6 +55,18 @@ app.use('/salesorders', AuthService, So)
 app.use('/suppliers', AuthService, Supplier)
 app.use('/users', AuthService, Users)
 
-app.listen(port, () => {
-  console.log(`⚡️[server]: Server is running at https://localhost:${port}`)
-})
+if (process.env.KEY && process.env.CERT) {
+    let credentials = {
+        key: fs.readFileSync(process.env.KEY, 'utf-8'),
+        cert: fs.readFileSync(process.env.CERT, 'utf-8'),
+    }
+    console.log(`⚡️[server]: Server is running at https://localhost:${port}`)
+    let httpsServer = https.createServer(credentials, app)
+    httpsServer.listen(port)
+} else {
+    app.listen(port, () => {
+        console.log(
+            `⚡️[server]: Server is running at https://localhost:${port}`
+        )
+    })
+}
