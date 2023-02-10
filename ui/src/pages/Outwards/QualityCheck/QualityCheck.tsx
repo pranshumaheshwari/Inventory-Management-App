@@ -1,145 +1,138 @@
-import * as Yup from 'yup'
-
 import {
-    Autocomplete,
+    AutocompleteItem,
     Button,
-    FormHelperText,
     Grid,
-    InputLabel,
-    SelectChangeEvent,
+    SelectItem,
     Skeleton,
-    TextField,
-    Typography,
-} from '@mui/material'
+    Text,
+} from '@mantine/core'
 import { Fetch, useAuth } from '../../../services'
-import { Field, Formik, FormikHelpers } from 'formik'
-import React, { SyntheticEvent, useContext, useEffect, useState } from 'react'
+import {
+    FormAutoComplete,
+    FormInputNumber,
+    FormSelect,
+} from '../../../components'
+import { OutwardsQualtiyFormProvider, useOutwardsQualtiyForm } from './context'
+import React, { useEffect, useState } from 'react'
 
-import { AlertContext } from '../../../context'
-import { FormInput } from '../../../components'
-import FormSelect from '../../../components/FormSelect'
-import { useConfirm } from 'material-ui-confirm'
+import { isNotEmpty } from '@mantine/form'
+import { openConfirmModal } from '@mantine/modals'
+import { showNotification } from '@mantine/notifications'
 
 export interface OutwardsQualityCheck {
     customerId: string
     soId: string
     fgId: string
     quantity: number
-    productionId: number
-}
-
-interface FormValues extends Required<OutwardsQualityCheck> {
-    submit: null
+    productionId: string
 }
 
 const QualityCheck = () => {
-    const confirm = useConfirm()
-    const { setAlert } = useContext(AlertContext)
     const {
         token: { token },
     } = useAuth()
     const [customer, setCustomer] = useState<{ value: string }[] | null>()
-    const [salesorder, setSalesOrder] = useState<{ value: string }[] | null>([])
-    const [finishedGoods, setFinishedGoods] = useState<
-        {
-            fgId: string
-            quantity: number
-            createdAt: string
-            productionId: number
-        }[]
-    >([])
+    const [salesorder, setSalesOrder] = useState<SelectItem[]>([])
+    const [finishedGoods, setFinishedGoods] = useState<AutocompleteItem[]>([])
     const [error, setError] = useState('')
-    let initialValues: FormValues = {
+    let initialValues: OutwardsQualityCheck = {
         customerId: '',
         soId: '',
         fgId: '',
-        productionId: 0,
+        productionId: '',
         quantity: 0,
-        submit: null,
     }
 
-    const rejectOqc = async (
-        values: FormValues,
-        {
-            setErrors,
-            setStatus,
-            setSubmitting,
-            resetForm,
-        }: Partial<FormikHelpers<FormValues>>
-    ) => {
-        confirm({
-            description: 'This will reject based on Outwards Quality Check',
-            confirmationText: 'Reject',
+    const form = useOutwardsQualtiyForm({
+        initialValues,
+        validate: {
+            soId: isNotEmpty(),
+            fgId: isNotEmpty(),
+            customerId: isNotEmpty(),
+            productionId: isNotEmpty(),
+            quantity: (value) =>
+                value <= 0 ? 'Quantity should be more than 0' : null,
+        },
+        validateInputOnChange: true,
+    })
+
+    const openModal = () =>
+        openConfirmModal({
+            title: 'Please confirm your action',
+            centered: true,
+            children: <Text size="sm">Are you sure you want to proceed</Text>,
+            labels: { confirm: 'Confirm', cancel: 'Cancel' },
+            onConfirm: acceptOqc,
         })
-            .then(async () => {
-                if (setSubmitting && setStatus && setErrors && resetForm) {
-                    setSubmitting(true)
-                    try {
-                        const resp = await Fetch({
-                            url: '/outwards/oqc/reject',
-                            options: {
-                                authToken: token,
-                                method: 'POST',
-                                body: values,
-                            },
-                        })
-                        setAlert({
-                            type: 'warning',
-                            children: (
-                                <Typography>
-                                    Rejected OQC check with ID - {resp[0].id}
-                                </Typography>
-                            ),
-                        })
-                        resetForm()
-                        setSalesOrder([])
-                        setFinishedGoods([])
-                    } catch (err) {
-                        setStatus({ success: false })
-                        setErrors({ submit: (err as Error).message })
-                        setSubmitting(false)
-                    }
-                }
+
+    const openDeleteModal = () =>
+        openConfirmModal({
+            title: 'Delete this item',
+            centered: true,
+            children: (
+                <Text size="sm">
+                    Are you sure you want to delete this item? This action is
+                    destructive and irreversible. All data will be lost
+                </Text>
+            ),
+            labels: { confirm: 'Delete', cancel: "No don't delete it" },
+            confirmProps: { color: 'red' },
+            onConfirm: rejectOqc,
+        })
+
+    const rejectOqc = async () => {
+        try {
+            const resp = await Fetch({
+                url: '/outwards/oqc/reject',
+                options: {
+                    authToken: token,
+                    method: 'POST',
+                    body: form.values,
+                },
             })
-            .catch(() => {})
+            showNotification({
+                title: 'Success',
+                message: <Text>Rejected OQC check with ID - {resp[0].id}</Text>,
+                color: 'orange',
+            })
+            form.reset()
+            setSalesOrder([])
+            setFinishedGoods([])
+        } catch (err) {
+            setError((err as Error).message)
+            showNotification({
+                title: 'Error',
+                message: <Text>{(err as Error).message}</Text>,
+                color: 'red',
+            })
+        }
     }
 
-    const acceptOqc = async (
-        values: FormValues,
-        {
-            setErrors,
-            setStatus,
-            setSubmitting,
-            resetForm,
-        }: Partial<FormikHelpers<FormValues>>
-    ) => {
-        if (setSubmitting && setStatus && setErrors && resetForm) {
-            setSubmitting(true)
-            try {
-                const resp = await Fetch({
-                    url: '/outwards/oqc/accept',
-                    options: {
-                        authToken: token,
-                        method: 'POST',
-                        body: values,
-                    },
-                })
-                setAlert({
-                    type: 'success',
-                    children: (
-                        <Typography>
-                            Accepted OQC check with ID - {resp[0].id}
-                        </Typography>
-                    ),
-                })
-                resetForm()
-                setFinishedGoods([])
-                setSalesOrder([])
-            } catch (err) {
-                setStatus({ success: false })
-                setErrors({ submit: (err as Error).message })
-                setSubmitting(false)
-            }
+    const acceptOqc = async () => {
+        try {
+            const resp = await Fetch({
+                url: '/outwards/oqc/accept',
+                options: {
+                    authToken: token,
+                    method: 'POST',
+                    body: form.values,
+                },
+            })
+            showNotification({
+                title: 'Success',
+                message: <Text>Accepted OQC check with ID - {resp[0].id}</Text>,
+                color: 'green',
+            })
+            form.reset()
+            setFinishedGoods([])
+            setSalesOrder([])
+        } catch (err) {
+            setError((err as Error).message)
+            showNotification({
+                title: 'Error',
+                message: <Text>{(err as Error).message}</Text>,
+                color: 'red',
+            })
         }
     }
 
@@ -180,6 +173,7 @@ const QualityCheck = () => {
             }).then((data) =>
                 data.map((salesOrder: { id: string }) => ({
                     value: salesOrder.id,
+                    label: salesOrder.id,
                     ...salesOrder,
                 }))
             )
@@ -219,6 +213,7 @@ const QualityCheck = () => {
                 ) =>
                     data
                         .map((d) => ({
+                            value: d.fgId,
                             productionId: d.id,
                             fgId: d.fgId,
                             quantity: d.quantity,
@@ -226,6 +221,7 @@ const QualityCheck = () => {
                         }))
                         .sort((a, b) => b.productionId - a.productionId)
             )
+            console.log(data)
             setFinishedGoods(data)
         } catch (e) {
             setError((e as Error).message)
@@ -241,203 +237,141 @@ const QualityCheck = () => {
     }
 
     return (
-        <Formik
-            initialValues={initialValues}
-            validationSchema={Yup.object().shape({
-                status: Yup.string().required('Status is required'),
-                fgId: Yup.string().required('Finished Good is required'),
-                productionId: Yup.number()
-                    .min(1)
-                    .required('Production Id is required'),
-                quantity: Yup.number().min(1).required('Quantity is required'),
-            })}
-            onSubmit={() => {}}
-        >
-            {({
-                values,
-                errors,
-                handleSubmit,
-                isSubmitting,
-                handleChange,
-                setValues,
-                setErrors,
-                setStatus,
-                setSubmitting,
-                resetForm,
-            }) => (
-                <form noValidate onSubmit={handleSubmit}>
-                    <Grid container spacing={3}>
-                        <Field
-                            name="customerId"
-                            component={FormSelect}
-                            xs={5}
-                            label="Customer"
-                            placeholder="Select Customer"
-                            items={customer}
-                            onChange={(e: SelectChangeEvent) => {
-                                handleChange(e)
-                                updateSalesOrder(e.target?.value)
-                            }}
-                        />
-                        <Field
-                            name="soId"
-                            component={FormSelect}
-                            xs={5}
-                            label="Sales Order"
-                            placeholder="Select Sales Order"
-                            items={salesorder}
-                            onChange={(e: SelectChangeEvent) => {
-                                handleChange(e)
-                                getFinishedGoods(e.target?.value)
-                            }}
-                        />
-                        <Field
-                            name="status"
-                            component={FormInput}
-                            xs={2}
-                            label="Status"
-                            placeholder="Select Status"
-                            defaultValue="Accepted"
-                            disabled
-                        />
-
-                        <Grid item xs={4}>
-                            <InputLabel htmlFor="fgId">
-                                Finished Good
-                            </InputLabel>
-                            <Autocomplete
-                                id="fgId"
-                                key={finishedGoods[0]?.fgId}
-                                options={[
-                                    ...new Set(
-                                        finishedGoods.map((fg) => fg.fgId)
-                                    ),
-                                ]}
-                                onChange={(e: SyntheticEvent, value) => {
-                                    if (value) {
-                                        setValues({
-                                            ...values,
-                                            fgId: value,
-                                        })
+        <OutwardsQualtiyFormProvider form={form}>
+            <form
+                onSubmit={(e) => {
+                    e.preventDefault()
+                }}
+            >
+                <Grid>
+                    <FormSelect
+                        xs={6}
+                        label="Customer"
+                        placeholder="Select Customer"
+                        data={customer}
+                        withAsterisk
+                        {...form.getInputProps('customerId')}
+                        onChange={(value) => {
+                            if (value) {
+                                form.setFieldValue('customerId', value)
+                                updateSalesOrder(value)
+                            }
+                        }}
+                    />
+                    <FormSelect
+                        xs={6}
+                        label="Sales Order"
+                        placeholder="Select Sales Order"
+                        data={salesorder}
+                        withAsterisk
+                        {...form.getInputProps('soId')}
+                        onChange={(value) => {
+                            if (value) {
+                                form.setFieldValue('soId', value)
+                                getFinishedGoods(value)
+                            }
+                        }}
+                    />
+                    <FormAutoComplete
+                        xs={4}
+                        id="fgId"
+                        label="Finished Good"
+                        placeholder="Select Finished Good"
+                        data={finishedGoods}
+                        withAsterisk
+                        {...form.getInputProps('fgId')}
+                    />
+                    <FormAutoComplete
+                        xs={4}
+                        id="productionId"
+                        label="Production ID"
+                        placeholder="Select Production ID"
+                        data={[
+                            ...finishedGoods
+                                .filter((item) => {
+                                    if (form.values.fgId) {
+                                        return item.fgId === form.values.fgId
                                     }
-                                }}
-                                renderInput={(params) => (
-                                    <TextField {...params} name="fgId" />
-                                )}
-                            />
-                        </Grid>
-                        <Grid item xs={4}>
-                            <InputLabel htmlFor="productionId">
-                                Production Id
-                            </InputLabel>
-                            <Autocomplete
-                                id="productionId"
-                                key={finishedGoods[0]?.productionId}
-                                options={[
-                                    ...finishedGoods.filter((item) => {
-                                        if (values.fgId) {
-                                            return item.fgId === values.fgId
+                                    return false
+                                })
+                                .map((item) => ({
+                                    ...item,
+                                    value: item.productionId.toString(),
+                                })),
+                        ]}
+                        withAsterisk
+                        {...form.getInputProps('productionId')}
+                        onChange={(value) => {
+                            form.setFieldValue('productionId', value)
+                            const productionId = parseInt(value)
+                            const quantity = finishedGoods.filter((item) => {
+                                if (
+                                    item.fgId === form.values.fgId &&
+                                    item.productionId === productionId
+                                ) {
+                                    return true
+                                }
+                                return false
+                            })
+                            form.setFieldValue('quantity', quantity[0].quantity)
+                        }}
+                    />
+                    <FormInputNumber
+                        name="quantity"
+                        xs={4}
+                        label="Quantity"
+                        placeholder="Enter Quantity"
+                        min={0}
+                        withAsterisk
+                        {...form.getInputProps('quantity')}
+                        disabled
+                    />
+                    {error && (
+                        <Grid.Col xs={12}>
+                            <Text c="red">{error}</Text>
+                        </Grid.Col>
+                    )}
+                    {
+                        <>
+                            <Grid.Col xs={2}>
+                                <Button
+                                    fullWidth
+                                    size="md"
+                                    variant="outline"
+                                    color="red"
+                                    onClick={() => {
+                                        const result = form.validate()
+                                        if (!result.hasErrors) {
+                                            openDeleteModal()
                                         }
-                                        return true
-                                    }),
-                                ]}
-                                isOptionEqualToValue={(option, value) =>
-                                    option.productionId === value.productionId
-                                }
-                                getOptionLabel={(option) =>
-                                    option.productionId.toString()
-                                }
-                                onChange={(e: SyntheticEvent, value) => {
-                                    if (value) {
-                                        setValues({
-                                            ...values,
-                                            productionId: value.productionId,
-                                            quantity: value.quantity,
-                                        })
-                                    }
-                                }}
-                                renderInput={(params) => (
-                                    <TextField
-                                        {...params}
-                                        name="productionId"
-                                    />
-                                )}
-                            />
-                        </Grid>
-                        <Field
-                            name="quantity"
-                            component={FormInput}
-                            xs={4}
-                            type="number"
-                            label="Quantity"
-                            placeholder="Enter Quantity"
-                            disabled
-                        />
-
-                        {errors.submit && (
-                            <Grid item xs={12}>
-                                <FormHelperText error>
-                                    {errors.submit}
-                                </FormHelperText>
-                            </Grid>
-                        )}
-
-                        {error && (
-                            <Grid item xs={12}>
-                                <FormHelperText error>{error}</FormHelperText>
-                            </Grid>
-                        )}
-                        {
-                            <>
-                                <Grid item xs={2}>
-                                    <Button
-                                        disableElevation
-                                        disabled={isSubmitting}
-                                        fullWidth
-                                        size="large"
-                                        type="button"
-                                        variant="contained"
-                                        color="error"
-                                        onClick={() => {
-                                            rejectOqc(values, {
-                                                setErrors,
-                                                setStatus,
-                                                setSubmitting,
-                                                resetForm,
-                                            })
-                                        }}
-                                    >
-                                        Reject
-                                    </Button>
-                                </Grid>
-                                <Grid item xs={8} />
-                                <Grid item xs={2}>
-                                    <Button
-                                        disableElevation
-                                        disabled={isSubmitting}
-                                        fullWidth
-                                        size="large"
-                                        type="button"
-                                        variant="contained"
-                                        color="primary"
-                                        onClick={() => {
-                                            acceptOqc(values, {
-                                                setErrors,
-                                                setStatus,
-                                                setSubmitting,
-                                                resetForm,
-                                            })
-                                        }}
-                                    >
-                                        Approve
-                                    </Button>
-                                </Grid>
-                            </>
-                        }
-                    </Grid>
-                </form>
-            )}
-        </Formik>
+                                    }}
+                                >
+                                    Reject
+                                </Button>
+                            </Grid.Col>
+                            <Grid.Col xs={8} />
+                            <Grid.Col xs={2}>
+                                <Button
+                                    fullWidth
+                                    size="md"
+                                    type="button"
+                                    variant="filled"
+                                    color="primary"
+                                    onClick={() => {
+                                        const result = form.validate()
+                                        if (!result.hasErrors) {
+                                            openModal()
+                                        }
+                                    }}
+                                >
+                                    Approve
+                                </Button>
+                            </Grid.Col>
+                        </>
+                    }
+                </Grid>
+            </form>
+        </OutwardsQualtiyFormProvider>
     )
 }
 

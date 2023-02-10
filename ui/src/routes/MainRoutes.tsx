@@ -29,9 +29,11 @@ const AgainstPurchaseOrder = Loadable(
 const InwardsQualityCheck = Loadable(
     lazy(() => import('../pages/Inwards/QualityCheck/QualityCheck'))
 )
-const NewRequisition = Loadable(lazy(() => import('../pages/Requisition/New')))
+const NewRequisition = Loadable(
+    lazy(() => import('../pages/Requisition/New/New'))
+)
 const IssueRequisition = Loadable(
-    lazy(() => import('../pages/Requisition/Issue'))
+    lazy(() => import('../pages/Requisition/Issue/Issue'))
 )
 const RawMaterialReportById = Loadable(
     lazy(() => import('../pages/RawMaterial/Report/ById'))

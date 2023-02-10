@@ -1,38 +1,21 @@
-import { DateRangePicker, Range, RangeKeyDict } from 'react-date-range'
-import { Grid, RegularBreakpoints } from '@mui/material'
+import { DateRangePicker, DateRangePickerProps } from '@mantine/dates'
 
-import InputLabel from '@mui/material/InputLabel'
+import { Grid } from '@mantine/core'
 import React from 'react'
-import Stack from '@mui/material/Stack'
 
-interface DateRangePickerInterface {
-    xs: RegularBreakpoints['xs']
-    range: Range
-    label?: string
-    onChange: (value: RangeKeyDict) => void
+interface DateRangePickerInterface extends DateRangePickerProps {
+    xs: number
 }
 
-const MDateRangePicker = ({
-    xs,
-    range,
-    label,
-    onChange,
-}: DateRangePickerInterface) => {
+const MDateRangePicker = ({ xs, ...props }: DateRangePickerInterface) => {
     return (
-        <Grid item xs={xs}>
-            <Stack spacing={1}>
-                <InputLabel htmlFor={label}>{label}</InputLabel>
-                <DateRangePicker
-                    dateDisplayFormat="dd/MM/yyyy"
-                    onChange={onChange}
-                    maxDate={new Date()}
-                    ranges={[range]}
-                    color="#1890ff"
-                    displayMode="dateRange"
-                    weekStartsOn={1}
-                />
-            </Stack>
-        </Grid>
+        <Grid.Col xs={xs}>
+            <DateRangePicker
+                inputFormat="DD/MM/YYYY"
+                maxDate={new Date()}
+                {...props}
+            />
+        </Grid.Col>
     )
 }
 

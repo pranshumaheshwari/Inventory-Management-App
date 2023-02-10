@@ -1,84 +1,113 @@
-import * as Yup from 'yup'
-
 import {
-    Autocomplete,
+    AutocompleteItem,
     Button,
+    Center,
     Divider,
-    FormHelperText,
     Grid,
-    InputLabel,
-    OutlinedInput,
-    SelectChangeEvent,
+    SelectItem,
     Skeleton,
-    Step,
-    StepLabel,
     Stepper,
-    TextField,
-    Typography,
-} from '@mui/material'
+    Text,
+} from '@mantine/core'
 import { Fetch, useAuth } from '../../../services'
-import { Field, FieldArray, Formik, FormikHelpers } from 'formik'
-import React, {
-    ChangeEvent,
-    SyntheticEvent,
-    useContext,
-    useEffect,
-    useState,
-} from 'react'
+import { FinishedGoodFormProvider, useFinishedGoodForm } from './context'
+import {
+    FormAutoComplete,
+    FormInputNumber,
+    FormInputText,
+    FormSelect,
+} from '../../../components'
+import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-import { AlertContext } from '../../../context'
 import { FinishedGoodsInterface } from '../FinishedGood'
-import { FormInput } from '../../../components'
-import FormSelect from '../../../components/FormSelect'
-import { InputAutoComplete } from '../../common'
 import { RawMaterialInterface } from '../../RawMaterial/RawMaterial'
-import { useConfirm } from 'material-ui-confirm'
-
-interface FormValues extends Required<FinishedGoodsInterface> {
-    submit: null
-}
+import { isNotEmpty } from '@mantine/form'
+import { openConfirmModal } from '@mantine/modals'
+import { showNotification } from '@mantine/notifications'
 
 const Form = () => {
-    const { setAlert } = useContext(AlertContext)
     const navigate = useNavigate()
-    const confirm = useConfirm()
     const location = useLocation()
     const isEdit = location.state ? true : false
     const {
         token: { token },
     } = useAuth()
-    const [customer, setCustomer] = useState<{ value: string }[] | null>()
+    const [customer, setCustomer] = useState<SelectItem[]>()
     const [error, setError] = useState('')
     const [activeStep, setActiveStep] = React.useState(0)
-    const [rawmaterial, setRawmaterial] =
-        useState<Partial<RawMaterialInterface>[]>()
+    const [rawmaterial, setRawmaterial] = useState<AutocompleteItem[]>()
     const [selectedRm, setSelectedRm] = useState<{
-        rm: Partial<RawMaterialInterface>
+        rm: AutocompleteItem
         quantity: number
     }>({
-        rm: {},
+        rm: {
+            value: '',
+        },
         quantity: 0,
     })
-    let initialValues: FormValues = {
+    let initialValues: FinishedGoodsInterface = {
         id: '',
         description: '',
         category: '',
+        customerId: '',
         price: 0,
-        manPower: 0,
         overheads: 0,
         storeStock: 0,
-        customerId: '',
+        manPower: 0,
         bom: [],
-        submit: null,
     }
 
     if (isEdit) {
         initialValues = {
             ...initialValues,
-            ...(location.state as FormValues),
+            ...(location.state as FinishedGoodsInterface),
         }
     }
+
+    const form = useFinishedGoodForm({
+        initialValues,
+        validate: {
+            id: isNotEmpty(),
+            description: isNotEmpty(),
+            category: isNotEmpty(),
+            customerId: isNotEmpty(),
+            price: (value) => (value <= 0 ? 'Price is required' : null),
+            manPower: (value) =>
+                value < 0 ? 'Man power be non-negative' : null,
+            overheads: (value) =>
+                value < 0 ? 'Overheads should be non-negative' : null,
+            storeStock: (value) =>
+                value < 0 ? 'Store stock should be non-negative' : null,
+            bom: (value) =>
+                value.length === 0
+                    ? 'Need atleast one raw material in BOM'
+                    : null,
+        },
+    })
+    const openModal = () =>
+        openConfirmModal({
+            title: 'Please confirm your action',
+            centered: true,
+            children: <Text size="sm">Are you sure you want to proceed</Text>,
+            labels: { confirm: 'Confirm', cancel: 'Cancel' },
+            onConfirm: onSubmit,
+        })
+
+    const openDeleteModal = () =>
+        openConfirmModal({
+            title: 'Delete this item',
+            centered: true,
+            children: (
+                <Text size="sm">
+                    Are you sure you want to delete this item? This action is
+                    destructive and irreversible. All data will be lost
+                </Text>
+            ),
+            labels: { confirm: 'Delete', cancel: "No don't delete it" },
+            confirmProps: { color: 'red' },
+            onConfirm: onDelete,
+        })
 
     const handleNext = () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1)
@@ -88,10 +117,7 @@ const Form = () => {
         setActiveStep((prevActiveStep) => prevActiveStep - 1)
     }
 
-    const onSubmit = async (
-        values: FormValues,
-        { setErrors, setStatus, setSubmitting }: FormikHelpers<FormValues>
-    ) => {
+    const onSubmit = async () => {
         try {
             const resp = await Fetch({
                 url:
@@ -99,56 +125,52 @@ const Form = () => {
                     (isEdit ? '/' + encodeURIComponent(initialValues.id) : ''),
                 options: {
                     method: isEdit ? 'PUT' : 'POST',
-                    body: values,
+                    body: form.values,
                     authToken: token,
                 },
             })
-            setAlert({
-                type: 'success',
-                children: (
-                    <Typography>
+            showNotification({
+                title: 'Success',
+                message: (
+                    <Text>
                         Succesfully {isEdit ? 'edited' : 'created'} finished
                         good with ID - {resp.id}
-                    </Typography>
+                    </Text>
                 ),
+                color: 'green',
             })
             navigate('..')
         } catch (err) {
-            setStatus({ success: false })
-            setErrors({ submit: (err as Error).message })
-            setSubmitting(false)
+            setError((err as Error).message)
+            showNotification({
+                title: 'Error',
+                message: <Text>{(err as Error).message}</Text>,
+                color: 'red',
+            })
         }
     }
     const onDelete = async () => {
-        confirm({
-            description: `This will delete finished good ${initialValues.id}`,
-        })
-            .then(async () => {
-                try {
-                    const resp = await Fetch({
-                        url: `/finishedgoods/${encodeURIComponent(
-                            initialValues.id
-                        )}`,
-                        options: {
-                            method: 'DELETE',
-                            authToken: token,
-                        },
-                    })
-                    setAlert({
-                        type: 'warning',
-                        children: (
-                            <Typography>
-                                Succesfully deleted finished good with ID -{' '}
-                                {resp.id}
-                            </Typography>
-                        ),
-                    })
-                    navigate('..')
-                } catch (e) {
-                    setError((e as Error).message)
-                }
+        try {
+            const resp = await Fetch({
+                url: `/finishedgoods/${encodeURIComponent(initialValues.id)}`,
+                options: {
+                    method: 'DELETE',
+                    authToken: token,
+                },
             })
-            .catch(() => {})
+            showNotification({
+                title: 'Success',
+                message: (
+                    <Text>
+                        Succesfully deleted finished good with ID - {resp.id}
+                    </Text>
+                ),
+                color: 'orange',
+            })
+            navigate('..')
+        } catch (e) {
+            setError((e as Error).message)
+        }
     }
 
     const getCustomers = async () => {
@@ -184,11 +206,29 @@ const Form = () => {
                         }),
                     },
                 },
-            })
+            }).then((data) =>
+                data.map((d: Partial<RawMaterialInterface>) => ({
+                    ...d,
+                    value: d.id,
+                    label: d.id,
+                }))
+            )
             setRawmaterial(data)
         } catch (e) {
             setError((e as Error).message)
         }
+    }
+
+    const deleteRm = async (rmId: string) => {
+        try {
+            await Fetch({
+                url: `/finishedgoods/${initialValues.id}/${rmId}`,
+                options: {
+                    authToken: token,
+                    method: 'DELETE',
+                },
+            })
+        } catch (e) {}
     }
 
     useEffect(() => {
@@ -200,408 +240,323 @@ const Form = () => {
     }
 
     return (
-        <Formik
-            initialValues={initialValues}
-            validationSchema={Yup.object().shape({
-                id: Yup.string().required('Unique ID is required'),
-                description: Yup.string().required('Description is required'),
-                category: Yup.string().required('Category is required'),
-                customerId: Yup.string().required('Customer is required'),
-                price: Yup.number().moreThan(0).required('Price is required'),
-                storeStock: Yup.number().min(0),
-                manPower: Yup.number().min(0),
-                overheads: Yup.number().min(0),
-                bom: Yup.array().of(
-                    Yup.object().shape({
-                        rmId: Yup.string().required(
-                            'Raw Material Identifier is required'
-                        ),
-                        quantity: Yup.number()
-                            .min(0)
-                            .required('Quantity is required'),
-                    })
-                ),
-            })}
-            onSubmit={onSubmit}
-        >
-            {({ values, errors, handleSubmit, isSubmitting }) => (
-                <form noValidate onSubmit={handleSubmit}>
-                    <Grid container spacing={3}>
-                        <Grid item xs={3} />
-                        <Grid item xs={6}>
-                            <Stepper activeStep={activeStep}>
-                                {['Basic Details', 'Bill of Material'].map(
-                                    (label, index) => {
-                                        const stepProps: {
-                                            completed?: boolean
-                                        } = {}
-                                        const labelProps: {
-                                            optional?: React.ReactNode
-                                        } = {}
-                                        if (index === 1) {
-                                            labelProps.optional = (
-                                                <Typography variant="caption">
-                                                    Optional
-                                                </Typography>
-                                            )
-                                        }
-                                        return (
-                                            <Step key={label} {...stepProps}>
-                                                <StepLabel {...labelProps}>
-                                                    {label}
-                                                </StepLabel>
-                                            </Step>
+        <FinishedGoodFormProvider form={form}>
+            <form
+                onSubmit={(e) => {
+                    e.preventDefault()
+                }}
+            >
+                <Grid>
+                    <Grid.Col xs={3} />
+                    <Grid.Col xs={6}>
+                        <Stepper
+                            active={activeStep}
+                            onStepClick={setActiveStep}
+                        >
+                            {['Basic Details', 'Bill of Material'].map(
+                                (label, index) => {
+                                    return (
+                                        <Stepper.Step
+                                            key={label}
+                                            label={label}
+                                        />
+                                    )
+                                }
+                            )}
+                        </Stepper>
+                    </Grid.Col>
+                    <Grid.Col xs={3} />
+                    {activeStep === 0 && (
+                        <>
+                            <FormInputText
+                                xs={4}
+                                label="ID"
+                                placeholder="Enter ID"
+                                withAsterisk
+                                {...form.getInputProps('id')}
+                            />
+                            <FormInputText
+                                xs={8}
+                                label="Description"
+                                placeholder="Enter Description"
+                                withAsterisk
+                                {...form.getInputProps('description')}
+                            />
+                            <FormSelect
+                                xs={6}
+                                label="Customer"
+                                placeholder="Select Customer"
+                                data={customer}
+                                withAsterisk
+                                {...form.getInputProps('customerId')}
+                            />
+                            <FormSelect
+                                xs={6}
+                                label="Category"
+                                placeholder="Select Category"
+                                data={[
+                                    {
+                                        value: 'Fuse_Box',
+                                        label: 'Fuse Box',
+                                    },
+                                    {
+                                        value: 'Indicator',
+                                        label: 'Indicator',
+                                    },
+                                    {
+                                        value: 'Magneto',
+                                        label: 'Magneto',
+                                    },
+                                    {
+                                        value: 'Battery_Cable',
+                                        label: 'Battery Cable',
+                                    },
+                                    {
+                                        value: 'Lead_Wire',
+                                        label: 'Lead Wire',
+                                    },
+                                    {
+                                        value: 'Piaggio',
+                                        label: 'Piaggio',
+                                    },
+                                    {
+                                        value: 'Pigtail',
+                                        label: 'Pigtail',
+                                    },
+                                    {
+                                        value: 'SPD',
+                                        label: 'SPD',
+                                    },
+                                ]}
+                                withAsterisk
+                                {...form.getInputProps('category')}
+                            />
+                            <FormInputNumber
+                                xs={3}
+                                type="number"
+                                label="Price"
+                                placeholder="Enter Price"
+                                min={0}
+                                precision={2}
+                                withAsterisk
+                                {...form.getInputProps('price')}
+                            />
+                            <FormInputNumber
+                                xs={3}
+                                type="number"
+                                label="Store Stock"
+                                placeholder="Enter Store Stock"
+                                min={0}
+                                {...form.getInputProps('storeStock')}
+                            />
+                            <FormInputNumber
+                                xs={3}
+                                type="number"
+                                label="Man Power"
+                                placeholder="Enter Man Power"
+                                precision={2}
+                                min={0}
+                                {...form.getInputProps('manPower')}
+                            />
+                            <FormInputNumber
+                                xs={3}
+                                type="number"
+                                label="Overheads"
+                                placeholder="Enter Overheads"
+                                precision={2}
+                                min={0}
+                                {...form.getInputProps('overheads')}
+                            />
+                            <Grid.Col xs={12}>
+                                <Button
+                                    fullWidth
+                                    size="md"
+                                    variant="filled"
+                                    color="primary"
+                                    onClick={handleNext}
+                                >
+                                    Next
+                                </Button>
+                            </Grid.Col>
+                        </>
+                    )}{' '}
+                    {activeStep === 1 && (
+                        <>
+                            <FormAutoComplete
+                                xs={9}
+                                id="rmId"
+                                label="Raw Material"
+                                data={rawmaterial}
+                                {...form.getInputProps('rmId')}
+                                onChange={(value) =>
+                                    setSelectedRm((selectedRm) => {
+                                        let rm = rawmaterial.find(
+                                            (d) => d.value === value
                                         )
+                                        if (rm)
+                                            return {
+                                                ...selectedRm,
+                                                rm,
+                                            }
+                                        return selectedRm
+                                    })
+                                }
+                                withAsterisk
+                            />
+                            <FormInputNumber
+                                name="quantity"
+                                xs={3}
+                                label="Quantity"
+                                placeholder="Enter Quantity"
+                                withAsterisk
+                                min={0}
+                                {...form.getInputProps('quantity')}
+                                onChange={(val) => {
+                                    if (val) {
+                                        setSelectedRm((selectedRm) => ({
+                                            ...selectedRm,
+                                            quantity: val,
+                                        }))
                                     }
-                                )}
-                            </Stepper>
-                        </Grid>
-                        <Grid item xs={3} />
-                        {activeStep === 0 && (
-                            <>
-                                <Field
-                                    name="id"
-                                    component={FormInput}
-                                    xs={4}
-                                    type="text"
-                                    label="ID"
-                                    placeholder="Enter ID"
-                                />
-                                <Field
-                                    name="description"
-                                    component={FormInput}
-                                    xs={8}
-                                    type="text"
-                                    label="Description"
-                                    placeholder="Enter Description"
-                                />
-                                <Field
-                                    name="customerId"
-                                    component={FormSelect}
-                                    xs={6}
-                                    label="Customer"
-                                    placeholder="Select Customer"
-                                    items={customer}
-                                />
-                                <Field
-                                    name="category"
-                                    component={FormSelect}
-                                    xs={6}
-                                    label="Category"
-                                    placeholder="Select Category"
-                                    items={[
-                                        {
-                                            value: 'Fuse_Box',
-                                            label: 'Fuse Box',
-                                        },
-                                        {
-                                            value: 'Indicator',
-                                        },
-                                        {
-                                            value: 'Magneto',
-                                        },
-                                        {
-                                            value: 'Battery_Cable',
-                                            label: 'Battery Cable',
-                                        },
-                                        {
-                                            value: 'Lead_Wire',
-                                            label: 'Lead Wire',
-                                        },
-                                        {
-                                            value: 'Piaggio',
-                                        },
-                                        {
-                                            value: 'Pigtail',
-                                        },
-                                        {
-                                            value: 'SPD',
-                                        },
-                                    ]}
-                                />
-                                <Field
-                                    name="price"
-                                    component={FormInput}
-                                    xs={3}
-                                    type="number"
-                                    label="Price"
-                                    placeholder="Enter Price"
-                                />
-                                <Field
-                                    name="storeStock"
-                                    component={FormInput}
-                                    xs={3}
-                                    type="number"
-                                    label="Store Stock"
-                                    placeholder="Enter Store Stock"
-                                />
-                                <Field
-                                    name="manPower"
-                                    component={FormInput}
-                                    xs={3}
-                                    type="number"
-                                    label="Man Power"
-                                    placeholder="Enter Man Power"
-                                />
-                                <Field
-                                    name="overheads"
-                                    component={FormInput}
-                                    xs={3}
-                                    type="number"
-                                    label="Overheads"
-                                    placeholder="Enter Overheads"
-                                />
-                                <Grid item xs={12}>
-                                    <Button
-                                        disableElevation
-                                        disabled={isSubmitting}
-                                        fullWidth
-                                        size="large"
-                                        variant="contained"
-                                        color="primary"
-                                        onClick={handleNext}
-                                    >
-                                        Next
-                                    </Button>
-                                </Grid>
-                            </>
-                        )}{' '}
-                        {activeStep === 1 && (
-                            <FieldArray name="bom">
-                                {({ remove, push }) => (
-                                    <>
-                                        <InputAutoComplete<
-                                            Partial<RawMaterialInterface>
-                                        >
-                                            identifierXs={4}
-                                            defaultIdentifier="description"
-                                            identifierItems={[
-                                                {
-                                                    value: 'description',
-                                                    label: 'Description',
-                                                },
-                                                {
-                                                    value: 'id',
-                                                    label: 'ID',
-                                                },
-                                                {
-                                                    label: 'DTPL Part Number',
-                                                    value: 'dtplCode',
-                                                },
-                                            ]}
-                                            itemXs={6}
-                                            label="Raw Material"
-                                            name="rmId"
-                                            options={rawmaterial}
-                                            uniqueIdentifier="id"
-                                            placeholder="Select Raw Material"
-                                            onChange={(
-                                                e: SyntheticEvent,
-                                                value
-                                            ) =>
-                                                setSelectedRm((selectedRm) => {
-                                                    if (value)
-                                                        return {
-                                                            ...selectedRm,
-                                                            rm: value,
-                                                        }
-                                                    return selectedRm
+                                }}
+                            />
+                            <Grid.Col xs={1} />
+                            <Grid.Col xs={12}>
+                                <Button
+                                    fullWidth
+                                    size="md"
+                                    variant="filled"
+                                    color="primary"
+                                    onClick={() => {
+                                        if (
+                                            selectedRm.quantity &&
+                                            selectedRm.rm &&
+                                            selectedRm.rm.id
+                                        ) {
+                                            if (
+                                                !form.values.bom.find(
+                                                    (r) =>
+                                                        r.rmId ===
+                                                        selectedRm.rm.id
+                                                )
+                                            ) {
+                                                form.insertListItem('bom', {
+                                                    rmId: selectedRm.rm.id,
+                                                    quantity:
+                                                        selectedRm.quantity,
                                                 })
                                             }
+                                        }
+                                    }}
+                                >
+                                    Add to BOM
+                                </Button>
+                            </Grid.Col>
+                            <Grid.Col xs={12}>
+                                <Divider />
+                            </Grid.Col>
+                            {form.values.bom.length !== 0 && (
+                                <Grid.Col xs={12}>
+                                    <Grid justify="center" align="center" grow>
+                                        <Grid.Col xs={4}>
+                                            <Text fz="lg">
+                                                Raw Material Identifier
+                                            </Text>
+                                        </Grid.Col>
+                                        <Grid.Col xs={4}>
+                                            <Text fz="lg">Quantity</Text>
+                                        </Grid.Col>
+                                        <Grid.Col xs={4} />
+                                    </Grid>
+                                </Grid.Col>
+                            )}
+                            {form.values.bom.map((item, index) => (
+                                <Grid.Col xs={12} key={index}>
+                                    <Grid justify="center" align="center" grow>
+                                        <FormInputText
+                                            xs={4}
+                                            disabled
+                                            {...form.getInputProps(
+                                                `bom.${index}.rmId`
+                                            )}
                                         />
-                                        <Field
-                                            name="quantity"
-                                            component={FormInput}
-                                            xs={2}
-                                            type="number"
-                                            label="Quantity"
-                                            placeholder="Enter Quantity"
-                                            onChange={(
-                                                e: ChangeEvent<HTMLInputElement>
-                                            ) =>
-                                                setSelectedRm((selectedRm) => ({
-                                                    ...selectedRm,
-                                                    quantity: parseFloat(
-                                                        e.target?.value
-                                                    ),
-                                                }))
-                                            }
+                                        <FormInputNumber
+                                            xs={4}
+                                            {...form.getInputProps(
+                                                `bom.${index}.quantity`
+                                            )}
                                         />
-                                        <Grid item xs={1} />
-                                        <Grid item xs={12}>
+                                        <Grid.Col xs={4}>
                                             <Button
-                                                disableElevation
-                                                disabled={isSubmitting}
                                                 fullWidth
-                                                size="large"
-                                                variant="contained"
-                                                color="primary"
+                                                size="xs"
+                                                variant="outline"
+                                                color="red"
                                                 onClick={() => {
-                                                    if (
-                                                        selectedRm.quantity &&
-                                                        selectedRm.rm &&
-                                                        selectedRm.rm.id
-                                                    ) {
-                                                        if (
-                                                            !values.bom.find(
-                                                                (r) =>
-                                                                    r.rmId ===
-                                                                    selectedRm
-                                                                        .rm.id
-                                                            )
-                                                        ) {
-                                                            push({
-                                                                rmId: selectedRm
-                                                                    .rm.id,
-                                                                quantity:
-                                                                    selectedRm.quantity,
-                                                            })
-                                                        }
-                                                    }
+                                                    form.removeListItem(
+                                                        'bom',
+                                                        index
+                                                    )
+                                                    deleteRm(item.rmId)
                                                 }}
                                             >
-                                                Add to BOM
+                                                DELETE
                                             </Button>
-                                        </Grid>
-                                        {errors.bom && (
-                                            <Grid item xs={12}>
-                                                <FormHelperText error>
-                                                    {errors.bom as string}
-                                                </FormHelperText>
-                                            </Grid>
-                                        )}
-                                        <Grid item xs={12}>
-                                            <Divider />
-                                        </Grid>
-                                        {values.bom.length !== 0 && (
-                                            <Grid item xs={12} container>
-                                                <Grid item xs={4}>
-                                                    <Typography variant="h6">
-                                                        Raw Material Identifier
-                                                    </Typography>
-                                                </Grid>
-                                                <Grid item xs={4}>
-                                                    <Typography variant="h6">
-                                                        Quantity
-                                                    </Typography>
-                                                </Grid>
-                                                <Grid item xs={4} />
-                                            </Grid>
-                                        )}
-                                        {values.bom.map((item, index) => (
-                                            <Grid
-                                                item
-                                                xs={12}
-                                                container
-                                                key={index}
-                                            >
-                                                <Grid item xs={4}>
-                                                    <OutlinedInput
-                                                        name={`bom.${index}.rmId`}
-                                                        type="text"
-                                                        disabled
-                                                        value={item.rmId}
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={4}>
-                                                    <OutlinedInput
-                                                        name={`bom.${index}.quantity`}
-                                                        type="number"
-                                                        disabled
-                                                        value={item.quantity}
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={4}>
-                                                    <Button
-                                                        disableElevation
-                                                        disabled={isSubmitting}
-                                                        fullWidth
-                                                        size="small"
-                                                        variant="contained"
-                                                        color="error"
-                                                        onClick={() =>
-                                                            // TODO - if isEdit then make a DELETE call to bom
-                                                            remove(index)
-                                                        }
-                                                    >
-                                                        DELETE
-                                                    </Button>
-                                                </Grid>
-                                            </Grid>
-                                        ))}
-                                    </>
-                                )}
-                            </FieldArray>
-                        )}
-                        {errors.submit && (
-                            <Grid item xs={12}>
-                                <FormHelperText error>
-                                    {errors.submit}
-                                </FormHelperText>
-                            </Grid>
-                        )}
-                        {error && (
-                            <Grid item xs={12}>
-                                <FormHelperText error>{error}</FormHelperText>
-                            </Grid>
-                        )}
-                        {activeStep === 1 && (
-                            <>
-                                <Grid item xs={2}>
-                                    <Button
-                                        disableElevation
-                                        disabled={isSubmitting}
-                                        fullWidth
-                                        size="large"
-                                        variant="contained"
-                                        color="secondary"
-                                        onClick={handleBack}
-                                    >
-                                        Back
-                                    </Button>
-                                </Grid>
-                                <Grid item xs={8} />
-                                <Grid item xs={2}>
-                                    <Button
-                                        disableElevation
-                                        disabled={isSubmitting}
-                                        fullWidth
-                                        size="large"
-                                        type="submit"
-                                        variant="contained"
-                                        color="primary"
-                                    >
-                                        {isEdit ? 'Update' : 'Create'}
-                                    </Button>
-                                </Grid>
-                            </>
-                        )}
-                        {isEdit && (
-                            <Grid item xs={12}>
-                                <Grid
-                                    container
-                                    justifyContent="center"
-                                    alignItems="center"
+                                        </Grid.Col>
+                                    </Grid>
+                                </Grid.Col>
+                            ))}
+                        </>
+                    )}
+                    {error && (
+                        <Grid.Col xs={12}>
+                            <Text c="red">{error}</Text>
+                        </Grid.Col>
+                    )}
+                    {activeStep === 1 && (
+                        <>
+                            <Grid.Col xs={2}>
+                                <Button
+                                    fullWidth
+                                    size="md"
+                                    variant="outline"
+                                    color="gray"
+                                    onClick={handleBack}
                                 >
-                                    <Button
-                                        disableElevation
-                                        disabled={isSubmitting}
-                                        size="large"
-                                        variant="contained"
-                                        color="error"
-                                        onClick={() => {
-                                            onDelete()
-                                        }}
-                                    >
-                                        DELETE
-                                    </Button>
-                                </Grid>
-                            </Grid>
-                        )}
-                    </Grid>
-                </form>
-            )}
-        </Formik>
+                                    Back
+                                </Button>
+                            </Grid.Col>
+                            <Grid.Col xs={8} />
+                            <Grid.Col xs={2}>
+                                <Button
+                                    fullWidth
+                                    size="md"
+                                    variant="filled"
+                                    color="primary"
+                                    onClick={openModal}
+                                >
+                                    {isEdit ? 'Update' : 'Create'}
+                                </Button>
+                            </Grid.Col>
+                        </>
+                    )}
+                    {isEdit && (
+                        <Grid.Col xs={12}>
+                            <Center>
+                                <Button
+                                    size="xs"
+                                    variant="filled"
+                                    color="red"
+                                    onClick={openDeleteModal}
+                                >
+                                    DELETE
+                                </Button>
+                            </Center>
+                        </Grid.Col>
+                    )}
+                </Grid>
+            </form>
+        </FinishedGoodFormProvider>
     )
 }
 

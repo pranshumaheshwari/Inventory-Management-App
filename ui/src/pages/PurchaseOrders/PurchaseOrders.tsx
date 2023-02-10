@@ -1,19 +1,21 @@
-import { ColDef } from 'ag-grid-community';
-import { Inventory } from '../common';
+import { IconEdit, IconPlus } from '@tabler/icons-react'
+
+import { ColDef } from 'ag-grid-community'
+import { Inventory } from '../common'
 import React from 'react'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'
 
 export interface PurchaseOrdersInterface {
-    id: string;
-    supplierId: string;
-    status: string;
+    id: string
+    supplierId: string
+    status: string
     poDetails: {
-        rmId: string;
-        quantity: number;
-        price: number;
-    }[];
+        rmId: string
+        quantity: number
+        price: number
+    }[]
     supplier: {
-        name: string;
+        name: string
     }
 }
 
@@ -21,51 +23,54 @@ const PurchaseOrders = () => {
     const navigate = useNavigate()
     const columnDefs: ColDef<PurchaseOrdersInterface>[] = [
         { field: 'id', headerName: 'ID' },
-        { headerName: 'Supplier', valueGetter: ({ data }) => data?.supplier.name },
+        {
+            headerName: 'Supplier',
+            valueGetter: ({ data }) => data?.supplier.name,
+        },
         { field: 'status', headerName: 'Status' },
     ]
     const actions = [
         {
             name: 'New Purchase Order',
-            icon: 'add_outlined',
+            icon: IconPlus,
             onClick: () => {
-                navigate("new")
-            }
+                navigate('new')
+            },
         },
         {
             name: 'Create Purchase Order From Sales Order',
-            icon: 'create_outlined',
+            icon: IconEdit,
             onClick: () => {
-                navigate("newFromSalesOrder")
-            }
-        }
+                navigate('newFromSalesOrder')
+            },
+        },
     ]
 
     return (
         <Inventory<PurchaseOrdersInterface>
             columnDefs={columnDefs}
             addEditButton
-            speedDialActions={actions}
-            url='/purchaseorders'
+            affixActions={actions}
+            url="/purchaseorders"
             options={{
                 params: {
                     include: JSON.stringify({
                         supplier: {
                             select: {
-                                name: true
-                            }
+                                name: true,
+                            },
                         },
                         poDetails: {
                             select: {
                                 rmId: true,
                                 quantity: true,
-                                price: true
-                            }
-                        }
-                    })
-                }
+                                price: true,
+                            },
+                        },
+                    }),
+                },
             }}
-            fileName='purchaseOrders_inventory'
+            fileName="purchaseOrders_inventory"
         />
     )
 }

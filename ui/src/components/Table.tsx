@@ -1,5 +1,5 @@
 import { AgGridReact, AgGridReactProps } from 'ag-grid-react'
-import { Box, Skeleton } from '@mui/material'
+import { Box, Skeleton } from '@mantine/core'
 import React, { useMemo, useRef } from 'react'
 
 import { ColDef } from 'ag-grid-community'
@@ -47,7 +47,7 @@ function Table<Type>({
     )
 
     return (
-        <Box width="100%" height="100%" className="ag-theme-alpine">
+        <Box w="100%" h="100%" className="ag-theme-alpine">
             {rowData ? (
                 <AgGridReact<Type>
                     animateRows
@@ -75,11 +75,7 @@ function Table<Type>({
                 />
             ) : (
                 <>
-                    <Skeleton
-                        variant="rectangular"
-                        width="100%"
-                        height="100%"
-                    />
+                    <Skeleton width="100%" height="100%" />
                 </>
             )}
         </Box>

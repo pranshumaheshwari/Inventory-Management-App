@@ -1,4 +1,5 @@
 import { ColDef } from 'ag-grid-community'
+import { IconPlus } from '@tabler/icons-react'
 import { Inventory } from '../common'
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -54,7 +55,7 @@ const RawMaterial = () => {
     const actions = [
         {
             name: 'New Raw Material',
-            icon: 'add_outlined',
+            icon: IconPlus,
             onClick: () => {
                 navigate('new')
             },
@@ -65,7 +66,7 @@ const RawMaterial = () => {
         <Inventory<RawMaterialInterface>
             columnDefs={columnDefs}
             addEditButton
-            speedDialActions={actions}
+            affixActions={actions}
             url="/rawmaterial"
             fileName="rawmaterial_inventory"
         />

@@ -1,24 +1,25 @@
-import { Button, Typography } from '@mui/material'
+import { Affix, Table } from '../../components'
 import { Fetch, useAuth } from '../../services'
 import React, { useEffect, useMemo, useState } from 'react'
-import { SpeedDial, Table } from '../../components'
 
+import { AffixInterface } from '../../components/Affix'
+import { Button } from '@mantine/core'
 import { ColDef } from 'ag-grid-community'
 import { FetchInterface } from '../../services/fetch'
-import { SpeedDialInterface } from '../../components/SpeedDial'
+import { IconEdit } from '@tabler/icons-react'
 import { TableInterface } from '../../components/Table'
 import { useNavigate } from 'react-router-dom'
 
 interface InventoryInterface<T> extends TableInterface<T>, FetchInterface {
     columnDefs: ColDef<any>[]
     addEditButton?: boolean
-    speedDialActions: SpeedDialInterface['actions']
+    affixActions: AffixInterface['actions']
 }
 
 function Inventory<Type>({
     columnDefs,
     addEditButton,
-    speedDialActions,
+    affixActions,
     url,
     fileName,
     options,
@@ -53,10 +54,9 @@ function Inventory<Type>({
                     field: '#',
                     cellRenderer: ({ data }: { data: Type }) => (
                         <Button
-                            disableElevation
-                            size="medium"
+                            size="md"
                             type="submit"
-                            variant="contained"
+                            variant="subtle"
                             sx={{
                                 backgroundColor: 'primary.light',
                             }}
@@ -66,7 +66,7 @@ function Inventory<Type>({
                                 })
                             }}
                         >
-                            <Typography color="secondary.dark">Edit</Typography>
+                            <IconEdit />
                         </Button>
                     ),
                 },
@@ -83,7 +83,7 @@ function Inventory<Type>({
                 fileName={fileName}
                 rowData={rowData}
             />
-            <SpeedDial actions={speedDialActions} />
+            <Affix actions={affixActions} />
         </>
     )
 }
