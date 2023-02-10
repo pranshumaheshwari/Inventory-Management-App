@@ -1,3 +1,5 @@
+import { IconChartBar, IconUserPlus } from '@tabler/icons-react'
+
 import { ItemInterface } from '.'
 
 const dashboard: ItemInterface = {
@@ -10,14 +12,16 @@ const dashboard: ItemInterface = {
             title: 'Attendance',
             type: 'item',
             url: '/manPower/attendance',
-            icon: 'man_outlined',
+            icon: IconUserPlus,
+            urls: ['/manPower/attendance'],
         },
         {
             id: 'manpower-report',
             title: 'Report',
             type: 'item',
             url: '/manPower/report',
-            icon: 'assessment_outlined',
+            icon: IconChartBar,
+            urls: ['/manPower/report'],
         },
     ],
 }

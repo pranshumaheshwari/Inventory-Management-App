@@ -1,13 +1,8 @@
-import React from 'react'
-import { Container } from '@mui/material'
 import Form from './components/Form'
+import React from 'react'
 
 const NewSupplier = () => {
-	return (
-		<Container>
-			<Form />
-		</Container>
-	)
+    return <Form />
 }
 
 export default NewSupplier

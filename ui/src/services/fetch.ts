@@ -1,4 +1,4 @@
-const API_URL = 'https://pranshu.duckdns.org:17190'
+const API_URL = 'http://elara.whatbox.ca:17190'
 
 export interface FetchInterface {
     url: string

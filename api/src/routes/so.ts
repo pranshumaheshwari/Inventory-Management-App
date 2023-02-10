@@ -6,7 +6,6 @@ import { PrismaService } from '../service'
 const app: Router = express.Router()
 const prisma = PrismaService.so
 
-
 app.get('/', async (req: Request, res: Response) => {
     const args: Prisma.SoFindManyArgs = {}
     const { select, include } = req.query
@@ -21,18 +20,16 @@ app.get('/', async (req: Request, res: Response) => {
 })
 
 app.post('/', async (req: Request, res: Response) => {
-    const {
-        id,
-        customerId,
-        soDetails
-    } = req.body
+    const { id, customerId, soDetails } = req.body
 
-    const details = soDetails.map((fg: Prisma.SoDetailsUncheckedCreateInput) => {
-        return {
-            fgId: fg.fgId,
-            quantity: fg.quantity
+    const details = soDetails.map(
+        (fg: Prisma.SoDetailsUncheckedCreateInput) => {
+            return {
+                fgId: fg.fgId,
+                quantity: fg.quantity,
+            }
         }
-    })
+    )
 
     try {
         const result = await prisma.create({
@@ -40,14 +37,14 @@ app.post('/', async (req: Request, res: Response) => {
                 id,
                 customerId,
                 soDetails: {
-                    create: details
-                }
-            }
+                    create: details,
+                },
+            },
         })
         res.json(result)
     } catch (e) {
         res.status(500).json({
-            message: (e as Error).message
+            message: (e as Error).message,
         })
     }
 })
@@ -64,40 +61,37 @@ app.get('/:soId', async (req: Request, res: Response) => {
     }
     const data = await PrismaService.soDetails.findMany({
         where: {
-            soId
+            soId,
         },
-        ...args
+        ...args,
     })
     res.json(data)
 })
 
 app.put('/:id', async (req: Request, res: Response) => {
-    const {
-        id: updatedId,
-        customerId,
-        status,
-        soDetails
-    } = req.body
+    const { id: updatedId, customerId, status, soDetails } = req.body
 
     const { id } = req.params
 
-    const details = soDetails.map((fg: Prisma.SoDetailsUncheckedCreateInput) => {
-        return {
-            fgId: fg.fgId,
-            quantity: fg.quantity
+    const details = soDetails.map(
+        (fg: Prisma.SoDetailsUncheckedCreateInput) => {
+            return {
+                fgId: fg.fgId,
+                quantity: fg.quantity,
+            }
         }
-    })
+    )
 
     const currentDetails = await PrismaService.soDetails.findMany({
         where: {
-            soId: id
-        }
+            soId: id,
+        },
     })
     try {
         const del = await PrismaService.soDetails.deleteMany({
             where: {
-                soId: id
-            }
+                soId: id,
+            },
         })
         const result = await prisma.update({
             where: {
@@ -108,17 +102,17 @@ app.put('/:id', async (req: Request, res: Response) => {
                 customerId,
                 status,
                 soDetails: {
-                    create: details
-                }
-            }
+                    create: details,
+                },
+            },
         })
         res.json(result)
     } catch (e) {
         const recreate = await PrismaService.soDetails.createMany({
-            data: currentDetails
+            data: currentDetails,
         })
         res.status(500).json({
-            message: (e as Error).message
+            message: (e as Error).message,
         })
     }
 })
@@ -128,18 +122,37 @@ app.delete('/:id', async (req: Request, res: Response) => {
     try {
         const del = await PrismaService.soDetails.deleteMany({
             where: {
-                soId: id
-            }
+                soId: id,
+            },
         })
         const result = await prisma.delete({
             where: {
-                id
-            }
+                id,
+            },
         })
         res.json(result)
     } catch (e) {
         res.status(500).json({
-            message: (e as Error).message
+            message: (e as Error).message,
+        })
+    }
+})
+
+app.delete('/:id/:fgId', async (req: Request, res: Response) => {
+    const { id, fgId } = req.params
+    try {
+        const result = await PrismaService.soDetails.delete({
+            where: {
+                soId_fgId: {
+                    soId: id,
+                    fgId,
+                },
+            },
+        })
+        res.json(result)
+    } catch (e) {
+        res.status(500).json({
+            message: (e as Error).message,
         })
     }
 })

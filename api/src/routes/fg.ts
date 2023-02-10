@@ -6,7 +6,6 @@ import { PrismaService } from '../service'
 const app: Router = express.Router()
 const prisma = PrismaService.fg
 
-
 app.get('/', async (req: Request, res: Response) => {
     const args: Prisma.FgFindManyArgs = {}
     const { select, include, where, distinct } = req.query
@@ -36,13 +35,13 @@ app.post('/', async (req: Request, res: Response) => {
         price,
         storeStock,
         overheads,
-        bom
+        bom,
     } = req.body
 
     const BOM = bom?.map((rm: Prisma.BomUncheckedCreateInput) => {
         return {
             rmId: rm.rmId,
-            quantity: rm.quantity
+            quantity: rm.quantity,
         }
     })
 
@@ -53,8 +52,8 @@ app.post('/', async (req: Request, res: Response) => {
                 description,
                 customer: {
                     connect: {
-                        id: customerId
-                    }
+                        id: customerId,
+                    },
                 },
                 category,
                 manPower,
@@ -62,14 +61,14 @@ app.post('/', async (req: Request, res: Response) => {
                 storeStock,
                 overheads,
                 bom: {
-                    create: BOM
-                }
-            }
+                    create: BOM,
+                },
+            },
         })
         res.json(result)
     } catch (e) {
         res.status(500).json({
-            message: (e as Error).message
+            message: (e as Error).message,
         })
     }
 })
@@ -78,8 +77,8 @@ app.get('/:id', async (req: Request, res: Response) => {
     const { id } = req.params
     const data = await prisma.findUnique({
         where: {
-            id
-        }
+            id,
+        },
     })
     res.json(data)
 })
@@ -96,27 +95,27 @@ app.put('/:id', async (req: Request, res: Response) => {
         price,
         storeStock,
         overheads,
-        bom
+        bom,
     } = req.body
 
     const { id } = req.params
     const BOM = bom?.map((rm: Prisma.BomUncheckedCreateInput) => {
         return {
             rmId: rm.rmId,
-            quantity: rm.quantity
+            quantity: rm.quantity,
         }
     })
-    
+
     const currentBOM = await PrismaService.bom.findMany({
         where: {
-            fgId: id
-        }
+            fgId: id,
+        },
     })
     try {
         const del = await PrismaService.bom.deleteMany({
             where: {
-                fgId: id
-            }
+                fgId: id,
+            },
         })
         const result = await prisma.update({
             where: {
@@ -132,35 +131,52 @@ app.put('/:id', async (req: Request, res: Response) => {
                 storeStock,
                 overheads,
                 bom: {
-                    create: BOM
-                }
-            }
+                    create: BOM,
+                },
+            },
         })
         res.json(result)
     } catch (e) {
         const recreate = await PrismaService.bom.createMany({
-            data: currentBOM
+            data: currentBOM,
         })
         res.status(500).json({
-            message: (e as Error).message
+            message: (e as Error).message,
         })
     }
 })
-
-// TODO - Add a bom delete route
 
 app.delete('/:id', async (req: Request, res: Response) => {
     const { id } = req.params
     try {
         const result = await prisma.delete({
             where: {
-                id
+                id,
             },
         })
         res.json(result)
     } catch (e) {
         res.status(500).json({
-            message: (e as Error).message
+            message: (e as Error).message,
+        })
+    }
+})
+
+app.delete('/:fgId/:rmId', async (req: Request, res: Response) => {
+    const { fgId, rmId } = req.params
+    try {
+        const result = await PrismaService.bom.delete({
+            where: {
+                fgId_rmId: {
+                    rmId,
+                    fgId,
+                },
+            },
+        })
+        res.json(result)
+    } catch (e) {
+        res.status(500).json({
+            message: (e as Error).message,
         })
     }
 })

@@ -1,47 +1,80 @@
-import * as Yup from 'yup'
-
-import {
-    Button,
-    CircularProgress,
-    FormHelperText,
-    Grid,
-    Typography,
-} from '@mui/material'
+import { Button, Center, Grid, Text } from '@mantine/core'
 import { Fetch, useAuth } from '../../../services'
-import { Field, Formik, FormikHelpers } from 'formik'
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
+import { SupplierFormProvider, useSupplierForm } from './context'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-import { AlertContext } from '../../../context'
-import { FormInput } from '../../../components'
+import { FormInputText } from '../../../components'
 import { SupplierInterface } from '../Suppliers'
-import { useConfirm } from 'material-ui-confirm'
-
-interface FormValues extends Required<SupplierInterface> {
-    submit: null
-}
+import { isNotEmpty } from '@mantine/form'
+import { openConfirmModal } from '@mantine/modals'
+import { showNotification } from '@mantine/notifications'
 
 const Form = () => {
-    const { setAlert } = useContext(AlertContext)
     const navigate = useNavigate()
     const location = useLocation()
-    const confirm = useConfirm()
     const isEdit = location.state ? true : false
     const {
         token: { token },
     } = useAuth()
     const [error, setError] = useState('')
-    const onSubmit = async (
-        values: FormValues,
-        { setErrors, setStatus, setSubmitting }: FormikHelpers<FormValues>
-    ) => {
+    const initialValues = isEdit
+        ? (location.state as SupplierInterface)
+        : {
+              id: '',
+              name: '',
+              address1: '',
+              address2: '',
+              city: '',
+              state: '',
+              gst: '',
+          }
+    const form = useSupplierForm({
+        initialValues,
+        validate: {
+            id: isNotEmpty(),
+            name: isNotEmpty(),
+            city: isNotEmpty(),
+            state: isNotEmpty(),
+            gst: (value) =>
+                value.length === 15 ? null : 'GST Number length should be 15',
+        },
+    })
+    const openModal = () =>
+        openConfirmModal({
+            title: 'Please confirm your action',
+            centered: true,
+            children: <Text size="sm">Are you sure you want to proceed</Text>,
+            labels: { confirm: 'Confirm', cancel: 'Cancel' },
+            onConfirm: () => {
+                onSubmit(form.values)
+            },
+        })
+
+    const openDeleteModal = () =>
+        openConfirmModal({
+            title: 'Delete this item',
+            centered: true,
+            children: (
+                <Text size="sm">
+                    Are you sure you want to delete this item? This action is
+                    destructive and irreversible. All data will be lost
+                </Text>
+            ),
+            labels: { confirm: 'Delete', cancel: "No don't delete it" },
+            confirmProps: { color: 'red' },
+            onConfirm: onDelete,
+        })
+    const onSubmit = async (values: SupplierInterface) => {
         try {
             const resp = await Fetch({
                 url:
                     '/suppliers' +
                     (isEdit
                         ? '/' +
-                          encodeURIComponent((location.state as FormValues).id)
+                          encodeURIComponent(
+                              (location.state as SupplierInterface).id
+                          )
                         : ''),
                 options: {
                     method: isEdit ? 'PUT' : 'POST',
@@ -49,216 +82,161 @@ const Form = () => {
                     authToken: token,
                 },
             })
-            setAlert({
-                type: 'success',
-                children: (
-                    <Typography>
+            showNotification({
+                title: 'Success',
+                message: (
+                    <Text>
                         Succesfully {isEdit ? 'edited' : 'created'} supplier
                         with ID - {resp.id}
-                    </Typography>
+                    </Text>
                 ),
+                color: 'green',
             })
             navigate('..')
         } catch (err) {
-            setStatus({ success: false })
-            setErrors({ submit: (err as Error).message })
-            setSubmitting(false)
+            setError((err as Error).message)
+            showNotification({
+                title: 'Error',
+                message: <Text>{(err as Error).message}</Text>,
+                color: 'red',
+            })
         }
     }
     const onDelete = async () => {
-        confirm({
-            description: `This will delete supplier ${
-                (location.state as FormValues).id
-            }`,
-        })
-            .then(async () => {
-                try {
-                    const resp = await Fetch({
-                        url: `/suppliers/${encodeURIComponent(
-                            (location.state as FormValues).id
-                        )}`,
-                        options: {
-                            method: 'DELETE',
-                            authToken: token,
-                        },
-                    })
-                    setAlert({
-                        type: 'warning',
-                        children: (
-                            <Typography>
-                                Succesfully {isEdit ? 'edited' : 'created'}{' '}
-                                supplier with ID - {resp.id}
-                            </Typography>
-                        ),
-                    })
-                    navigate('..')
-                } catch (e) {
-                    setError((e as Error).message)
-                }
+        try {
+            const resp = await Fetch({
+                url: `/suppliers/${encodeURIComponent(
+                    (location.state as SupplierInterface).id
+                )}`,
+                options: {
+                    method: 'DELETE',
+                    authToken: token,
+                },
             })
-            .catch(() => {})
+            showNotification({
+                title: 'Success',
+                message: (
+                    <Text>
+                        Succesfully {isEdit ? 'edited' : 'created'} supplier
+                        with ID - {resp.id}
+                    </Text>
+                ),
+                color: 'orange',
+            })
+            navigate('..')
+        } catch (e) {
+            setError((e as Error).message)
+        }
     }
 
     return (
-        <Formik
-            initialValues={
-                isEdit
-                    ? (location.state as FormValues)
-                    : {
-                          id: '',
-                          name: '',
-                          address1: '',
-                          address2: '',
-                          city: '',
-                          state: '',
-                          gst: '',
-                          submit: null,
-                      }
-            }
-            validationSchema={Yup.object().shape({
-                id: Yup.string().required('Unique ID is required'),
-                name: Yup.string().required('Name is required'),
-                address1: Yup.string(),
-                address2: Yup.string(),
-                city: Yup.string().required('City is required'),
-                state: Yup.string().required('State is required'),
-                gst: Yup.string()
-                    .length(15)
-                    .required('GST No. with length of 15 is required'),
-            })}
-            onSubmit={onSubmit}
-        >
-            {({
-                errors,
-                handleBlur,
-                handleChange,
-                handleSubmit,
-                isSubmitting,
-                touched,
-                values,
-            }) => (
-                <form noValidate onSubmit={handleSubmit}>
-                    <Grid container spacing={3}>
-                        <Field
-                            name="id"
-                            component={FormInput}
-                            xs={4}
-                            type="text"
-                            label="ID"
-                            placeholder="Enter ID"
-                        />
-                        <Field
-                            name="name"
-                            component={FormInput}
-                            xs={8}
-                            type="text"
-                            label="Name"
-                            placeholder="Enter name"
-                        />
-                        <Field
-                            name="address1"
-                            component={FormInput}
-                            xs={6}
-                            type="text"
-                            label="Address 1"
-                            placeholder="Address 1"
-                        />
-                        <Field
-                            name="address2"
-                            component={FormInput}
-                            xs={6}
-                            type="text"
-                            label="Address 2"
-                            placeholder="Address 2"
-                        />
-                        <Field
-                            name="city"
-                            component={FormInput}
-                            xs={4}
-                            type="text"
-                            label="City"
-                            placeholder="City"
-                        />
-                        <Field
-                            name="state"
-                            component={FormInput}
-                            xs={4}
-                            type="text"
-                            label="State"
-                            placeholder="State"
-                        />
-                        <Field
-                            name="gst"
-                            component={FormInput}
-                            xs={4}
-                            type="text"
-                            label="GST"
-                            placeholder="GST"
-                        />
-                        {errors.submit && (
-                            <Grid item xs={12}>
-                                <FormHelperText error>
-                                    {errors.submit}
-                                </FormHelperText>
-                            </Grid>
-                        )}
-                        {error && (
-                            <Grid item xs={12}>
-                                <FormHelperText error>{error}</FormHelperText>
-                            </Grid>
-                        )}
-                        <Grid item xs={12}>
-                            <Button
-                                disableElevation
-                                disabled={isSubmitting}
-                                fullWidth
-                                size="large"
-                                type="submit"
-                                variant="contained"
-                                color="primary"
-                            >
-                                {isEdit ? 'Update' : 'Create'}
-                            </Button>
-                            {isSubmitting && (
-                                <CircularProgress
-                                    size={24}
-                                    sx={{
-                                        color: 'text.secondary',
-                                        position: 'absolute',
-                                        top: '50%',
-                                        left: '50%',
-                                        marginTop: '-12px',
-                                        marginLeft: '-12px',
-                                    }}
-                                />
-                            )}
-                        </Grid>
-                        {isEdit && (
-                            <Grid item xs={12}>
-                                <Grid
-                                    container
-                                    justifyContent="center"
-                                    alignItems="center"
+        <SupplierFormProvider form={form}>
+            <form
+                onSubmit={(e) => {
+                    e.preventDefault()
+                }}
+            >
+                <Grid justify="center" align="center" grow>
+                    <FormInputText
+                        name="id"
+                        xs={4}
+                        type="text"
+                        label="ID"
+                        placeholder="Enter ID"
+                        withAsterisk
+                        {...form.getInputProps('id')}
+                    />
+                    <FormInputText
+                        name="name"
+                        xs={8}
+                        type="text"
+                        label="Name"
+                        placeholder="Enter name"
+                        withAsterisk
+                        {...form.getInputProps('name')}
+                    />
+                    <FormInputText
+                        name="address1"
+                        xs={6}
+                        type="text"
+                        label="Address 1"
+                        placeholder="Address 1"
+                        {...form.getInputProps('address1')}
+                    />
+                    <FormInputText
+                        name="address2"
+                        xs={6}
+                        type="text"
+                        label="Address 2"
+                        placeholder="Address 2"
+                        {...form.getInputProps('address2')}
+                    />
+                    <FormInputText
+                        name="city"
+                        xs={4}
+                        type="text"
+                        label="City"
+                        placeholder="City"
+                        withAsterisk
+                        {...form.getInputProps('city')}
+                    />
+                    <FormInputText
+                        name="state"
+                        xs={4}
+                        type="text"
+                        label="State"
+                        placeholder="State"
+                        withAsterisk
+                        {...form.getInputProps('state')}
+                    />
+                    <FormInputText
+                        name="gst"
+                        xs={4}
+                        type="text"
+                        label="GST"
+                        placeholder="GST"
+                        withAsterisk
+                        {...form.getInputProps('gst')}
+                    />
+                    {error && (
+                        <Grid.Col xs={12}>
+                            <Text c="red">{error}</Text>
+                        </Grid.Col>
+                    )}
+                    <Grid.Col xs={12}>
+                        <Button
+                            fullWidth
+                            size="xs"
+                            type="submit"
+                            variant="filled"
+                            color="primary"
+                            onClick={() => {
+                                const result = form.validate()
+                                if (!result.hasErrors) {
+                                    openModal()
+                                }
+                            }}
+                        >
+                            {isEdit ? 'Update' : 'Create'}
+                        </Button>
+                    </Grid.Col>
+                    {isEdit && (
+                        <Grid.Col xs={12}>
+                            <Center>
+                                <Button
+                                    size="xs"
+                                    variant="filled"
+                                    color="red"
+                                    onClick={openDeleteModal}
                                 >
-                                    <Button
-                                        disableElevation
-                                        disabled={isSubmitting}
-                                        size="large"
-                                        variant="contained"
-                                        color="error"
-                                        onClick={() => {
-                                            onDelete()
-                                        }}
-                                    >
-                                        DELETE
-                                    </Button>
-                                </Grid>
-                            </Grid>
-                        )}
-                    </Grid>
-                </form>
-            )}
-        </Formik>
+                                    DELETE
+                                </Button>
+                            </Center>
+                        </Grid.Col>
+                    )}
+                </Grid>
+            </form>
+        </SupplierFormProvider>
     )
 }
 

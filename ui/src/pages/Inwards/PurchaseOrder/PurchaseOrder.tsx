@@ -1,23 +1,15 @@
-import * as Yup from 'yup'
-
-import {
-    Button,
-    Divider,
-    FormHelperText,
-    Grid,
-    OutlinedInput,
-    SelectChangeEvent,
-    Skeleton,
-    Typography,
-} from '@mui/material'
+import { Button, Divider, Grid, Skeleton, Text } from '@mantine/core'
 import { Fetch, useAuth } from '../../../services'
-import { Field, FieldArray, Formik, FormikHelpers } from 'formik'
-import React, { useContext, useEffect, useState } from 'react'
+import { FormInputText, FormSelect } from '../../../components'
+import {
+    InwardsPurchaseOrderFormProvider,
+    useInwardsPurchaseOrderForm,
+} from './context'
+import React, { useEffect, useState } from 'react'
 
-import { AlertContext } from '../../../context'
-import { FormInput } from '../../../components'
-import FormSelect from '../../../components/FormSelect'
-import { useConfirm } from 'material-ui-confirm'
+import { isNotEmpty } from '@mantine/form'
+import { openConfirmModal } from '@mantine/modals'
+import { showNotification } from '@mantine/notifications'
 
 export interface InwardsPurchaseOrderInterface {
     supplierId: string
@@ -31,13 +23,7 @@ export interface InwardsPurchaseOrderInterface {
     }[]
 }
 
-interface FormValues extends Required<InwardsPurchaseOrderInterface> {
-    submit: null
-}
-
 const PurchaseOrder = () => {
-    const confirm = useConfirm()
-    const { setAlert } = useContext(AlertContext)
     const {
         token: { token },
     } = useAuth()
@@ -56,95 +42,111 @@ const PurchaseOrder = () => {
         | null
     >([])
     const [error, setError] = useState('')
-    let initialValues: FormValues = {
+    let initialValues: InwardsPurchaseOrderInterface = {
         supplierId: '',
         invoiceId: '',
         poId: '',
         details: [],
-        submit: null,
     }
 
-    const rejectPo = async (
-        values: FormValues,
-        {
-            setErrors,
-            setStatus,
-            setSubmitting,
-            resetForm,
-        }: Partial<FormikHelpers<FormValues>>
-    ) => {
-        confirm({
-            description: `This will reject PO check`,
-            confirmationText: 'Reject',
+    const form = useInwardsPurchaseOrderForm({
+        initialValues,
+        validate: {
+            invoiceId: isNotEmpty(),
+            supplierId: isNotEmpty(),
+            poId: isNotEmpty(),
+            details: (value) =>
+                value.length === 0
+                    ? 'Need atleast one raw material in purchase order verification'
+                    : null,
+        },
+        validateInputOnChange: true,
+    })
+
+    const openModal = () =>
+        openConfirmModal({
+            title: 'Please confirm your action',
+            centered: true,
+            children: <Text size="sm">Are you sure you want to proceed</Text>,
+            labels: { confirm: 'Confirm', cancel: 'Cancel' },
+            onConfirm: acceptPo,
         })
-            .then(async () => {
-                if (setSubmitting && setStatus && setErrors && resetForm) {
-                    setSubmitting(true)
-                    try {
-                        const resp = await Fetch({
-                            url: '/inwards/rejectPO',
-                            options: {
-                                authToken: token,
-                                method: 'PUT',
-                                body: values,
-                            },
-                        })
-                        setAlert({
-                            type: 'warning',
-                            children: (
-                                <Typography>
-                                    Rejected PO check with ID - {resp[0].id}
-                                </Typography>
-                            ),
-                        })
-                        resetForm()
-                        setPo([])
-                        setInvoice([])
-                    } catch (err) {
-                        setStatus({ success: false })
-                        setErrors({ submit: (err as Error).message })
-                        setSubmitting(false)
-                    }
-                }
-            })
-            .catch(() => {})
+
+    const openRejectModal = () =>
+        openConfirmModal({
+            title: 'Delete this item',
+            centered: true,
+            children: (
+                <Text size="sm">
+                    Are you sure you want to reject this item? This action is
+                    destructive and irreversible. All data will be lost
+                </Text>
+            ),
+            labels: { confirm: 'Reject', cancel: "No don't reject it" },
+            confirmProps: { color: 'orange' },
+            onConfirm: rejectPo,
+        })
+
+    const rejectPo = async () => {
+        if (form.isValid()) {
+            try {
+                const resp = await Fetch({
+                    url: '/inwards/rejectPO',
+                    options: {
+                        authToken: token,
+                        method: 'PUT',
+                        body: form.values,
+                    },
+                })
+                showNotification({
+                    title: 'Success',
+                    message: (
+                        <Text>Rejected PO check with ID - {resp[0].id}</Text>
+                    ),
+                    color: 'orange',
+                })
+                form.reset()
+                setPo([])
+                setInvoice([])
+            } catch (err) {
+                setError((err as Error).message)
+                showNotification({
+                    title: 'Error',
+                    message: <Text>{(err as Error).message}</Text>,
+                    color: 'red',
+                })
+            }
+        }
     }
 
-    const acceptPo = async (
-        values: FormValues,
-        {
-            setErrors,
-            setStatus,
-            setSubmitting,
-            resetForm,
-        }: Partial<FormikHelpers<FormValues>>
-    ) => {
-        if (setSubmitting && setStatus && setErrors && resetForm) {
-            setSubmitting(true)
+    const acceptPo = async () => {
+        if (form.isValid()) {
             try {
                 const resp = await Fetch({
                     url: '/inwards/acceptPO',
                     options: {
                         authToken: token,
                         method: 'PUT',
-                        body: values,
+                        body: form.values,
                     },
                 })
-                setAlert({
-                    type: 'success',
-                    children: (
-                        <Typography>
-                            Accpected PO check with ID - {resp[0].id}
-                        </Typography>
+                showNotification({
+                    title: 'Success',
+                    message: (
+                        <Text>Accpected PO check with ID - {resp[0].id}</Text>
                     ),
+                    color: 'green',
                 })
-                resetForm()
+                form.reset()
                 setPo([])
                 setInvoice([])
             } catch (err) {
-                setStatus({ success: false })
-                setErrors({ submit: (err as Error).message })
-                setSubmitting(false)
+                setError((err as Error).message)
+                showNotification({
+                    title: 'Error',
+                    message: <Text>{(err as Error).message}</Text>,
+                    color: 'red',
+                })
             }
         }
     }
@@ -189,7 +191,8 @@ const PurchaseOrder = () => {
             }).then((data) => {
                 return data.map((invoice: { invoiceId: string }) => ({
                     value: invoice.invoiceId,
-                    ...invoice,
+                    label: invoice.invoiceId,
+                    // ...invoice,
                 }))
             })
             setInvoice(data)
@@ -223,7 +226,8 @@ const PurchaseOrder = () => {
             }).then((data) => {
                 return data.map((po: { id: string }) => ({
                     value: po.id,
-                    ...po,
+                    label: po.id,
+                    // ...po,
                 }))
             })
             setPo(data)
@@ -237,16 +241,12 @@ const PurchaseOrder = () => {
         updatePo(supplierId)
     }
 
-    const updatePoValues = async (
-        poId: string,
-        values: FormValues,
-        setValues: FormikHelpers<FormValues>['setValues']
-    ) => {
+    const updatePoValues = async () => {
         try {
-            if (values.invoiceId && values.details) {
-                values.details = await values.details.map((d) => {
+            if (form.values.invoiceId && form.values.details) {
+                const details = await form.values.details.map((d) => {
                     const poDetails = po
-                        ?.find(({ id }) => id === poId)
+                        ?.find(({ id }) => id === form.values.poId)
                         ?.poDetails.find(({ rmId }) => rmId === d.rmId)
                     if (poDetails) {
                         return {
@@ -257,25 +257,14 @@ const PurchaseOrder = () => {
                     }
                     return d
                 })
-                setValues({
-                    ...values,
-                })
+                form.setFieldValue('details', details)
             }
-            setValues({
-                ...values,
-                poId,
-            })
         } catch (e) {
             setError((e as Error).message)
         }
     }
 
-    const getRawMaterials = async (
-        supplierId: string,
-        id: string,
-        values: FormValues,
-        setValues: FormikHelpers<FormValues>['setValues']
-    ) => {
+    const getRawMaterials = async () => {
         try {
             const data = await Fetch({
                 url: '/invoice',
@@ -283,8 +272,8 @@ const PurchaseOrder = () => {
                     authToken: token,
                     params: {
                         where: JSON.stringify({
-                            supplierId,
-                            id,
+                            supplierId: form.values.supplierId,
+                            id: form.values.invoiceId,
                         }),
                         select: JSON.stringify({
                             invoiceDetails: {
@@ -297,29 +286,33 @@ const PurchaseOrder = () => {
                     },
                 },
             })
+                .then((data) => {
+                    console.log(data)
+                    return data
+                })
                 .then((data) => data[0]['invoiceDetails'])
-                .then(async (data: FormValues['details']) => {
-                    return await data.map((d) => {
-                        if (values.poId) {
-                            const poDetails = po
-                                ?.find(({ id }) => id === values.poId)
-                                ?.poDetails.find(({ rmId }) => rmId === d.rmId)
-                            if (poDetails) {
-                                return {
-                                    ...d,
-                                    poQuantity: poDetails.quantity,
-                                    poPrice: poDetails.price,
+                .then(
+                    async (data: InwardsPurchaseOrderInterface['details']) => {
+                        return await data.map((d) => {
+                            if (form.values.poId) {
+                                const poDetails = po
+                                    ?.find(({ id }) => id === form.values.poId)
+                                    ?.poDetails.find(
+                                        ({ rmId }) => rmId === d.rmId
+                                    )
+                                if (poDetails) {
+                                    return {
+                                        ...d,
+                                        poQuantity: poDetails.quantity,
+                                        poPrice: poDetails.price,
+                                    }
                                 }
                             }
-                        }
-                        return d
-                    })
-                })
-            setValues({
-                ...values,
-                details: data,
-                invoiceId: id,
-            })
+                            return d
+                        })
+                    }
+                )
+            form.setFieldValue('details', data)
         } catch (e) {
             setError((e as Error).message)
         }
@@ -334,232 +327,172 @@ const PurchaseOrder = () => {
     }
 
     return (
-        <Formik
-            initialValues={initialValues}
-            validationSchema={Yup.object().shape({
-                invoiceId: Yup.string().required('Invoice ID is required'),
-                supplierId: Yup.string().required('Supplier is required'),
-                poId: Yup.string().required('Purchase Order is required'),
-                status: Yup.string().required('Status is required'),
-                details: Yup.array().of(
-                    Yup.object().shape({
-                        rmId: Yup.string().required(
-                            'Raw Material Part Number is required'
-                        ),
-                        quantity: Yup.number()
-                            .min(0)
-                            .required('Quantity is required'),
-                    })
-                ),
-            })}
-            onSubmit={() => {}}
-        >
-            {({
-                values,
-                errors,
-                handleSubmit,
-                isSubmitting,
-                handleChange,
-                setValues,
-                setErrors,
-                setStatus,
-                setSubmitting,
-                resetForm,
-            }) => (
-                <form noValidate onSubmit={handleSubmit}>
-                    <Grid container spacing={3}>
-                        <Field
-                            name="supplierId"
-                            component={FormSelect}
-                            xs={12}
-                            label="Supplier"
-                            placeholder="Select Supplier"
-                            items={supplier}
-                            onChange={(e: SelectChangeEvent) => {
-                                handleChange(e)
-                                updateSupplier(e.target?.value)
-                            }}
-                        />
-                        <Field
-                            name="poId"
-                            component={FormSelect}
-                            xs={5}
-                            label="Purchase Order"
-                            placeholder="Select Purchase Order"
-                            items={po}
-                            onChange={(e: SelectChangeEvent) => {
-                                handleChange(e)
-                                updatePoValues(
-                                    e.target.value,
-                                    values,
-                                    setValues
-                                )
-                            }}
-                        />
-                        <Field
-                            name="invoiceId"
-                            component={FormSelect}
-                            xs={5}
-                            label="Invoice"
-                            placeholder="Select Invoice"
-                            items={invoice}
-                            onChange={(e: SelectChangeEvent) => {
-                                handleChange(e)
-                                getRawMaterials(
-                                    values.supplierId,
-                                    e.target.value,
-                                    values,
-                                    setValues
-                                )
-                            }}
-                        />
-                        <Field
-                            name="status"
-                            component={FormInput}
-                            xs={2}
-                            label="Status"
-                            placeholder="Select Status"
-                            defaultValue="IQC"
-                            disabled
-                        />
-                        <FieldArray name="details">
-                            {() => (
-                                <>
-                                    <Grid item xs={12}>
-                                        <Divider />
-                                    </Grid>
-                                    {values.details.length !== 0 && (
-                                        <Grid item xs={12} container>
-                                            <Grid item xs={3}>
-                                                <Typography variant="h6">
-                                                    Raw Material Part Number
-                                                </Typography>
-                                            </Grid>
-                                            <Grid item xs={3}>
-                                                <Typography variant="h6">
-                                                    Invoice Quantity
-                                                </Typography>
-                                            </Grid>
-                                            <Grid item xs={3}>
-                                                <Typography variant="h6">
-                                                    PO Quantity
-                                                </Typography>
-                                            </Grid>
-                                            <Grid item xs={3}>
-                                                <Typography variant="h6">
-                                                    PO Price
-                                                </Typography>
-                                            </Grid>
-                                        </Grid>
-                                    )}
-                                    {values.details.map((item, index) => (
-                                        <Grid
-                                            item
-                                            xs={12}
-                                            container
-                                            key={index}
-                                        >
-                                            <Grid item xs={3}>
-                                                <OutlinedInput
-                                                    name={`details.${index}.rmId`}
-                                                    type="text"
-                                                    disabled
-                                                    value={item.rmId}
-                                                />
-                                            </Grid>
-                                            <Grid item xs={3}>
-                                                <OutlinedInput
-                                                    name={`details.${index}.quantity`}
-                                                    type="number"
-                                                    disabled
-                                                    value={item.quantity}
-                                                />
-                                            </Grid>
-                                            <Grid item xs={3}>
-                                                <OutlinedInput
-                                                    name={`details.${index}.poQuantity`}
-                                                    type="number"
-                                                    disabled
-                                                    value={item.poQuantity}
-                                                />
-                                            </Grid>
-                                            <Grid item xs={3}>
-                                                <OutlinedInput
-                                                    name={`details.${index}.poPrice`}
-                                                    type="number"
-                                                    disabled
-                                                    value={item.poPrice}
-                                                />
-                                            </Grid>
-                                        </Grid>
-                                    ))}
-                                </>
-                            )}
-                        </FieldArray>
-
-                        {errors.submit && (
-                            <Grid item xs={12}>
-                                <FormHelperText error>
-                                    {errors.submit}
-                                </FormHelperText>
-                            </Grid>
-                        )}
-                        {error && (
-                            <Grid item xs={12}>
-                                <FormHelperText error>{error}</FormHelperText>
-                            </Grid>
-                        )}
-                        {
-                            <>
-                                <Grid item xs={2}>
-                                    <Button
-                                        disableElevation
-                                        disabled={isSubmitting}
-                                        fullWidth
-                                        size="large"
-                                        type="button"
-                                        variant="contained"
-                                        color="error"
-                                        onClick={() => {
-                                            rejectPo(values, {
-                                                setErrors,
-                                                setStatus,
-                                                setSubmitting,
-                                                resetForm,
-                                            })
-                                        }}
-                                    >
-                                        Reject
-                                    </Button>
+        <InwardsPurchaseOrderFormProvider form={form}>
+            <form
+                onSubmit={(e) => {
+                    e.preventDefault()
+                }}
+            >
+                <Grid justify="center" align="center" grow>
+                    <FormSelect
+                        name="supplierId"
+                        xs={12}
+                        label="Supplier"
+                        placeholder="Select Supplier"
+                        data={supplier}
+                        withAsterisk
+                        {...form.getInputProps('supplierId')}
+                        onChange={(value) => {
+                            if (value) {
+                                form.setFieldValue('supplierId', value)
+                                updateSupplier(value)
+                            }
+                        }}
+                    />
+                    <FormSelect
+                        name="poId"
+                        xs={5}
+                        label="Purchase Order"
+                        placeholder="Select Purchase Order"
+                        data={po ? po : []}
+                        withAsterisk
+                        {...form.getInputProps('poId')}
+                        onChange={(value) => {
+                            if (value) {
+                                form.setFieldValue('poId', value)
+                                updatePoValues()
+                            }
+                        }}
+                    />
+                    <FormSelect
+                        name="invoiceId"
+                        xs={5}
+                        label="Invoice"
+                        placeholder="Select Invoice"
+                        data={invoice ? invoice : []}
+                        withAsterisk
+                        {...form.getInputProps('invoiceId')}
+                        onChange={(value) => {
+                            if (value) {
+                                form.setFieldValue('invoiceId', value)
+                                getRawMaterials()
+                            }
+                        }}
+                    />
+                    <FormInputText
+                        name="status"
+                        xs={2}
+                        label="Status"
+                        placeholder="Select Status"
+                        defaultValue="IQC"
+                        disabled
+                        withAsterisk
+                        {...form.getInputProps('status')}
+                    />
+                    <>
+                        <Grid.Col xs={12}>
+                            <Divider />
+                        </Grid.Col>
+                        {form.values.details.length !== 0 && (
+                            <Grid.Col xs={12}>
+                                <Grid justify="center" align="center" grow>
+                                    <Grid.Col xs={3}>
+                                        <Text fz="lg">
+                                            Raw Material Part Number
+                                        </Text>
+                                    </Grid.Col>
+                                    <Grid.Col xs={3}>
+                                        <Text fz="lg">Invoice Quantity</Text>
+                                    </Grid.Col>
+                                    <Grid.Col xs={3}>
+                                        <Text fz="lg">PO Quantity</Text>
+                                    </Grid.Col>
+                                    <Grid.Col xs={3}>
+                                        <Text fz="lg">PO Price</Text>
+                                    </Grid.Col>
                                 </Grid>
-                                <Grid item xs={8} />
-                                <Grid item xs={2}>
-                                    <Button
-                                        disableElevation
-                                        disabled={isSubmitting}
-                                        fullWidth
-                                        size="large"
-                                        type="button"
-                                        variant="contained"
-                                        color="primary"
-                                        onClick={() => {
-                                            acceptPo(values, {
-                                                setErrors,
-                                                setStatus,
-                                                setSubmitting,
-                                                resetForm,
-                                            })
-                                        }}
-                                    >
-                                        Approve
-                                    </Button>
+                            </Grid.Col>
+                        )}
+                        {form.values.details.map((item, index) => (
+                            <Grid.Col xs={12} key={index}>
+                                <Grid justify="center" align="center" grow>
+                                    <FormInputText
+                                        xs={3}
+                                        {...form.getInputProps(
+                                            `details.${index}.rmId`
+                                        )}
+                                        disabled
+                                    />
+                                    <FormInputText
+                                        xs={3}
+                                        {...form.getInputProps(
+                                            `details.${index}.quantity`
+                                        )}
+                                        disabled
+                                    />
+                                    <FormInputText
+                                        xs={3}
+                                        {...form.getInputProps(
+                                            `details.${index}.poQuantity`
+                                        )}
+                                        disabled
+                                    />
+                                    <FormInputText
+                                        xs={3}
+                                        {...form.getInputProps(
+                                            `details.${index}.poPrice`
+                                        )}
+                                        disabled
+                                    />
                                 </Grid>
-                            </>
-                        }
-                    </Grid>
-                </form>
-            )}
-        </Formik>
+                            </Grid.Col>
+                        ))}
+                    </>
+                    {error && (
+                        <Grid.Col xs={12}>
+                            <Text c="red">{error}</Text>
+                        </Grid.Col>
+                    )}
+                    {
+                        <>
+                            <Grid.Col xs={2}>
+                                <Button
+                                    fullWidth
+                                    size="md"
+                                    variant="filled"
+                                    color="orange"
+                                    onClick={() => {
+                                        const result = form.validate()
+                                        if (!result.hasErrors) {
+                                            openRejectModal()
+                                        }
+                                    }}
+                                >
+                                    Reject
+                                </Button>
+                            </Grid.Col>
+                            <Grid.Col xs={8} />
+                            <Grid.Col xs={2}>
+                                <Button
+                                    fullWidth
+                                    size="md"
+                                    variant="filled"
+                                    color="primary"
+                                    onClick={() => {
+                                        const result = form.validate()
+                                        if (!result.hasErrors) {
+                                            openModal()
+                                        }
+                                    }}
+                                >
+                                    Approve
+                                </Button>
+                            </Grid.Col>
+                        </>
+                    }
+                </Grid>
+            </form>
+        </InwardsPurchaseOrderFormProvider>
     )
 }
 

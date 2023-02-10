@@ -1,4 +1,5 @@
 import { ColDef } from 'ag-grid-community'
+import { IconPlus } from '@tabler/icons-react'
 import { Inventory } from '../common'
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -45,7 +46,7 @@ const FinishedGoods = () => {
     const actions = [
         {
             name: 'New Finished Good',
-            icon: 'add_outlined',
+            icon: IconPlus,
             onClick: () => {
                 navigate('new')
             },
@@ -56,7 +57,7 @@ const FinishedGoods = () => {
         <Inventory<FinishedGoodsInterface>
             columnDefs={columnDefs}
             addEditButton
-            speedDialActions={actions}
+            affixActions={actions}
             url="/finishedgoods"
             options={{
                 params: {

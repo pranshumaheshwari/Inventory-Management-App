@@ -1,58 +1,57 @@
-import { useTheme } from '@mui/material/styles'
-import { AppBar, Box, IconButton, Toolbar, useMediaQuery } from '@mui/material'
-import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined'
-import MenuOpenOutlinedIcon from '@mui/icons-material/MenuOpenOutlined'
+import {
+    Burger,
+    Header,
+    MediaQuery,
+    Title,
+    useMantineTheme,
+} from '@mantine/core'
 
-import AppBarStyled from './AppBarStyled'
-import Profile from './HeaderProfile'
+import React from 'react'
 
 interface HeaderInterface {
-    open: boolean
-    handleDrawerToggle: () => void
+    opened: boolean
+    setOpened: (fn: (o: boolean) => boolean) => void
 }
 
-const Header = ({ open, handleDrawerToggle }: HeaderInterface) => {
-    const theme = useTheme()
-    const matchDownMD = useMediaQuery(theme.breakpoints.down('lg'))
-
-    const iconBackColor = 'grey.100'
-    const iconBackColorOpen = 'grey.200'
-
-    const mainHeader = (
-        <Toolbar>
-            <IconButton
-                disableRipple
-                aria-label="open drawer"
-                onClick={handleDrawerToggle}
-                edge="start"
-                color="secondary"
-                sx={{ color: 'text.primary', bgcolor: open ? iconBackColorOpen : iconBackColor, ml: { xs: 0, lg: -2 } }}
-            >
-                {!open ? <MenuOutlinedIcon /> : <MenuOpenOutlinedIcon />}
-            </IconButton>
-            <Box sx={{ width: '100%', ml: 1 }} />
-            <Profile />
-        </Toolbar>
-    )
-
-    const appBar = {
-        elevation: 0,
-        sx: {
-            borderBottom: `1px solid ${theme.palette.divider}`
-        }
-    }
-
+const MHeader = ({ opened, setOpened }: HeaderInterface) => {
+    const theme = useMantineTheme()
     return (
-        <>
-            {!matchDownMD ? (
-                <AppBarStyled open={open} theme={theme} {...appBar}>
-                    {mainHeader}
-                </AppBarStyled>
-            ) : (
-                <AppBar {...appBar}>{mainHeader}</AppBar>
-            )}
-        </>
+        <Header
+            height={{ base: 50, md: 70 }}
+            p="md"
+            sx={{
+                backgroundColor: theme.colors[theme.primaryColor][6],
+            }}
+        >
+            <div
+                style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    height: '100%',
+                }}
+            >
+                <MediaQuery largerThan="sm" styles={{ display: 'none' }}>
+                    <Burger
+                        opened={opened}
+                        onClick={() => setOpened((o: boolean) => !o)}
+                        size="sm"
+                        color="white"
+                        mr="xl"
+                    />
+                </MediaQuery>
+                <Title
+                    color="white"
+                    fz="xl"
+                    fw={700}
+                    size={25}
+                    ff="monospace"
+                    sx={{ marginLeft: 10 }}
+                >
+                    IMS
+                </Title>
+            </div>
+        </Header>
     )
 }
 
-export default Header
+export default MHeader

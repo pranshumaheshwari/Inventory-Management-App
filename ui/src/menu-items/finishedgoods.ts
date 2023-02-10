@@ -1,3 +1,12 @@
+import {
+    IconAssembly,
+    IconBuildingStore,
+    IconBuildingWarehouse,
+    IconCheckupList,
+    IconPackgeExport,
+    IconTruckDelivery,
+} from '@tabler/icons-react'
+
 import { ItemInterface } from '.'
 
 const dashboard: ItemInterface = {
@@ -10,24 +19,28 @@ const dashboard: ItemInterface = {
             title: 'Inventory',
             type: 'item',
             url: '/finishedGoods',
-            icon: 'bar_chart_outlined',
-            urls: ['/finishedGoods', '/finishedGoods/new', '/finishedGoods/edit']
+            icon: IconBuildingWarehouse,
+            urls: [
+                '/finishedGoods',
+                '/finishedGoods/new',
+                '/finishedGoods/edit',
+            ],
         },
         {
             id: 'finishedgood-customer',
             title: 'Customer',
             type: 'item',
             url: '/customers',
-            icon: 'local_shipping_outlined',
-            urls: ['/customers', '/customers/new', '/customers/edit']
+            icon: IconBuildingStore,
+            urls: ['/customers', '/customers/new', '/customers/edit'],
         },
         {
             id: 'finishedgood-salesOrders',
             title: 'Sales Orders',
             type: 'item',
             url: '/salesOrders',
-            icon: 'discount_outlined',
-            urls: ['/salesOrders', '/salesOrders/new', '/salesOrders/edit']
+            icon: IconPackgeExport,
+            urls: ['/salesOrders', '/salesOrders/new', '/salesOrders/edit'],
         },
         {
             id: 'finishedgood-outwards',
@@ -39,27 +52,28 @@ const dashboard: ItemInterface = {
                     title: 'Production',
                     type: 'item',
                     url: '/outwards/production',
-                    icon: 'precision_manufacturing'
+                    icon: IconAssembly,
+                    urls: ['/outwards/production'],
                 },
                 {
                     id: 'finishedgood-outwards-qualityCheck',
                     title: 'Quality Check',
                     type: 'item',
                     url: '/outwards/qualityCheck',
-                    icon: 'check_outlined',
-                    urls: ['/outwards/qualityCheck']
+                    icon: IconCheckupList,
+                    urls: ['/outwards/qualityCheck'],
                 },
                 {
                     id: 'finishedgood-outwards-dispatch',
                     title: 'Dispatch',
                     type: 'item',
                     url: '/outwards/dispatch',
-                    icon: 'note_outlined',
-                    urls: ['/outwards/dispatch']
+                    icon: IconTruckDelivery,
+                    urls: ['/outwards/dispatch'],
                 },
             ],
-        }
-    ]
+        },
+    ],
 }
 
 export default dashboard

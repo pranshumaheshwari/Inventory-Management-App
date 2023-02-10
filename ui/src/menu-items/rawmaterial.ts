@@ -1,3 +1,14 @@
+import {
+    IconBuildingStore,
+    IconBuildingWarehouse,
+    IconCheckupList,
+    IconCirclePlus,
+    IconClipboardPlus,
+    IconFileInvoice,
+    IconPackgeImport,
+    IconTextPlus,
+} from '@tabler/icons-react'
+
 import { ItemInterface } from '.'
 
 const dashboard: ItemInterface = {
@@ -10,15 +21,15 @@ const dashboard: ItemInterface = {
             title: 'Inventory',
             type: 'item',
             url: '/rawmaterial',
-            icon: 'bar_chart_outlined',
-            urls: ['/rawMaterial', '/rawMaterial/new', '/rawMaterial/edit'],
+            icon: IconBuildingWarehouse,
+            urls: ['/rawmaterial', '/rawmaterial/new', '/rawmaterial/edit'],
         },
         {
             id: 'rawmaterial-suppliers',
             title: 'Suppliers',
             type: 'item',
             url: '/suppliers',
-            icon: 'local_shipping_outlined',
+            icon: IconBuildingStore,
             urls: ['/suppliers', '/suppliers/new', '/suppliers/edit'],
         },
         {
@@ -26,7 +37,7 @@ const dashboard: ItemInterface = {
             title: 'Purchase Orders',
             type: 'item',
             url: '/purchaseOrders',
-            icon: 'local_offer_outlined',
+            icon: IconPackgeImport,
             urls: [
                 '/purchaseOrders',
                 '/purchaseOrders/new',
@@ -43,7 +54,7 @@ const dashboard: ItemInterface = {
                     title: 'Invoice',
                     type: 'item',
                     url: '/inwards/invoice',
-                    icon: 'note_outlined',
+                    icon: IconFileInvoice,
                     urls: [
                         '/inwards/invoice',
                         '/inwards/invoice/new',
@@ -55,7 +66,7 @@ const dashboard: ItemInterface = {
                     title: 'Against Purchase Order',
                     type: 'item',
                     url: '/inwards/purchaseOrder',
-                    icon: 'add_box_outlined',
+                    icon: IconClipboardPlus,
                     urls: ['/inwards/purchaseOrder'],
                 },
                 {
@@ -63,7 +74,7 @@ const dashboard: ItemInterface = {
                     title: 'Quality Check',
                     type: 'item',
                     url: '/inwards/qualityCheck',
-                    icon: 'check_outlined',
+                    icon: IconCheckupList,
                     urls: ['/inwards/qualityCheck'],
                 },
             ],
@@ -78,14 +89,16 @@ const dashboard: ItemInterface = {
                     title: 'New Requisition',
                     type: 'item',
                     url: '/requisition/new',
-                    icon: 'add_outlined',
+                    icon: IconCirclePlus,
+                    urls: ['/requisition/new'],
                 },
                 {
                     id: 'rawmaterial-requisition-issue',
                     title: 'Issue Against Requisition',
                     type: 'item',
                     url: '/requisition/issue',
-                    icon: 'call_missed_outgoing_outlined',
+                    icon: IconTextPlus,
+                    urls: ['/requisition/issue'],
                 },
             ],
         },
@@ -99,12 +112,14 @@ const dashboard: ItemInterface = {
                     title: 'By Unique Identifier',
                     type: 'item',
                     url: '/rawMaterial/report/byId',
+                    urls: ['/rawMaterial/report/byId'],
                 },
                 {
                     id: 'rawmaterial-report-bypo',
                     title: 'By Purchase Order',
                     type: 'item',
                     url: '/rawMaterial/report/byPo',
+                    urls: ['/rawMaterial/report/byPo'],
                 },
             ],
         },

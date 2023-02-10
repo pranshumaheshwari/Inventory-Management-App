@@ -1,3 +1,4 @@
+import { IconGridDots } from '@tabler/icons-react'
 import { ItemInterface } from '.'
 
 const dashboard: ItemInterface = {
@@ -10,10 +11,10 @@ const dashboard: ItemInterface = {
             title: 'Dashboard',
             type: 'item',
             url: '/',
-            icon: 'grid_view_outlined',
-            urls: ['/']
-        }
-    ]
+            icon: IconGridDots,
+            urls: ['/'],
+        },
+    ],
 }
 
 export default dashboard

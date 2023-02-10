@@ -1,4 +1,4 @@
-import { Box, Card, CardContent, Grid } from '@mui/material'
+import { Box, Card, Container, Grid } from '@mantine/core'
 
 import { AuthForm } from './components'
 import React from 'react'
@@ -7,55 +7,33 @@ interface LoginProps {}
 
 const Login = (props: LoginProps) => {
     return (
-        <Box
+        <Grid
+            grow
             sx={{
                 minHeight: '100vh',
             }}
+            justify="center"
+            align="center"
         >
-            <Grid
-                container
-                direction="column"
-                justifyContent="flex-end"
-                sx={{
-                    minHeight: '100vh',
-                }}
-            >
-                <Grid item xs={12}>
-                    <Grid
-                        item
-                        xs={12}
-                        container
-                        justifyContent="center"
-                        alignItems="center"
+            <Grid.Col>
+                <Container
+                    sx={{
+                        maxWidth: 400,
+                    }}
+                >
+                    <Card
                         sx={{
-                            minHeight: {
-                                xs: 'calc(100vh - 134px)',
-                                md: 'calc(100vh - 112px)',
-                            },
+                            margin: 2.5,
                         }}
+                        shadow="sm"
                     >
-                        <Grid item>
-                            <Card
-                                elevation={0}
-                                sx={{
-                                    boxShadow: 5,
-                                    maxWidth: { xs: 400, lg: 475 },
-                                    margin: { xs: 2.5, md: 3 },
-                                }}
-                            >
-                                <Box sx={{ p: { xs: 2, sm: 3, md: 4, xl: 5 } }}>
-                                    <Grid item xs={12}>
-                                        <CardContent>
-                                            <AuthForm />
-                                        </CardContent>
-                                    </Grid>
-                                </Box>
-                            </Card>
-                        </Grid>
-                    </Grid>
-                </Grid>
-            </Grid>
-        </Box>
+                        <Box sx={{ p: { xs: 2, sm: 3, md: 4, xl: 5 } }}>
+                            <AuthForm />
+                        </Box>
+                    </Card>
+                </Container>
+            </Grid.Col>
+        </Grid>
     )
 }
 

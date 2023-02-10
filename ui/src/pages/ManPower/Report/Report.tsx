@@ -1,19 +1,10 @@
-import {
-    Box,
-    Button,
-    Container,
-    FormHelperText,
-    Grid,
-    Step,
-    StepLabel,
-    Stepper,
-} from '@mui/material'
+import { Box, Button, Grid, Stepper, Text } from '@mantine/core'
 import { DateRangePicker, Table } from '../../../components'
 import { Fetch, useAuth } from '../../../services'
 import React, { useState } from 'react'
-import { addDays, format, parseISO } from 'date-fns'
 
 import { ColDef } from 'ag-grid-community'
+import dayjs from 'dayjs'
 
 interface RecordInterface {
     id: number
@@ -22,15 +13,7 @@ interface RecordInterface {
 }
 
 function Report() {
-    const [value, setValue] = useState<{
-        startDate: Date
-        endDate: Date
-        key: string
-    }>({
-        startDate: new Date(),
-        endDate: new Date(),
-        key: 'daterange',
-    })
+    const [value, setValue] = useState<[Date, Date]>([new Date(), new Date()])
     const {
         token: { token },
     } = useAuth()
@@ -52,7 +35,7 @@ function Report() {
             headerName: 'Date',
             valueGetter: ({ data }) => {
                 if (data?.date) {
-                    return format(parseISO(data?.date), 'dd/MM/yyyy')
+                    return dayjs(data?.date).format('DD/MM/YYYY')
                 }
                 return ''
             },
@@ -71,12 +54,14 @@ function Report() {
                             AND: [
                                 {
                                     date: {
-                                        gte: value.startDate,
+                                        gte: value[0].toISOString(),
                                     },
                                 },
                                 {
                                     date: {
-                                        lte: addDays(value.endDate, 1),
+                                        lte: dayjs(value[1])
+                                            .add(1, 'day')
+                                            .toISOString(),
                                     },
                                 },
                             ],
@@ -91,110 +76,86 @@ function Report() {
     }
 
     return (
-        <Container>
-            <Grid container spacing={3}>
-                <Grid item xs={3} />
-                <Grid item xs={6}>
-                    <Stepper activeStep={activeStep}>
-                        {['Date Range', 'Report'].map((label, index) => {
-                            const stepProps: {
-                                completed?: boolean
-                            } = {}
-                            const labelProps: {
-                                optional?: React.ReactNode
-                            } = {}
-                            return (
-                                <Step key={label} {...stepProps}>
-                                    <StepLabel {...labelProps}>
-                                        {label}
-                                    </StepLabel>
-                                </Step>
-                            )
-                        })}
-                    </Stepper>
-                </Grid>
-                <Grid item xs={3} />
-                {activeStep === 0 && (
-                    <>
-                        <Grid item xs={3} />
-                        <DateRangePicker
-                            xs={6}
-                            range={value}
-                            onChange={(value) => {
-                                let val = value['daterange']
-                                if (
-                                    val &&
-                                    val.startDate &&
-                                    val.endDate &&
-                                    val.key
-                                ) {
-                                    setValue({
-                                        startDate: val.startDate,
-                                        endDate: val.endDate,
-                                        key: val.key,
-                                    })
-                                }
+        <Grid>
+            <Grid.Col xs={3} />
+            <Grid.Col xs={6}>
+                <Stepper active={activeStep} onStepClick={setActiveStep}>
+                    {['Date Range', 'Report'].map((label, index) => {
+                        return <Stepper.Step key={label} label={label} />
+                    })}
+                </Stepper>
+            </Grid.Col>
+            <Grid.Col xs={3} />
+            {activeStep === 0 && (
+                <>
+                    <Grid.Col xs={3} />
+                    <DateRangePicker
+                        xs={6}
+                        name="dateRange"
+                        label="Select Date Range"
+                        range={value}
+                        clearable
+                        value={value}
+                        onChange={(value) => {
+                            if (value[0] && value[1]) {
+                                setValue([value[0], value[1]])
+                            }
+                        }}
+                    />
+                    <Grid.Col xs={3} />
+                    <Grid.Col xs={3} />
+                    <Grid.Col xs={6}>
+                        <Button
+                            fullWidth
+                            size="md"
+                            variant="filled"
+                            color="primary"
+                            onClick={() => {
+                                fetchRecords()
+                                handleNext()
                             }}
-                        />
-                        <Grid item xs={3} />
-                        <Grid item xs={3} />
-
-                        <Grid item xs={6}>
-                            <Button
-                                disableElevation
-                                disabled={!value.endDate}
-                                fullWidth
-                                size="large"
-                                variant="contained"
-                                color="primary"
-                                onClick={() => {
-                                    fetchRecords()
-                                    handleNext()
-                                }}
-                            >
-                                Next
-                            </Button>
-                        </Grid>
-                        <Grid item xs={3} />
-                    </>
-                )}
-                {activeStep === 1 && (
-                    <>
-                        <Grid item xs={12}>
-                            <Box height="70vh" width="100%">
-                                <Table<RecordInterface>
-                                    columnDefs={columnDefs}
-                                    rowData={records}
-                                />
-                            </Box>
-                        </Grid>
-                    </>
-                )}
-                {error && (
-                    <Grid item xs={12}>
-                        <FormHelperText error>{error}</FormHelperText>
-                    </Grid>
-                )}
-                {activeStep === 1 && (
-                    <>
-                        <Grid item xs={3} />
-                        <Grid item xs={6}>
-                            <Button
-                                disableElevation
-                                fullWidth
-                                size="large"
-                                variant="contained"
-                                color="primary"
-                                onClick={handleBack}
-                            >
-                                Back
-                            </Button>
-                        </Grid>
-                        <Grid item xs={3} />
-                    </>
-                )}
-            </Grid>
-        </Container>
+                        >
+                            Next
+                        </Button>
+                    </Grid.Col>
+                    <Grid.Col xs={3} />
+                </>
+            )}
+            {activeStep === 1 && (
+                <>
+                    <Grid.Col xs={12}>
+                        <Box h="70vh" w="100%">
+                            <Table<RecordInterface>
+                                columnDefs={columnDefs}
+                                rowData={records}
+                            />
+                        </Box>
+                    </Grid.Col>
+                </>
+            )}
+            {error && (
+                <Grid.Col xs={12}>
+                    <Text c="red">{error}</Text>
+                </Grid.Col>
+            )}
+            {activeStep === 1 && (
+                <>
+                    <Grid.Col xs={3} />
+                    <Grid.Col xs={6}>
+                        <Button
+                            fullWidth
+                            size="md"
+                            variant="outline"
+                            color="primary"
+                            onClick={handleBack}
+                        >
+                            Back
+                        </Button>
+                    </Grid.Col>
+                    <Grid.Col xs={3} />
+                </>
+            )}
+        </Grid>
     )
 }
 

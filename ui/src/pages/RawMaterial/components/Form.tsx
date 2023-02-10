@@ -1,50 +1,94 @@
-import * as Yup from 'yup'
-
-import {
-    Button,
-    CircularProgress,
-    FormHelperText,
-    Grid,
-    Skeleton,
-    Typography,
-} from '@mui/material'
+import { Button, Center, Grid, Skeleton, Text } from '@mantine/core'
 import { Fetch, useAuth } from '../../../services'
-import { Field, Formik, FormikHelpers } from 'formik'
-import React, { useContext, useEffect, useState } from 'react'
+import { FormInputNumber, FormInputText, FormSelect } from '../../../components'
+import { RawMaterialFormProvider, useRawMaterialForm } from './context'
+import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-import { AlertContext } from '../../../context'
-import { FormInput } from '../../../components'
-import FormSelect from '../../../components/FormSelect'
 import { RawMaterialInterface } from '../RawMaterial'
-import { useConfirm } from 'material-ui-confirm'
-
-interface FormValues extends Required<RawMaterialInterface> {
-    submit: null
-}
+import { isNotEmpty } from '@mantine/form'
+import { openConfirmModal } from '@mantine/modals'
+import { showNotification } from '@mantine/notifications'
 
 const Form = () => {
-    const { setAlert } = useContext(AlertContext)
     const navigate = useNavigate()
     const location = useLocation()
-    const confirm = useConfirm()
     const isEdit = location.state ? true : false
     const {
         token: { token },
     } = useAuth()
-    const [supplier, setSupplier] = useState<{ value: string }[] | null>()
+    const [supplier, setSupplier] = useState<
+        { value: string; label: string }[] | null
+    >()
     const [error, setError] = useState('')
-    const onSubmit = async (
-        values: FormValues,
-        { setErrors, setStatus, setSubmitting }: FormikHelpers<FormValues>
-    ) => {
+    const initialValues = isEdit
+        ? (location.state as RawMaterialInterface)
+        : {
+              id: '',
+              description: '',
+              dtplCode: '',
+              category: '',
+              unit: '',
+              price: 0,
+              storeStock: 0,
+              iqcPendingStock: 0,
+              poPendingStock: 0,
+              lineStock: 0,
+              supplierId: '',
+          }
+    const form = useRawMaterialForm({
+        initialValues,
+        validate: {
+            id: isNotEmpty(),
+            description: isNotEmpty(),
+            dtplCode: isNotEmpty(),
+            category: isNotEmpty(),
+            supplierId: isNotEmpty(),
+            unit: isNotEmpty(),
+            price: (value) => (value <= 0 ? 'Price is required' : null),
+            iqcPendingStock: (value) =>
+                value < 0 ? 'Quantity should be non-negative' : null,
+            storeStock: (value) =>
+                value < 0 ? 'Quantity should be non-negative' : null,
+            lineStock: (value) =>
+                value < 0 ? 'Quantity should be non-negative' : null,
+        },
+    })
+    const openModal = () =>
+        openConfirmModal({
+            title: 'Please confirm your action',
+            centered: true,
+            children: <Text size="sm">Are you sure you want to proceed</Text>,
+            labels: { confirm: 'Confirm', cancel: 'Cancel' },
+            onConfirm: () => {
+                onSubmit(form.values)
+            },
+        })
+
+    const openDeleteModal = () =>
+        openConfirmModal({
+            title: 'Delete this item',
+            centered: true,
+            children: (
+                <Text size="sm">
+                    Are you sure you want to delete this item? This action is
+                    destructive and irreversible. All data will be lost
+                </Text>
+            ),
+            labels: { confirm: 'Delete', cancel: "No don't delete it" },
+            confirmProps: { color: 'red' },
+            onConfirm: onDelete,
+        })
+    const onSubmit = async (values: RawMaterialInterface) => {
         try {
             const resp = await Fetch({
                 url:
                     '/rawmaterial' +
                     (isEdit
                         ? '/' +
-                          encodeURIComponent((location.state as FormValues).id)
+                          encodeURIComponent(
+                              (location.state as RawMaterialInterface).id
+                          )
                         : ''),
                 options: {
                     method: isEdit ? 'PUT' : 'POST',
@@ -52,54 +96,50 @@ const Form = () => {
                     authToken: token,
                 },
             })
-            setAlert({
-                type: 'success',
-                children: (
-                    <Typography>
+            showNotification({
+                title: 'Success',
+                message: (
+                    <Text>
                         Succesfully {isEdit ? 'edited' : 'created'} raw material
                         with ID - {resp.id}
-                    </Typography>
+                    </Text>
                 ),
+                color: 'green',
             })
             navigate('..')
         } catch (err) {
-            setStatus({ success: false })
-            setErrors({ submit: (err as Error).message })
-            setSubmitting(false)
+            setError((err as Error).message)
+            showNotification({
+                title: 'Error',
+                message: <Text>{(err as Error).message}</Text>,
+                color: 'red',
+            })
         }
     }
     const onDelete = async () => {
-        confirm({
-            description: `This will delete raw naterial ${
-                (location.state as FormValues).id
-            }`,
-        })
-            .then(async () => {
-                try {
-                    const resp = await Fetch({
-                        url: `/rawmaterial/${encodeURIComponent(
-                            (location.state as FormValues).id
-                        )}`,
-                        options: {
-                            method: 'DELETE',
-                            authToken: token,
-                        },
-                    })
-                    setAlert({
-                        type: 'warning',
-                        children: (
-                            <Typography>
-                                Succesfully deleted raw material with ID -{' '}
-                                {resp.id}
-                            </Typography>
-                        ),
-                    })
-                    navigate('..')
-                } catch (e) {
-                    setError((e as Error).message)
-                }
+        try {
+            const resp = await Fetch({
+                url: `/rawmaterial/${encodeURIComponent(
+                    (location.state as RawMaterialInterface).id
+                )}`,
+                options: {
+                    method: 'DELETE',
+                    authToken: token,
+                },
             })
-            .catch(() => {})
+            showNotification({
+                title: 'Success',
+                message: (
+                    <Text>
+                        Succesfully deleted raw material with ID - {resp.id}
+                    </Text>
+                ),
+                color: 'orange',
+            })
+            navigate('..')
+        } catch (e) {
+            setError((e as Error).message)
+        }
     }
 
     const getSuppliers = async () => {
@@ -130,220 +170,156 @@ const Form = () => {
     }
 
     return (
-        <Formik
-            initialValues={
-                isEdit
-                    ? (location.state as FormValues)
-                    : {
-                          id: '',
-                          description: '',
-                          dtplCode: '',
-                          category: '',
-                          unit: '',
-                          price: 0,
-                          storeStock: 0,
-                          iqcPendingStock: 0,
-                          poPendingStock: 0,
-                          lineStock: 0,
-                          supplierId: '',
-                          submit: null,
-                      }
-            }
-            validationSchema={Yup.object().shape({
-                id: Yup.string().required('Unique ID is required'),
-                description: Yup.string().required('Description is required'),
-                dtplCode: Yup.string().required('DTPL Part Number is required'),
-                category: Yup.string().required('Category is required'),
-                supplierId: Yup.string().required('Supplier is required'),
-                unit: Yup.string().required('Unit is required'),
-                price: Yup.number().moreThan(0).required('Price is required'),
-                iqcPendingStock: Yup.number().min(0),
-                storeStock: Yup.number().min(0),
-                lineStock: Yup.number().min(0),
-            })}
-            onSubmit={onSubmit}
-        >
-            {({ errors, handleSubmit, isSubmitting }) => (
-                <form noValidate onSubmit={handleSubmit}>
-                    <Grid container spacing={3}>
-                        <Field
-                            name="id"
-                            component={FormInput}
-                            xs={2}
-                            type="text"
-                            label="ID"
-                            placeholder="Enter ID"
-                        />
-                        <Field
-                            name="description"
-                            component={FormInput}
-                            xs={6}
-                            type="text"
-                            label="Description"
-                            placeholder="Enter Description"
-                        />
-                        <Field
-                            name="dtplCode"
-                            component={FormInput}
-                            xs={4}
-                            type="text"
-                            label="DTPL Part Number"
-                            placeholder="Enter DTPL Part Number"
-                        />
-                        <Field
-                            name="supplierId"
-                            component={FormSelect}
-                            xs={4}
-                            label="Supplier"
-                            placeholder="Select Supplier"
-                            items={supplier}
-                        />
-                        <Field
-                            name="category"
-                            component={FormSelect}
-                            xs={3}
-                            label="Category"
-                            placeholder="Select Category"
-                            items={[
-                                {
-                                    value: 'Coil',
-                                },
-                                {
-                                    value: 'Connector',
-                                },
-                                {
-                                    value: 'Consumables',
-                                },
-                                {
-                                    value: 'Fuse',
-                                },
-                                {
-                                    value: 'Grommet',
-                                },
-                                {
-                                    value: 'Misc',
-                                },
-                                {
-                                    value: 'Sleeve',
-                                },
-                                {
-                                    value: 'Sticker',
-                                },
-                                {
-                                    value: 'Tape',
-                                },
-                                {
-                                    value: 'Terminal',
-                                },
-                                {
-                                    value: 'Wire',
-                                },
-                            ]}
-                        />
-                        <Field
-                            name="unit"
-                            component={FormInput}
-                            xs={2}
-                            type="text"
-                            label="Unit"
-                            placeholder="Enter Unit"
-                        />
-                        <Field
-                            name="price"
-                            component={FormInput}
-                            xs={3}
-                            type="number"
-                            label="Price"
-                            placeholder="Enter Price"
-                        />
-                        <Field
-                            name="iqcPendingStock"
-                            component={FormInput}
-                            xs={4}
-                            type="number"
-                            label="IQC Pending Stock"
-                            placeholder="Enter IQC Stock"
-                        />
-                        <Field
-                            name="storeStock"
-                            component={FormInput}
-                            xs={4}
-                            type="number"
-                            label="Store Stock"
-                            placeholder="Enter Store Stock"
-                        />
-                        <Field
-                            name="lineStock"
-                            component={FormInput}
-                            xs={4}
-                            type="number"
-                            label="Line Stock"
-                            placeholder="Enter Line Stock"
-                        />
-                        {errors.submit && (
-                            <Grid item xs={12}>
-                                <FormHelperText error>
-                                    {errors.submit}
-                                </FormHelperText>
-                            </Grid>
-                        )}
-                        {error && (
-                            <Grid item xs={12}>
-                                <FormHelperText error>{error}</FormHelperText>
-                            </Grid>
-                        )}
-                        <Grid item xs={12}>
-                            <Button
-                                disableElevation
-                                disabled={isSubmitting}
-                                fullWidth
-                                size="large"
-                                type="submit"
-                                variant="contained"
-                                color="primary"
-                            >
-                                {isEdit ? 'Update' : 'Create'}
-                            </Button>
-                            {isSubmitting && (
-                                <CircularProgress
-                                    size={24}
-                                    sx={{
-                                        color: 'text.secondary',
-                                        position: 'absolute',
-                                        top: '50%',
-                                        left: '50%',
-                                        marginTop: '-12px',
-                                        marginLeft: '-12px',
-                                    }}
-                                />
-                            )}
-                        </Grid>
-                        {isEdit && (
-                            <Grid item xs={12}>
-                                <Grid
-                                    container
-                                    justifyContent="center"
-                                    alignItems="center"
+        <RawMaterialFormProvider form={form}>
+            <form
+                onSubmit={(e) => {
+                    e.preventDefault()
+                }}
+            >
+                <Grid justify="center" align="center" grow>
+                    <FormInputText
+                        name="id"
+                        xs={2}
+                        type="text"
+                        label="ID"
+                        placeholder="Enter ID"
+                        withAsterisk
+                        {...form.getInputProps('id')}
+                    />
+                    <FormInputText
+                        name="description"
+                        xs={6}
+                        type="text"
+                        label="Description"
+                        placeholder="Enter Description"
+                        withAsterisk
+                        {...form.getInputProps('description')}
+                    />
+                    <FormInputText
+                        name="dtplCode"
+                        xs={4}
+                        type="text"
+                        label="DTPL Part Number"
+                        placeholder="Enter DTPL Part Number"
+                        withAsterisk
+                        {...form.getInputProps('dtplCode')}
+                    />
+                    <FormSelect
+                        name="supplierId"
+                        xs={4}
+                        label="Supplier"
+                        placeholder="Select Supplier"
+                        searchable
+                        data={supplier}
+                        withAsterisk
+                        {...form.getInputProps('supplierId')}
+                    />
+                    <FormSelect
+                        name="category"
+                        xs={3}
+                        label="Category"
+                        placeholder="Select Category"
+                        data={[
+                            'Coil',
+                            'Connector',
+                            'Consumables',
+                            'Fuse',
+                            'Grommet',
+                            'Misc',
+                            'Sleeve',
+                            'Sticker',
+                            'Tape',
+                            'Terminal',
+                            'Wire',
+                        ]}
+                        withAsterisk
+                        {...form.getInputProps('category')}
+                    />
+                    <FormInputText
+                        name="unit"
+                        xs={2}
+                        type="text"
+                        label="Unit"
+                        placeholder="Enter Unit"
+                        withAsterisk
+                        {...form.getInputProps('unit')}
+                    />
+                    <FormInputNumber
+                        name="price"
+                        xs={3}
+                        type="number"
+                        label="Price"
+                        placeholder="Enter Price"
+                        withAsterisk
+                        min={0}
+                        {...form.getInputProps('price')}
+                    />
+                    <FormInputNumber
+                        name="iqcPendingStock"
+                        xs={4}
+                        type="number"
+                        label="IQC Pending Stock"
+                        placeholder="Enter IQC Stock"
+                        min={0}
+                        {...form.getInputProps('iqcPendingStock')}
+                    />
+                    <FormInputNumber
+                        name="storeStock"
+                        xs={4}
+                        type="number"
+                        label="Store Stock"
+                        placeholder="Enter Store Stock"
+                        min={0}
+                        {...form.getInputProps('storeStock')}
+                    />
+                    <FormInputNumber
+                        name="lineStock"
+                        xs={4}
+                        type="number"
+                        label="Line Stock"
+                        placeholder="Enter Line Stock"
+                        min={0}
+                        {...form.getInputProps('lineStock')}
+                    />
+                    {error && (
+                        <Grid.Col xs={12}>
+                            <Text c="red">{error}</Text>
+                        </Grid.Col>
+                    )}
+                    <Grid.Col xs={12}>
+                        <Button
+                            fullWidth
+                            size="xs"
+                            type="submit"
+                            variant="filled"
+                            color="primary"
+                            onClick={() => {
+                                const result = form.validate()
+                                if (!result.hasErrors) {
+                                    openModal()
+                                }
+                            }}
+                        >
+                            {isEdit ? 'Update' : 'Create'}
+                        </Button>
+                    </Grid.Col>
+                    {isEdit && (
+                        <Grid.Col xs={12}>
+                            <Center>
+                                <Button
+                                    size="xs"
+                                    variant="filled"
+                                    color="red"
+                                    onClick={openDeleteModal}
                                 >
-                                    <Button
-                                        disableElevation
-                                        disabled={isSubmitting}
-                                        size="large"
-                                        variant="contained"
-                                        color="error"
-                                        onClick={() => {
-                                            onDelete()
-                                        }}
-                                    >
-                                        DELETE
-                                    </Button>
-                                </Grid>
-                            </Grid>
-                        )}
-                    </Grid>
-                </form>
-            )}
-        </Formik>
+                                    DELETE
+                                </Button>
+                            </Center>
+                        </Grid.Col>
+                    )}
+                </Grid>
+            </form>
+        </RawMaterialFormProvider>
     )
 }
 

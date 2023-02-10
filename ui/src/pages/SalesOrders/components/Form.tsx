@@ -1,48 +1,33 @@
-import * as Yup from 'yup'
-
 import {
-    Autocomplete,
+    AutocompleteItem,
     Button,
+    Center,
     Divider,
-    FormHelperText,
     Grid,
-    InputLabel,
-    OutlinedInput,
-    SelectChangeEvent,
     Skeleton,
-    Step,
-    StepLabel,
     Stepper,
-    TextField,
-    Typography,
-} from '@mui/material'
+    Text,
+} from '@mantine/core'
 import { Fetch, useAuth } from '../../../services'
-import { Field, FieldArray, Formik, FormikHelpers } from 'formik'
-import React, {
-    ChangeEvent,
-    SyntheticEvent,
-    useContext,
-    useEffect,
-    useState,
-} from 'react'
+import {
+    FormAutoComplete,
+    FormInputNumber,
+    FormInputText,
+    FormSelect,
+} from '../../../components'
+import React, { useEffect, useState } from 'react'
+import { SalesOrdersFormProvider, useSalesOrdersForm } from './context'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-import { AlertContext } from '../../../context'
 import { FinishedGoodsInterface } from '../../FinishedGood/FinishedGood'
-import { FormInput } from '../../../components'
-import FormSelect from '../../../components/FormSelect'
 import { SalesOrdersInterface } from '../SalesOrders'
-import { useConfirm } from 'material-ui-confirm'
-
-interface FormValues extends Required<SalesOrdersInterface> {
-    submit: null
-}
+import { isNotEmpty } from '@mantine/form'
+import { openConfirmModal } from '@mantine/modals'
+import { showNotification } from '@mantine/notifications'
 
 const Form = () => {
-    const { setAlert } = useContext(AlertContext)
     const navigate = useNavigate()
     const location = useLocation()
-    const confirm = useConfirm()
     const isEdit = location.state ? true : false
     const {
         token: { token },
@@ -50,18 +35,17 @@ const Form = () => {
     const [customer, setCustomer] = useState<{ value: string }[] | null>()
     const [error, setError] = useState('')
     const [activeStep, setActiveStep] = React.useState(0)
-    const [finishedgoods, setFinishedGoods] =
-        useState<Partial<FinishedGoodsInterface>[]>()
-    const [finishedgoodsIdentifier, setFinishedGoodsIdentifier] =
-        useState<keyof FinishedGoodsInterface>('description')
+    const [finishedgoods, setFinishedGoods] = useState<AutocompleteItem[]>()
     const [selectedFg, setSelectedFg] = useState<{
-        fg: Partial<FinishedGoodsInterface>
+        fg: AutocompleteItem
         quantity: number
     }>({
-        fg: {},
+        fg: {
+            value: '',
+        },
         quantity: 0,
     })
-    let initialValues: FormValues = {
+    let initialValues: SalesOrdersInterface = {
         id: '',
         customerId: '',
         status: 'Open',
@@ -69,15 +53,52 @@ const Form = () => {
         customer: {
             name: '',
         },
-        submit: null,
     }
 
     if (isEdit) {
         initialValues = {
             ...initialValues,
-            ...(location.state as FormValues),
+            ...(location.state as SalesOrdersInterface),
         }
     }
+
+    const form = useSalesOrdersForm({
+        initialValues,
+        validate: {
+            id: isNotEmpty(),
+            customerId: isNotEmpty(),
+            status: isNotEmpty(),
+            soDetails: (value) =>
+                value.length === 0
+                    ? 'Need atleast one finished good in sales order'
+                    : null,
+        },
+        validateInputOnChange: true,
+    })
+
+    const openModal = () =>
+        openConfirmModal({
+            title: 'Please confirm your action',
+            centered: true,
+            children: <Text size="sm">Are you sure you want to proceed</Text>,
+            labels: { confirm: 'Confirm', cancel: 'Cancel' },
+            onConfirm: onSubmit,
+        })
+
+    const openDeleteModal = () =>
+        openConfirmModal({
+            title: 'Delete this item',
+            centered: true,
+            children: (
+                <Text size="sm">
+                    Are you sure you want to delete this item? This action is
+                    destructive and irreversible. All data will be lost
+                </Text>
+            ),
+            labels: { confirm: 'Delete', cancel: "No don't delete it" },
+            confirmProps: { color: 'red' },
+            onConfirm: onDelete,
+        })
 
     const handleNext = () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1)
@@ -87,15 +108,12 @@ const Form = () => {
         setActiveStep((prevActiveStep) => prevActiveStep - 1)
     }
 
-    const onSubmit = async (
-        values: FormValues,
-        { setErrors, setStatus, setSubmitting }: FormikHelpers<FormValues>
-    ) => {
+    const onSubmit = async () => {
         try {
-            const postData: Partial<FormValues> = {
-                id: values.id,
-                customerId: values.customerId,
-                soDetails: values.soDetails,
+            const postData: Partial<SalesOrdersInterface> = {
+                id: form.values.id,
+                customerId: form.values.customerId,
+                soDetails: form.values.soDetails,
             }
             const resp = await Fetch({
                 url:
@@ -107,53 +125,61 @@ const Form = () => {
                     authToken: token,
                 },
             })
-            setAlert({
-                type: 'success',
-                children: (
-                    <Typography>
+            showNotification({
+                title: 'Success',
+                message: (
+                    <Text>
                         Succesfully {isEdit ? 'edited' : 'created'} sales order
                         with ID - {resp.id}
-                    </Typography>
+                    </Text>
                 ),
+                color: 'green',
             })
             navigate('..')
         } catch (err) {
-            setStatus({ success: false })
-            setErrors({ submit: (err as Error).message })
-            setSubmitting(false)
+            setError((err as Error).message)
+            showNotification({
+                title: 'Error',
+                message: <Text>{(err as Error).message}</Text>,
+                color: 'red',
+            })
         }
     }
 
     const onDelete = async () => {
-        confirm({
-            description: `This will delete sales order ${initialValues.id}`,
-        })
-            .then(async () => {
-                try {
-                    const resp = await Fetch({
-                        url: `/salesorders/${encodeURIComponent(
-                            initialValues.id
-                        )}`,
-                        options: {
-                            method: 'DELETE',
-                            authToken: token,
-                        },
-                    })
-                    setAlert({
-                        type: 'warning',
-                        children: (
-                            <Typography>
-                                Succesfully deleted sales order with ID -{' '}
-                                {resp.id}
-                            </Typography>
-                        ),
-                    })
-                    navigate('..')
-                } catch (e) {
-                    setError((e as Error).message)
-                }
+        try {
+            const resp = await Fetch({
+                url: `/salesorders/${encodeURIComponent(initialValues.id)}`,
+                options: {
+                    method: 'DELETE',
+                    authToken: token,
+                },
             })
-            .catch(() => {})
+            showNotification({
+                title: 'Success',
+                message: (
+                    <Text>
+                        Succesfully deleted sales order with ID - {resp.id}
+                    </Text>
+                ),
+                color: 'orange',
+            })
+            navigate('..')
+        } catch (e) {
+            setError((e as Error).message)
+        }
+    }
+
+    const onDeleteFg = async (fgId: string) => {
+        try {
+            await Fetch({
+                url: `/salesorders/${initialValues.id}/${fgId}`,
+                options: {
+                    method: 'DELETE',
+                    authToken: token,
+                },
+            })
+        } catch (e) {}
     }
 
     const getCustomers = async () => {
@@ -188,7 +214,12 @@ const Form = () => {
                         }),
                     },
                 },
-            })
+            }).then((data) =>
+                data.map((d: Partial<FinishedGoodsInterface>) => ({
+                    ...d,
+                    value: d.id,
+                }))
+            )
             setFinishedGoods(data)
         } catch (e) {
             setError((e as Error).message)
@@ -204,328 +235,234 @@ const Form = () => {
     }
 
     return (
-        <Formik
-            initialValues={initialValues}
-            validationSchema={Yup.object().shape({
-                id: Yup.string().required('Unique ID is required'),
-                customerId: Yup.string().required('Customer is required'),
-                soDetails: Yup.array()
-                    .min(1)
-                    .of(
-                        Yup.object().shape({
-                            fgId: Yup.string().required(
-                                'Finished Goods Identifier is required'
-                            ),
-                            quantity: Yup.number()
-                                .min(0)
-                                .required('Quantity is required'),
-                        })
-                    ),
-            })}
-            onSubmit={onSubmit}
-        >
-            {({ values, errors, handleSubmit, isSubmitting }) => (
-                <form noValidate onSubmit={handleSubmit}>
-                    <Grid container spacing={3}>
-                        <Grid item xs={3} />
-                        <Grid item xs={6}>
-                            <Stepper activeStep={activeStep}>
-                                {[
-                                    'Basic Details',
-                                    'List of Finished Goods',
-                                ].map((label, index) => {
-                                    const stepProps: { completed?: boolean } =
-                                        {}
-                                    const labelProps: {
-                                        optional?: React.ReactNode
-                                    } = {}
+        <SalesOrdersFormProvider form={form}>
+            <form
+                onSubmit={(e) => {
+                    e.preventDefault()
+                }}
+            >
+                <Grid>
+                    <Grid.Col xs={3} />
+                    <Grid.Col xs={6}>
+                        <Stepper
+                            active={activeStep}
+                            onStepClick={setActiveStep}
+                        >
+                            {['Basic Details', 'List of Finished Goods'].map(
+                                (label, index) => {
                                     return (
-                                        <Step key={label} {...stepProps}>
-                                            <StepLabel {...labelProps}>
-                                                {label}
-                                            </StepLabel>
-                                        </Step>
+                                        <Stepper.Step
+                                            key={label}
+                                            label={label}
+                                        />
                                     )
-                                })}
-                            </Stepper>
-                        </Grid>
-                        <Grid item xs={3} />
-                        {activeStep === 0 && (
-                            <>
-                                <Field
-                                    name="id"
-                                    component={FormInput}
-                                    xs={6}
-                                    type="text"
-                                    label="ID"
-                                    placeholder="Enter ID"
-                                />
-                                <Field
-                                    name="customerId"
-                                    component={FormSelect}
-                                    xs={6}
-                                    label="Customer"
-                                    placeholder="Select Customer"
-                                    items={customer}
-                                />
-                                <Grid item xs={12}>
-                                    <Button
-                                        disableElevation
-                                        disabled={isSubmitting}
-                                        fullWidth
-                                        size="large"
-                                        variant="contained"
-                                        color="primary"
-                                        onClick={handleNext}
-                                    >
-                                        Next
-                                    </Button>
-                                </Grid>
-                            </>
-                        )}{' '}
-                        {activeStep === 1 && (
-                            <FieldArray name="soDetails">
-                                {({ remove, push }) => (
-                                    <>
-                                        <Grid item xs={1} />
-                                        <Field
-                                            name="FgSelect"
-                                            component={FormSelect}
+                                }
+                            )}
+                        </Stepper>
+                    </Grid.Col>
+                    <Grid.Col xs={3} />
+                    {activeStep === 0 && (
+                        <>
+                            <FormInputText
+                                xs={6}
+                                label="ID"
+                                placeholder="Enter ID"
+                                withAsterisk
+                                {...form.getInputProps('id')}
+                            />
+                            <FormSelect
+                                xs={6}
+                                label="Customer"
+                                placeholder="Select Customer"
+                                data={customer}
+                                withAsterisk
+                                {...form.getInputProps('customerId')}
+                            />
+                            <Grid.Col xs={12}>
+                                <Button
+                                    fullWidth
+                                    size="md"
+                                    variant="filled"
+                                    color="primary"
+                                    onClick={handleNext}
+                                >
+                                    Next
+                                </Button>
+                            </Grid.Col>
+                        </>
+                    )}{' '}
+                    {activeStep === 1 && (
+                        <>
+                            <Grid.Col xs={1} />
+                            <FormAutoComplete
+                                xs={6}
+                                id="fgId"
+                                label="Finished Good"
+                                placeholder="Select Finished Good"
+                                data={finishedgoods}
+                                onChange={(value) =>
+                                    setSelectedFg((selectedFg) => {
+                                        let fg = finishedgoods.find(
+                                            (d) => d.value === value
+                                        )
+                                        if (fg)
+                                            return {
+                                                ...selectedFg,
+                                                fg,
+                                            }
+                                        return selectedFg
+                                    })
+                                }
+                            />
+                            <FormInputNumber
+                                name="quantity"
+                                xs={4}
+                                label="Quantity"
+                                placeholder="Enter Quantity"
+                                min={0}
+                                onChange={(val) => {
+                                    if (val) {
+                                        setSelectedFg((selectedFg) => ({
+                                            ...selectedFg,
+                                            quantity: val,
+                                        }))
+                                    }
+                                }}
+                            />
+                            <Grid.Col xs={1} />
+                            <Grid.Col xs={12}>
+                                <Button
+                                    fullWidth
+                                    size="md"
+                                    variant="filled"
+                                    color="primary"
+                                    onClick={() => {
+                                        if (
+                                            selectedFg.quantity &&
+                                            selectedFg.fg &&
+                                            selectedFg.fg.id
+                                        ) {
+                                            form.insertListItem('soDetails', {
+                                                fgId: selectedFg.fg.id,
+                                                quantity: selectedFg.quantity,
+                                            })
+                                        }
+                                    }}
+                                >
+                                    Add to Sales Order
+                                </Button>
+                            </Grid.Col>
+                            <Grid.Col xs={12}>
+                                <Divider />
+                            </Grid.Col>
+                            {form.values.soDetails.length !== 0 && (
+                                <Grid.Col xs={12}>
+                                    <Grid justify="center" align="center" grow>
+                                        <Grid.Col xs={4}>
+                                            <Text fz="lg">
+                                                Finished Goods Identifier
+                                            </Text>
+                                        </Grid.Col>
+                                        <Grid.Col xs={4}>
+                                            <Text fz="lg">Quantity</Text>
+                                        </Grid.Col>
+                                        <Grid.Col xs={4} />
+                                    </Grid>
+                                </Grid.Col>
+                            )}
+                            {form.values.soDetails.map((item, index) => (
+                                <Grid.Col xs={12} key={index}>
+                                    <Grid justify="center" align="center" grow>
+                                        <FormInputText
+                                            {...form.getInputProps(
+                                                `soDetails.${index}.fgId`
+                                            )}
                                             xs={4}
-                                            label="Finished Goods Field"
-                                            placeholder="Select Finished Goods Field"
-                                            defaultValue="description"
-                                            items={[
-                                                {
-                                                    value: 'description',
-                                                    label: 'Description',
-                                                },
-                                                {
-                                                    value: 'id',
-                                                    label: 'ID',
-                                                },
-                                            ]}
-                                            onChange={(e: SelectChangeEvent) =>
-                                                setFinishedGoodsIdentifier(
-                                                    e.target
-                                                        ?.value as keyof FinishedGoodsInterface
-                                                )
-                                            }
+                                            disabled
                                         />
-                                        <Grid item xs={4}>
-                                            <InputLabel htmlFor="rmId">
-                                                Finished Good
-                                            </InputLabel>
-                                            <Autocomplete
-                                                id="fgId"
-                                                options={finishedgoods}
-                                                getOptionLabel={(option) =>
-                                                    option[
-                                                        finishedgoodsIdentifier
-                                                    ] as string
-                                                }
-                                                disablePortal
-                                                isOptionEqualToValue={(
-                                                    option,
-                                                    value
-                                                ) => option.id === value.id}
-                                                onChange={(
-                                                    e: SyntheticEvent,
-                                                    value
-                                                ) =>
-                                                    setSelectedFg(
-                                                        (selectedFg) => {
-                                                            if (value)
-                                                                return {
-                                                                    ...selectedFg,
-                                                                    fg: value,
-                                                                }
-                                                            return selectedFg
-                                                        }
-                                                    )
-                                                }
-                                                renderInput={(params) => (
-                                                    <TextField {...params} />
-                                                )}
-                                            />
-                                        </Grid>
-                                        <Field
-                                            name="quantity"
-                                            component={FormInput}
-                                            xs={2}
-                                            type="number"
-                                            label="Quantity"
-                                            placeholder="Enter Quantity"
-                                            onChange={(
-                                                e: ChangeEvent<HTMLInputElement>
-                                            ) =>
-                                                setSelectedFg((selectedFg) => ({
-                                                    ...selectedFg,
-                                                    quantity: parseFloat(
-                                                        e.target?.value
-                                                    ),
-                                                }))
-                                            }
+                                        <FormInputNumber
+                                            {...form.getInputProps(
+                                                `soDetails.${index}.quantity`
+                                            )}
+                                            xs={4}
                                         />
-                                        <Grid item xs={1} />
-                                        <Grid item xs={12}>
+                                        <Grid.Col xs={4}>
                                             <Button
-                                                disableElevation
-                                                disabled={isSubmitting}
                                                 fullWidth
-                                                size="large"
-                                                variant="contained"
-                                                color="primary"
+                                                size="xs"
+                                                variant="outline"
+                                                color="red"
                                                 onClick={() => {
-                                                    if (
-                                                        selectedFg.quantity &&
-                                                        selectedFg.fg &&
-                                                        selectedFg.fg.id
-                                                    ) {
-                                                        push({
-                                                            fgId: selectedFg.fg
-                                                                .id,
-                                                            quantity:
-                                                                selectedFg.quantity,
-                                                        })
-                                                    }
+                                                    form.removeListItem(
+                                                        'soDetails',
+                                                        index
+                                                    )
+                                                    onDeleteFg(item.fgId)
                                                 }}
                                             >
-                                                Add to Sales Order
+                                                DELETE
                                             </Button>
-                                        </Grid>
-                                        <Grid item xs={12}>
-                                            <Divider />
-                                        </Grid>
-                                        {values.soDetails.length !== 0 && (
-                                            <Grid item xs={12} container>
-                                                <Grid item xs={4}>
-                                                    <Typography variant="h6">
-                                                        Finished Goods
-                                                        Identifier
-                                                    </Typography>
-                                                </Grid>
-                                                <Grid item xs={4}>
-                                                    <Typography variant="h6">
-                                                        Quantity
-                                                    </Typography>
-                                                </Grid>
-                                                <Grid item xs={4} />
-                                            </Grid>
-                                        )}
-                                        {values.soDetails.map((item, index) => (
-                                            <Grid
-                                                item
-                                                xs={12}
-                                                container
-                                                key={index}
-                                            >
-                                                <Grid item xs={4}>
-                                                    <OutlinedInput
-                                                        name={`soDetails.${index}.fgId`}
-                                                        type="text"
-                                                        disabled
-                                                        value={item.fgId}
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={4}>
-                                                    <OutlinedInput
-                                                        name={`soDetails.${index}.quantity`}
-                                                        type="number"
-                                                        disabled
-                                                        value={item.quantity}
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={4}>
-                                                    <Button
-                                                        disableElevation
-                                                        disabled={isSubmitting}
-                                                        fullWidth
-                                                        size="small"
-                                                        variant="contained"
-                                                        color="error"
-                                                        onClick={() =>
-                                                            remove(index)
-                                                        }
-                                                    >
-                                                        DELETE
-                                                    </Button>
-                                                </Grid>
-                                            </Grid>
-                                        ))}
-                                    </>
-                                )}
-                            </FieldArray>
-                        )}
-                        {errors.submit && (
-                            <Grid item xs={12}>
-                                <FormHelperText error>
-                                    {errors.submit}
-                                </FormHelperText>
-                            </Grid>
-                        )}
-                        {error && (
-                            <Grid item xs={12}>
-                                <FormHelperText error>{error}</FormHelperText>
-                            </Grid>
-                        )}
-                        {activeStep === 1 && (
-                            <>
-                                <Grid item xs={2}>
-                                    <Button
-                                        disableElevation
-                                        disabled={isSubmitting}
-                                        fullWidth
-                                        size="large"
-                                        variant="contained"
-                                        color="secondary"
-                                        onClick={handleBack}
-                                    >
-                                        Back
-                                    </Button>
-                                </Grid>
-                                <Grid item xs={8} />
-                                <Grid item xs={2}>
-                                    <Button
-                                        disableElevation
-                                        disabled={isSubmitting}
-                                        fullWidth
-                                        size="large"
-                                        type="submit"
-                                        variant="contained"
-                                        color="primary"
-                                    >
-                                        {isEdit ? 'Update' : 'Create'}
-                                    </Button>
-                                </Grid>
-                            </>
-                        )}
-                        {isEdit && (
-                            <Grid item xs={12}>
-                                <Grid
-                                    container
-                                    justifyContent="center"
-                                    alignItems="center"
+                                        </Grid.Col>
+                                    </Grid>
+                                </Grid.Col>
+                            ))}
+                        </>
+                    )}
+                    {error && (
+                        <Grid.Col xs={12}>
+                            <Text c="red">{error}</Text>
+                        </Grid.Col>
+                    )}
+                    {activeStep === 1 && (
+                        <>
+                            <Grid.Col xs={2}>
+                                <Button
+                                    fullWidth
+                                    size="md"
+                                    variant="filled"
+                                    color="secondary"
+                                    onClick={handleBack}
                                 >
-                                    <Button
-                                        disableElevation
-                                        disabled={isSubmitting}
-                                        size="large"
-                                        variant="contained"
-                                        color="error"
-                                        onClick={() => {
-                                            onDelete()
-                                        }}
-                                    >
-                                        DELETE
-                                    </Button>
-                                </Grid>
-                            </Grid>
-                        )}
-                    </Grid>
-                </form>
-            )}
-        </Formik>
+                                    Back
+                                </Button>
+                            </Grid.Col>
+                            <Grid.Col xs={8} />
+                            <Grid.Col xs={2}>
+                                <Button
+                                    fullWidth
+                                    size="md"
+                                    type="submit"
+                                    variant="filled"
+                                    color="primary"
+                                    onClick={() => {
+                                        const result = form.validate()
+                                        if (!result.hasErrors) {
+                                            openModal()
+                                        }
+                                    }}
+                                >
+                                    {isEdit ? 'Update' : 'Create'}
+                                </Button>
+                            </Grid.Col>
+                        </>
+                    )}
+                    {isEdit && (
+                        <Grid.Col xs={12}>
+                            <Center>
+                                <Button
+                                    size="xs"
+                                    variant="filled"
+                                    color="red"
+                                    onClick={openDeleteModal}
+                                >
+                                    DELETE
+                                </Button>
+                            </Center>
+                        </Grid.Col>
+                    )}
+                </Grid>
+            </form>
+        </SalesOrdersFormProvider>
     )
 }
 

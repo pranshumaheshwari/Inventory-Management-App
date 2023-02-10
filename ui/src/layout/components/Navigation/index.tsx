@@ -1,6 +1,6 @@
-import { Box, Typography } from '@mui/material'
-
+import { Box } from '@mantine/core'
 import NavGroup from './NavGroup'
+import { Title } from '@mantine/core'
 import menuItem from '../../../menu-items'
 
 const Navigation = () => {
@@ -10,9 +10,9 @@ const Navigation = () => {
                 return <NavGroup key={item.id} item={item} />
             default:
                 return (
-                    <Typography key={item.id} variant="h6" color="error" align="center">
+                    <Title key={item.id} order={6} color="error" align="center">
                         Fix - Navigation Group
-                    </Typography>
+                    </Title>
                 )
         }
     })

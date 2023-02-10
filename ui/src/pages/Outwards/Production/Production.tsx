@@ -1,89 +1,103 @@
-import * as Yup from 'yup'
-
 import {
-    Autocomplete,
+    AutocompleteItem,
     Button,
-    CircularProgress,
-    FormHelperText,
     Grid,
-    InputLabel,
+    SelectItem,
     Skeleton,
-    TextField,
-    Typography,
-} from '@mui/material'
-import { DatePicker, FormInput, FormSelect } from '../../../components'
+    Text,
+} from '@mantine/core'
+import {
+    DatePicker,
+    FormAutoComplete,
+    FormInputNumber,
+    FormSelect,
+} from '../../../components'
 import { Fetch, useAuth } from '../../../services'
-import { Field, Formik, FormikHelpers } from 'formik'
-import React, { SyntheticEvent, useContext, useEffect, useState } from 'react'
+import { ProductionFormProvider, useProductionForm } from './context'
+import React, { useEffect, useState } from 'react'
 
-import { AlertContext } from '../../../context'
-import { FinishedGoodsInterface } from '../../FinishedGood/FinishedGood'
-import { InputAutoComplete } from '../../common'
-import { SelectChangeEvent } from '@mui/material/Select'
+import { isNotEmpty } from '@mantine/form'
+import { openConfirmModal } from '@mantine/modals'
+import { showNotification } from '@mantine/notifications'
 
-interface ProductionInterface {
-    date: Date
+export interface ProductionInterface {
+    createdAt: Date
     fgId: string
     quantity: number
     soId: string
     customerId: string
 }
 
-interface FormValues extends Required<ProductionInterface> {
-    submit: null
-}
-
 const Production = () => {
     const {
         token: { token },
     } = useAuth()
-    const { setAlert } = useContext(AlertContext)
     const [error, setError] = useState('')
-    const [finishedGood, setFinishedGood] = useState<
-        Partial<FinishedGoodsInterface>[]
-    >([])
+    const [finishedGood, setFinishedGood] = useState<AutocompleteItem[]>([])
     const [customer, setCustomer] = useState<{ value: string }[] | null>()
-    const [salesOrder, setSalesOrder] = useState<{ value: string }[] | null>([])
+    const [salesOrder, setSalesOrder] = useState<SelectItem[]>([])
 
-    const onSubmit = async (
-        values: FormValues,
-        {
-            setErrors,
-            setStatus,
-            setSubmitting,
-            resetForm,
-        }: FormikHelpers<FormValues>
-    ) => {
+    let initialValues: ProductionInterface = {
+        fgId: '',
+        soId: '',
+        quantity: 0,
+        customerId: '',
+        createdAt: new Date(),
+    }
+
+    const form = useProductionForm({
+        initialValues,
+        validate: {
+            soId: isNotEmpty(),
+            fgId: isNotEmpty(),
+            customerId: isNotEmpty(),
+            quantity: (value) =>
+                value <= 0 ? 'Quantity should be more than 0' : null,
+        },
+        validateInputOnChange: true,
+    })
+
+    const openModal = () =>
+        openConfirmModal({
+            title: 'Please confirm your action',
+            centered: true,
+            children: <Text size="sm">Are you sure you want to proceed</Text>,
+            labels: { confirm: 'Confirm', cancel: 'Cancel' },
+            onConfirm: onSubmit,
+        })
+
+    const onSubmit = async () => {
         try {
             const resp = await Fetch({
                 url: '/outwards/production',
                 options: {
                     method: 'POST',
                     body: {
-                        quantity: values.quantity,
-                        fgId: values.fgId,
-                        createAt: values.date.toISOString(),
-                        soId: values.soId,
+                        ...form.values,
+                        createdAt: form.values.createdAt.toISOString(),
                     },
                     authToken: token,
                 },
             })
-            resetForm()
+            form.reset()
             setSalesOrder([])
             setFinishedGood([])
-            setSubmitting(false)
-            setAlert({
-                type: 'success',
-                children: (
-                    <Typography>
+            showNotification({
+                title: 'Success',
+                message: (
+                    <Text>
                         Succesfully created new record with ID - {resp[0].id}
-                    </Typography>
+                    </Text>
                 ),
+                color: 'green',
             })
         } catch (err) {
-            setStatus({ success: false })
-            setErrors({ submit: (err as Error).message })
-            setSubmitting(false)
+            setError((err as Error).message)
+            showNotification({
+                title: 'Error',
+                message: <Text>{(err as Error).message}</Text>,
+                color: 'red',
+            })
         }
     }
 
@@ -126,6 +140,7 @@ const Production = () => {
             }).then((data) =>
                 data.map((d: { fg: { id: string; description: string } }) => ({
                     ...d.fg,
+                    value: d.fg.id,
                 }))
             )
             setFinishedGood(data)
@@ -149,9 +164,7 @@ const Production = () => {
                         }),
                     },
                 },
-            }).then((data) =>
-                data.map((d: { id: string }) => ({ value: d.id }))
-            )
+            }).then((data) => data.map((d: { id: string }) => d.id))
             setSalesOrder(data)
         } catch (e) {
             setError((e as Error).message)
@@ -167,147 +180,90 @@ const Production = () => {
     }
 
     return (
-        <Formik
-            initialValues={{
-                submit: null,
-                fgId: '',
-                soId: '',
-                quantity: 0,
-                customerId: '',
-                date: new Date(),
-            }}
-            validationSchema={Yup.object().shape({
-                fgId: Yup.string().required('Finished Good is required'),
-                quantity: Yup.number().min(1).required('Quantity is required'),
-                soId: Yup.string().required('Sales Order is required'),
-            })}
-            onSubmit={onSubmit}
-        >
-            {({
-                errors,
-                handleSubmit,
-                isSubmitting,
-                setValues,
-                values,
-                handleChange,
-            }) => (
-                <form noValidate onSubmit={handleSubmit}>
-                    <Grid container spacing={3}>
-                        <Field
-                            name="customerId"
-                            component={FormSelect}
-                            xs={6}
-                            label="Customer"
-                            placeholder="Select Customer"
-                            items={customer}
-                            onChange={(e: SelectChangeEvent) => {
-                                handleChange(e)
-                                getSalesOrders(e.target.value)
-                            }}
-                        />
-                        <Field
-                            name="soId"
-                            component={FormSelect}
-                            xs={6}
-                            label="Sales Order"
-                            placeholder="Select Sales Order"
-                            items={salesOrder}
-                            onChange={(e: SelectChangeEvent) => {
-                                handleChange(e)
-                                getFinishedGoods(e.target.value)
-                            }}
-                        />
-                        <InputAutoComplete<Partial<FinishedGoodsInterface>>
-                            identifierXs={4}
-                            defaultIdentifier="description"
-                            identifierItems={[
-                                {
-                                    value: 'description',
-                                    label: 'Description',
-                                },
-                                {
-                                    value: 'id',
-                                    label: 'Part Number',
-                                },
-                            ]}
-                            itemXs={8}
-                            label="Finished Good"
-                            name="fgId"
-                            options={finishedGood}
-                            uniqueIdentifier="id"
-                            itemKey={finishedGood[0]?.id}
-                            onChange={(e: SyntheticEvent, value) =>
-                                setValues((values) => ({
-                                    ...values,
-                                    fgId: value?.id ? value.id : '',
-                                }))
+        <ProductionFormProvider form={form}>
+            <form
+                onSubmit={(e) => {
+                    e.preventDefault()
+                }}
+            >
+                <Grid>
+                    <FormSelect
+                        xs={6}
+                        label="Customer"
+                        placeholder="Select Customer"
+                        data={customer}
+                        withAsterisk
+                        {...form.getInputProps('customerId')}
+                        onChange={(value) => {
+                            if (value) {
+                                form.setFieldValue('customerId', value)
+                                getSalesOrders(value)
                             }
-                            placeholder="Select Finished Good"
-                        />
-                        <Field
-                            name="quantity"
-                            component={FormInput}
-                            xs={6}
-                            type="number"
-                            label="Quantity"
-                            placeholder="Enter Quantity"
-                        />
-                        <DatePicker
-                            xs={6}
-                            label="Date"
-                            value={values.date}
-                            onChange={(value: Date | null) => {
-                                if (value) {
-                                    setValues((values) => ({
-                                        ...values,
-                                        date: value,
-                                    }))
+                        }}
+                    />
+                    <FormSelect
+                        xs={6}
+                        label="Sales Order"
+                        placeholder="Select Sales Order"
+                        data={salesOrder}
+                        withAsterisk
+                        {...form.getInputProps('soId')}
+                        onChange={(value) => {
+                            if (value) {
+                                form.setFieldValue('soId', value)
+                                getFinishedGoods(value)
+                            }
+                        }}
+                    />
+                    <FormAutoComplete
+                        xs={6}
+                        id="fgId"
+                        label="Finished Good"
+                        placeholder="Select Finished Good"
+                        data={finishedGood}
+                        withAsterisk
+                        {...form.getInputProps('fgId')}
+                    />
+                    <FormInputNumber
+                        name="quantity"
+                        xs={4}
+                        label="Quantity"
+                        placeholder="Enter Quantity"
+                        min={0}
+                        withAsterisk
+                        {...form.getInputProps('quantity')}
+                    />
+                    <DatePicker
+                        xs={2}
+                        label="Date"
+                        placeholder="Enter Date"
+                        withAsterisk
+                        {...form.getInputProps('createdAt')}
+                    />
+                    {error && (
+                        <Grid.Col xs={12}>
+                            <Text c="red">{error}</Text>
+                        </Grid.Col>
+                    )}
+                    <Grid.Col xs={12}>
+                        <Button
+                            fullWidth
+                            size="md"
+                            variant="filled"
+                            color="primary"
+                            onClick={() => {
+                                const result = form.validate()
+                                if (!result.hasErrors) {
+                                    openModal()
                                 }
                             }}
-                            name="date"
-                        />
-                        {errors.submit && (
-                            <Grid item xs={12}>
-                                <FormHelperText error>
-                                    {errors.submit}
-                                </FormHelperText>
-                            </Grid>
-                        )}
-                        {error && (
-                            <Grid item xs={12}>
-                                <FormHelperText error>{error}</FormHelperText>
-                            </Grid>
-                        )}
-                        <Grid item xs={12}>
-                            <Button
-                                disableElevation
-                                disabled={isSubmitting}
-                                fullWidth
-                                size="large"
-                                type="submit"
-                                variant="contained"
-                                color="primary"
-                            >
-                                Create
-                            </Button>
-                            {isSubmitting && (
-                                <CircularProgress
-                                    size={24}
-                                    sx={{
-                                        color: 'text.secondary',
-                                        position: 'absolute',
-                                        top: '50%',
-                                        left: '50%',
-                                        marginTop: '-12px',
-                                        marginLeft: '-12px',
-                                    }}
-                                />
-                            )}
-                        </Grid>
-                    </Grid>
-                </form>
-            )}
-        </Formik>
+                        >
+                            Create
+                        </Button>
+                    </Grid.Col>
+                </Grid>
+            </form>
+        </ProductionFormProvider>
     )
 }
 

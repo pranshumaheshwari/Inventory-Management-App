@@ -1,18 +1,19 @@
-import { ColDef } from 'ag-grid-community';
-import { Inventory } from '../common';
+import { ColDef } from 'ag-grid-community'
+import { IconPlus } from '@tabler/icons-react'
+import { Inventory } from '../common'
 import React from 'react'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'
 
 export interface SalesOrdersInterface {
-    id: string;
-    customerId: string;
-    status: string;
+    id: string
+    customerId: string
+    status: string
     soDetails: {
-        fgId: string;
-        quantity: number;
-    }[];
+        fgId: string
+        quantity: number
+    }[]
     customer: {
-        name: string;
+        name: string
     }
 }
 
@@ -20,38 +21,41 @@ const SalesOrders = () => {
     const navigate = useNavigate()
     const columnDefs: ColDef<SalesOrdersInterface>[] = [
         { field: 'id', headerName: 'ID' },
-        { headerName: 'Customer', valueGetter: ({ data }) => data?.customer.name },
+        {
+            headerName: 'Customer',
+            valueGetter: ({ data }) => data?.customer.name,
+        },
         { field: 'status', headerName: 'Status' },
     ]
     const actions = [
         {
             name: 'New Sales Order',
-            icon: 'add_outlined',
+            icon: IconPlus,
             onClick: () => {
-                navigate("new")
-            }
-        }
+                navigate('new')
+            },
+        },
     ]
 
     return (
         <Inventory<SalesOrdersInterface>
             columnDefs={columnDefs}
             addEditButton
-            speedDialActions={actions}
-            url='/salesorders'
+            affixActions={actions}
+            url="/salesorders"
             options={{
                 params: {
                     include: JSON.stringify({
                         customer: {
                             select: {
-                                name: true
-                            }
+                                name: true,
+                            },
                         },
-                        soDetails: true
-                    })
-                }
+                        soDetails: true,
+                    }),
+                },
             }}
-            fileName='salesOrders_inventory'
+            fileName="salesOrders_inventory"
         />
     )
 }
