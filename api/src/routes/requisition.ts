@@ -6,7 +6,6 @@ import { PrismaService } from '../service'
 const app: Router = express.Router()
 const prisma = PrismaService.requisition
 
-
 app.get('/', async (req: Request, res: Response) => {
     const args: Prisma.RequisitionFindManyArgs = {}
     const { select, include, where, distinct } = req.query
@@ -46,12 +45,7 @@ app.get('/issue', async (req: Request, res: Response) => {
 })
 
 app.post('/', async (req: Request, res: Response) => {
-    const {
-        quantity,
-        fgId,
-        soId,
-        createdAt
-    } = req.body
+    const { quantity, fgId, soId, createdAt } = req.body
 
     try {
         const result = await prisma.create({
@@ -60,24 +54,19 @@ app.post('/', async (req: Request, res: Response) => {
                 fgId,
                 soId,
                 user: req.user ? req.user.username : '',
-                createdAt
-            }
+                createdAt,
+            },
         })
         res.json(result)
     } catch (e) {
         res.status(500).json({
-            message: (e as Error).message
+            message: (e as Error).message,
         })
     }
 })
 
 app.post('/issue', async (req: Request, res: Response) => {
-    const {
-        quantity,
-        requisitionId,
-        rmId
-    } = req.body
-
+    const { quantity, requisitionId, rmId } = req.body
 
     // TODO - Add logic to close finished requisitions
     try {
@@ -87,8 +76,8 @@ app.post('/issue', async (req: Request, res: Response) => {
                     user: req.user ? req.user.username : '',
                     quantity,
                     requisitionId: parseInt(requisitionId),
-                    rmId
-                }
+                    rmId,
+                },
             }),
             PrismaService.rm.update({
                 where: {
@@ -96,58 +85,60 @@ app.post('/issue', async (req: Request, res: Response) => {
                 },
                 data: {
                     lineStock: {
-                        decrement: quantity
-                    }
-                }
-            })
+                        increment: quantity,
+                    },
+                    storeStock: {
+                        decrement: quantity,
+                    },
+                },
+            }),
         ])
         res.json(result)
     } catch (e) {
         res.status(500).json({
-            message: (e as Error).message
+            message: (e as Error).message,
         })
     }
 })
 
 app.post('/issueMany', async (req: Request, res: Response) => {
-    const {
-        requisitionId,
-        details
-    } = req.body
+    const { requisitionId, details } = req.body
 
     try {
         const result = await PrismaService.$transaction([
-            ...await details.map(({ rmId, quantity }: {
-                rmId: string,
-                quantity: number
-            }) => PrismaService.requisitionOutward.create({
-                data: {
-                    rmId,
-                    quantity,
-                    user: req.user ? req.user.username : '',
-                    requisitionId: parseInt(requisitionId)
-                }
-            })),
-            ...await details.map(({ rmId, quantity }: {
-                rmId: string,
-                quantity: number
-            }) => PrismaService.rm.update({
-                where: {
-                    id: rmId
-                },
-                data: {
-                    lineStock: {
-                        decrement: quantity
-                    }
-                }
-            }))
-
+            ...(await details.map(
+                ({ rmId, quantity }: { rmId: string; quantity: number }) =>
+                    PrismaService.requisitionOutward.create({
+                        data: {
+                            rmId,
+                            quantity,
+                            user: req.user ? req.user.username : '',
+                            requisitionId: parseInt(requisitionId),
+                        },
+                    })
+            )),
+            ...(await details.map(
+                ({ rmId, quantity }: { rmId: string; quantity: number }) =>
+                    PrismaService.rm.update({
+                        where: {
+                            id: rmId,
+                        },
+                        data: {
+                            lineStock: {
+                                increment: quantity,
+                            },
+                            storeStock: {
+                                decrement: quantity,
+                            },
+                        },
+                    })
+            )),
         ])
-        
+
         res.json(result)
     } catch (e) {
         res.status(500).json({
-            message: (e as Error).message
+            message: (e as Error).message,
         })
     }
 })
@@ -156,8 +147,8 @@ app.get('/:id', async (req: Request, res: Response) => {
     const { id } = req.params
     const data = await prisma.findUnique({
         where: {
-            id: parseInt(id)
-        }
+            id: parseInt(id),
+        },
     })
     res.json(data)
 })
@@ -166,18 +157,14 @@ app.get('/issue/:id', async (req: Request, res: Response) => {
     const { id } = req.params
     const data = await PrismaService.requisitionOutward.findUnique({
         where: {
-            id: parseInt(id)
-        }
+            id: parseInt(id),
+        },
     })
     res.json(data)
 })
 
 app.put('/:id', async (req: Request, res: Response) => {
-    const {
-        quantity,
-        fgId,
-        soId
-    } = req.body
+    const { quantity, fgId, soId } = req.body
 
     const { id } = req.params
 
@@ -189,13 +176,13 @@ app.put('/:id', async (req: Request, res: Response) => {
             data: {
                 quantity,
                 fgId,
-                soId
-            }
+                soId,
+            },
         })
         res.json(result)
     } catch (e) {
         res.status(500).json({
-            message: (e as Error).message
+            message: (e as Error).message,
         })
     }
 })
@@ -205,13 +192,13 @@ app.delete('/:id', async (req: Request, res: Response) => {
     try {
         const result = await prisma.delete({
             where: {
-                id: parseInt(id)
-            }
+                id: parseInt(id),
+            },
         })
         res.json(result)
     } catch (e) {
         res.status(500).json({
-            message: (e as Error).message
+            message: (e as Error).message,
         })
     }
 })

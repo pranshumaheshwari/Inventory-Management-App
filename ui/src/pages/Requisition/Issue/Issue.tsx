@@ -170,7 +170,7 @@ const RequisitionIssue = () => {
         }
     }
 
-    const getRawmaterial = async () => {
+    const getRawmaterial = async (requisitionId: number) => {
         try {
             const data = await Fetch({
                 url: '/requisition',
@@ -195,9 +195,15 @@ const RequisitionIssue = () => {
                                     },
                                 },
                             },
+                            requisitionOutward: {
+                                select: {
+                                    rmId: true,
+                                    quantity: true,
+                                },
+                            },
                         }),
                         where: JSON.stringify({
-                            id: form.values.requisitionId,
+                            id: requisitionId,
                         }),
                     },
                 },
@@ -216,13 +222,30 @@ const RequisitionIssue = () => {
                                     }
                                 }[]
                             }
+                            requisitionOutward: {
+                                rmId: string
+                                quantity: number
+                            }[]
                         }[]
                     ) => data[0]
                 )
                 .then((data) =>
                     data.fg.bom.map((b) => ({
                         ...b.rm,
-                        bomQuantity: b.quantity * data.quantity,
+                        bomQuantity:
+                            b.quantity * data.quantity -
+                            data.requisitionOutward.reduce(
+                                (total, obj, idx) => {
+                                    if (
+                                        data.requisitionOutward[idx].rmId ===
+                                        b.rm.id
+                                    ) {
+                                        return total + obj.quantity
+                                    }
+                                    return total
+                                },
+                                0
+                            ),
                         value: b.rm.id,
                     }))
                 )
@@ -265,7 +288,6 @@ const RequisitionIssue = () => {
                     {activeStep === 0 && (
                         <>
                             <FormSelect
-                                name="requisitionId"
                                 xs={12}
                                 label="Requisition"
                                 placeholder="Select Requisition"
@@ -274,11 +296,12 @@ const RequisitionIssue = () => {
                                 {...form.getInputProps('requisitionId')}
                                 onChange={(value) => {
                                     if (value) {
+                                        console.log(value)
                                         form.setFieldValue(
                                             'requisitionId',
                                             parseInt(value)
                                         )
-                                        getRawmaterial()
+                                        getRawmaterial(parseInt(value))
                                     }
                                 }}
                             />
@@ -460,7 +483,7 @@ const RequisitionIssue = () => {
                                     color="primary"
                                     onClick={openModal}
                                 >
-                                    Create
+                                    Issue
                                 </Button>
                             </Grid.Col>
                         </>
