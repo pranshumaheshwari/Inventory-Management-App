@@ -128,6 +128,13 @@ const dashboard: ItemInterface = {
                     url: '/rawMaterial/report/inwards',
                     urls: ['/rawMaterial/report/inwards'],
                 },
+                {
+                    id: 'rawmaterial-report-requisition',
+                    title: 'Requisition',
+                    type: 'item',
+                    url: '/rawMaterial/report/requisition',
+                    urls: ['/rawMaterial/report/requisition'],
+                },
             ],
         },
     ],
