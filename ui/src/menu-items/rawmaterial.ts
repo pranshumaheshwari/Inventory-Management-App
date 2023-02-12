@@ -121,6 +121,13 @@ const dashboard: ItemInterface = {
                     url: '/rawMaterial/report/byPo',
                     urls: ['/rawMaterial/report/byPo'],
                 },
+                {
+                    id: 'rawmaterial-report-inwards',
+                    title: 'Inwards',
+                    type: 'item',
+                    url: '/rawMaterial/report/inwards',
+                    urls: ['/rawMaterial/report/inwards'],
+                },
             ],
         },
     ],
