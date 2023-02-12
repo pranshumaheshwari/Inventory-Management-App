@@ -71,11 +71,10 @@ const QualityCheck = () => {
             centered: true,
             children: (
                 <Text size="sm">
-                    Are you sure you want to delete this item? This action is
-                    destructive and irreversible. All data will be lost
+                    Are you sure you want to reject this item?
                 </Text>
             ),
-            labels: { confirm: 'Delete', cancel: "No don't delete it" },
+            labels: { confirm: 'Reject', cancel: "No don't reject it" },
             confirmProps: { color: 'red' },
             onConfirm: rejectOqc,
         })
@@ -87,7 +86,10 @@ const QualityCheck = () => {
                 options: {
                     authToken: token,
                     method: 'POST',
-                    body: form.values,
+                    body: {
+                        ...form.values,
+                        productionId: parseInt(form.values.productionId),
+                    },
                 },
             })
             showNotification({
@@ -115,7 +117,10 @@ const QualityCheck = () => {
                 options: {
                     authToken: token,
                     method: 'POST',
-                    body: form.values,
+                    body: {
+                        ...form.values,
+                        productionId: parseInt(form.values.productionId),
+                    },
                 },
             })
             showNotification({
@@ -221,7 +226,6 @@ const QualityCheck = () => {
                         }))
                         .sort((a, b) => b.productionId - a.productionId)
             )
-            console.log(data)
             setFinishedGoods(data)
         } catch (e) {
             setError((e as Error).message)
@@ -277,7 +281,9 @@ const QualityCheck = () => {
                         id="fgId"
                         label="Finished Good"
                         placeholder="Select Finished Good"
-                        data={finishedGoods}
+                        data={[
+                            ...new Set(finishedGoods.map((item) => item.value)),
+                        ]}
                         withAsterisk
                         {...form.getInputProps('fgId')}
                     />
@@ -295,7 +301,6 @@ const QualityCheck = () => {
                                     return false
                                 })
                                 .map((item) => ({
-                                    ...item,
                                     value: item.productionId.toString(),
                                 })),
                         ]}

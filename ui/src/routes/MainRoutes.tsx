@@ -41,6 +41,15 @@ const RawMaterialReportById = Loadable(
 const RawMaterialReportByPo = Loadable(
     lazy(() => import('../pages/RawMaterial/Report/ByPo'))
 )
+const RawMaterialReportInwards = Loadable(
+    lazy(() => import('../pages/RawMaterial/Report/Inwards'))
+)
+const RawMaterialReportRequisition = Loadable(
+    lazy(() => import('../pages/RawMaterial/Report/Requisition'))
+)
+const RawMaterialReportExcess = Loadable(
+    lazy(() => import('../pages/RawMaterial/Report/Excess'))
+)
 
 // Finished Goods
 const FinishedGood = Loadable(
@@ -104,6 +113,18 @@ const MainRoutes: RouteObject = {
                         {
                             path: 'byPo',
                             element: <RawMaterialReportByPo />,
+                        },
+                        {
+                            path: 'inwards',
+                            element: <RawMaterialReportInwards />,
+                        },
+                        {
+                            path: 'requisition',
+                            element: <RawMaterialReportRequisition />,
+                        },
+                        {
+                            path: 'excess',
+                            element: <RawMaterialReportExcess />,
                         },
                     ],
                 },

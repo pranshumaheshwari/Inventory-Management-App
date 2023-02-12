@@ -227,7 +227,7 @@ const PurchaseOrder = () => {
                 return data.map((po: { id: string }) => ({
                     value: po.id,
                     label: po.id,
-                    // ...po,
+                    ...po,
                 }))
             })
             setPo(data)
@@ -264,7 +264,7 @@ const PurchaseOrder = () => {
         }
     }
 
-    const getRawMaterials = async () => {
+    const getRawMaterials = async (invoiceId: string) => {
         try {
             const data = await Fetch({
                 url: '/invoice',
@@ -273,7 +273,7 @@ const PurchaseOrder = () => {
                     params: {
                         where: JSON.stringify({
                             supplierId: form.values.supplierId,
-                            id: form.values.invoiceId,
+                            id: invoiceId,
                         }),
                         select: JSON.stringify({
                             invoiceDetails: {
@@ -286,14 +286,10 @@ const PurchaseOrder = () => {
                     },
                 },
             })
-                .then((data) => {
-                    console.log(data)
-                    return data
-                })
                 .then((data) => data[0]['invoiceDetails'])
                 .then(
                     async (data: InwardsPurchaseOrderInterface['details']) => {
-                        return await data.map((d) => {
+                        return data.map((d) => {
                             if (form.values.poId) {
                                 const poDetails = po
                                     ?.find(({ id }) => id === form.values.poId)
@@ -375,7 +371,7 @@ const PurchaseOrder = () => {
                         onChange={(value) => {
                             if (value) {
                                 form.setFieldValue('invoiceId', value)
-                                getRawMaterials()
+                                getRawMaterials(value)
                             }
                         }}
                     />

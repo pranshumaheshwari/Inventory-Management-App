@@ -192,7 +192,7 @@ const QualityCheck = () => {
         }
     }
 
-    const getRawMaterials = async () => {
+    const getRawMaterials = async (invoiceId: string) => {
         try {
             const data = await Fetch({
                 url: '/inwards/iqc',
@@ -202,7 +202,7 @@ const QualityCheck = () => {
                         where: JSON.stringify({
                             inwardsPoPending: {
                                 supplierId: form.values.supplierId,
-                                invoiceId: form.values.invoiceId,
+                                invoiceId: invoiceId,
                             },
                             status: 'PendingIqcVerification',
                         }),
@@ -268,7 +268,7 @@ const QualityCheck = () => {
                         onChange={(value) => {
                             if (value) {
                                 form.setFieldValue('invoiceId', value)
-                                getRawMaterials()
+                                getRawMaterials(value)
                             }
                         }}
                     />

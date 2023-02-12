@@ -108,7 +108,8 @@ const Dispatch = () => {
                 title: 'Success',
                 message: (
                     <Text>
-                        Succesfully created dispatch with ID - {resp.id}
+                        Succesfully created dispatch invoice with ID -{' '}
+                        {resp[0].invoiceNumber}
                     </Text>
                 ),
                 color: 'green',
