@@ -47,6 +47,9 @@ const RawMaterialReportInwards = Loadable(
 const RawMaterialReportRequisition = Loadable(
     lazy(() => import('../pages/RawMaterial/Report/Requisition'))
 )
+const RawMaterialReportExcess = Loadable(
+    lazy(() => import('../pages/RawMaterial/Report/Excess'))
+)
 
 // Finished Goods
 const FinishedGood = Loadable(
@@ -118,6 +121,10 @@ const MainRoutes: RouteObject = {
                         {
                             path: 'requisition',
                             element: <RawMaterialReportRequisition />,
+                        },
+                        {
+                            path: 'excess',
+                            element: <RawMaterialReportExcess />,
                         },
                     ],
                 },

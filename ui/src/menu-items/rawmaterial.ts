@@ -135,6 +135,13 @@ const dashboard: ItemInterface = {
                     url: '/rawMaterial/report/requisition',
                     urls: ['/rawMaterial/report/requisition'],
                 },
+                {
+                    id: 'rawmaterial-report-excess',
+                    title: 'Excess',
+                    type: 'item',
+                    url: '/rawMaterial/report/excess',
+                    urls: ['/rawMaterial/report/excess'],
+                },
             ],
         },
     ],
