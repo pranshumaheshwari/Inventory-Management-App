@@ -85,6 +85,13 @@ const dashboard: ItemInterface = {
                     url: '/finishedGoods/report/byId',
                     urls: ['/finishedGoods/report/byId'],
                 },
+                {
+                    id: 'finishedgood-report-byso',
+                    title: 'By Sales Order',
+                    type: 'item',
+                    url: '/finishedGoods/report/bySo',
+                    urls: ['/finishedGoods/report/bySo'],
+                },
             ],
         },
     ],

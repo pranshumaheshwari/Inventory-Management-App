@@ -79,6 +79,9 @@ const Dispatch = Loadable(
 const FinishedGoodReportById = Loadable(
     lazy(() => import('../pages/FinishedGood/Report/ById'))
 )
+const FinishedGoodReportBySo = Loadable(
+    lazy(() => import('../pages/FinishedGood/Report/BySo'))
+)
 
 // ManPower
 const Attendance = Loadable(lazy(() => import('../pages/ManPower/Attendance')))
@@ -178,6 +181,10 @@ const MainRoutes: RouteObject = {
                         {
                             path: 'byId',
                             element: <FinishedGoodReportById />,
+                        },
+                        {
+                            path: 'bySo',
+                            element: <FinishedGoodReportBySo />,
                         },
                     ],
                 },

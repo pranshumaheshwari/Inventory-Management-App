@@ -1,42 +1,35 @@
-import {
-    AutocompleteItem,
-    Box,
-    Button,
-    Grid,
-    Skeleton,
-    Stepper,
-    Text,
-} from '@mantine/core'
-import { DateRangePicker, FormAutoComplete, Table } from '../../../components'
+import { Box, Button, Grid, Skeleton, Stepper, Text } from '@mantine/core'
 import { Fetch, useAuth } from '../../../services'
+import { FormSelect, Table } from '../../../components'
 import React, { useEffect, useState } from 'react'
 
 import { ColDef } from 'ag-grid-community'
-import { FinishedGoodsInterface } from '../FinishedGood'
 import dayjs from 'dayjs'
 
 interface RecordInterface {
     createdAt: string
-    type: 'Production' | 'OQC' | 'Dispatch'
-    id: string | number
 }
 
-function ById() {
+function BySo() {
     const {
         token: { token },
     } = useAuth()
     const [error, setError] = useState('')
     const [activeStep, setActiveStep] = useState(0)
     const [records, setRecords] = useState<RecordInterface[]>([])
-    const [finishedgood, setFinishedgood] = useState<AutocompleteItem[]>()
-    const [selectedFg, setSelectedFg] = useState<{
-        fg: AutocompleteItem
-    }>({
-        fg: {
-            value: '',
-        },
-    })
-    const [value, setValue] = useState<[Date, Date]>([new Date(), new Date()])
+    const [customer, setCustomer] = useState<{ value: string }[] | null>()
+    const [selectedSo, setSelectedSo] = useState('')
+    const [so, setSo] = useState<
+        | {
+              value: string
+              id: string
+              soDetails: {
+                  fgId: string
+                  quantity: number
+              }[]
+          }[]
+        | null
+    >([])
 
     const handleNext = () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1)
@@ -44,6 +37,25 @@ function ById() {
 
     const handleBack = () => {
         setActiveStep((prevActiveStep) => prevActiveStep - 1)
+    }
+
+    const getSupplier = async () => {
+        try {
+            const data = await Fetch({
+                url: '/customers',
+                options: {
+                    authToken: token,
+                },
+            }).then((data) => {
+                return data.map((customer: { name: string; id: string }) => ({
+                    label: customer.name,
+                    value: customer.id,
+                }))
+            })
+            setCustomer(data)
+        } catch (e) {
+            setError((e as Error).message)
+        }
     }
 
     const columnDefs: ColDef<RecordInterface>[] = [
@@ -60,61 +72,59 @@ function ById() {
             },
         },
         { field: 'quantity', headerName: 'Quantity', type: 'numberColumn' },
+        {
+            field: 'fgId',
+            headerName: 'Finished Good',
+        },
     ]
 
-    const getFinishedGoods = async () => {
+    useEffect(() => {
+        getSupplier()
+    }, [])
+
+    if (!customer) {
+        return <Skeleton width="90vw" height="100%" />
+    }
+
+    const updateSo = async (csutomerId: string) => {
         try {
             const data = await Fetch({
-                url: '/finishedgoods',
+                url: '/salesorders',
                 options: {
                     authToken: token,
                     params: {
+                        where: JSON.stringify({
+                            csutomerId,
+                        }),
                         select: JSON.stringify({
                             id: true,
-                            description: true,
+                            soDetails: {
+                                select: {
+                                    fgId: true,
+                                    quantity: true,
+                                },
+                            },
                         }),
                     },
                 },
-            }).then((data) =>
-                data.map((d: Partial<FinishedGoodsInterface>) => ({
-                    ...d,
-                    value: d.id,
+            }).then((data) => {
+                return data.map((so: { id: string }) => ({
+                    value: so.id,
+                    label: so.id,
+                    ...so,
                 }))
-            )
-            setFinishedgood(data)
+            })
+            setSo(data)
         } catch (e) {
             setError((e as Error).message)
         }
-    }
-
-    useEffect(() => {
-        getFinishedGoods()
-    }, [])
-
-    if (!finishedgood) {
-        return <Skeleton width="90vw" height="100%" />
     }
 
     const fetchRecords = async () => {
         try {
             const query = {
                 where: JSON.stringify({
-                    fgId: selectedFg.fg.id,
-                    AND: [
-                        {
-                            createdAt: {
-                                gte: value[0].toISOString(),
-                            },
-                        },
-                        {
-                            createdAt: {
-                                lte: dayjs(value[1])
-                                    .add(1, 'day')
-                                    .toDate()
-                                    .toISOString(),
-                            },
-                        },
-                    ],
+                    soId: selectedSo,
                 }),
             }
 
@@ -128,18 +138,6 @@ function ById() {
                 },
             }).then((data) =>
                 data.map((d: RecordInterface) => ({ ...d, type: 'Production' }))
-            )
-
-            const outwardsQuality = await Fetch({
-                url: '/outwards/oqc',
-                options: {
-                    authToken: token,
-                    params: {
-                        ...query,
-                    },
-                },
-            }).then((data) =>
-                data.map((d: RecordInterface) => ({ ...d, type: 'OQC' }))
             )
 
             const dispatch = await Fetch({
@@ -158,7 +156,7 @@ function ById() {
                 }))
             )
 
-            const data = [...production, ...outwardsQuality, ...dispatch]
+            const data = [...production, ...dispatch]
             data.sort((a, b) => b.createdAt - a.createdAt)
             setRecords(data)
         } catch (e) {
@@ -179,46 +177,32 @@ function ById() {
             <Grid.Col xs={3} />
             {activeStep === 0 && (
                 <>
-                    <FormAutoComplete
-                        xs={12}
-                        label="Finished Good"
-                        placeholder="Select Finished Good"
-                        data={finishedgood}
-                        onChange={(value) =>
-                            setSelectedFg((selectedFg) => {
-                                let fg = finishedgood.find(
-                                    (d) => d.value === value
-                                )
-                                if (fg)
-                                    return {
-                                        ...selectedFg,
-                                        fg,
-                                    }
-                                return selectedFg
-                            })
-                        }
-                        withAsterisk
-                    />
-                    <Grid.Col xs={3} />
-                    <DateRangePicker
+                    <FormSelect
                         xs={6}
-                        name="dateRange"
-                        label="Select Date Range"
-                        range={value}
-                        clearable
-                        value={value}
+                        label="Customer"
+                        placeholder="Select Customer"
+                        data={customer}
                         onChange={(value) => {
-                            if (value[0] && value[1]) {
-                                setValue([value[0], value[1]])
+                            if (value) {
+                                updateSo(value)
                             }
                         }}
                     />
-                    <Grid.Col xs={3} />
-                    <Grid.Col xs={3} />
+                    <FormSelect
+                        xs={6}
+                        label="Sales Order"
+                        placeholder="Select Sales Order"
+                        data={so ? so : []}
+                        onChange={(value) => {
+                            if (value) {
+                                setSelectedSo(value)
+                            }
+                        }}
+                    />
 
-                    <Grid.Col xs={6}>
+                    <Grid.Col xs={12}>
                         <Button
-                            disabled={!value[1]}
+                            disabled={!selectedSo}
                             fullWidth
                             size="md"
                             variant="filled"
@@ -276,4 +260,4 @@ function ById() {
     )
 }
 
-export default ById
+export default BySo
