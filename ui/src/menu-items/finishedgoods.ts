@@ -73,6 +73,20 @@ const dashboard: ItemInterface = {
                 },
             ],
         },
+        {
+            id: 'finishedgood-report',
+            title: 'Reports',
+            type: 'group',
+            children: [
+                {
+                    id: 'finishedgood-report-byid',
+                    title: 'By Unique Identifier',
+                    type: 'item',
+                    url: '/finishedGoods/report/byId',
+                    urls: ['/finishedGoods/report/byId'],
+                },
+            ],
+        },
     ],
 }
 
