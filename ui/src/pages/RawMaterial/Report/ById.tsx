@@ -173,9 +173,8 @@ function ById() {
                 <>
                     <FormAutoComplete
                         xs={12}
-                        id="rmId"
-                        name="rmId"
                         label="Raw Material"
+                        placeholder="Select Raw Material"
                         data={rawmaterial}
                         onChange={(value) =>
                             setSelectedRm((selectedRm) => {

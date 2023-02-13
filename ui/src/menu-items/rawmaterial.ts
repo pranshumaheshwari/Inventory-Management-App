@@ -142,6 +142,13 @@ const dashboard: ItemInterface = {
                     url: '/rawMaterial/report/excess',
                     urls: ['/rawMaterial/report/excess'],
                 },
+                {
+                    id: 'rawmaterial-report-shortage',
+                    title: 'Shortage',
+                    type: 'item',
+                    url: '/rawMaterial/report/shortage',
+                    urls: ['/rawMaterial/report/shortage'],
+                },
             ],
         },
     ],
