@@ -8,12 +8,18 @@ const prisma = PrismaService.so
 
 app.get('/', async (req: Request, res: Response) => {
     const args: Prisma.SoFindManyArgs = {}
-    const { select, include } = req.query
+    const { select, include, where, distinct } = req.query
     if (select) {
         args.select = JSON.parse(select as string)
     }
     if (include) {
         args.include = JSON.parse(include as string)
+    }
+    if (where) {
+        args.where = JSON.parse(where as string)
+    }
+    if (distinct) {
+        args.distinct = JSON.parse(distinct as string)
     }
     const data = await prisma.findMany(args)
     res.json(data)

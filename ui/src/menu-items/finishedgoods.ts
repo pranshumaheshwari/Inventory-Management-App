@@ -73,6 +73,41 @@ const dashboard: ItemInterface = {
                 },
             ],
         },
+        {
+            id: 'finishedgood-report',
+            title: 'Reports',
+            type: 'group',
+            children: [
+                {
+                    id: 'finishedgood-report-byid',
+                    title: 'By Unique Identifier',
+                    type: 'item',
+                    url: '/finishedGoods/report/byId',
+                    urls: ['/finishedGoods/report/byId'],
+                },
+                {
+                    id: 'finishedgood-report-byso',
+                    title: 'By Sales Order',
+                    type: 'item',
+                    url: '/finishedGoods/report/bySo',
+                    urls: ['/finishedGoods/report/bySo'],
+                },
+                {
+                    id: 'finishedgood-report-production',
+                    title: 'Production',
+                    type: 'item',
+                    url: '/finishedGoods/report/production',
+                    urls: ['/finishedGoods/report/production'],
+                },
+                {
+                    id: 'finishedgood-report-dispatch',
+                    title: 'Dispatch',
+                    type: 'item',
+                    url: '/finishedGoods/report/dispatch',
+                    urls: ['/finishedGoods/report/dispatch'],
+                },
+            ],
+        },
     ],
 }
 

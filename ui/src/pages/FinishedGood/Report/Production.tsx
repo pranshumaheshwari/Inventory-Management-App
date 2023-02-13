@@ -1,40 +1,23 @@
-import {
-    AutocompleteItem,
-    Box,
-    Button,
-    Grid,
-    Skeleton,
-    Stepper,
-    Text,
-} from '@mantine/core'
-import { DateRangePicker, FormAutoComplete, Table } from '../../../components'
+import { Box, Button, Grid, Stepper, Text } from '@mantine/core'
+import { DateRangePicker, Table } from '../../../components'
 import { Fetch, useAuth } from '../../../services'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
 import { ColDef } from 'ag-grid-community'
-import { RawMaterialInterface } from '../RawMaterial'
 import dayjs from 'dayjs'
 
 interface RecordInterface {
+    fgId: string
     createdAt: string
-    type: 'Production' | 'Inwards' | 'Requisition'
 }
 
-function ById() {
+function ProductionReport() {
     const {
         token: { token },
     } = useAuth()
     const [error, setError] = useState('')
     const [activeStep, setActiveStep] = useState(0)
     const [records, setRecords] = useState<RecordInterface[]>([])
-    const [rawmaterial, setRawmaterial] = useState<AutocompleteItem[]>()
-    const [selectedRm, setSelectedRm] = useState<{
-        rm: AutocompleteItem
-    }>({
-        rm: {
-            value: '',
-        },
-    })
     const [value, setValue] = useState<[Date, Date]>([new Date(), new Date()])
 
     const handleNext = () => {
@@ -47,7 +30,7 @@ function ById() {
 
     const columnDefs: ColDef<RecordInterface>[] = [
         { field: 'id', headerName: 'ID' },
-        { field: 'type', headerName: 'Stage' },
+        { field: 'fgId', headerName: 'Finished Good' },
         {
             field: 'createdAt',
             headerName: 'Date',
@@ -61,45 +44,10 @@ function ById() {
         { field: 'quantity', headerName: 'Quantity', type: 'numberColumn' },
     ]
 
-    const getRawmaterials = async () => {
-        try {
-            const data = await Fetch({
-                url: '/rawmaterial',
-                options: {
-                    authToken: token,
-                    params: {
-                        select: JSON.stringify({
-                            id: true,
-                            description: true,
-                            dtplCode: true,
-                        }),
-                    },
-                },
-            }).then((data) =>
-                data.map((d: Partial<RawMaterialInterface>) => ({
-                    ...d,
-                    value: d.id,
-                }))
-            )
-            setRawmaterial(data)
-        } catch (e) {
-            setError((e as Error).message)
-        }
-    }
-
-    useEffect(() => {
-        getRawmaterials()
-    }, [])
-
-    if (!rawmaterial) {
-        return <Skeleton width="90vw" height="100%" />
-    }
-
     const fetchRecords = async () => {
         try {
             const query = {
                 where: JSON.stringify({
-                    rmId: selectedRm.rm.id,
                     AND: [
                         {
                             createdAt: {
@@ -110,59 +58,28 @@ function ById() {
                             createdAt: {
                                 lte: dayjs(value[1])
                                     .add(1, 'day')
-                                    .toDate()
                                     .toISOString(),
                             },
                         },
                     ],
                 }),
+                orderBy: JSON.stringify([
+                    {
+                        id: 'asc',
+                    },
+                ]),
             }
 
-            const production = await Fetch({
-                url: '/outwards/productionlog',
+            const data = await Fetch({
+                url: '/outwards/production',
                 options: {
                     authToken: token,
                     params: {
                         ...query,
                     },
                 },
-            }).then((data) =>
-                data.map((d: RecordInterface) => ({ ...d, type: 'Production' }))
-            )
+            })
 
-            const inwardsVerified = await Fetch({
-                url: '/inwards/verified',
-                options: {
-                    authToken: token,
-                    params: {
-                        ...query,
-                    },
-                },
-            }).then((data) =>
-                data.map((d: RecordInterface) => ({ ...d, type: 'Inwards' }))
-            )
-
-            const requisitionOutwards = await Fetch({
-                url: '/requisition/issue',
-                options: {
-                    authToken: token,
-                    params: {
-                        ...query,
-                    },
-                },
-            }).then((data) =>
-                data.map((d: RecordInterface) => ({
-                    ...d,
-                    type: 'Requisition',
-                }))
-            )
-
-            const data = [
-                ...production,
-                ...inwardsVerified,
-                ...requisitionOutwards,
-            ]
-            data.sort((a, b) => b.createdAt - a.createdAt)
             setRecords(data)
         } catch (e) {
             setError((e as Error).message)
@@ -182,26 +99,6 @@ function ById() {
             <Grid.Col xs={3} />
             {activeStep === 0 && (
                 <>
-                    <FormAutoComplete
-                        xs={12}
-                        label="Raw Material"
-                        placeholder="Select Raw Material"
-                        data={rawmaterial}
-                        onChange={(value) =>
-                            setSelectedRm((selectedRm) => {
-                                let rm = rawmaterial.find(
-                                    (d) => d.value === value
-                                )
-                                if (rm)
-                                    return {
-                                        ...selectedRm,
-                                        rm,
-                                    }
-                                return selectedRm
-                            })
-                        }
-                        withAsterisk
-                    />
                     <Grid.Col xs={3} />
                     <DateRangePicker
                         xs={6}
@@ -279,4 +176,4 @@ function ById() {
     )
 }
 
-export default ById
+export default ProductionReport

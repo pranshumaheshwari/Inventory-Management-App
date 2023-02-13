@@ -12,12 +12,13 @@ import { Fetch, useAuth } from '../../../services'
 import React, { useEffect, useState } from 'react'
 
 import { ColDef } from 'ag-grid-community'
-import { RawMaterialInterface } from '../RawMaterial'
+import { FinishedGoodsInterface } from '../FinishedGood'
 import dayjs from 'dayjs'
 
 interface RecordInterface {
     createdAt: string
-    type: 'Production' | 'Inwards' | 'Requisition'
+    type: 'Production' | 'OQC' | 'Dispatch'
+    id: string | number
 }
 
 function ById() {
@@ -27,11 +28,11 @@ function ById() {
     const [error, setError] = useState('')
     const [activeStep, setActiveStep] = useState(0)
     const [records, setRecords] = useState<RecordInterface[]>([])
-    const [rawmaterial, setRawmaterial] = useState<AutocompleteItem[]>()
-    const [selectedRm, setSelectedRm] = useState<{
-        rm: AutocompleteItem
+    const [finishedgood, setFinishedgood] = useState<AutocompleteItem[]>()
+    const [selectedFg, setSelectedFg] = useState<{
+        fg: AutocompleteItem
     }>({
-        rm: {
+        fg: {
             value: '',
         },
     })
@@ -61,37 +62,36 @@ function ById() {
         { field: 'quantity', headerName: 'Quantity', type: 'numberColumn' },
     ]
 
-    const getRawmaterials = async () => {
+    const getFinishedGoods = async () => {
         try {
             const data = await Fetch({
-                url: '/rawmaterial',
+                url: '/finishedgoods',
                 options: {
                     authToken: token,
                     params: {
                         select: JSON.stringify({
                             id: true,
                             description: true,
-                            dtplCode: true,
                         }),
                     },
                 },
             }).then((data) =>
-                data.map((d: Partial<RawMaterialInterface>) => ({
+                data.map((d: Partial<FinishedGoodsInterface>) => ({
                     ...d,
                     value: d.id,
                 }))
             )
-            setRawmaterial(data)
+            setFinishedgood(data)
         } catch (e) {
             setError((e as Error).message)
         }
     }
 
     useEffect(() => {
-        getRawmaterials()
+        getFinishedGoods()
     }, [])
 
-    if (!rawmaterial) {
+    if (!finishedgood) {
         return <Skeleton width="90vw" height="100%" />
     }
 
@@ -99,7 +99,7 @@ function ById() {
         try {
             const query = {
                 where: JSON.stringify({
-                    rmId: selectedRm.rm.id,
+                    fgId: selectedFg.fg.id,
                     AND: [
                         {
                             createdAt: {
@@ -119,7 +119,7 @@ function ById() {
             }
 
             const production = await Fetch({
-                url: '/outwards/productionlog',
+                url: '/outwards/production',
                 options: {
                     authToken: token,
                     params: {
@@ -130,8 +130,8 @@ function ById() {
                 data.map((d: RecordInterface) => ({ ...d, type: 'Production' }))
             )
 
-            const inwardsVerified = await Fetch({
-                url: '/inwards/verified',
+            const outwardsQuality = await Fetch({
+                url: '/outwards/oqc',
                 options: {
                     authToken: token,
                     params: {
@@ -139,11 +139,11 @@ function ById() {
                     },
                 },
             }).then((data) =>
-                data.map((d: RecordInterface) => ({ ...d, type: 'Inwards' }))
+                data.map((d: RecordInterface) => ({ ...d, type: 'OQC' }))
             )
 
-            const requisitionOutwards = await Fetch({
-                url: '/requisition/issue',
+            const dispatch = await Fetch({
+                url: '/outwards/dispatch',
                 options: {
                     authToken: token,
                     params: {
@@ -151,17 +151,14 @@ function ById() {
                     },
                 },
             }).then((data) =>
-                data.map((d: RecordInterface) => ({
+                data.map((d: { invoiceNumber: string }) => ({
                     ...d,
-                    type: 'Requisition',
+                    id: d.invoiceNumber,
+                    type: 'Dispatch',
                 }))
             )
 
-            const data = [
-                ...production,
-                ...inwardsVerified,
-                ...requisitionOutwards,
-            ]
+            const data = [...production, ...outwardsQuality, ...dispatch]
             data.sort((a, b) => b.createdAt - a.createdAt)
             setRecords(data)
         } catch (e) {
@@ -184,20 +181,20 @@ function ById() {
                 <>
                     <FormAutoComplete
                         xs={12}
-                        label="Raw Material"
-                        placeholder="Select Raw Material"
-                        data={rawmaterial}
+                        label="Finished Good"
+                        placeholder="Select Finished Good"
+                        data={finishedgood}
                         onChange={(value) =>
-                            setSelectedRm((selectedRm) => {
-                                let rm = rawmaterial.find(
+                            setSelectedFg((selectedFg) => {
+                                let fg = finishedgood.find(
                                     (d) => d.value === value
                                 )
-                                if (rm)
+                                if (fg)
                                     return {
-                                        ...selectedRm,
-                                        rm,
+                                        ...selectedFg,
+                                        fg,
                                     }
-                                return selectedRm
+                                return selectedFg
                             })
                         }
                         withAsterisk

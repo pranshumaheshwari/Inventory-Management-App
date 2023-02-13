@@ -49,8 +49,8 @@ function ExcessReport() {
             type: 'numberColumn',
         },
         {
-            field: 'excessQuantity',
-            headerName: 'Excess Stock',
+            field: 'shortageQuantity',
+            headerName: 'Shortage Stock',
             type: 'numberColumn',
         },
     ]
@@ -187,12 +187,12 @@ function ExcessReport() {
                                 ...rm,
                                 requiredQuantity: requiredQty,
                                 issuedQuantity: issuedQty,
-                                excessQuantity:
-                                    rm.totalQuantity + issuedQty - requiredQty,
+                                shortageQuantity:
+                                    requiredQty - rm.totalQuantity - issuedQty,
                             }
                         })
                         .filter((rm) => {
-                            if (rm.excessQuantity > 0) {
+                            if (rm.shortageQuantity > 0) {
                                 return true
                             }
                             return false

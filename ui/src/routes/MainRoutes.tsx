@@ -50,6 +50,9 @@ const RawMaterialReportRequisition = Loadable(
 const RawMaterialReportExcess = Loadable(
     lazy(() => import('../pages/RawMaterial/Report/Excess'))
 )
+const RawMaterialReportShortage = Loadable(
+    lazy(() => import('../pages/RawMaterial/Report/Shortage'))
+)
 
 // Finished Goods
 const FinishedGood = Loadable(
@@ -72,6 +75,18 @@ const OutwardsQualityCheck = Loadable(
 )
 const Dispatch = Loadable(
     lazy(() => import('../pages/Outwards/Dispatch/Dispatch'))
+)
+const FinishedGoodReportById = Loadable(
+    lazy(() => import('../pages/FinishedGood/Report/ById'))
+)
+const FinishedGoodReportBySo = Loadable(
+    lazy(() => import('../pages/FinishedGood/Report/BySo'))
+)
+const FinishedGoodReportProduction = Loadable(
+    lazy(() => import('../pages/FinishedGood/Report/Production'))
+)
+const FinishedGoodReportDispatch = Loadable(
+    lazy(() => import('../pages/FinishedGood/Report/Dispatch'))
 )
 
 // ManPower
@@ -126,6 +141,10 @@ const MainRoutes: RouteObject = {
                             path: 'excess',
                             element: <RawMaterialReportExcess />,
                         },
+                        {
+                            path: 'shortage',
+                            element: <RawMaterialReportShortage />,
+                        },
                     ],
                 },
             ],
@@ -161,6 +180,27 @@ const MainRoutes: RouteObject = {
                 {
                     path: 'edit',
                     element: <NewFinishedGood />,
+                },
+                {
+                    path: 'report',
+                    children: [
+                        {
+                            path: 'byId',
+                            element: <FinishedGoodReportById />,
+                        },
+                        {
+                            path: 'bySo',
+                            element: <FinishedGoodReportBySo />,
+                        },
+                        {
+                            path: 'production',
+                            element: <FinishedGoodReportProduction />,
+                        },
+                        {
+                            path: 'dispatch',
+                            element: <FinishedGoodReportDispatch />,
+                        },
+                    ],
                 },
             ],
         },
