@@ -99,6 +99,13 @@ const dashboard: ItemInterface = {
                     url: '/finishedGoods/report/production',
                     urls: ['/finishedGoods/report/production'],
                 },
+                {
+                    id: 'finishedgood-report-dispatch',
+                    title: 'Dispatch',
+                    type: 'item',
+                    url: '/finishedGoods/report/dispatch',
+                    urls: ['/finishedGoods/report/dispatch'],
+                },
             ],
         },
     ],
