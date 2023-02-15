@@ -83,8 +83,6 @@ app.get('/:id', async (req: Request, res: Response) => {
     res.json(data)
 })
 
-// TODO - make this upsert
-
 app.put('/:id', async (req: Request, res: Response) => {
     const {
         id: updatedId,
@@ -99,24 +97,29 @@ app.put('/:id', async (req: Request, res: Response) => {
     } = req.body
 
     const { id } = req.params
-    const BOM = bom?.map((rm: Prisma.BomUncheckedCreateInput) => {
-        return {
-            rmId: rm.rmId,
-            quantity: rm.quantity,
+    const BOM = bom?.map(
+        (
+            b: Prisma.BomUncheckedCreateInput
+        ): Prisma.BomUpsertWithWhereUniqueWithoutFgInput => {
+            return {
+                where: {
+                    fgId_rmId: {
+                        fgId: id,
+                        rmId: b.rmId,
+                    },
+                },
+                update: {
+                    quantity: b.quantity,
+                },
+                create: {
+                    quantity: b.quantity,
+                    rmId: b.rmId,
+                },
+            }
         }
-    })
+    )
 
-    const currentBOM = await PrismaService.bom.findMany({
-        where: {
-            fgId: id,
-        },
-    })
     try {
-        const del = await PrismaService.bom.deleteMany({
-            where: {
-                fgId: id,
-            },
-        })
         const result = await prisma.update({
             where: {
                 id,
@@ -131,15 +134,12 @@ app.put('/:id', async (req: Request, res: Response) => {
                 storeStock,
                 overheads,
                 bom: {
-                    create: BOM,
+                    upsert: BOM,
                 },
             },
         })
         res.json(result)
     } catch (e) {
-        const recreate = await PrismaService.bom.createMany({
-            data: currentBOM,
-        })
         res.status(500).json({
             message: (e as Error).message,
         })
