@@ -15,7 +15,7 @@ interface RecordInterface {
     totalQuantity: number
 }
 
-function ProductionReport() {
+function DispatchReport() {
     const {
         token: { token },
     } = useAuth()
@@ -72,7 +72,7 @@ function ProductionReport() {
                     id: true,
                     description: true,
                     category: true,
-                    production: {
+                    dispatch: {
                         where: {
                             so: {
                                 createdAt: {
@@ -113,7 +113,7 @@ function ProductionReport() {
             }).then((data) =>
                 data.map(
                     (d: {
-                        production: {
+                        dispatch: {
                             quantity: number
                             createdAt: string
                         }[]
@@ -126,14 +126,14 @@ function ProductionReport() {
                             (prevVal, curVal) => prevVal + curVal.quantity,
                             0
                         ),
-                        totalQuantity: d.production.reduce(
+                        totalQuantity: d.dispatch.reduce(
                             (prevVal, curVal) => prevVal + curVal.quantity,
                             0
                         ),
                         productionQuantity: [
                             ...Array(dayjs().date()).keys(),
                         ].map((ini, idx) =>
-                            d.production.reduce((prevVal, curVal) => {
+                            d.dispatch.reduce((prevVal, curVal) => {
                                 if (
                                     dayjs(curVal.createdAt).date() - 1 ===
                                     idx
@@ -180,4 +180,4 @@ function ProductionReport() {
     )
 }
 
-export default ProductionReport
+export default DispatchReport

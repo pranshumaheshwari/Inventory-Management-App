@@ -113,6 +113,13 @@ const dashboard: ItemInterface = {
                     url: '/finishedGoods/report/productionTracker',
                     urls: ['/finishedGoods/report/productionTracker'],
                 },
+                {
+                    id: 'finishedgood-report-dispatchtracker',
+                    title: 'Dispatch Tracker',
+                    type: 'item',
+                    url: '/finishedGoods/report/dispatchTracker',
+                    urls: ['/finishedGoods/report/dispatchTracker'],
+                },
             ],
         },
     ],
