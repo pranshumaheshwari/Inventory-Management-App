@@ -21,7 +21,7 @@ export interface RawMaterialInterface {
 const RawMaterial = () => {
     const navigate = useNavigate()
     const columnDefs: ColDef<RawMaterialInterface>[] = [
-        { field: 'id', headerName: 'Part Number' },
+        { field: 'id', headerName: 'Part Number', pinned: 'left' },
         { field: 'description', headerName: 'Description' },
         { field: 'dtplCode', headerName: 'DTPL Part Number' },
         { field: 'category', headerName: 'Category' },

@@ -13,6 +13,8 @@ function Table<Type>({
     fileName,
     rowData,
     defaultColDef,
+    pinnedBottomRowData,
+    pinnedTopRowData,
     ...otherProps
 }: TableInterface<Type>) {
     const gridRef = useRef<AgGridReact<Type>>(null)
@@ -55,6 +57,8 @@ function Table<Type>({
                     columnDefs={columnDefs}
                     rowData={rowData}
                     defaultColDef={cDefaultColDef}
+                    pinnedBottomRowData={pinnedBottomRowData}
+                    pinnedTopRowData={pinnedTopRowData}
                     paginationAutoPageSize
                     pagination
                     columnTypes={columnTypes}

@@ -22,7 +22,7 @@ export interface FinishedGoodsInterface {
 const FinishedGoods = () => {
     const navigate = useNavigate()
     const columnDefs: ColDef<FinishedGoodsInterface>[] = [
-        { field: 'id', headerName: 'Part Number' },
+        { field: 'id', headerName: 'Part Number', pinned: 'left' },
         { field: 'description', headerName: 'Description' },
         {
             field: 'category',

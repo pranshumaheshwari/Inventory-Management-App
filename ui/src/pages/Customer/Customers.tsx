@@ -1,8 +1,8 @@
 import { ColDef } from 'ag-grid-community'
+import { IconPlus } from '@tabler/icons-react'
 import { Inventory } from '../common'
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { IconPlus } from '@tabler/icons-react'
 
 export interface CustomerInterface {
     id: string
@@ -17,7 +17,7 @@ export interface CustomerInterface {
 const Customers = () => {
     const navigate = useNavigate()
     const columnDefs: ColDef<CustomerInterface>[] = [
-        { field: 'id' },
+        { field: 'id', pinned: 'left' },
         { field: 'name', headerName: 'Name' },
         {
             valueGetter: ({ data }) => {

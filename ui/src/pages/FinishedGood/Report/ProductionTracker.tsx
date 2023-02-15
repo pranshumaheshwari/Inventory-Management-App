@@ -22,9 +22,9 @@ function ProductionReport() {
     const [error, setError] = useState('')
     const [records, setRecords] = useState<RecordInterface[]>([])
 
-    const columnDefs: ColDef<RecordInterface>[] = useMemo(
+    const columnDefs = useMemo<ColDef<RecordInterface>[]>(
         () => [
-            { field: 'id', headerName: 'Part Number' },
+            { field: 'id', headerName: 'Part Number', pinned: 'left' },
             { field: 'description', headerName: 'Description' },
             { field: 'category', headerName: 'Category' },
             {
@@ -43,6 +43,7 @@ function ProductionReport() {
                 field: 'totalQuantity',
                 headerName: 'Total Production',
                 type: 'numberColumn',
+                pinned: 'right',
             },
             {
                 field: 'balance',
@@ -60,6 +61,7 @@ function ProductionReport() {
                     }
                     return 0
                 },
+                pinned: 'right',
             },
         ],
         []
