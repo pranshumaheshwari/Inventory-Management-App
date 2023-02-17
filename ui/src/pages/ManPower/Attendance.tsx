@@ -1,9 +1,9 @@
 import { Button, Grid, Text } from '@mantine/core'
 import { DatePicker, FormInputNumber } from '../../components'
 import { Fetch, useAuth } from '../../services'
+import { createFormContext, isNotEmpty } from '@mantine/form'
 
 import React from 'react'
-import { createFormContext } from '@mantine/form'
 import { openConfirmModal } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
 
@@ -27,6 +27,7 @@ const Attendance = () => {
         validate: {
             number: (value) =>
                 value <= 0 ? 'Attendance should be greater than 0' : null,
+            date: isNotEmpty(),
         },
     })
     const openModal = () =>
@@ -92,7 +93,13 @@ const Attendance = () => {
                         label="Date"
                         placeholder="Select Date"
                         withAsterisk
-                        {...form.getInputProps('date')}
+                        value={form.values.date}
+                        onChange={(value) => {
+                            if (value) {
+                                form.setFieldValue('date', value)
+                            }
+                        }}
+                        error={form.getInputProps('date').error}
                     />
                     <Grid.Col xs={12}>
                         <Button

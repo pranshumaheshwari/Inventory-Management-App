@@ -120,6 +120,13 @@ const dashboard: ItemInterface = {
                     url: '/finishedGoods/report/dispatchTracker',
                     urls: ['/finishedGoods/report/dispatchTracker'],
                 },
+                {
+                    id: 'finishedgood-report-manpowerefficiency',
+                    title: 'Manpower Efficiency',
+                    type: 'item',
+                    url: '/finishedGoods/report/manpowerEfficiency',
+                    urls: ['/finishedGoods/report/manpowerEfficiency'],
+                },
             ],
         },
     ],
