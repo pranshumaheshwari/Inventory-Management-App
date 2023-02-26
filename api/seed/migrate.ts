@@ -1,4 +1,10 @@
-import { Prisma, PrismaClient, UsersType } from '@prisma/client'
+import {
+    FgCategory,
+    Prisma,
+    PrismaClient,
+    RmCategory,
+    UsersType,
+} from '@prisma/client'
 
 import { FieldInfo } from 'mysql'
 import { MysqlError } from 'mysql'
@@ -19,7 +25,7 @@ connection.connect()
 // USERS
 connection.query(
     'SELECT * FROM users',
-    (
+    async (
         error: MysqlError,
         res: {
             username: string
@@ -29,7 +35,7 @@ connection.query(
         fields: FieldInfo[]
     ) => {
         if (error) throw error
-        prisma.users.createMany({
+        await prisma.users.createMany({
             data: res.map((r) => ({ ...r, name: r.username })),
         })
     }
@@ -38,7 +44,7 @@ connection.query(
 // CUSTOMER
 connection.query(
     'SELECT * FROM customer',
-    (
+    async (
         error: MysqlError,
         res: {
             code: string
@@ -53,7 +59,7 @@ connection.query(
         fields: FieldInfo[]
     ) => {
         if (error) throw error
-        prisma.customer.createMany({
+        await prisma.customer.createMany({
             data: res.map((r) => ({ ...r, gst: r.GST_no, id: r.code })),
         })
     }
@@ -62,7 +68,7 @@ connection.query(
 // SUPPLIER
 connection.query(
     'SELECT * FROM supplier',
-    (
+    async (
         error: MysqlError,
         res: {
             code: string
@@ -77,8 +83,97 @@ connection.query(
         fields: FieldInfo[]
     ) => {
         if (error) throw error
-        prisma.supplier.createMany({
+        await prisma.supplier.createMany({
             data: res.map((r) => ({ ...r, gst: r.GST_no, id: r.code })),
+        })
+    }
+)
+
+// RAW MATERIAL
+connection.query(
+    'SELECT * FROM raw_material',
+    async (
+        error: MysqlError,
+        res: {
+            code: string
+            DTPL_code: string
+            name: string
+            category: RmCategory
+            stock: number
+            line_stock: number
+            unit: string
+            supplier_code: string
+            price: number
+            monthly_requirement: number
+        }[],
+        fields: FieldInfo[]
+    ) => {
+        if (error) throw error
+        await prisma.rm.createMany({
+            data: res.map((r) => ({
+                ...r,
+                id: r.code,
+                description: r.name,
+                dtplCode: r.DTPL_code,
+                supplierId: r.supplier_code,
+                storeStock: r.stock,
+                lineStock: r.line_stock,
+            })),
+        })
+    }
+)
+
+// FINISHED GOODS
+connection.query(
+    'SELECT * FROM finished_goods',
+    async (
+        error: MysqlError,
+        res: {
+            code: string
+            name: string
+            customer: string
+            category: FgCategory
+            stock: number
+            quantity: number
+            price: number
+            overheads: number
+            man_power: number
+        }[],
+        fields: FieldInfo[]
+    ) => {
+        if (error) throw error
+        await prisma.fg.createMany({
+            data: res.map((r) => ({
+                ...r,
+                id: r.code,
+                description: r.name,
+                customerId: r.customer,
+                storeStock: r.stock,
+                manPower: r.man_power,
+            })),
+        })
+    }
+)
+
+// BOM
+connection.query(
+    'SELECT * FROM finished_goods_detail',
+    async (
+        error: MysqlError,
+        res: {
+            code: string
+            raw_material_code: string
+            quantity: number
+        }[],
+        fields: FieldInfo[]
+    ) => {
+        if (error) throw error
+        await prisma.bom.createMany({
+            data: res.map((r) => ({
+                fgId: r.code,
+                rmId: r.raw_material_code,
+                quantity: r.quantity,
+            })),
         })
     }
 )
