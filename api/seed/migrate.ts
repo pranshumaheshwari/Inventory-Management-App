@@ -114,7 +114,7 @@ connection.query(
             code: string
             DTPL_code: string
             name: string
-            category: RmCategory
+            category: RmCategory | 'Misc.' | 'Conector'
             stock: number
             line_stock: number
             unit: string
@@ -131,7 +131,12 @@ connection.query(
                 description: r.name,
                 dtplCode: r.DTPL_code,
                 supplierId: r.supplier_code,
-                category: r.category,
+                category:
+                    r.category === 'Misc.'
+                        ? RmCategory.Misc
+                        : r.category === 'Conector'
+                        ? RmCategory.Connector
+                        : r.category,
                 unit: r.unit,
                 price: r.price,
                 storeStock: r.stock,
