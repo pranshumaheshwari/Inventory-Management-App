@@ -60,7 +60,15 @@ connection.query(
     ) => {
         if (error) throw error
         await prisma.customer.createMany({
-            data: res.map((r) => ({ ...r, gst: r.GST_no, id: r.code })),
+            data: res.map((r) => ({
+                id: r.code,
+                name: r.name,
+                address1: r.address1,
+                address2: r.address2,
+                city: r.city,
+                state: r.state,
+                gst: r.GST_no,
+            })),
         })
     }
 )
@@ -84,7 +92,15 @@ connection.query(
     ) => {
         if (error) throw error
         await prisma.supplier.createMany({
-            data: res.map((r) => ({ ...r, gst: r.GST_no, id: r.code })),
+            data: res.map((r) => ({
+                id: r.code,
+                name: r.name,
+                address1: r.address1,
+                address2: r.address2,
+                city: r.city,
+                state: r.state,
+                gst: r.GST_no,
+            })),
         })
     }
 )
@@ -111,11 +127,13 @@ connection.query(
         if (error) throw error
         await prisma.rm.createMany({
             data: res.map((r) => ({
-                ...r,
                 id: r.code,
                 description: r.name,
                 dtplCode: r.DTPL_code,
                 supplierId: r.supplier_code,
+                category: r.category,
+                unit: r.unit,
+                price: r.price,
                 storeStock: r.stock,
                 lineStock: r.line_stock,
             })),
@@ -144,12 +162,14 @@ connection.query(
         if (error) throw error
         await prisma.fg.createMany({
             data: res.map((r) => ({
-                ...r,
                 id: r.code,
-                description: r.name,
                 customerId: r.customer,
+                description: r.name,
                 storeStock: r.stock,
+                category: r.category,
+                price: r.price,
                 manPower: r.man_power,
+                overheads: r.overheads,
             })),
         })
     }
