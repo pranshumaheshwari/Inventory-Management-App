@@ -1,7 +1,7 @@
 import { Button, Grid, Text } from '@mantine/core'
 import { Fetch, useAuth } from '../../../services'
 import { FormInputText, FormPasswordInput } from '../../../components'
-import { createFormContext, isNotEmpty } from '@mantine/form'
+import { createFormContext, isNotEmpty, useForm } from '@mantine/form'
 
 import React from 'react'
 import { showNotification } from '@mantine/notifications'
@@ -13,14 +13,13 @@ interface FormValues {
 }
 
 const LoginForm = () => {
-    const [LoginFormProvider, _, useLoginForm] = createFormContext<FormValues>()
     const navigate = useNavigate()
     const { setToken } = useAuth()
     const initialValues: FormValues = {
         password: '',
         username: '',
     }
-    const form = useLoginForm({
+    const form = useForm({
         initialValues,
         validate: {
             username: isNotEmpty(),
@@ -48,45 +47,43 @@ const LoginForm = () => {
         }
     }
     return (
-        <LoginFormProvider form={form}>
-            <form
-                onSubmit={(e) => {
-                    e.preventDefault()
-                }}
-            >
-                <Grid grow>
-                    <FormInputText
-                        xs={12}
-                        label="Username"
-                        placeholder="Enter username"
-                        withAsterisk
-                        {...form.getInputProps('username')}
-                    />
-                    <FormPasswordInput
-                        xs={12}
-                        label="Password"
-                        placeholder="Enter password"
-                        withAsterisk
-                        {...form.getInputProps('password')}
-                    />
-                    <Grid.Col xs={12}>
-                        <Button
-                            fullWidth
-                            variant="filled"
-                            color="primary"
-                            onClick={() => {
-                                const result = form.validate()
-                                if (!result.hasErrors) {
-                                    onSubmit()
-                                }
-                            }}
-                        >
-                            Login
-                        </Button>
-                    </Grid.Col>
-                </Grid>
-            </form>
-        </LoginFormProvider>
+        <form
+            onSubmit={(e) => {
+                e.preventDefault()
+            }}
+        >
+            <Grid grow>
+                <FormInputText
+                    xs={12}
+                    label="Username"
+                    placeholder="Enter username"
+                    withAsterisk
+                    {...form.getInputProps('username')}
+                />
+                <FormPasswordInput
+                    xs={12}
+                    label="Password"
+                    placeholder="Enter password"
+                    withAsterisk
+                    {...form.getInputProps('password')}
+                />
+                <Grid.Col xs={12}>
+                    <Button
+                        fullWidth
+                        variant="filled"
+                        color="primary"
+                        onClick={() => {
+                            const result = form.validate()
+                            if (!result.hasErrors) {
+                                onSubmit()
+                            }
+                        }}
+                    >
+                        Login
+                    </Button>
+                </Grid.Col>
+            </Grid>
+        </form>
     )
 }
 

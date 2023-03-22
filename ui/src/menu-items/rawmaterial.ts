@@ -5,7 +5,7 @@ import {
     IconCirclePlus,
     IconClipboardPlus,
     IconFileInvoice,
-    IconPackgeImport,
+    IconPackage,
     IconTextPlus,
 } from '@tabler/icons-react'
 
@@ -37,7 +37,7 @@ const dashboard: ItemInterface = {
             title: 'Purchase Orders',
             type: 'item',
             url: '/purchaseOrders',
-            icon: IconPackgeImport,
+            icon: IconPackage,
             urls: [
                 '/purchaseOrders',
                 '/purchaseOrders/new',

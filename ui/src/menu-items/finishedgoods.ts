@@ -3,7 +3,7 @@ import {
     IconBuildingStore,
     IconBuildingWarehouse,
     IconCheckupList,
-    IconPackgeExport,
+    IconPackage,
     IconTruckDelivery,
 } from '@tabler/icons-react'
 
@@ -39,7 +39,7 @@ const dashboard: ItemInterface = {
             title: 'Sales Orders',
             type: 'item',
             url: '/salesOrders',
-            icon: IconPackgeExport,
+            icon: IconPackage,
             urls: ['/salesOrders', '/salesOrders/new', '/salesOrders/edit'],
         },
         {
