@@ -71,7 +71,7 @@ model Customer {
 model Rm {
     id                 String               @id
     description        String               @unique
-    dtplCode           String               @unique @map("DTPL_code")
+    dtplCode           String?              @map("DTPL_code")
     supplierId         String               @map("supplier_id")
     category           RmCategory
     unit               String
@@ -452,9 +452,15 @@ enum RequisitionStatus {
 
 enum UsersType {
     admin
-    store
     ppc
     production
+    store
+    hr
+    iqc
+    oqc
+    qa
+    planthead
+    mtnc
 
     @@map("users_type")
 }
