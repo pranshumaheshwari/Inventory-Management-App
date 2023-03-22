@@ -1,5 +1,5 @@
-import { Box } from '@mantine/core'
 import NavGroup from './NavGroup'
+import { ScrollArea } from '@mantine/core'
 import { Title } from '@mantine/core'
 import menuItem from '../../../menu-items'
 
@@ -17,7 +17,7 @@ const Navigation = () => {
         }
     })
 
-    return <Box sx={{ pt: 2 }}>{navGroups}</Box>
+    return <ScrollArea sx={{ pt: 2 }}>{navGroups}</ScrollArea>
 }
 
 export default Navigation
