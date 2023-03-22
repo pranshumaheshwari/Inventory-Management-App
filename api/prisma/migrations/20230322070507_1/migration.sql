@@ -12,7 +12,7 @@ CREATE TABLE `attendance` (
 CREATE TABLE `users` (
     `username` VARCHAR(191) NOT NULL,
     `password` VARCHAR(191) NOT NULL,
-    `type` ENUM('admin', 'store', 'ppc', 'production') NOT NULL,
+    `type` ENUM('admin', 'ppc', 'production', 'store', 'hr', 'iqc', 'oqc', 'qa', 'planthead', 'mtnc') NOT NULL,
     `name` VARCHAR(191) NOT NULL,
     `created_at` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
 
@@ -53,7 +53,7 @@ CREATE TABLE `customer` (
 CREATE TABLE `rm` (
     `id` VARCHAR(191) NOT NULL,
     `description` VARCHAR(191) NOT NULL,
-    `DTPL_code` VARCHAR(191) NOT NULL,
+    `DTPL_code` VARCHAR(191) NULL,
     `supplier_id` VARCHAR(191) NOT NULL,
     `category` ENUM('Coil', 'Connector', 'Consumables', 'Fuse', 'Grommet', 'Misc', 'Sleeve', 'Sticker', 'Tape', 'Terminal', 'Wire') NOT NULL,
     `unit` VARCHAR(191) NOT NULL,
@@ -67,7 +67,6 @@ CREATE TABLE `rm` (
     `created_at` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     UNIQUE INDEX `rm_description_key`(`description`),
-    UNIQUE INDEX `rm_DTPL_code_key`(`DTPL_code`),
     INDEX `supplier_id`(`supplier_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
