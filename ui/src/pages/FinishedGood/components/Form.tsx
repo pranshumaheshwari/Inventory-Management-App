@@ -482,6 +482,7 @@ const Form = () => {
                                         />
                                         <FormInputNumber
                                             xs={4}
+                                            precision={4}
                                             {...form.getInputProps(
                                                 `bom.${index}.quantity`
                                             )}
@@ -519,8 +520,7 @@ const Form = () => {
                                 <Button
                                     fullWidth
                                     size="md"
-                                    variant="outline"
-                                    color="gray"
+                                    variant="default"
                                     onClick={handleBack}
                                 >
                                     Back

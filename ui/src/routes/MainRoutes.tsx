@@ -104,6 +104,11 @@ const AttendanceReport = Loadable(
     lazy(() => import('../pages/ManPower/Report/Report'))
 )
 
+// Others
+const BulkUpdate = Loadable(
+    lazy(() => import('../pages/BulkUpdate/BulkUpdate'))
+)
+
 const MainRoutes: RouteObject = {
     path: '/',
     element: <MainLayout />,
@@ -393,6 +398,10 @@ const MainRoutes: RouteObject = {
                     element: <AttendanceReport />,
                 },
             ],
+        },
+        {
+            path: 'bulkUpdate',
+            element: <BulkUpdate />,
         },
     ],
 }
