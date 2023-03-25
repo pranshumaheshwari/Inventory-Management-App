@@ -75,10 +75,20 @@ app.post('/', async (req: Request, res: Response) => {
 
 app.get('/:id', async (req: Request, res: Response) => {
     const { id } = req.params
-    const data = await prisma.findUnique({
+    const args: Prisma.FgFindUniqueArgs = {
         where: {
             id,
         },
+    }
+    const { select, include } = req.query
+    if (select) {
+        args.select = JSON.parse(select as string)
+    }
+    if (include) {
+        args.include = JSON.parse(include as string)
+    }
+    const data = await prisma.findUnique({
+        ...args,
     })
     res.json(data)
 })
