@@ -25,7 +25,7 @@ model Users {
     dispatch             Dispatch[]
     production           Production[]
     requisition          Requisition[]
-    requisitionOutward   RequisitionOutward[]   @relation("requisition_outwardTousers")
+    requisitionOutward   RequisitionOutward[]
     po                   Po[]
     invoice              Invoice[]
     inwardsPO            InwardsIQCPending[]
@@ -141,9 +141,9 @@ model Po {
     supplierId       String             @map("supplier_id")
     status           BinaryStatus?      @default(Open)
     createdAt        DateTime?          @default(now()) @map("created_at")
-    supplier         Supplier           @relation(fields: [supplierId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    supplier         Supplier           @relation(fields: [supplierId], references: [id], onDelete: Restrict, onUpdate: Cascade)
     poDetails        PoDetails[]
-    users            Users              @relation(fields: [user], references: [username])
+    users            Users              @relation(fields: [user], references: [username], onDelete: Restrict, onUpdate: Cascade)
     InwardsPoPending InwardsPoPending[]
 
     @@index([supplierId], name: "supplier_id")
@@ -156,8 +156,8 @@ model PoDetails {
     price     Float
     quantity  Float
     createdAt DateTime? @default(now()) @map("created_at")
-    po        Po        @relation(fields: [poId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    rm        Rm        @relation(fields: [rmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    po        Po        @relation(fields: [poId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    rm        Rm        @relation(fields: [rmId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
     @@id([poId, rmId])
     @@index([rmId], name: "rm_id")
@@ -170,9 +170,9 @@ model Invoice {
     supplierId     String             @map("supplier_id")
     status         BinaryStatus?      @default(Open)
     createdAt      DateTime?          @default(now()) @map("created_at")
-    supplier       Supplier           @relation(fields: [supplierId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    supplier       Supplier           @relation(fields: [supplierId], references: [id], onDelete: Restrict, onUpdate: Cascade)
     invoiceDetails InwardsPoPending[]
-    users          Users              @relation(fields: [user], references: [username])
+    users          Users              @relation(fields: [user], references: [username], onDelete: Restrict, onUpdate: Cascade)
 
     @@id([id, supplierId])
     @@index([supplierId], name: "supplier_id")
@@ -195,10 +195,10 @@ model InwardsPoPending {
     poRejectedStockBefore  Float?    @map("po_rejected_stock_before")
 
     status            InwardsStatus       @default(PendingPoVerification)
-    supplier          Supplier            @relation(fields: [supplierId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    rm                Rm                  @relation(fields: [rmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    invoice           Invoice             @relation(fields: [invoiceId, supplierId], references: [id, supplierId])
-    po                Po?                 @relation(fields: [poId], references: [id])
+    supplier          Supplier            @relation(fields: [supplierId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    rm                Rm                  @relation(fields: [rmId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    invoice           Invoice             @relation(fields: [invoiceId, supplierId], references: [id, supplierId], onDelete: Restrict, onUpdate: Cascade)
+    po                Po?                 @relation(fields: [poId], references: [id], onDelete: Restrict, onUpdate: Cascade)
     inwardsIQCPending InwardsIQCPending[]
 
     @@id([invoiceId, supplierId, rmId])
@@ -222,9 +222,9 @@ model InwardsIQCPending {
     iqcRejectedStockBefore Float?        @map("iqc_rejected_stock_before")
     poRejectedStockBefore  Float?        @map("po_rejected_stock_before")
 
-    users            Users             @relation(fields: [user], references: [username])
-    inwardsPoPending InwardsPoPending  @relation(fields: [inwardsPoPendingId], references: [id])
-    rm               Rm                @relation(fields: [rmId], references: [id])
+    users            Users             @relation(fields: [user], references: [username], onDelete: Restrict, onUpdate: Cascade)
+    inwardsPoPending InwardsPoPending  @relation(fields: [inwardsPoPendingId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    rm               Rm                @relation(fields: [rmId], references: [id], onDelete: Restrict, onUpdate: Cascade)
     inwardsVerified  InwardsVerified[]
 
     @@map("inwards_iqc_pending")
@@ -245,9 +245,9 @@ model InwardsVerified {
     iqcRejectedStockBefore Float?        @map("iqc_rejected_stock_before")
     poRejectedStockBefore  Float?        @map("po_rejected_stock_before")
 
-    users             Users             @relation(fields: [user], references: [username])
-    rm                Rm                @relation(fields: [rmId], references: [id])
-    inwardsIQCPending InwardsIQCPending @relation(fields: [inwardsIQCPendingId], references: [id])
+    users             Users             @relation(fields: [user], references: [username], onDelete: Restrict, onUpdate: Cascade)
+    rm                Rm                @relation(fields: [rmId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    inwardsIQCPending InwardsIQCPending @relation(fields: [inwardsIQCPendingId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
     @@map("inwards_verified")
 }
@@ -260,10 +260,10 @@ model Requisition {
     quantity           Float
     status             RequisitionStatus    @default(Ready)
     createdAt          DateTime?            @default(now()) @map("created_at")
-    fg                 Fg                   @relation(fields: [fgId], references: [id])
-    so                 So                   @relation("requisitionToso", fields: [soId], references: [id])
-    users              Users                @relation(fields: [user], references: [username])
-    requisitionOutward RequisitionOutward[] @relation("requisitionTorequisition_outward_requisition_id")
+    fg                 Fg                   @relation(fields: [fgId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    so                 So                   @relation(fields: [soId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    users              Users                @relation(fields: [user], references: [username], onDelete: Restrict, onUpdate: Cascade)
+    requisitionOutward RequisitionOutward[]
 
     @@index([fgId], name: "fg_id")
     @@index([soId], name: "so_id")
@@ -284,9 +284,9 @@ model RequisitionOutward {
     iqcRejectedStockBefore Float?    @map("iqc_rejected_stock_before")
     poRejectedStockBefore  Float?    @map("po_rejected_stock_before")
 
-    requisition Requisition @relation("requisitionTorequisition_outward_requisition_id", fields: [requisitionId], references: [id])
-    rm          Rm          @relation(fields: [rmId], references: [id])
-    users       Users       @relation("requisition_outwardTousers", fields: [user], references: [username])
+    requisition Requisition @relation(fields: [requisitionId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    rm          Rm          @relation(fields: [rmId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    users       Users       @relation(fields: [user], references: [username], onDelete: Restrict, onUpdate: Cascade)
 
     @@index([requisitionId], name: "requisition_id")
     @@index([rmId], name: "rm_id")
@@ -304,9 +304,9 @@ model Production {
     createdAt             DateTime?      @default(now()) @map("created_at")
     status                OutwardsStatus @default(PendingOqcVerification)
 
-    fg                   Fg                     @relation(fields: [fgId], references: [id])
-    so                   So                     @relation("productionToso", fields: [soId], references: [id])
-    users                Users                  @relation(fields: [user], references: [username])
+    fg                   Fg                     @relation(fields: [fgId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    so                   So                     @relation(fields: [soId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    users                Users                  @relation(fields: [user], references: [username], onDelete: Restrict, onUpdate: Cascade)
     outwardsQualityCheck OutwardsQualityCheck[]
     productionLog        ProductionLog[]
 
@@ -329,11 +329,11 @@ model ProductionLog {
     iqcRejectedStockBefore Float?    @map("iqc_rejected_stock_before")
     poRejectedStockBefore  Float?    @map("po_rejected_stock_before")
 
-    fg         Fg         @relation(fields: [fgId], references: [id])
-    bom        Bom        @relation(fields: [rmId, fgId], references: [rmId, fgId])
-    production Production @relation(fields: [productionId], references: [id])
-    rm         Rm         @relation(fields: [rmId], references: [id])
-    Users      Users      @relation(fields: [user], references: [username])
+    fg         Fg         @relation(fields: [fgId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    bom        Bom        @relation(fields: [rmId, fgId], references: [rmId, fgId], onDelete: Restrict, onUpdate: Cascade)
+    production Production @relation(fields: [productionId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    rm         Rm         @relation(fields: [rmId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    Users      Users      @relation(fields: [user], references: [username], onDelete: Restrict, onUpdate: Cascade)
 
     @@id([rmId, productionId])
     @@map("production_log")
@@ -350,9 +350,9 @@ model OutwardsQualityCheck {
     createdAt             DateTime?      @default(now()) @map("created_at")
     status                OutwardsStatus @default(Accepted)
 
-    production Production @relation(fields: [productionId], references: [id])
-    fg         Fg         @relation(fields: [fgId], references: [id])
-    users      Users      @relation(fields: [user], references: [username])
+    production Production @relation(fields: [productionId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    fg         Fg         @relation(fields: [fgId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    users      Users      @relation(fields: [user], references: [username], onDelete: Restrict, onUpdate: Cascade)
 
     @@map("outwards_quality_check")
 }
@@ -368,10 +368,10 @@ model Dispatch {
     oqcPendingStockBefore Float?    @map("oqc_pending_stock_before")
     createdAt             DateTime? @default(now()) @map("created_at")
 
-    fg       Fg        @relation(fields: [fgId], references: [id])
-    users    Users     @relation(fields: [user], references: [username])
-    so       So        @relation(fields: [soId], references: [id])
-    soDetail SoDetails @relation(fields: [soId, fgId], references: [soId, fgId])
+    fg       Fg        @relation(fields: [fgId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    users    Users     @relation(fields: [user], references: [username], onDelete: Restrict, onUpdate: Cascade)
+    so       So        @relation(fields: [soId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    soDetail SoDetails @relation(fields: [soId, fgId], references: [soId, fgId], onDelete: Restrict, onUpdate: Cascade)
 
     @@id([invoiceNumber, fgId])
     @@index([fgId], name: "fg_id")
@@ -383,9 +383,9 @@ model So {
     customerId  String        @map("customer_id")
     status      BinaryStatus? @default(Open)
     createdAt   DateTime?     @default(now()) @map("created_at")
-    customer    Customer      @relation(fields: [customerId], references: [id])
-    production  Production[]  @relation("productionToso")
-    requisition Requisition[] @relation("requisitionToso")
+    customer    Customer      @relation(fields: [customerId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    production  Production[]
+    requisition Requisition[]
     soDetails   SoDetails[]
     Dispatch    Dispatch[]
 
@@ -398,8 +398,8 @@ model SoDetails {
     fgId      String     @map("fg_id")
     quantity  Float
     createdAt DateTime?  @default(now()) @map("created_at")
-    fg        Fg         @relation(fields: [fgId], references: [id])
-    so        So         @relation(fields: [soId], references: [id])
+    fg        Fg         @relation(fields: [fgId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    so        So         @relation(fields: [soId], references: [id], onDelete: Restrict, onUpdate: Cascade)
     Dispatch  Dispatch[]
 
     @@id([soId, fgId])
