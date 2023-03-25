@@ -1,5 +1,4 @@
 import {
-    AutocompleteItem,
     Button,
     Divider,
     Grid,
@@ -10,13 +9,13 @@ import {
 } from '@mantine/core'
 import {
     DatePicker,
-    FormAutoComplete,
     FormInputNumber,
     FormInputText,
     FormSelect,
 } from '../../../components'
 import { DispatchFormProvider, useDispatchForm } from './context'
 import { Fetch, useAuth } from '../../../services'
+import { FinishedGoodSelectFilter, FinishedGoodSelectItem } from '../../common'
 import React, { useEffect, useState } from 'react'
 
 import { isNotEmpty } from '@mantine/form'
@@ -41,9 +40,9 @@ const Dispatch = () => {
     const [activeStep, setActiveStep] = React.useState(0)
     const [customer, setCustomer] = useState<{ value: string }[] | null>()
     const [salesorder, setSalesOrder] = useState<SelectItem[]>([])
-    const [finishedgoods, setFinishedGoods] = useState<AutocompleteItem[]>([])
+    const [finishedgoods, setFinishedGoods] = useState<SelectItem[]>([])
     const [selectedFg, setSelectedFg] = useState<{
-        fg: AutocompleteItem
+        fg: SelectItem
         quantity: number
     }>({
         fg: {
@@ -186,6 +185,7 @@ const Dispatch = () => {
                                 select: {
                                     id: true,
                                     description: true,
+                                    category: true,
                                 },
                             },
                         }),
@@ -197,6 +197,7 @@ const Dispatch = () => {
                         fg: {
                             id: string
                             description: string
+                            category: string
                         }
                     }[]
                 ) =>
@@ -204,6 +205,7 @@ const Dispatch = () => {
                         id: d.fg.id,
                         value: d.fg.id,
                         description: d.fg.description,
+                        group: d.fg.category,
                     }))
             )
             setFinishedGoods(data)
@@ -309,12 +311,14 @@ const Dispatch = () => {
                     {activeStep === 1 && (
                         <>
                             <Grid.Col xs={1} />
-                            <FormAutoComplete
+                            <FormSelect
                                 xs={6}
                                 id="fgId"
                                 label="Finished Good"
                                 placeholder="Select Finished Good"
                                 data={finishedgoods}
+                                itemComponent={FinishedGoodSelectItem}
+                                filter={FinishedGoodSelectFilter}
                                 onChange={(value) =>
                                     setSelectedFg((selectedFg) => {
                                         let fg = finishedgoods.find(

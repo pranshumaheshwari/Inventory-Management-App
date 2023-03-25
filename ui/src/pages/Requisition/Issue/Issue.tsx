@@ -1,19 +1,15 @@
 import {
-    AutocompleteItem,
     Button,
     Divider,
     Grid,
+    SelectItem,
     Skeleton,
     Stepper,
     Text,
 } from '@mantine/core'
 import { Fetch, useAuth } from '../../../services'
-import {
-    FormAutoComplete,
-    FormInputNumber,
-    FormInputText,
-    FormSelect,
-} from '../../../components'
+import { FormInputNumber, FormInputText, FormSelect } from '../../../components'
+import { RawMaterialSelectFilter, RawMaterialSelectItem } from '../../common'
 import React, { useEffect, useState } from 'react'
 import {
     RequisitionIssueFormProvider,
@@ -44,9 +40,9 @@ const RequisitionIssue = () => {
             label: string
         }[]
     >([])
-    const [rawmaterial, setRawmaterial] = useState<AutocompleteItem[]>([])
+    const [rawmaterial, setRawmaterial] = useState<SelectItem[]>([])
     const [selectedRm, setSelectedRm] = useState<{
-        rm: AutocompleteItem
+        rm: SelectItem
         quantity: number
     }>({
         rm: {
@@ -189,6 +185,7 @@ const RequisitionIssue = () => {
                                                     id: true,
                                                     description: true,
                                                     dtplCode: true,
+                                                    category: true,
                                                 },
                                             },
                                         },
@@ -219,6 +216,7 @@ const RequisitionIssue = () => {
                                         id: string
                                         description: string
                                         dtplCode: string
+                                        category: string
                                     }
                                 }[]
                             }
@@ -247,6 +245,8 @@ const RequisitionIssue = () => {
                                 0
                             ),
                         value: b.rm.id,
+                        label: b.rm.description,
+                        group: b.rm.category,
                     }))
                 )
             setRawmaterial(data)
@@ -320,12 +320,14 @@ const RequisitionIssue = () => {
                     )}
                     {activeStep === 1 && (
                         <>
-                            <FormAutoComplete
+                            <FormSelect
                                 xs={8}
                                 id="rmId"
                                 label="Raw Material"
                                 placeholder="Select Raw Material"
                                 data={rawmaterial}
+                                itemComponent={RawMaterialSelectItem}
+                                filter={RawMaterialSelectFilter}
                                 {...form.getInputProps('rmId')}
                                 onChange={(value) =>
                                     setSelectedRm((selectedRm) => {

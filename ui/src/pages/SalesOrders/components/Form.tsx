@@ -1,20 +1,16 @@
 import {
-    AutocompleteItem,
     Button,
     Center,
     Divider,
     Grid,
+    SelectItem,
     Skeleton,
     Stepper,
     Text,
 } from '@mantine/core'
 import { Fetch, useAuth } from '../../../services'
-import {
-    FormAutoComplete,
-    FormInputNumber,
-    FormInputText,
-    FormSelect,
-} from '../../../components'
+import { FinishedGoodSelectFilter, FinishedGoodSelectItem } from '../../common'
+import { FormInputNumber, FormInputText, FormSelect } from '../../../components'
 import React, { useEffect, useState } from 'react'
 import { SalesOrdersFormProvider, useSalesOrdersForm } from './context'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -35,9 +31,9 @@ const Form = () => {
     const [customer, setCustomer] = useState<{ value: string }[] | null>()
     const [error, setError] = useState('')
     const [activeStep, setActiveStep] = React.useState(0)
-    const [finishedgoods, setFinishedGoods] = useState<AutocompleteItem[]>([])
+    const [finishedgoods, setFinishedGoods] = useState<SelectItem[]>([])
     const [selectedFg, setSelectedFg] = useState<{
-        fg: AutocompleteItem
+        fg: SelectItem
         quantity: number
     }>({
         fg: {
@@ -211,6 +207,7 @@ const Form = () => {
                         select: JSON.stringify({
                             id: true,
                             description: true,
+                            category: true,
                         }),
                         where: JSON.stringify({
                             customerId,
@@ -219,8 +216,10 @@ const Form = () => {
                 },
             }).then((data) =>
                 data.map((d: Partial<FinishedGoodsInterface>) => ({
-                    ...d,
+                    label: d.description,
                     value: d.id,
+                    group: d.category,
+                    ...d,
                 }))
             )
             setFinishedGoods(data)
@@ -306,12 +305,14 @@ const Form = () => {
                     {activeStep === 1 && (
                         <>
                             <Grid.Col xs={1} />
-                            <FormAutoComplete
+                            <FormSelect
                                 xs={6}
                                 id="fgId"
                                 label="Finished Good"
                                 placeholder="Select Finished Good"
                                 data={finishedgoods}
+                                itemComponent={FinishedGoodSelectItem}
+                                filter={FinishedGoodSelectFilter}
                                 onChange={(value) =>
                                     setSelectedFg((selectedFg) => {
                                         let fg = finishedgoods.find(

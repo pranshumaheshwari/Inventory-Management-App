@@ -1,14 +1,15 @@
 import {
-    AutocompleteItem,
     Box,
     Button,
     Grid,
+    SelectItem,
     Skeleton,
     Stepper,
     Text,
 } from '@mantine/core'
-import { DateRangePicker, FormAutoComplete, Table } from '../../../components'
+import { DateRangePicker, FormSelect, Table } from '../../../components'
 import { Fetch, useAuth } from '../../../services'
+import { RawMaterialSelectFilter, RawMaterialSelectItem } from '../../common'
 import React, { useEffect, useState } from 'react'
 
 import { ColDef } from 'ag-grid-community'
@@ -27,9 +28,9 @@ function ById() {
     const [error, setError] = useState('')
     const [activeStep, setActiveStep] = useState(0)
     const [records, setRecords] = useState<RecordInterface[]>([])
-    const [rawmaterial, setRawmaterial] = useState<AutocompleteItem[]>()
+    const [rawmaterial, setRawmaterial] = useState<SelectItem[]>()
     const [selectedRm, setSelectedRm] = useState<{
-        rm: AutocompleteItem
+        rm: SelectItem
     }>({
         rm: {
             value: '',
@@ -72,6 +73,7 @@ function ById() {
                             id: true,
                             description: true,
                             dtplCode: true,
+                            category: true,
                         }),
                     },
                 },
@@ -79,6 +81,8 @@ function ById() {
                 data.map((d: Partial<RawMaterialInterface>) => ({
                     ...d,
                     value: d.id,
+                    label: d.description,
+                    group: d.category,
                 }))
             )
             setRawmaterial(data)
@@ -182,10 +186,12 @@ function ById() {
             <Grid.Col xs={3} />
             {activeStep === 0 && (
                 <>
-                    <FormAutoComplete
+                    <FormSelect
                         xs={12}
                         label="Raw Material"
                         placeholder="Select Raw Material"
+                        itemComponent={RawMaterialSelectItem}
+                        filter={RawMaterialSelectFilter}
                         data={rawmaterial}
                         onChange={(value) =>
                             setSelectedRm((selectedRm) => {

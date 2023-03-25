@@ -1,21 +1,17 @@
 import {
-    AutocompleteItem,
     Button,
     Center,
     Divider,
     Grid,
+    SelectItem,
     Skeleton,
     Stepper,
     Text,
 } from '@mantine/core'
 import { Fetch, useAuth } from '../../../services'
-import {
-    FormAutoComplete,
-    FormInputNumber,
-    FormInputText,
-    FormSelect,
-} from '../../../components'
+import { FormInputNumber, FormInputText, FormSelect } from '../../../components'
 import { PurchaseOrdersFormProvider, usePurchaseOrdersForm } from './context'
+import { RawMaterialSelectFilter, RawMaterialSelectItem } from '../../common'
 import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
@@ -35,9 +31,9 @@ const Form = () => {
     const [supplier, setSupplier] = useState<{ value: string }[] | null>()
     const [error, setError] = useState('')
     const [activeStep, setActiveStep] = React.useState(0)
-    const [rawMaterial, setRawMaterial] = useState<AutocompleteItem[]>()
+    const [rawMaterial, setRawMaterial] = useState<SelectItem[]>([])
     const [selectedRm, setSelectedRm] = useState<{
-        rm: AutocompleteItem
+        rm: SelectItem
         quantity: number
     }>({
         rm: {
@@ -201,7 +197,7 @@ const Form = () => {
         }
     }
 
-    const getRawMaterials = async () => {
+    const getRawMaterials = async (supplierId: string) => {
         try {
             const data = await Fetch({
                 url: '/rawmaterial',
@@ -213,6 +209,10 @@ const Form = () => {
                             description: true,
                             dtplCode: true,
                             price: true,
+                            category: true,
+                        }),
+                        where: JSON.stringify({
+                            supplierId,
                         }),
                     },
                 },
@@ -220,6 +220,8 @@ const Form = () => {
                 data.map((d: Partial<RawMaterialInterface>) => ({
                     ...d,
                     value: d.id,
+                    label: d.description,
+                    group: d.category,
                 }))
             )
             setRawMaterial(data)
@@ -229,10 +231,10 @@ const Form = () => {
     }
 
     useEffect(() => {
-        Promise.all([getSuppliers(), getRawMaterials()])
+        Promise.all([getSuppliers()])
     }, [])
 
-    if (!supplier || !rawMaterial) {
+    if (!supplier) {
         return <Skeleton width="90vw" height="100%" />
     }
 
@@ -282,6 +284,15 @@ const Form = () => {
                                 data={supplier}
                                 withAsterisk
                                 {...form.getInputProps('supplierId')}
+                                onChange={(supplierId) => {
+                                    if (supplierId) {
+                                        form.setFieldValue(
+                                            'supplierId',
+                                            supplierId
+                                        )
+                                        getRawMaterials(supplierId)
+                                    }
+                                }}
                             />
                             <Grid.Col xs={12}>
                                 <Button
@@ -298,11 +309,13 @@ const Form = () => {
                     )}{' '}
                     {activeStep === 1 && (
                         <>
-                            <FormAutoComplete
+                            <FormSelect
                                 xs={6}
                                 id="rmId"
                                 label="Raw Material"
                                 data={rawMaterial}
+                                itemComponent={RawMaterialSelectItem}
+                                filter={RawMaterialSelectFilter}
                                 {...form.getInputProps('rmId')}
                                 onChange={(value) =>
                                     setSelectedRm((selectedRm) => {

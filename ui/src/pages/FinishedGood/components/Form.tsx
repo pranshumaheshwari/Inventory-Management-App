@@ -1,5 +1,4 @@
 import {
-    AutocompleteItem,
     Button,
     Center,
     Divider,
@@ -11,12 +10,8 @@ import {
 } from '@mantine/core'
 import { Fetch, useAuth } from '../../../services'
 import { FinishedGoodFormProvider, useFinishedGoodForm } from './context'
-import {
-    FormAutoComplete,
-    FormInputNumber,
-    FormInputText,
-    FormSelect,
-} from '../../../components'
+import { FormInputNumber, FormInputText, FormSelect } from '../../../components'
+import { RawMaterialSelectFilter, RawMaterialSelectItem } from '../../common'
 import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
@@ -36,9 +31,9 @@ const Form = () => {
     const [customer, setCustomer] = useState<SelectItem[]>()
     const [error, setError] = useState('')
     const [activeStep, setActiveStep] = React.useState(0)
-    const [rawmaterial, setRawmaterial] = useState<AutocompleteItem[]>()
+    const [rawmaterial, setRawmaterial] = useState<SelectItem[]>()
     const [selectedRm, setSelectedRm] = useState<{
-        rm: AutocompleteItem
+        rm: SelectItem
         quantity: number
     }>({
         rm: {
@@ -203,6 +198,7 @@ const Form = () => {
                             id: true,
                             description: true,
                             dtplCode: true,
+                            category: true,
                         }),
                     },
                 },
@@ -211,6 +207,7 @@ const Form = () => {
                     ...d,
                     value: d.id,
                     label: d.id,
+                    group: d.category,
                 }))
             )
             setRawmaterial(data)
@@ -382,11 +379,13 @@ const Form = () => {
                     )}{' '}
                     {activeStep === 1 && (
                         <>
-                            <FormAutoComplete
+                            <FormSelect
                                 xs={9}
                                 id="rmId"
                                 label="Raw Material"
                                 data={rawmaterial}
+                                itemComponent={RawMaterialSelectItem}
+                                filter={RawMaterialSelectFilter}
                                 {...form.getInputProps('rmId')}
                                 onChange={(value) =>
                                     setSelectedRm((selectedRm) => {

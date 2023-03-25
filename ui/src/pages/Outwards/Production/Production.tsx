@@ -1,18 +1,7 @@
-import {
-    AutocompleteItem,
-    Button,
-    Grid,
-    SelectItem,
-    Skeleton,
-    Text,
-} from '@mantine/core'
-import {
-    DatePicker,
-    FormAutoComplete,
-    FormInputNumber,
-    FormSelect,
-} from '../../../components'
+import { Button, Grid, SelectItem, Skeleton, Text } from '@mantine/core'
+import { DatePicker, FormInputNumber, FormSelect } from '../../../components'
 import { Fetch, useAuth } from '../../../services'
+import { FinishedGoodSelectFilter, FinishedGoodSelectItem } from '../../common'
 import { ProductionFormProvider, useProductionForm } from './context'
 import React, { useEffect, useState } from 'react'
 
@@ -33,7 +22,7 @@ const Production = () => {
         token: { token },
     } = useAuth()
     const [error, setError] = useState('')
-    const [finishedGood, setFinishedGood] = useState<AutocompleteItem[]>([])
+    const [finishedGood, setFinishedGood] = useState<SelectItem[]>([])
     const [customer, setCustomer] = useState<{ value: string }[] | null>()
     const [salesOrder, setSalesOrder] = useState<SelectItem[]>([])
 
@@ -132,16 +121,27 @@ const Production = () => {
                                 select: {
                                     id: true,
                                     description: true,
+                                    category: true,
                                 },
                             },
                         }),
                     },
                 },
             }).then((data) =>
-                data.map((d: { fg: { id: string; description: string } }) => ({
-                    ...d.fg,
-                    value: d.fg.id,
-                }))
+                data.map(
+                    (d: {
+                        fg: {
+                            id: string
+                            description: string
+                            category: string
+                        }
+                    }) => ({
+                        ...d.fg,
+                        value: d.fg.id,
+                        label: d.fg.id,
+                        group: d.fg.category,
+                    })
+                )
             )
             setFinishedGood(data)
         } catch (e) {
@@ -215,12 +215,14 @@ const Production = () => {
                             }
                         }}
                     />
-                    <FormAutoComplete
+                    <FormSelect
                         xs={6}
                         id="fgId"
                         label="Finished Good"
                         placeholder="Select Finished Good"
                         data={finishedGood}
+                        itemComponent={FinishedGoodSelectItem}
+                        filter={FinishedGoodSelectFilter}
                         withAsterisk
                         {...form.getInputProps('fgId')}
                     />
