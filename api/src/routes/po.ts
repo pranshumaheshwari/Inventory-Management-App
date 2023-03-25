@@ -50,6 +50,40 @@ app.post('/', async (req: Request, res: Response) => {
     }
 })
 
+app.post('/details', async (req: Request, res: Response) => {
+    const { supplierId, rmId, quantity, poId, price } = req.body
+    try {
+        const result = await PrismaService.poDetails.create({
+            data: {
+                price,
+                quantity,
+                po: {
+                    connectOrCreate: {
+                        where: {
+                            id: poId,
+                        },
+                        create: {
+                            id: poId,
+                            supplierId,
+                            user: req.user ? req.user.username : '',
+                        },
+                    },
+                },
+                rm: {
+                    connect: {
+                        id: rmId,
+                    },
+                },
+            },
+        })
+        res.json(result)
+    } catch (e) {
+        res.status(500).json({
+            message: (e as Error).message,
+        })
+    }
+})
+
 app.put('/', async (req: Request, res: Response) => {
     const { supplierId, id, poDetails, status } = req.body
 
