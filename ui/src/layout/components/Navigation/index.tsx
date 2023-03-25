@@ -1,6 +1,6 @@
 import NavGroup from './NavGroup'
+import NavItem from './NavItem'
 import { ScrollArea } from '@mantine/core'
-import { Title } from '@mantine/core'
 import menuItem from '../../../menu-items'
 
 const Navigation = () => {
@@ -9,11 +9,7 @@ const Navigation = () => {
             case 'group':
                 return <NavGroup key={item.id} item={item} />
             default:
-                return (
-                    <Title key={item.id} order={6} color="error" align="center">
-                        Fix - Navigation Group
-                    </Title>
-                )
+                return <NavItem key={item.id} item={item} />
         }
     })
 

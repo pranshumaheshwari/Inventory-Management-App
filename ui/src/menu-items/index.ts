@@ -2,10 +2,11 @@ import { TablerIconsProps } from '@tabler/icons-react'
 import dashboard from './dashboard'
 import finishedgoods from './finishedgoods'
 import manpower from './manpower'
+import others from './others'
 import rawmaterial from './rawmaterial'
 
 const menuItems: MenuItemsInterface = {
-    items: [dashboard, rawmaterial, finishedgoods, manpower],
+    items: [dashboard, rawmaterial, finishedgoods, manpower, ...others],
 }
 
 export default menuItems

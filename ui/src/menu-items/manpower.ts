@@ -2,7 +2,7 @@ import { IconChartBar, IconUserPlus } from '@tabler/icons-react'
 
 import { ItemInterface } from '.'
 
-const dashboard: ItemInterface = {
+const manpower: ItemInterface = {
     id: 'group-manpower',
     title: 'Man Power',
     type: 'group',
@@ -26,4 +26,4 @@ const dashboard: ItemInterface = {
     ],
 }
 
-export default dashboard
+export default manpower

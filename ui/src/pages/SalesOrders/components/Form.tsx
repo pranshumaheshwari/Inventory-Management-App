@@ -35,7 +35,7 @@ const Form = () => {
     const [customer, setCustomer] = useState<{ value: string }[] | null>()
     const [error, setError] = useState('')
     const [activeStep, setActiveStep] = React.useState(0)
-    const [finishedgoods, setFinishedGoods] = useState<AutocompleteItem[]>()
+    const [finishedgoods, setFinishedGoods] = useState<AutocompleteItem[]>([])
     const [selectedFg, setSelectedFg] = useState<{
         fg: AutocompleteItem
         quantity: number
@@ -201,7 +201,7 @@ const Form = () => {
         }
     }
 
-    const getFinishedGoods = async () => {
+    const getFinishedGoods = async (customerId: string) => {
         try {
             const data = await Fetch({
                 url: '/finishedgoods',
@@ -211,6 +211,9 @@ const Form = () => {
                         select: JSON.stringify({
                             id: true,
                             description: true,
+                        }),
+                        where: JSON.stringify({
+                            customerId,
                         }),
                     },
                 },
@@ -227,10 +230,10 @@ const Form = () => {
     }
 
     useEffect(() => {
-        Promise.all([getCustomers(), getFinishedGoods()])
+        Promise.all([getCustomers()])
     }, [])
 
-    if (!customer || !finishedgoods) {
+    if (!customer) {
         return <Skeleton width="90vw" height="100%" />
     }
 
@@ -277,6 +280,15 @@ const Form = () => {
                                 data={customer}
                                 withAsterisk
                                 {...form.getInputProps('customerId')}
+                                onChange={(customerId) => {
+                                    if (customerId) {
+                                        getFinishedGoods(customerId)
+                                        form.setFieldValue(
+                                            'customerId',
+                                            customerId
+                                        )
+                                    }
+                                }}
                             />
                             <Grid.Col xs={12}>
                                 <Button
@@ -419,8 +431,7 @@ const Form = () => {
                                 <Button
                                     fullWidth
                                     size="md"
-                                    variant="filled"
-                                    color="secondary"
+                                    variant="default"
                                     onClick={handleBack}
                                 >
                                     Back

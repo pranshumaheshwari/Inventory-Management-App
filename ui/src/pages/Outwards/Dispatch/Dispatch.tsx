@@ -436,8 +436,7 @@ const Dispatch = () => {
                                 <Button
                                     fullWidth
                                     size="md"
-                                    variant="filled"
-                                    color="secondary"
+                                    variant="default"
                                     onClick={handleBack}
                                 >
                                     Back

@@ -162,8 +162,7 @@ function DispatchReport() {
                         <Button
                             fullWidth
                             size="md"
-                            variant="outline"
-                            color="primary"
+                            variant="default"
                             onClick={handleBack}
                         >
                             Back
