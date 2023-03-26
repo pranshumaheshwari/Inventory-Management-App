@@ -64,6 +64,8 @@ CREATE TABLE `rm` (
     `po_pending_stock` DOUBLE NOT NULL DEFAULT 0.00,
     `po_rejected_stock` DOUBLE NOT NULL DEFAULT 0.00,
     `line_stock` DOUBLE NOT NULL DEFAULT 0.00,
+    `mpq` DOUBLE NOT NULL DEFAULT 1.00,
+    `moq` DOUBLE NOT NULL DEFAULT 1.00,
     `created_at` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     UNIQUE INDEX `rm_description_key`(`description`),
@@ -333,34 +335,34 @@ ALTER TABLE `bom` ADD CONSTRAINT `bom_fg_id_fkey` FOREIGN KEY (`fg_id`) REFERENC
 ALTER TABLE `bom` ADD CONSTRAINT `bom_rm_id_fkey` FOREIGN KEY (`rm_id`) REFERENCES `rm`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `po` ADD CONSTRAINT `po_supplier_id_fkey` FOREIGN KEY (`supplier_id`) REFERENCES `supplier`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `po` ADD CONSTRAINT `po_supplier_id_fkey` FOREIGN KEY (`supplier_id`) REFERENCES `supplier`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `po` ADD CONSTRAINT `po_user_fkey` FOREIGN KEY (`user`) REFERENCES `users`(`username`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `po_details` ADD CONSTRAINT `po_details_po_id_fkey` FOREIGN KEY (`po_id`) REFERENCES `po`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `po_details` ADD CONSTRAINT `po_details_po_id_fkey` FOREIGN KEY (`po_id`) REFERENCES `po`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `po_details` ADD CONSTRAINT `po_details_rm_id_fkey` FOREIGN KEY (`rm_id`) REFERENCES `rm`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `po_details` ADD CONSTRAINT `po_details_rm_id_fkey` FOREIGN KEY (`rm_id`) REFERENCES `rm`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `invoice` ADD CONSTRAINT `invoice_supplier_id_fkey` FOREIGN KEY (`supplier_id`) REFERENCES `supplier`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `invoice` ADD CONSTRAINT `invoice_supplier_id_fkey` FOREIGN KEY (`supplier_id`) REFERENCES `supplier`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `invoice` ADD CONSTRAINT `invoice_user_fkey` FOREIGN KEY (`user`) REFERENCES `users`(`username`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `inwards_po_pending` ADD CONSTRAINT `inwards_po_pending_supplier_id_fkey` FOREIGN KEY (`supplier_id`) REFERENCES `supplier`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `inwards_po_pending` ADD CONSTRAINT `inwards_po_pending_supplier_id_fkey` FOREIGN KEY (`supplier_id`) REFERENCES `supplier`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `inwards_po_pending` ADD CONSTRAINT `inwards_po_pending_rm_id_fkey` FOREIGN KEY (`rm_id`) REFERENCES `rm`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `inwards_po_pending` ADD CONSTRAINT `inwards_po_pending_rm_id_fkey` FOREIGN KEY (`rm_id`) REFERENCES `rm`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `inwards_po_pending` ADD CONSTRAINT `inwards_po_pending_invoice_id_supplier_id_fkey` FOREIGN KEY (`invoice_id`, `supplier_id`) REFERENCES `invoice`(`id`, `supplier_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `inwards_po_pending` ADD CONSTRAINT `inwards_po_pending_po_id_fkey` FOREIGN KEY (`po_id`) REFERENCES `po`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `inwards_po_pending` ADD CONSTRAINT `inwards_po_pending_po_id_fkey` FOREIGN KEY (`po_id`) REFERENCES `po`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `inwards_iqc_pending` ADD CONSTRAINT `inwards_iqc_pending_user_fkey` FOREIGN KEY (`user`) REFERENCES `users`(`username`) ON DELETE RESTRICT ON UPDATE CASCADE;
