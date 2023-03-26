@@ -1,11 +1,7 @@
-import { AutocompleteItem, Button, Grid, Skeleton, Text } from '@mantine/core'
-import {
-    DatePicker,
-    FormAutoComplete,
-    FormInputNumber,
-    FormSelect,
-} from '../../../components'
+import { Button, Grid, SelectItem, Skeleton, Text } from '@mantine/core'
+import { DatePicker, FormInputNumber, FormSelect } from '../../../components'
 import { Fetch, useAuth } from '../../../services'
+import { FinishedGoodSelectFilter, FinishedGoodSelectItem } from '../../common'
 import { NewRequisitionFormProvider, useNewRequisitionForm } from './context'
 import React, { useEffect, useState } from 'react'
 
@@ -26,7 +22,7 @@ const NewRequisition = () => {
         token: { token },
     } = useAuth()
     const [error, setError] = useState('')
-    const [finishedGood, setFinishedGood] = useState<AutocompleteItem[]>([])
+    const [finishedGood, setFinishedGood] = useState<SelectItem[]>([])
     const [customer, setCustomer] = useState<{ value: string }[] | null>()
     const [salesOrder, setSalesOrder] = useState<{ value: string }[] | null>([])
     let initialValues: NewRequisitionInterface = {
@@ -127,17 +123,27 @@ const NewRequisition = () => {
                                 select: {
                                     id: true,
                                     description: true,
+                                    category: true,
                                 },
                             },
                         }),
                     },
                 },
             }).then((data) =>
-                data.map((d: { fg: { id: string; description: string } }) => ({
-                    ...d.fg,
-                    value: d.fg.id,
-                    label: d.fg.description,
-                }))
+                data.map(
+                    (d: {
+                        fg: {
+                            id: string
+                            description: string
+                            category: string
+                        }
+                    }) => ({
+                        ...d.fg,
+                        value: d.fg.id,
+                        label: d.fg.description,
+                        group: d.fg.category,
+                    })
+                )
             )
             setFinishedGood(data)
         } catch (e) {
@@ -215,11 +221,13 @@ const NewRequisition = () => {
                             }
                         }}
                     />
-                    <FormAutoComplete
+                    <FormSelect
                         xs={6}
                         id="fgId"
                         label="Finished Good"
                         data={finishedGood}
+                        itemComponent={FinishedGoodSelectItem}
+                        filter={FinishedGoodSelectFilter}
                         placeholder="Select Finished Good"
                         withAsterisk
                         {...form.getInputProps('fgId')}

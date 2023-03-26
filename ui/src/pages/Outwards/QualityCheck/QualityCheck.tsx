@@ -1,17 +1,6 @@
-import {
-    AutocompleteItem,
-    Button,
-    Grid,
-    SelectItem,
-    Skeleton,
-    Text,
-} from '@mantine/core'
+import { Button, Grid, SelectItem, Skeleton, Text } from '@mantine/core'
 import { Fetch, useAuth } from '../../../services'
-import {
-    FormAutoComplete,
-    FormInputNumber,
-    FormSelect,
-} from '../../../components'
+import { FormInputNumber, FormSelect } from '../../../components'
 import { OutwardsQualtiyFormProvider, useOutwardsQualtiyForm } from './context'
 import React, { useEffect, useState } from 'react'
 
@@ -33,7 +22,7 @@ const QualityCheck = () => {
     } = useAuth()
     const [customer, setCustomer] = useState<{ value: string }[] | null>()
     const [salesorder, setSalesOrder] = useState<SelectItem[]>([])
-    const [finishedGoods, setFinishedGoods] = useState<AutocompleteItem[]>([])
+    const [finishedGoods, setFinishedGoods] = useState<SelectItem[]>([])
     const [error, setError] = useState('')
     let initialValues: OutwardsQualityCheck = {
         customerId: '',
@@ -201,9 +190,15 @@ const QualityCheck = () => {
                         }),
                         select: JSON.stringify({
                             id: true,
-                            fgId: true,
                             quantity: true,
                             createdAt: true,
+                            fg: {
+                                select: {
+                                    id: true,
+                                    category: true,
+                                    description: true,
+                                },
+                            },
                         }),
                     },
                 },
@@ -211,18 +206,24 @@ const QualityCheck = () => {
                 (
                     data: {
                         id: number
-                        fgId: string
                         quantity: number
                         createdAt: string
+                        fg: {
+                            id: string
+                            description: string
+                            category: string
+                        }
                     }[]
                 ) =>
                     data
                         .map((d) => ({
-                            value: d.fgId,
+                            value: d.fg.id,
+                            label: d.fg.description,
+                            group: d.fg.category,
                             productionId: d.id,
-                            fgId: d.fgId,
                             quantity: d.quantity,
                             createdAt: d.createdAt,
+                            fgId: d.fg.id,
                         }))
                         .sort((a, b) => b.productionId - a.productionId)
             )
@@ -276,7 +277,7 @@ const QualityCheck = () => {
                             }
                         }}
                     />
-                    <FormAutoComplete
+                    <FormSelect
                         xs={4}
                         id="fgId"
                         label="Finished Good"
@@ -287,7 +288,7 @@ const QualityCheck = () => {
                         withAsterisk
                         {...form.getInputProps('fgId')}
                     />
-                    <FormAutoComplete
+                    <FormSelect
                         xs={4}
                         id="productionId"
                         label="Production ID"
@@ -302,23 +303,31 @@ const QualityCheck = () => {
                                 })
                                 .map((item) => ({
                                     value: item.productionId.toString(),
+                                    label: item.productionId.toString(),
                                 })),
                         ]}
                         withAsterisk
                         {...form.getInputProps('productionId')}
                         onChange={(value) => {
-                            form.setFieldValue('productionId', value)
-                            const productionId = parseInt(value)
-                            const quantity = finishedGoods.filter((item) => {
-                                if (
-                                    item.fgId === form.values.fgId &&
-                                    item.productionId === productionId
-                                ) {
-                                    return true
-                                }
-                                return false
-                            })
-                            form.setFieldValue('quantity', quantity[0].quantity)
+                            if (value) {
+                                form.setFieldValue('productionId', value)
+                                const productionId = parseInt(value)
+                                const quantity = finishedGoods.filter(
+                                    (item) => {
+                                        if (
+                                            item.fgId === form.values.fgId &&
+                                            item.productionId === productionId
+                                        ) {
+                                            return true
+                                        }
+                                        return false
+                                    }
+                                )
+                                form.setFieldValue(
+                                    'quantity',
+                                    quantity[0].quantity
+                                )
+                            }
                         }}
                     />
                     <FormInputNumber

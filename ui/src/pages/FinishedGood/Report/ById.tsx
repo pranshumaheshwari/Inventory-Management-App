@@ -1,14 +1,15 @@
 import {
-    AutocompleteItem,
     Box,
     Button,
     Grid,
+    SelectItem,
     Skeleton,
     Stepper,
     Text,
 } from '@mantine/core'
-import { DateRangePicker, FormAutoComplete, Table } from '../../../components'
+import { DateRangePicker, FormSelect, Table } from '../../../components'
 import { Fetch, useAuth } from '../../../services'
+import { FinishedGoodSelectFilter, FinishedGoodSelectItem } from '../../common'
 import React, { useEffect, useState } from 'react'
 
 import { ColDef } from 'ag-grid-community'
@@ -28,9 +29,9 @@ function ById() {
     const [error, setError] = useState('')
     const [activeStep, setActiveStep] = useState(0)
     const [records, setRecords] = useState<RecordInterface[]>([])
-    const [finishedgood, setFinishedgood] = useState<AutocompleteItem[]>()
+    const [finishedgood, setFinishedgood] = useState<SelectItem[]>()
     const [selectedFg, setSelectedFg] = useState<{
-        fg: AutocompleteItem
+        fg: SelectItem
     }>({
         fg: {
             value: '',
@@ -72,6 +73,7 @@ function ById() {
                         select: JSON.stringify({
                             id: true,
                             description: true,
+                            category: true,
                         }),
                     },
                 },
@@ -79,6 +81,8 @@ function ById() {
                 data.map((d: Partial<FinishedGoodsInterface>) => ({
                     ...d,
                     value: d.id,
+                    label: d.description,
+                    group: d.category,
                 }))
             )
             setFinishedgood(data)
@@ -179,11 +183,13 @@ function ById() {
             <Grid.Col xs={3} />
             {activeStep === 0 && (
                 <>
-                    <FormAutoComplete
+                    <FormSelect
                         xs={12}
                         label="Finished Good"
                         placeholder="Select Finished Good"
                         data={finishedgood}
+                        itemComponent={FinishedGoodSelectItem}
+                        filter={FinishedGoodSelectFilter}
                         onChange={(value) =>
                             setSelectedFg((selectedFg) => {
                                 let fg = finishedgood.find(
