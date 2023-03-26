@@ -5,6 +5,7 @@ import {
     SelectItem,
     Skeleton,
     Stepper,
+    Table,
     Text,
 } from '@mantine/core'
 import { Fetch, useAuth } from '../../services'
@@ -33,8 +34,13 @@ export interface PurchaseOrderFromSalesOrderInterface {
         quantity: number
         poId: string
         price: number
+        requirement: number
+        stock: number
+        mpq: number
     }[]
 }
+
+const EXTRA_QUANTITY = 1.15
 
 const months = [
     'January',
@@ -170,7 +176,12 @@ const NewFromSalesOrder = () => {
                                             select: {
                                                 id: true,
                                                 supplierId: true,
+                                                storeStock: true,
+                                                lineStock: true,
+                                                iqcPendingStock: true,
+                                                poPendingStock: true,
                                                 price: true,
+                                                mpq: true,
                                             },
                                         },
                                         quantity: true,
@@ -179,35 +190,62 @@ const NewFromSalesOrder = () => {
                             }),
                         },
                     },
-                }).then(
-                    (f: {
-                        bom: {
-                            quantity: number
-                            rm: {
-                                id: string
-                                supplierId: string
-                                price: number
-                            }
-                        }[]
-                    }) => {
-                        for (let rm of f.bom) {
-                            const idx = data.findIndex(
-                                (d) => d.rmId === rm.rm.id
-                            )
-                            if (idx !== -1) {
-                                data[idx].quantity += rm.quantity * fg.quantity
-                            } else {
-                                data.push({
-                                    rmId: rm.rm.id,
-                                    quantity: rm.quantity * fg.quantity,
-                                    supplierId: rm.rm.supplierId,
-                                    poId: `${rm.rm.supplierId}-${month}-001`,
-                                    price: rm.rm.price,
-                                })
+                })
+                    .then(
+                        (f: {
+                            bom: {
+                                quantity: number
+                                rm: {
+                                    id: string
+                                    supplierId: string
+                                    price: number
+                                    storeStock: number
+                                    lineStock: number
+                                    iqcPendingStock: number
+                                    poPendingStock: number
+                                    mpq: number
+                                }
+                            }[]
+                        }) => {
+                            for (let rm of f.bom) {
+                                const idx = data.findIndex(
+                                    (d) => d.rmId === rm.rm.id
+                                )
+                                if (idx !== -1) {
+                                    data[idx].requirement +=
+                                        rm.quantity * fg.quantity
+                                } else {
+                                    data.push({
+                                        rmId: rm.rm.id,
+                                        quantity: 0,
+                                        supplierId: rm.rm.supplierId,
+                                        poId: `${rm.rm.supplierId}-${month}-001`,
+                                        price: rm.rm.price,
+                                        requirement: rm.quantity * fg.quantity,
+                                        stock:
+                                            rm.rm.storeStock +
+                                            rm.rm.lineStock +
+                                            rm.rm.iqcPendingStock +
+                                            rm.rm.poPendingStock,
+                                        mpq: rm.rm.mpq,
+                                    })
+                                }
                             }
                         }
-                    }
-                )
+                    )
+                    .then(() => {
+                        for (let rm of data) {
+                            rm.quantity =
+                                Math.ceil(
+                                    (rm.requirement * EXTRA_QUANTITY -
+                                        rm.stock) /
+                                        rm.mpq
+                                ) * rm.mpq
+                        }
+                    })
+                    .then(() => {
+                        data = data.filter((d) => d.quantity > 0)
+                    })
             })
         ).then(() => {
             form.setFieldValue('rawMaterials', data)
@@ -402,94 +440,89 @@ const NewFromSalesOrder = () => {
                 {activeStep === 2 && (
                     <>
                         {form.values.rawMaterials.length !== 0 && (
-                            <Grid.Col xs={12}>
-                                <Grid justify="center" align="center" grow>
-                                    <Grid.Col xs={1}>
-                                        <Center>
-                                            <Text fz="lg">RM</Text>
-                                        </Center>
-                                    </Grid.Col>
-                                    <Grid.Col xs={2}>
-                                        <Center>
-                                            <Text fz="lg">Supplier</Text>
-                                        </Center>
-                                    </Grid.Col>
-                                    <Grid.Col xs={3}>
-                                        <Center>
-                                            <Text fz="lg">Puchase Order</Text>
-                                        </Center>
-                                    </Grid.Col>
-                                    <Grid.Col xs={2}>
-                                        <Center>
-                                            <Text fz="lg">Quantity</Text>
-                                        </Center>
-                                    </Grid.Col>
-                                    <Grid.Col xs={2}>
-                                        <Center>
-                                            <Text fz="lg">Price</Text>
-                                        </Center>
-                                    </Grid.Col>
-                                    <Grid.Col xs={2} />
-                                </Grid>
-                            </Grid.Col>
+                            <Table withColumnBorders>
+                                <thead>
+                                    <tr>
+                                        <th>RM</th>
+                                        <th>Supplier</th>
+                                        <th>Puchase Order</th>
+                                        <th>Requirement</th>
+                                        <th>Stock</th>
+                                        <th>PO Quantity</th>
+                                        <th>Price</th>
+                                    </tr>
+                                </thead>
+                                {form.values.rawMaterials.map((item, index) => (
+                                    <tr key={index}>
+                                        <td>
+                                            {
+                                                form.values.rawMaterials[index]
+                                                    .rmId
+                                            }
+                                        </td>
+                                        <td>
+                                            {
+                                                form.values.rawMaterials[index]
+                                                    .supplierId
+                                            }
+                                        </td>
+                                        <td>
+                                            {
+                                                form.values.rawMaterials[index]
+                                                    .poId
+                                            }
+                                        </td>
+                                        <td>
+                                            {
+                                                form.values.rawMaterials[index]
+                                                    .requirement
+                                            }
+                                        </td>
+                                        <td>
+                                            {
+                                                form.values.rawMaterials[index]
+                                                    .stock
+                                            }
+                                        </td>
+                                        <td>
+                                            <FormInputNumber
+                                                precision={2}
+                                                {...form.getInputProps(
+                                                    `rawMaterials.${index}.quantity`
+                                                )}
+                                                xs={2}
+                                            />
+                                        </td>
+                                        <td>
+                                            <FormInputNumber
+                                                precision={2}
+                                                {...form.getInputProps(
+                                                    `rawMaterials.${index}.price`
+                                                )}
+                                                xs={5}
+                                            />
+                                        </td>
+                                        <td>
+                                            <Button
+                                                fullWidth
+                                                size="xs"
+                                                variant="outline"
+                                                color="red"
+                                                onClick={() => {
+                                                    form.removeListItem(
+                                                        'rawMaterials',
+                                                        index
+                                                    )
+                                                }}
+                                            >
+                                                DELETE
+                                            </Button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </Table>
                         )}
-                        {form.values.rawMaterials.map((item, index) => (
-                            <Grid.Col xs={12} key={index}>
-                                <Grid justify="center" align="center" grow>
-                                    <FormInputText
-                                        {...form.getInputProps(
-                                            `rawMaterials.${index}.rmId`
-                                        )}
-                                        xs={1}
-                                        disabled
-                                    />
-                                    <FormInputText
-                                        {...form.getInputProps(
-                                            `rawMaterials.${index}.supplierId`
-                                        )}
-                                        xs={2}
-                                        disabled
-                                    />
-                                    <FormInputText
-                                        {...form.getInputProps(
-                                            `rawMaterials.${index}.poId`
-                                        )}
-                                        xs={3}
-                                        disabled
-                                    />
-                                    <FormInputNumber
-                                        precision={2}
-                                        {...form.getInputProps(
-                                            `rawMaterials.${index}.quantity`
-                                        )}
-                                        xs={2}
-                                    />
-                                    <FormInputNumber
-                                        precision={2}
-                                        {...form.getInputProps(
-                                            `rawMaterials.${index}.price`
-                                        )}
-                                        xs={2}
-                                    />
-                                    <Grid.Col xs={2}>
-                                        <Button
-                                            fullWidth
-                                            size="xs"
-                                            variant="outline"
-                                            color="red"
-                                            onClick={() => {
-                                                form.removeListItem(
-                                                    'rawMaterials',
-                                                    index
-                                                )
-                                            }}
-                                        >
-                                            DELETE
-                                        </Button>
-                                    </Grid.Col>
-                                </Grid>
-                            </Grid.Col>
-                        ))}
+
                         <Grid.Col xs={2}>
                             <Button
                                 fullWidth
