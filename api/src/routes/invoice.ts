@@ -31,6 +31,7 @@ app.post('/', async (req: Request, res: Response) => {
         id,
         invoiceDetails,
         status,
+        date,
     }: {
         supplierId: string
         id: string
@@ -39,6 +40,7 @@ app.post('/', async (req: Request, res: Response) => {
             rmId: string
             quantity: number
         }[]
+        date: string
     } = req.body
 
     try {
@@ -54,20 +56,21 @@ app.post('/', async (req: Request, res: Response) => {
                             data: invoiceDetails,
                         },
                     },
+                    date,
                 },
             }),
-            ...invoiceDetails.map(({rmId, quantity}) => {
+            ...invoiceDetails.map(({ rmId, quantity }) => {
                 return PrismaService.rm.update({
                     where: {
-                        id: rmId
+                        id: rmId,
                     },
                     data: {
                         poPendingStock: {
-                            increment: quantity
-                        }
-                    }
+                            increment: quantity,
+                        },
+                    },
                 })
-            })
+            }),
         ])
         res.json(result)
     } catch (e) {

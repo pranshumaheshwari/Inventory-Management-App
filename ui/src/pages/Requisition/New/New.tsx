@@ -12,7 +12,6 @@ import { showNotification } from '@mantine/notifications'
 export interface NewRequisitionInterface {
     date: Date
     fgId: string
-    customerId: string
     soId: string
     quantity: number
 }
@@ -23,11 +22,9 @@ const NewRequisition = () => {
     } = useAuth()
     const [error, setError] = useState('')
     const [finishedGood, setFinishedGood] = useState<SelectItem[]>([])
-    const [customer, setCustomer] = useState<{ value: string }[] | null>()
     const [salesOrder, setSalesOrder] = useState<{ value: string }[] | null>([])
     let initialValues: NewRequisitionInterface = {
         date: new Date(),
-        customerId: '',
         soId: '',
         fgId: '',
         quantity: 0,
@@ -38,7 +35,6 @@ const NewRequisition = () => {
         validate: {
             fgId: isNotEmpty(),
             soId: isNotEmpty(),
-            customerId: isNotEmpty(),
             quantity: (value) =>
                 value < 0 ? 'Quantity should be greater than 0' : null,
         },
@@ -92,56 +88,31 @@ const NewRequisition = () => {
         }
     }
 
-    const getCustomers = async () => {
+    const getFinishedGoods = async () => {
         try {
             const data = await Fetch({
-                url: '/customers',
-                options: {
-                    authToken: token,
-                },
-            }).then((data) => {
-                return data.map((customer: { name: string; id: string }) => ({
-                    label: customer.name,
-                    value: customer.id,
-                }))
-            })
-            setCustomer(data)
-        } catch (e) {
-            setError((e as Error).message)
-        }
-    }
-
-    const getFinishedGoods = async (soId: string) => {
-        try {
-            const data = await Fetch({
-                url: `/salesorders/${soId}`,
+                url: `/finishedgoods`,
                 options: {
                     authToken: token,
                     params: {
                         select: JSON.stringify({
-                            fg: {
-                                select: {
-                                    id: true,
-                                    description: true,
-                                    category: true,
-                                },
-                            },
+                            id: true,
+                            description: true,
+                            category: true,
                         }),
                     },
                 },
             }).then((data) =>
                 data.map(
                     (d: {
-                        fg: {
-                            id: string
-                            description: string
-                            category: string
-                        }
+                        id: string
+                        description: string
+                        category: string
                     }) => ({
-                        ...d.fg,
-                        value: d.fg.id,
-                        label: d.fg.description,
-                        group: d.fg.category,
+                        ...d,
+                        value: d.id,
+                        label: d.description,
+                        group: d.category,
                     })
                 )
             )
@@ -151,7 +122,7 @@ const NewRequisition = () => {
         }
     }
 
-    const getSalesOrders = async (customerId: string) => {
+    const getSalesOrders = async (finishedGood: string) => {
         try {
             const data = await Fetch({
                 url: '/salesorders',
@@ -162,7 +133,12 @@ const NewRequisition = () => {
                             id: true,
                         }),
                         where: JSON.stringify({
-                            customerId,
+                            soDetails: {
+                                some: {
+                                    fgId: finishedGood,
+                                },
+                            },
+                            status: 'Open',
                         }),
                     },
                 },
@@ -176,10 +152,10 @@ const NewRequisition = () => {
     }
 
     useEffect(() => {
-        getCustomers()
+        getFinishedGoods()
     }, [])
 
-    if (!customer) {
+    if (!finishedGood) {
         return <Skeleton width="90vw" height="100%" />
     }
 
@@ -192,17 +168,19 @@ const NewRequisition = () => {
             >
                 <Grid justify="center" align="center" grow>
                     <FormSelect
-                        name="customerId"
-                        xs={6}
-                        label="Customer"
-                        placeholder="Select Customer"
-                        data={customer}
+                        xs={12}
+                        id="fgId"
+                        label="Finished Good"
+                        data={finishedGood}
+                        itemComponent={FinishedGoodSelectItem}
+                        filter={FinishedGoodSelectFilter}
+                        placeholder="Select Finished Good"
                         withAsterisk
-                        {...form.getInputProps('customerId')}
-                        onChange={(value) => {
-                            if (value) {
-                                form.setFieldValue('customerId', value)
-                                getSalesOrders(value)
+                        {...form.getInputProps('fgId')}
+                        onChange={(finishedGood) => {
+                            if (finishedGood) {
+                                form.setFieldValue('fgId', finishedGood)
+                                getSalesOrders(finishedGood)
                             }
                         }}
                     />
@@ -214,23 +192,6 @@ const NewRequisition = () => {
                         data={salesOrder ? salesOrder : []}
                         withAsterisk
                         {...form.getInputProps('soId')}
-                        onChange={(value) => {
-                            if (value) {
-                                form.setFieldValue('soId', value)
-                                getFinishedGoods(value)
-                            }
-                        }}
-                    />
-                    <FormSelect
-                        xs={6}
-                        id="fgId"
-                        label="Finished Good"
-                        data={finishedGood}
-                        itemComponent={FinishedGoodSelectItem}
-                        filter={FinishedGoodSelectFilter}
-                        placeholder="Select Finished Good"
-                        withAsterisk
-                        {...form.getInputProps('fgId')}
                     />
                     <FormInputNumber
                         name="quantity"
@@ -259,7 +220,12 @@ const NewRequisition = () => {
                             size="md"
                             variant="filled"
                             color="primary"
-                            onClick={openModal}
+                            onClick={() => {
+                                const result = form.validate()
+                                if (!result.hasErrors) {
+                                    openModal()
+                                }
+                            }}
                         >
                             Create
                         </Button>

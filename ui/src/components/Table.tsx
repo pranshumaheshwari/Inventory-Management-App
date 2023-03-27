@@ -16,6 +16,7 @@ function Table<Type>({
     defaultColDef,
     pinnedBottomRowData,
     pinnedTopRowData,
+    pagination = true,
     ...otherProps
 }: TableInterface<Type>) {
     const cDefaultColDef = useMemo(
@@ -28,7 +29,7 @@ function Table<Type>({
         [defaultColDef]
     )
 
-    const columnTypes = useMemo(
+    const columnTypes = useMemo<{ [key: string]: ColDef<Type> }>(
         () => ({
             numberColumn: {
                 filter: 'agNumberColumnFilter',
@@ -42,6 +43,9 @@ function Table<Type>({
                 },
                 headerClass: 'ag-right-aligned-header',
                 cellClass: 'ag-right-aligned-cell',
+                valueFormatter: (params) => {
+                    return Number(params.value).toFixed(2).toString()
+                },
             },
         }),
         []
@@ -57,9 +61,9 @@ function Table<Type>({
                     defaultColDef={cDefaultColDef}
                     pinnedBottomRowData={pinnedBottomRowData}
                     pinnedTopRowData={pinnedTopRowData}
-                    paginationAutoPageSize
-                    pagination
+                    pagination={pagination}
                     columnTypes={columnTypes}
+                    paginationAutoPageSize
                     defaultExcelExportParams={{
                         fileName: fileName ? fileName + '.xlsx' : 'export.xlsx',
                         columnKeys: columnDefs
