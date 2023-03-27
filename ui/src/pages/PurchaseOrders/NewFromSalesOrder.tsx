@@ -37,10 +37,11 @@ export interface PurchaseOrderFromSalesOrderInterface {
         requirement: number
         stock: number
         mpq: number
+        moq: number
     }[]
 }
 
-const EXTRA_QUANTITY = 1.15
+const EXTRA_QUANTITY = 1.25
 
 const months = [
     'January',
@@ -182,6 +183,7 @@ const NewFromSalesOrder = () => {
                                                 poPendingStock: true,
                                                 price: true,
                                                 mpq: true,
+                                                moq: true,
                                             },
                                         },
                                         quantity: true,
@@ -204,6 +206,7 @@ const NewFromSalesOrder = () => {
                                     iqcPendingStock: number
                                     poPendingStock: number
                                     mpq: number
+                                    moq: number
                                 }
                             }[]
                         }) => {
@@ -228,6 +231,7 @@ const NewFromSalesOrder = () => {
                                             rm.rm.iqcPendingStock +
                                             rm.rm.poPendingStock,
                                         mpq: rm.rm.mpq,
+                                        moq: rm.rm.moq,
                                     })
                                 }
                             }
@@ -241,6 +245,9 @@ const NewFromSalesOrder = () => {
                                         rm.stock) /
                                         rm.mpq
                                 ) * rm.mpq
+                            if (rm.quantity < rm.moq) {
+                                rm.quantity = rm.moq
+                            }
                         }
                     })
                     .then(() => {
@@ -389,6 +396,7 @@ const NewFromSalesOrder = () => {
                                         {...form.getInputProps(
                                             `finishedGoods.${index}.quantity`
                                         )}
+                                        disabled
                                         xs={5}
                                     />
                                     <Grid.Col xs={2}>

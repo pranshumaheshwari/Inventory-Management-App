@@ -444,12 +444,14 @@ const Form = () => {
                                             disabled
                                         />
                                         <FormInputNumber
+                                            precision={2}
                                             {...form.getInputProps(
                                                 `poDetails.${index}.quantity`
                                             )}
                                             xs={3}
                                         />
                                         <FormInputNumber
+                                            precision={2}
                                             {...form.getInputProps(
                                                 `poDetails.${index}.price`
                                             )}

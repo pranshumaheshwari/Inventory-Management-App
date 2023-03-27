@@ -290,13 +290,14 @@ const RequisitionIssue = () => {
                             <FormSelect
                                 xs={12}
                                 label="Requisition"
+                                name="requisitionId"
                                 placeholder="Select Requisition"
                                 data={finishedGoods}
                                 withAsterisk
                                 {...form.getInputProps('requisitionId')}
+                                value={form.values.requisitionId.toString()}
                                 onChange={(value) => {
                                     if (value) {
-                                        console.log(value)
                                         form.setFieldValue(
                                             'requisitionId',
                                             parseInt(value)

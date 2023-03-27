@@ -13,7 +13,7 @@ export interface AffixInterface {
 
 export default function MAffix({ actions }: AffixInterface) {
     return (
-        <Affix position={{ bottom: 40, right: 40 }}>
+        <Affix position={{ bottom: 10, right: 10 }}>
             <Menu
                 trigger="hover"
                 openDelay={100}

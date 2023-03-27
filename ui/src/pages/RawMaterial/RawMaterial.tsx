@@ -16,6 +16,8 @@ export interface RawMaterialInterface {
     iqcPendingStock: number
     poPendingStock: number
     lineStock: number
+    mpq: number
+    moq: number
 }
 
 const RawMaterial = () => {
@@ -45,11 +47,45 @@ const RawMaterial = () => {
             field: 'iqcRejectedStock',
             headerName: 'IQC Rejected Stock',
             type: 'numberColumn',
+            hide: true,
         },
         {
             field: 'poRejectedStock',
             headerName: 'PO Rejected Stock',
             type: 'numberColumn',
+            hide: true,
+        },
+        {
+            field: 'mpq',
+            headerName: 'Min Packaging Quantity',
+            type: 'numberColumn',
+            hide: true,
+        },
+        {
+            field: 'moq',
+            headerName: 'Min Order Quantity',
+            type: 'numberColumn',
+            hide: true,
+        },
+        {
+            field: 'price',
+            headerName: 'Price',
+            type: 'numberColumn',
+        },
+        {
+            headerName: 'Value',
+            type: 'numberColumn',
+            valueGetter: (data) => {
+                if (data.data) {
+                    return Math.floor(
+                        data.data.price *
+                            (data.data.storeStock +
+                                data.data.lineStock +
+                                data.data.poPendingStock +
+                                data.data.iqcPendingStock)
+                    )
+                }
+            },
         },
     ]
     const actions = [
