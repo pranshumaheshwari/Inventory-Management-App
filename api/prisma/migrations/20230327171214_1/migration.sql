@@ -65,7 +65,7 @@ CREATE TABLE `rm` (
     `po_rejected_stock` DOUBLE NOT NULL DEFAULT 0.00,
     `line_stock` DOUBLE NOT NULL DEFAULT 0.00,
     `mpq` DOUBLE NOT NULL DEFAULT 1.00,
-    `moq` DOUBLE NOT NULL DEFAULT 1.00,
+    `moq` DOUBLE NOT NULL DEFAULT 0.00,
     `created_at` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     UNIQUE INDEX `rm_description_key`(`description`),
@@ -133,6 +133,7 @@ CREATE TABLE `invoice` (
     `id` VARCHAR(191) NOT NULL,
     `supplier_id` VARCHAR(191) NOT NULL,
     `status` ENUM('Open', 'Closed') NULL DEFAULT 'Open',
+    `date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `created_at` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     INDEX `supplier_id`(`supplier_id`),
