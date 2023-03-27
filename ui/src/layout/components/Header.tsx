@@ -1,7 +1,9 @@
 import {
     Burger,
+    Center,
     Header,
     MediaQuery,
+    Text,
     Title,
     useMantineTheme,
 } from '@mantine/core'
@@ -47,7 +49,12 @@ const MHeader = ({ opened, setOpened }: HeaderInterface) => {
                     ff="monospace"
                     sx={{ marginLeft: 10 }}
                 >
-                    IMS
+                    Vistaar Auto Industries
+                    <Center>
+                        <Text fz="md" ff="monospace">
+                            IMS
+                        </Text>
+                    </Center>
                 </Title>
             </div>
         </Header>

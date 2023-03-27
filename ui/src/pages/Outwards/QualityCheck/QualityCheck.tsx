@@ -133,15 +133,38 @@ const QualityCheck = () => {
     const getCustomer = async () => {
         try {
             const data = await Fetch({
-                url: '/customers',
+                url: '/outwards/production',
                 options: {
                     authToken: token,
+                    params: {
+                        where: JSON.stringify({
+                            status: 'PendingOqcVerification',
+                        }),
+                        select: JSON.stringify({
+                            so: {
+                                select: {
+                                    customer: {
+                                        select: {
+                                            name: true,
+                                            id: true,
+                                        },
+                                    },
+                                },
+                            },
+                        }),
+                    },
                 },
             }).then((data) => {
-                return data.map((customer: { name: string; id: string }) => ({
-                    label: customer.name,
-                    value: customer.id,
-                }))
+                return data.map(
+                    (customer: {
+                        so: {
+                            customer: { name: string; id: string }
+                        }
+                    }) => ({
+                        label: customer.so.customer.name,
+                        value: customer.so.customer.id,
+                    })
+                )
             })
             setCustomer(data)
         } catch (e) {

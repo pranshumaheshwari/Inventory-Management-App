@@ -9,12 +9,18 @@ import {
     Text,
 } from '@mantine/core'
 import { Fetch, useAuth } from '../../../services'
-import { FormInputNumber, FormInputText, FormSelect } from '../../../components'
+import {
+    FormInputNumber,
+    FormInputText,
+    FormSelect,
+    Table,
+} from '../../../components'
 import { PurchaseOrdersFormProvider, usePurchaseOrdersForm } from './context'
 import { RawMaterialSelectFilter, RawMaterialSelectItem } from '../../common'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
+import { ColDef } from 'ag-grid-community'
 import { PurchaseOrdersInterface } from '../PurchaseOrders'
 import { RawMaterialInterface } from '../../RawMaterial/RawMaterial'
 import { isNotEmpty } from '@mantine/form'
@@ -234,6 +240,52 @@ const Form = () => {
         Promise.all([getSuppliers()])
     }, [])
 
+    const detailsColumnDef = useMemo<
+        ColDef<PurchaseOrdersInterface['poDetails'][number]>[]
+    >(
+        () => [
+            {
+                field: 'rmId',
+                headerName: 'Raw Material',
+            },
+            {
+                field: 'quantity',
+                headerName: 'Quantity',
+            },
+            {
+                field: 'price',
+                headerName: 'Price',
+            },
+            {
+                field: '#',
+                cellRenderer: ({
+                    data,
+                }: {
+                    data: PurchaseOrdersInterface['poDetails'][number]
+                }) => (
+                    <Button
+                        fullWidth
+                        size="xs"
+                        variant="outline"
+                        color="red"
+                        onClick={() => {
+                            form.removeListItem(
+                                'poDetails',
+                                form.values.poDetails.findIndex(
+                                    (d) => d.rmId === data.rmId
+                                )
+                            )
+                            onDeleteRm(data.rmId)
+                        }}
+                    >
+                        DELETE
+                    </Button>
+                ),
+            },
+        ],
+        []
+    )
+
     if (!supplier) {
         return <Skeleton width="90vw" height="100%" />
     }
@@ -409,7 +461,21 @@ const Form = () => {
                             <Grid.Col xs={12}>
                                 <Divider />
                             </Grid.Col>
-                            {form.values.poDetails.length !== 0 && (
+                            <Grid.Col
+                                xs={12}
+                                style={{
+                                    height: '30vh',
+                                }}
+                            >
+                                <Table<
+                                    PurchaseOrdersInterface['poDetails'][number]
+                                >
+                                    fileName={form.values.id}
+                                    rowData={form.values.poDetails}
+                                    columnDefs={detailsColumnDef}
+                                />
+                            </Grid.Col>
+                            {/* {form.values.poDetails.length !== 0 && (
                                 <Grid.Col xs={12}>
                                     <Grid justify="center" align="center" grow>
                                         <Grid.Col xs={3}>
@@ -432,8 +498,8 @@ const Form = () => {
                                         <Grid.Col xs={3} />
                                     </Grid>
                                 </Grid.Col>
-                            )}
-                            {form.values.poDetails.map((item, index) => (
+                            )} */}
+                            {/* {form.values.poDetails.map((item, index) => (
                                 <Grid.Col xs={12} key={index}>
                                     <Grid justify="center" align="center" grow>
                                         <FormInputText
@@ -477,7 +543,7 @@ const Form = () => {
                                         </Grid.Col>
                                     </Grid>
                                 </Grid.Col>
-                            ))}
+                            ))} */}
                         </>
                     )}
                     {error && (

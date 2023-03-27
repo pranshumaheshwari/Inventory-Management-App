@@ -128,15 +128,41 @@ const QualityCheck = () => {
     const getSupplier = async () => {
         try {
             const data = await Fetch({
-                url: '/suppliers',
+                url: '/inwards/iqc',
                 options: {
                     authToken: token,
+                    params: {
+                        where: JSON.stringify({
+                            status: 'PendingIqcVerification',
+                        }),
+                        select: JSON.stringify({
+                            inwardsPoPending: {
+                                select: {
+                                    supplier: {
+                                        select: {
+                                            name: true,
+                                            id: true,
+                                        },
+                                    },
+                                },
+                            },
+                        }),
+                    },
                 },
             }).then((data) => {
-                return data.map((supplier: { name: string; id: string }) => ({
-                    label: supplier.name,
-                    value: supplier.id,
-                }))
+                return data.map(
+                    (supplier: {
+                        inwardsPoPending: {
+                            suplier: {
+                                name: string
+                                id: string
+                            }
+                        }
+                    }) => ({
+                        label: supplier.inwardsPoPending.suplier.name,
+                        value: supplier.inwardsPoPending.suplier.id,
+                    })
+                )
             })
             setSupplier(data)
         } catch (e) {
