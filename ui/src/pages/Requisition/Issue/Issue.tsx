@@ -1,15 +1,6 @@
-import {
-    Button,
-    Divider,
-    Grid,
-    SelectItem,
-    Skeleton,
-    Stepper,
-    Text,
-} from '@mantine/core'
+import { Button, Grid, Skeleton, Stepper, Text } from '@mantine/core'
 import { Fetch, useAuth } from '../../../services'
 import { FormInputNumber, FormInputText, FormSelect } from '../../../components'
-import { RawMaterialSelectFilter, RawMaterialSelectItem } from '../../common'
 import React, { useEffect, useState } from 'react'
 import {
     RequisitionIssueFormProvider,
@@ -22,10 +13,12 @@ import { showNotification } from '@mantine/notifications'
 
 export interface RequisitionIssueInterface {
     requisitionId: number
-    fgId: string
     details: {
         rmId: string
         quantity: number
+        storeStock: number
+        lineStock: number
+        maxQuantity: number
     }[]
 }
 
@@ -40,27 +33,15 @@ const RequisitionIssue = () => {
             label: string
         }[]
     >([])
-    const [rawmaterial, setRawmaterial] = useState<SelectItem[]>([])
-    const [selectedRm, setSelectedRm] = useState<{
-        rm: SelectItem
-        quantity: number
-    }>({
-        rm: {
-            value: '',
-        },
-        quantity: 0,
-    })
     const [error, setError] = useState('')
     let initialValues: RequisitionIssueInterface = {
         requisitionId: 0,
-        fgId: '',
         details: [],
     }
 
     const form = useRequisitionIssueForm({
         initialValues,
         validate: {
-            fgId: isNotEmpty(),
             requisitionId: isNotEmpty(),
             details: (value) =>
                 value.length === 0
@@ -95,7 +76,9 @@ const RequisitionIssue = () => {
                     method: 'POST',
                     body: {
                         requisitionId: form.values.requisitionId,
-                        details: form.values.details,
+                        details: form.values.details.filter(
+                            (d) => d.quantity > 0
+                        ),
                     },
                     authToken: token,
                 },
@@ -112,13 +95,6 @@ const RequisitionIssue = () => {
             })
             form.reset()
             setActiveStep(0)
-            setRawmaterial([])
-            setSelectedRm({
-                rm: {
-                    value: '',
-                },
-                quantity: 0,
-            })
         } catch (err) {
             setError((err as Error).message)
             showNotification({
@@ -183,9 +159,8 @@ const RequisitionIssue = () => {
                                             rm: {
                                                 select: {
                                                     id: true,
-                                                    description: true,
-                                                    dtplCode: true,
-                                                    category: true,
+                                                    storeStock: true,
+                                                    lineStock: true,
                                                 },
                                             },
                                         },
@@ -214,9 +189,8 @@ const RequisitionIssue = () => {
                                     quantity: number
                                     rm: {
                                         id: string
-                                        description: string
-                                        dtplCode: string
-                                        category: string
+                                        storeStock: number
+                                        lineStock: number
                                     }
                                 }[]
                             }
@@ -229,27 +203,37 @@ const RequisitionIssue = () => {
                 )
                 .then((data) =>
                     data.fg.bom.map((b) => ({
-                        ...b.rm,
-                        bomQuantity:
-                            b.quantity * data.quantity -
-                            data.requisitionOutward.reduce(
-                                (total, obj, idx) => {
-                                    if (
-                                        data.requisitionOutward[idx].rmId ===
-                                        b.rm.id
-                                    ) {
-                                        return total + obj.quantity
-                                    }
-                                    return total
-                                },
-                                0
-                            ),
-                        value: b.rm.id,
-                        label: b.rm.description,
-                        group: b.rm.category,
+                        ...b,
+                        requisitionQuantity: data.quantity,
+                        issuedQuantity: data.requisitionOutward.reduce(
+                            (total, obj, idx) => {
+                                if (
+                                    data.requisitionOutward[idx].rmId ===
+                                    b.rm.id
+                                ) {
+                                    return total + obj.quantity
+                                }
+                                return total
+                            },
+                            0
+                        ),
                     }))
                 )
-            setRawmaterial(data)
+                .then((data) =>
+                    data
+                        .map((b) => ({
+                            ...b,
+                            ...b.rm,
+                            rmId: b.rm.id,
+                            maxQuantity: Math.ceil(
+                                b.quantity * b.requisitionQuantity -
+                                    b.issuedQuantity
+                            ),
+                            quantity: 0,
+                        }))
+                        .filter((b) => b.maxQuantity > 0)
+                )
+            form.setFieldValue('details', data)
         } catch (e) {
             setError((e as Error).message)
         }
@@ -321,102 +305,29 @@ const RequisitionIssue = () => {
                     )}
                     {activeStep === 1 && (
                         <>
-                            <FormSelect
-                                xs={8}
-                                id="rmId"
-                                label="Raw Material"
-                                placeholder="Select Raw Material"
-                                data={rawmaterial}
-                                itemComponent={RawMaterialSelectItem}
-                                filter={RawMaterialSelectFilter}
-                                {...form.getInputProps('rmId')}
-                                onChange={(value) =>
-                                    setSelectedRm((selectedRm) => {
-                                        let rm = rawmaterial.find(
-                                            (d) => d.value === value
-                                        )
-                                        if (rm)
-                                            return {
-                                                ...selectedRm,
-                                                rm,
-                                            }
-                                        return selectedRm
-                                    })
-                                }
-                                withAsterisk
-                            />
-                            <FormInputNumber
-                                name="quantity"
-                                xs={2}
-                                label="Quantity"
-                                placeholder="Enter Quantity"
-                                withAsterisk
-                                min={0}
-                                {...form.getInputProps('quantity')}
-                                onChange={(val) => {
-                                    if (val) {
-                                        setSelectedRm((selectedRm) => ({
-                                            ...selectedRm,
-                                            quantity: val,
-                                        }))
-                                    }
-                                }}
-                            />
-                            <FormInputNumber
-                                name="requiredQuanity"
-                                xs={2}
-                                label="Required Quantity"
-                                placeholder="Required Quantity"
-                                withAsterisk
-                                disabled
-                                value={selectedRm.rm.bomQuantity}
-                            />
-                            <Grid.Col xs={12}>
-                                <Button
-                                    fullWidth
-                                    size="md"
-                                    variant="filled"
-                                    color="primary"
-                                    onClick={() => {
-                                        if (
-                                            selectedRm.quantity &&
-                                            selectedRm.rm &&
-                                            selectedRm.rm.id
-                                        ) {
-                                            if (
-                                                !form.values.details.find(
-                                                    (r) =>
-                                                        r.rmId ===
-                                                        selectedRm.rm.id
-                                                )
-                                            ) {
-                                                form.insertListItem('details', {
-                                                    rmId: selectedRm.rm.id,
-                                                    quantity:
-                                                        selectedRm.quantity,
-                                                })
-                                            }
-                                        }
-                                    }}
-                                >
-                                    Add
-                                </Button>
-                            </Grid.Col>
-                            <Grid.Col xs={12}>
-                                <Divider />
-                            </Grid.Col>
                             {form.values.details.length !== 0 && (
                                 <Grid.Col xs={12}>
                                     <Grid justify="center" align="center" grow>
-                                        <Grid.Col xs={4}>
+                                        <Grid.Col xs={2}>
+                                            <Text fz="lg">Raw Material</Text>
+                                        </Grid.Col>
+                                        <Grid.Col xs={2}>
+                                            <Text fz="lg">Store Stock</Text>
+                                        </Grid.Col>
+                                        <Grid.Col xs={2}>
+                                            <Text fz="lg">Line Stock</Text>
+                                        </Grid.Col>
+                                        <Grid.Col xs={2}>
+                                            <Text fz="lg">Issued Quantity</Text>
+                                        </Grid.Col>
+                                        <Grid.Col xs={2}>
                                             <Text fz="lg">
-                                                Raw Material Part Number
+                                                Remaining Quantity
                                             </Text>
                                         </Grid.Col>
-                                        <Grid.Col xs={4}>
+                                        <Grid.Col xs={2}>
                                             <Text fz="lg">Quantity</Text>
                                         </Grid.Col>
-                                        <Grid.Col xs={4} />
                                     </Grid>
                                 </Grid.Col>
                             )}
@@ -424,36 +335,51 @@ const RequisitionIssue = () => {
                                 <Grid.Col xs={12} key={index}>
                                     <Grid justify="center" align="center" grow>
                                         <FormInputText
-                                            xs={4}
+                                            xs={2}
                                             disabled
                                             {...form.getInputProps(
                                                 `details.${index}.rmId`
                                             )}
                                         />
                                         <FormInputNumber
-                                            xs={4}
+                                            xs={2}
+                                            {...form.getInputProps(
+                                                `details.${index}.storeStock`
+                                            )}
+                                            disabled
+                                        />
+                                        <FormInputNumber
+                                            xs={2}
+                                            {...form.getInputProps(
+                                                `details.${index}.lineStock`
+                                            )}
+                                            disabled
+                                        />
+                                        <FormInputNumber
+                                            xs={2}
+                                            {...form.getInputProps(
+                                                `details.${index}.issuedQuantity`
+                                            )}
+                                            disabled
+                                        />
+                                        <FormInputNumber
+                                            xs={2}
+                                            {...form.getInputProps(
+                                                `details.${index}.maxQuantity`
+                                            )}
+                                            disabled
+                                        />
+                                        <FormInputNumber
+                                            xs={2}
                                             {...form.getInputProps(
                                                 `details.${index}.quantity`
                                             )}
+                                            min={0}
+                                            max={
+                                                form.values.details[index]
+                                                    .maxQuantity
+                                            }
                                         />
-                                        <Grid.Col xs={1} />
-                                        <Grid.Col xs={2}>
-                                            <Button
-                                                fullWidth
-                                                size="xs"
-                                                variant="outline"
-                                                color="red"
-                                                onClick={() => {
-                                                    form.removeListItem(
-                                                        'details',
-                                                        index
-                                                    )
-                                                }}
-                                            >
-                                                DELETE
-                                            </Button>
-                                        </Grid.Col>
-                                        <Grid.Col xs={1} />
                                     </Grid>
                                 </Grid.Col>
                             ))}
@@ -483,7 +409,12 @@ const RequisitionIssue = () => {
                                     size="md"
                                     variant="filled"
                                     color="primary"
-                                    onClick={openModal}
+                                    onClick={() => {
+                                        const result = form.validate()
+                                        if (!result.hasErrors) {
+                                            openModal()
+                                        }
+                                    }}
                                 >
                                     Issue
                                 </Button>

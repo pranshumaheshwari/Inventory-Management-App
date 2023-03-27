@@ -15,6 +15,7 @@ export interface InvoiceInterface {
         rmId: string
         quantity: number
     }[]
+    date: Date
 }
 
 const Invoice = () => {

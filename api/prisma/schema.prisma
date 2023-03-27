@@ -83,7 +83,7 @@ model Rm {
     poRejectedStock    Float                @default(0.00) @map("po_rejected_stock")
     lineStock          Float                @default(0.00) @map("line_stock")
     mpq                Float                @default(1.00)
-    moq                Float                @default(1.00)
+    moq                Float                @default(0.00)
     createdAt          DateTime?            @default(now()) @map("created_at")
     supplier           Supplier             @relation(fields: [supplierId], references: [id], onDelete: Restrict, onUpdate: Cascade)
     bom                Bom[]
@@ -171,6 +171,7 @@ model Invoice {
     id             String
     supplierId     String             @map("supplier_id")
     status         BinaryStatus?      @default(Open)
+    date           DateTime           @default(now())
     createdAt      DateTime?          @default(now()) @map("created_at")
     supplier       Supplier           @relation(fields: [supplierId], references: [id], onDelete: Restrict, onUpdate: Cascade)
     invoiceDetails InwardsPoPending[]

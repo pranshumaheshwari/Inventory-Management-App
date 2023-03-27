@@ -1,4 +1,4 @@
-import { Button, Divider, Grid, Skeleton, Text } from '@mantine/core'
+import { Button, Divider, Grid, Text } from '@mantine/core'
 import { Fetch, useAuth } from '../../../services'
 import { FormInputText, FormSelect } from '../../../components'
 import {
@@ -149,21 +149,21 @@ const QualityCheck = () => {
                         }),
                     },
                 },
-            }).then((data) => {
-                return data.map(
+            }).then((data) =>
+                data.map(
                     (supplier: {
                         inwardsPoPending: {
-                            suplier: {
+                            supplier: {
                                 name: string
                                 id: string
                             }
                         }
                     }) => ({
-                        label: supplier.inwardsPoPending.suplier.name,
-                        value: supplier.inwardsPoPending.suplier.id,
+                        label: supplier.inwardsPoPending.supplier.name,
+                        value: supplier.inwardsPoPending.supplier.id,
                     })
                 )
-            })
+            )
             setSupplier(data)
         } catch (e) {
             setError((e as Error).message)
@@ -256,10 +256,6 @@ const QualityCheck = () => {
         getSupplier()
     }, [])
 
-    if (!supplier) {
-        return <Skeleton width="90vw" height="100%" />
-    }
-
     return (
         <InwardsQualityCheckFormProvider form={form}>
             <form
@@ -273,7 +269,7 @@ const QualityCheck = () => {
                         xs={5}
                         label="Supplier"
                         placeholder="Select Supplier"
-                        data={supplier}
+                        data={supplier ? supplier : []}
                         withAsterisk
                         {...form.getInputProps('supplierId')}
                         onChange={(value) => {

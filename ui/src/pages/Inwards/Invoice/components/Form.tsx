@@ -8,12 +8,13 @@ import {
     Stepper,
     Text,
 } from '@mantine/core'
-import { Fetch, useAuth } from '../../../../services'
 import {
+    DatePicker,
     FormInputNumber,
     FormInputText,
     FormSelect,
 } from '../../../../components'
+import { Fetch, useAuth } from '../../../../services'
 import { InvoiceFormProvider, useInvoiceForm } from './context'
 import { RawMaterialSelectFilter, RawMaterialSelectItem } from '../../../common'
 import React, { useEffect, useState } from 'react'
@@ -53,6 +54,7 @@ const Form = () => {
         },
         status: 'Open',
         invoiceDetails: [],
+        date: new Date(),
     }
 
     if (isEdit) {
@@ -277,7 +279,7 @@ const Form = () => {
                         <>
                             <FormSelect
                                 name="supplierId"
-                                xs={6}
+                                xs={3}
                                 label="Supplier"
                                 placeholder="Select Supplier"
                                 data={supplier}
@@ -300,6 +302,13 @@ const Form = () => {
                                 placeholder="Enter Invoice ID"
                                 withAsterisk
                                 {...form.getInputProps('id')}
+                            />
+                            <DatePicker
+                                xs={3}
+                                label="Date"
+                                placeholder="Select Date"
+                                withAsterisk
+                                {...form.getInputProps('date')}
                             />
                             <FormSelect
                                 name="status"
@@ -365,27 +374,6 @@ const Form = () => {
                                     }
                                 }}
                             />
-                            {/* <FormInputNumber
-                                name="price"
-                                xs={3}
-                                min={0}
-                                precision={2}
-                                label="Price"
-                                placeholder="Enter Price"
-                                {...form.getInputProps('price')}
-                                value={selectedRm ? selectedRm.rm.price : 0}
-                                onChange={(val) => {
-                                    if (val) {
-                                        setSelectedRm((selectedRm) => ({
-                                            ...selectedRm,
-                                            rm: {
-                                                ...selectedRm.rm,
-                                                price: val,
-                                            },
-                                        }))
-                                    }
-                                }}
-                            /> */}
                             <Grid.Col xs={3} />
                             <Grid.Col xs={12}>
                                 <Button

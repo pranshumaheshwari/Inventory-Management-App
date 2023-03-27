@@ -31,6 +31,10 @@ export interface OutwardsDispatch {
         fgId: string
         quantity: number
     }[]
+    selectedFg: {
+        fgId: string
+        quantity: number
+    }
 }
 
 const Dispatch = () => {
@@ -41,15 +45,6 @@ const Dispatch = () => {
     const [customer, setCustomer] = useState<{ value: string }[] | null>()
     const [salesorder, setSalesOrder] = useState<SelectItem[]>([])
     const [finishedgoods, setFinishedGoods] = useState<SelectItem[]>([])
-    const [selectedFg, setSelectedFg] = useState<{
-        fg: SelectItem
-        quantity: number
-    }>({
-        fg: {
-            value: '',
-        },
-        quantity: 0,
-    })
     const [error, setError] = useState('')
     let initialValues: OutwardsDispatch = {
         customerId: '',
@@ -57,6 +52,10 @@ const Dispatch = () => {
         invoiceNumber: '',
         details: [],
         createdAt: new Date(),
+        selectedFg: {
+            fgId: '',
+            quantity: 0,
+        },
     }
 
     const form = useDispatchForm({
@@ -202,10 +201,10 @@ const Dispatch = () => {
                     }[]
                 ) =>
                     data.map((d) => ({
-                        id: d.fg.id,
                         value: d.fg.id,
-                        description: d.fg.description,
+                        label: d.fg.description,
                         group: d.fg.category,
+                        ...d.fg,
                     }))
             )
             setFinishedGoods(data)
@@ -313,40 +312,21 @@ const Dispatch = () => {
                             <Grid.Col xs={1} />
                             <FormSelect
                                 xs={6}
-                                id="fgId"
+                                name="selectedFg.fgId"
                                 label="Finished Good"
                                 placeholder="Select Finished Good"
                                 data={finishedgoods}
                                 itemComponent={FinishedGoodSelectItem}
                                 filter={FinishedGoodSelectFilter}
-                                onChange={(value) =>
-                                    setSelectedFg((selectedFg) => {
-                                        let fg = finishedgoods.find(
-                                            (d) => d.value === value
-                                        )
-                                        if (fg)
-                                            return {
-                                                ...selectedFg,
-                                                fg,
-                                            }
-                                        return selectedFg
-                                    })
-                                }
+                                {...form.getInputProps('selectedFg.fgId')}
                             />
                             <FormInputNumber
-                                name="quantity"
+                                name="selectedFg.quantity"
                                 xs={4}
                                 label="Quantity"
                                 placeholder="Enter Quantity"
                                 min={0}
-                                onChange={(val) => {
-                                    if (val) {
-                                        setSelectedFg((selectedFg) => ({
-                                            ...selectedFg,
-                                            quantity: val,
-                                        }))
-                                    }
-                                }}
+                                {...form.getInputProps('selectedFg.quantity')}
                             />
                             <Grid.Col xs={1} />
                             <Grid.Col xs={12}>
@@ -357,13 +337,16 @@ const Dispatch = () => {
                                     color="primary"
                                     onClick={() => {
                                         if (
-                                            selectedFg.quantity &&
-                                            selectedFg.fg &&
-                                            selectedFg.fg.id
+                                            form.values.selectedFg.quantity &&
+                                            form.values.selectedFg.fgId
                                         ) {
-                                            form.insertListItem('details', {
-                                                fgId: selectedFg.fg.id,
-                                                quantity: selectedFg.quantity,
+                                            form.insertListItem(
+                                                'details',
+                                                form.values.selectedFg
+                                            )
+                                            form.setFieldValue('selectedFg', {
+                                                fgId: '',
+                                                quantity: 0,
                                             })
                                         }
                                     }}
@@ -417,7 +400,6 @@ const Dispatch = () => {
                                                         'details',
                                                         index
                                                     )
-                                                    // onDeleteFg(item.fgId)
                                                 }}
                                             >
                                                 DELETE

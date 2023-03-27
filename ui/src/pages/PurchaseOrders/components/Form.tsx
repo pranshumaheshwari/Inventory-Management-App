@@ -237,7 +237,10 @@ const Form = () => {
     }
 
     useEffect(() => {
-        Promise.all([getSuppliers()])
+        getSuppliers()
+        if (isEdit) {
+            getRawMaterials(initialValues.supplierId)
+        }
     }, [])
 
     const detailsColumnDef = useMemo<
@@ -247,6 +250,22 @@ const Form = () => {
             {
                 field: 'rmId',
                 headerName: 'Raw Material',
+            },
+            {
+                field: 'Description',
+                valueGetter: (params) => {
+                    return rawMaterial.find(
+                        (rm) => rm.value === params.data?.rmId
+                    )?.description
+                },
+            },
+            {
+                field: 'DTPL Part Number',
+                valueGetter: (params) => {
+                    return rawMaterial.find(
+                        (rm) => rm.value === params.data?.rmId
+                    )?.dtplCode
+                },
             },
             {
                 field: 'quantity',
@@ -283,7 +302,7 @@ const Form = () => {
                 ),
             },
         ],
-        []
+        [rawMaterial]
     )
 
     if (!supplier) {
@@ -464,7 +483,7 @@ const Form = () => {
                             <Grid.Col
                                 xs={12}
                                 style={{
-                                    height: '30vh',
+                                    height: '50vh',
                                 }}
                             >
                                 <Table<
@@ -473,77 +492,9 @@ const Form = () => {
                                     fileName={form.values.id}
                                     rowData={form.values.poDetails}
                                     columnDefs={detailsColumnDef}
+                                    pagination={false}
                                 />
                             </Grid.Col>
-                            {/* {form.values.poDetails.length !== 0 && (
-                                <Grid.Col xs={12}>
-                                    <Grid justify="center" align="center" grow>
-                                        <Grid.Col xs={3}>
-                                            <Center>
-                                                <Text fz="lg">
-                                                    Raw Material Part Number
-                                                </Text>
-                                            </Center>
-                                        </Grid.Col>
-                                        <Grid.Col xs={3}>
-                                            <Center>
-                                                <Text fz="lg">Quantity</Text>
-                                            </Center>
-                                        </Grid.Col>
-                                        <Grid.Col xs={3}>
-                                            <Center>
-                                                <Text fz="lg">Price</Text>
-                                            </Center>
-                                        </Grid.Col>
-                                        <Grid.Col xs={3} />
-                                    </Grid>
-                                </Grid.Col>
-                            )} */}
-                            {/* {form.values.poDetails.map((item, index) => (
-                                <Grid.Col xs={12} key={index}>
-                                    <Grid justify="center" align="center" grow>
-                                        <FormInputText
-                                            {...form.getInputProps(
-                                                `poDetails.${index}.rmId`
-                                            )}
-                                            xs={3}
-                                            disabled
-                                        />
-                                        <FormInputNumber
-                                            precision={2}
-                                            {...form.getInputProps(
-                                                `poDetails.${index}.quantity`
-                                            )}
-                                            xs={3}
-                                        />
-                                        <FormInputNumber
-                                            precision={2}
-                                            {...form.getInputProps(
-                                                `poDetails.${index}.price`
-                                            )}
-                                            xs={3}
-                                        />
-                                        <Grid.Col xs={1} />
-                                        <Grid.Col xs={2}>
-                                            <Button
-                                                fullWidth
-                                                size="xs"
-                                                variant="outline"
-                                                color="red"
-                                                onClick={() => {
-                                                    form.removeListItem(
-                                                        'poDetails',
-                                                        index
-                                                    )
-                                                    onDeleteRm(item.rmId)
-                                                }}
-                                            >
-                                                DELETE
-                                            </Button>
-                                        </Grid.Col>
-                                    </Grid>
-                                </Grid.Col>
-                            ))} */}
                         </>
                     )}
                     {error && (
