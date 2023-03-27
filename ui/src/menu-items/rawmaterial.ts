@@ -20,9 +20,9 @@ const dashboard: ItemInterface = {
             id: 'rawmaterial-inventory',
             title: 'Inventory',
             type: 'item',
-            url: '/rawmaterial',
+            url: '/rawMaterial',
             icon: IconBuildingWarehouse,
-            urls: ['/rawmaterial', '/rawmaterial/new', '/rawmaterial/edit'],
+            urls: ['/rawMaterial', '/rawMaterial/new', '/rawMaterial/edit'],
         },
         {
             id: 'rawmaterial-suppliers',

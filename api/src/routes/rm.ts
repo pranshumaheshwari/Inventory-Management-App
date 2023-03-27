@@ -36,6 +36,8 @@ app.post('/', async (req: Request, res: Response) => {
         price,
         storeStock,
         lineStock,
+        mpq,
+        moq,
     } = req.body
 
     try {
@@ -50,6 +52,8 @@ app.post('/', async (req: Request, res: Response) => {
                 price,
                 storeStock,
                 lineStock,
+                mpq,
+                moq,
             },
         })
         res.json(result)

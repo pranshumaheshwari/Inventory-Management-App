@@ -1,8 +1,9 @@
 import { Affix, Table } from '../../components'
 import { Fetch, useAuth } from '../../services'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 
 import { AffixInterface } from '../../components/Affix'
+import { AgGridReact } from 'ag-grid-react'
 import { Button } from '@mantine/core'
 import { ColDef } from 'ag-grid-community'
 import { FetchInterface } from '../../services/fetch'
@@ -24,6 +25,8 @@ function Inventory<Type>({
     fileName,
     options,
 }: InventoryInterface<Type>) {
+    const gridRef = useRef<AgGridReact<Type>>(null)
+
     const {
         token: { token },
     } = useAuth()
@@ -39,6 +42,7 @@ function Inventory<Type>({
     const fetchData = async () => {
         const data = await Fetch({ url, options })
         setRowData(data)
+        gridRef.current?.api.sizeColumnsToFit()
     }
 
     useEffect(() => {
@@ -79,6 +83,7 @@ function Inventory<Type>({
     return (
         <>
             <Table<Type>
+                ref={gridRef}
                 columnDefs={columns}
                 fileName={fileName}
                 rowData={rowData}

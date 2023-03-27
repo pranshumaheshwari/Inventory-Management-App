@@ -1,11 +1,12 @@
 import { AgGridReact, AgGridReactProps } from 'ag-grid-react'
 import { Box, Skeleton } from '@mantine/core'
-import React, { useMemo, useRef } from 'react'
+import React, { useMemo } from 'react'
 
 import { ColDef } from 'ag-grid-community'
 
 export interface TableInterface<T> extends AgGridReactProps<T> {
     fileName?: string
+    ref?: React.RefObject<AgGridReact<T>>
 }
 
 function Table<Type>({
@@ -17,8 +18,6 @@ function Table<Type>({
     pinnedTopRowData,
     ...otherProps
 }: TableInterface<Type>) {
-    const gridRef = useRef<AgGridReact<Type>>(null)
-
     const cDefaultColDef = useMemo(
         () => ({
             sortable: true,
@@ -53,7 +52,6 @@ function Table<Type>({
             {rowData ? (
                 <AgGridReact<Type>
                     animateRows
-                    ref={gridRef}
                     columnDefs={columnDefs}
                     rowData={rowData}
                     defaultColDef={cDefaultColDef}
@@ -62,9 +60,6 @@ function Table<Type>({
                     paginationAutoPageSize
                     pagination
                     columnTypes={columnTypes}
-                    onGridReady={() => {
-                        gridRef.current?.api.sizeColumnsToFit()
-                    }}
                     defaultExcelExportParams={{
                         fileName: fileName ? fileName + '.xlsx' : 'export.xlsx',
                         columnKeys: columnDefs

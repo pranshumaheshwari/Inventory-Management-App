@@ -35,6 +35,8 @@ const Form = () => {
               poPendingStock: 0,
               lineStock: 0,
               supplierId: '',
+              mpq: 1,
+              moq: 1,
           }
     const form = useRawMaterialForm({
         initialValues,
@@ -252,34 +254,61 @@ const Form = () => {
                         placeholder="Enter Price"
                         withAsterisk
                         min={0}
+                        precision={2}
                         {...form.getInputProps('price')}
                     />
                     <FormInputNumber
                         name="iqcPendingStock"
-                        xs={4}
+                        xs={2}
                         type="number"
                         label="IQC Pending Stock"
                         placeholder="Enter IQC Stock"
                         min={0}
+                        precision={2}
+                        disabled
                         {...form.getInputProps('iqcPendingStock')}
                     />
                     <FormInputNumber
                         name="storeStock"
-                        xs={4}
+                        xs={2}
                         type="number"
                         label="Store Stock"
                         placeholder="Enter Store Stock"
                         min={0}
+                        precision={2}
+                        disabled
                         {...form.getInputProps('storeStock')}
                     />
                     <FormInputNumber
                         name="lineStock"
-                        xs={4}
+                        xs={2}
                         type="number"
                         label="Line Stock"
                         placeholder="Enter Line Stock"
                         min={0}
+                        precision={2}
+                        disabled
                         {...form.getInputProps('lineStock')}
+                    />
+                    <FormInputNumber
+                        name="mpq"
+                        xs={2}
+                        type="number"
+                        label="Minimum Packaging Quantity"
+                        placeholder="Enter MPQ"
+                        min={1}
+                        precision={2}
+                        {...form.getInputProps('mpq')}
+                    />
+                    <FormInputNumber
+                        name="moq"
+                        xs={2}
+                        type="number"
+                        label="Minimum Order Quantity"
+                        placeholder="Enter MOQ"
+                        min={1}
+                        precision={2}
+                        {...form.getInputProps('moq')}
                     />
                     {error && (
                         <Grid.Col xs={12}>

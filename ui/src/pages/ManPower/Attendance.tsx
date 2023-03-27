@@ -1,7 +1,7 @@
 import { Button, Grid, Text } from '@mantine/core'
 import { DatePicker, FormInputNumber } from '../../components'
 import { Fetch, useAuth } from '../../services'
-import { createFormContext, isNotEmpty } from '@mantine/form'
+import { isNotEmpty, useForm } from '@mantine/form'
 
 import React from 'react'
 import { openConfirmModal } from '@mantine/modals'
@@ -13,8 +13,6 @@ interface AttendanceInterface {
 }
 
 const Attendance = () => {
-    const [AttendanceFormProvider, _, useAttendanceForm] =
-        createFormContext<AttendanceInterface>()
     const {
         token: { token },
     } = useAuth()
@@ -22,7 +20,7 @@ const Attendance = () => {
         number: 0,
         date: new Date(),
     }
-    const form = useAttendanceForm({
+    const form = useForm({
         initialValues,
         validate: {
             number: (value) =>
@@ -73,53 +71,51 @@ const Attendance = () => {
     }
 
     return (
-        <AttendanceFormProvider form={form}>
-            <form
-                onSubmit={(e) => {
-                    e.preventDefault()
-                }}
-            >
-                <Grid>
-                    <FormInputNumber
-                        xs={6}
-                        label="Attendance"
-                        placeholder="Enter Attendance"
-                        withAsterisk
-                        min={0}
-                        {...form.getInputProps('number')}
-                    />
-                    <DatePicker
-                        xs={6}
-                        label="Date"
-                        placeholder="Select Date"
-                        withAsterisk
-                        value={form.values.date}
-                        onChange={(value) => {
-                            if (value) {
-                                form.setFieldValue('date', value)
+        <form
+            onSubmit={(e) => {
+                e.preventDefault()
+            }}
+        >
+            <Grid>
+                <FormInputNumber
+                    xs={6}
+                    label="Attendance"
+                    placeholder="Enter Attendance"
+                    withAsterisk
+                    min={0}
+                    {...form.getInputProps('number')}
+                />
+                <DatePicker
+                    xs={6}
+                    label="Date"
+                    placeholder="Select Date"
+                    withAsterisk
+                    value={form.values.date}
+                    onChange={(value) => {
+                        if (value) {
+                            form.setFieldValue('date', value)
+                        }
+                    }}
+                    error={form.getInputProps('date').error}
+                />
+                <Grid.Col xs={12}>
+                    <Button
+                        fullWidth
+                        size="md"
+                        variant="filled"
+                        color="primary"
+                        onClick={() => {
+                            const result = form.validate()
+                            if (!result.hasErrors) {
+                                openModal()
                             }
                         }}
-                        error={form.getInputProps('date').error}
-                    />
-                    <Grid.Col xs={12}>
-                        <Button
-                            fullWidth
-                            size="md"
-                            variant="filled"
-                            color="primary"
-                            onClick={() => {
-                                const result = form.validate()
-                                if (!result.hasErrors) {
-                                    openModal()
-                                }
-                            }}
-                        >
-                            Create
-                        </Button>
-                    </Grid.Col>
-                </Grid>
-            </form>
-        </AttendanceFormProvider>
+                    >
+                        Create
+                    </Button>
+                </Grid.Col>
+            </Grid>
+        </form>
     )
 }
 
