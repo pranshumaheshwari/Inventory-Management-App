@@ -10,6 +10,7 @@ import 'ag-grid-community/styles/ag-theme-alpine.css' // Optional theme CSS
 import App from './App'
 import { BrowserRouter } from 'react-router-dom'
 import { MantineProvider } from '@mantine/core'
+import { Notifications } from '@mantine/notifications'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 
@@ -18,6 +19,7 @@ root.render(
     <React.StrictMode>
         <BrowserRouter>
             <MantineProvider withNormalizeCSS withGlobalStyles>
+                <Notifications />
                 <App />
             </MantineProvider>
         </BrowserRouter>
