@@ -12,13 +12,14 @@ import {
     FormInputNumber,
     FormInputText,
     FormSelect,
+    Table,
 } from '../../../components'
-import { DispatchFormProvider, useDispatchForm } from './context'
 import { Fetch, useAuth } from '../../../services'
 import { FinishedGoodSelectFilter, FinishedGoodSelectItem } from '../../common'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
+import { isNotEmpty, useForm } from '@mantine/form'
 
-import { isNotEmpty } from '@mantine/form'
+import { ColDef } from 'ag-grid-community'
 import { openConfirmModal } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
 
@@ -58,7 +59,7 @@ const Dispatch = () => {
         },
     }
 
-    const form = useDispatchForm({
+    const form = useForm({
         initialValues,
         validate: {
             soId: isNotEmpty(),
@@ -217,240 +218,236 @@ const Dispatch = () => {
         getCustomer()
     }, [])
 
+    const detailsColumnDef = useMemo<
+        ColDef<OutwardsDispatch['details'][number]>[]
+    >(
+        () => [
+            {
+                field: 'fgId',
+                headerName: 'Part Number',
+            },
+            {
+                field: 'Description',
+                valueGetter: (params) => {
+                    return finishedgoods?.find(
+                        (fg) => fg.value === params.data?.fgId
+                    )?.description
+                },
+            },
+            {
+                field: 'quantity',
+                headerName: 'Quantity',
+            },
+            {
+                field: '#',
+                onCellClicked: ({ data }) => {
+                    if (data) {
+                        form.removeListItem(
+                            'details',
+                            form.values.details.findIndex(
+                                (d) => d.fgId === data.fgId
+                            )
+                        )
+                    }
+                },
+                cellRenderer: () => (
+                    <Button fullWidth size="xs" variant="outline" color="red">
+                        DELETE
+                    </Button>
+                ),
+            },
+        ],
+        [finishedgoods, form]
+    )
+
     if (!customer) {
         return <Skeleton width="90vw" height="100%" />
     }
 
     return (
-        <DispatchFormProvider form={form}>
-            <form
-                onSubmit={(e) => {
-                    e.preventDefault()
-                }}
-            >
-                <Grid>
-                    <Grid.Col xs={3} />
-                    <Grid.Col xs={6}>
-                        <Stepper
-                            active={activeStep}
-                            onStepClick={setActiveStep}
-                        >
-                            {['Basic Details', 'List of Finished Goods'].map(
-                                (label, index) => {
-                                    return (
-                                        <Stepper.Step
-                                            key={label}
-                                            label={label}
-                                        />
-                                    )
+        <form
+            onSubmit={(e) => {
+                e.preventDefault()
+            }}
+        >
+            <Grid>
+                <Grid.Col xs={3} />
+                <Grid.Col xs={6}>
+                    <Stepper active={activeStep} onStepClick={setActiveStep}>
+                        {['Basic Details', 'List of Finished Goods'].map(
+                            (label, index) => {
+                                return (
+                                    <Stepper.Step key={label} label={label} />
+                                )
+                            }
+                        )}
+                    </Stepper>
+                </Grid.Col>
+                <Grid.Col xs={3} />
+                {activeStep === 0 && (
+                    <>
+                        <FormInputText
+                            xs={6}
+                            label="Invoice"
+                            placeholder="Enter Invoice"
+                            withAsterisk
+                            {...form.getInputProps('invoiceNumber')}
+                        />
+                        <DatePicker
+                            xs={6}
+                            label="Date"
+                            placeholder="Select Date"
+                            withAsterisk
+                            {...form.getInputProps('createdAt')}
+                        />
+                        <FormSelect
+                            xs={6}
+                            label="Customer"
+                            placeholder="Select Customer"
+                            data={customer}
+                            withAsterisk
+                            {...form.getInputProps('customerId')}
+                            onChange={(value) => {
+                                if (value) {
+                                    form.setFieldValue('customerId', value)
+                                    updateSalesOrder(value)
                                 }
-                            )}
-                        </Stepper>
-                    </Grid.Col>
-                    <Grid.Col xs={3} />
-                    {activeStep === 0 && (
-                        <>
-                            <FormInputText
-                                xs={6}
-                                label="Invoice"
-                                placeholder="Enter Invoice"
-                                withAsterisk
-                                {...form.getInputProps('invoiceNumber')}
-                            />
-                            <DatePicker
-                                xs={6}
-                                label="Date"
-                                placeholder="Select Date"
-                                withAsterisk
-                                {...form.getInputProps('createdAt')}
-                            />
-                            <FormSelect
-                                xs={6}
-                                label="Customer"
-                                placeholder="Select Customer"
-                                data={customer}
-                                withAsterisk
-                                {...form.getInputProps('customerId')}
-                                onChange={(value) => {
-                                    if (value) {
-                                        form.setFieldValue('customerId', value)
-                                        updateSalesOrder(value)
-                                    }
-                                }}
-                            />
-                            <FormSelect
-                                name="soId"
-                                xs={6}
-                                label="Sales Order"
-                                placeholder="Select Sales Order"
-                                data={salesorder}
-                                withAsterisk
-                                {...form.getInputProps('soId')}
-                                onChange={(value) => {
-                                    if (value) {
-                                        form.setFieldValue('soId', value)
-                                        getFinishedGoods(value)
-                                    }
-                                }}
-                            />
-                            <Grid.Col xs={12}>
-                                <Button
-                                    fullWidth
-                                    size="md"
-                                    variant="filled"
-                                    color="primary"
-                                    onClick={handleNext}
-                                >
-                                    Next
-                                </Button>
-                            </Grid.Col>
-                        </>
-                    )}
-
-                    {activeStep === 1 && (
-                        <>
-                            <Grid.Col xs={1} />
-                            <FormSelect
-                                xs={6}
-                                name="selectedFg.fgId"
-                                label="Finished Good"
-                                placeholder="Select Finished Good"
-                                data={finishedgoods}
-                                itemComponent={FinishedGoodSelectItem}
-                                filter={FinishedGoodSelectFilter}
-                                {...form.getInputProps('selectedFg.fgId')}
-                            />
-                            <FormInputNumber
-                                name="selectedFg.quantity"
-                                xs={4}
-                                label="Quantity"
-                                placeholder="Enter Quantity"
-                                min={0}
-                                {...form.getInputProps('selectedFg.quantity')}
-                            />
-                            <Grid.Col xs={1} />
-                            <Grid.Col xs={12}>
-                                <Button
-                                    fullWidth
-                                    size="md"
-                                    variant="filled"
-                                    color="primary"
-                                    onClick={() => {
-                                        if (
-                                            form.values.selectedFg.quantity &&
-                                            form.values.selectedFg.fgId
-                                        ) {
-                                            form.insertListItem(
-                                                'details',
-                                                form.values.selectedFg
-                                            )
-                                            form.setFieldValue('selectedFg', {
-                                                fgId: '',
-                                                quantity: 0,
-                                            })
-                                        }
-                                    }}
-                                >
-                                    Add to Dispatch
-                                </Button>
-                            </Grid.Col>
-                            <Grid.Col xs={12}>
-                                <Divider />
-                            </Grid.Col>
-                            {form.values.details.length !== 0 && (
-                                <Grid.Col xs={12}>
-                                    <Grid justify="center" align="center" grow>
-                                        <Grid.Col xs={4}>
-                                            <Text fz="lg">
-                                                Finished Goods Identifier
-                                            </Text>
-                                        </Grid.Col>
-                                        <Grid.Col xs={4}>
-                                            <Text fz="lg">Quantity</Text>
-                                        </Grid.Col>
-                                        <Grid.Col xs={4} />
-                                    </Grid>
-                                </Grid.Col>
-                            )}
-                            {form.values.details.map((item, index) => (
-                                <Grid.Col xs={12} key={index}>
-                                    <Grid justify="center" align="center" grow>
-                                        <FormInputText
-                                            {...form.getInputProps(
-                                                `details.${index}.fgId`
-                                            )}
-                                            xs={4}
-                                            disabled
-                                        />
-                                        <FormInputNumber
-                                            {...form.getInputProps(
-                                                `details.${index}.quantity`
-                                            )}
-                                            min={0}
-                                            xs={4}
-                                        />
-                                        <Grid.Col xs={4}>
-                                            <Button
-                                                fullWidth
-                                                size="xs"
-                                                variant="outline"
-                                                color="red"
-                                                onClick={() => {
-                                                    form.removeListItem(
-                                                        'details',
-                                                        index
-                                                    )
-                                                }}
-                                            >
-                                                DELETE
-                                            </Button>
-                                        </Grid.Col>
-                                    </Grid>
-                                </Grid.Col>
-                            ))}
-                        </>
-                    )}
-
-                    {error && (
+                            }}
+                        />
+                        <FormSelect
+                            name="soId"
+                            xs={6}
+                            label="Sales Order"
+                            placeholder="Select Sales Order"
+                            data={salesorder}
+                            withAsterisk
+                            {...form.getInputProps('soId')}
+                            onChange={(value) => {
+                                if (value) {
+                                    form.setFieldValue('soId', value)
+                                    getFinishedGoods(value)
+                                }
+                            }}
+                        />
                         <Grid.Col xs={12}>
-                            <Text c="red">{error}</Text>
+                            <Button
+                                fullWidth
+                                size="md"
+                                variant="filled"
+                                color="primary"
+                                onClick={handleNext}
+                            >
+                                Next
+                            </Button>
                         </Grid.Col>
-                    )}
-                    {activeStep === 1 && (
-                        <>
-                            <Grid.Col xs={2}>
-                                <Button
-                                    fullWidth
-                                    size="md"
-                                    variant="default"
-                                    onClick={handleBack}
-                                >
-                                    Back
-                                </Button>
-                            </Grid.Col>
-                            <Grid.Col xs={8} />
-                            <Grid.Col xs={2}>
-                                <Button
-                                    fullWidth
-                                    size="md"
-                                    type="submit"
-                                    variant="filled"
-                                    color="primary"
-                                    onClick={() => {
-                                        const result = form.validate()
-                                        if (!result.hasErrors) {
-                                            openModal()
-                                        }
-                                    }}
-                                >
-                                    Create
-                                </Button>
-                            </Grid.Col>
-                        </>
-                    )}
-                </Grid>
-            </form>
-        </DispatchFormProvider>
+                    </>
+                )}
+
+                {activeStep === 1 && (
+                    <>
+                        <Grid.Col xs={1} />
+                        <FormSelect
+                            xs={6}
+                            name="selectedFg.fgId"
+                            label="Finished Good"
+                            placeholder="Select Finished Good"
+                            data={finishedgoods}
+                            itemComponent={FinishedGoodSelectItem}
+                            filter={FinishedGoodSelectFilter}
+                            {...form.getInputProps('selectedFg.fgId')}
+                        />
+                        <FormInputNumber
+                            name="selectedFg.quantity"
+                            xs={4}
+                            label="Quantity"
+                            placeholder="Enter Quantity"
+                            min={0}
+                            {...form.getInputProps('selectedFg.quantity')}
+                        />
+                        <Grid.Col xs={1} />
+                        <Grid.Col xs={12}>
+                            <Button
+                                fullWidth
+                                size="md"
+                                variant="filled"
+                                color="primary"
+                                onClick={() => {
+                                    if (
+                                        form.values.selectedFg.quantity &&
+                                        form.values.selectedFg.fgId
+                                    ) {
+                                        form.insertListItem(
+                                            'details',
+                                            form.values.selectedFg
+                                        )
+                                        form.setFieldValue('selectedFg', {
+                                            fgId: '',
+                                            quantity: 0,
+                                        })
+                                    }
+                                }}
+                            >
+                                Add to Dispatch
+                            </Button>
+                        </Grid.Col>
+                        <Grid.Col xs={12}>
+                            <Divider />
+                        </Grid.Col>
+                        <Grid.Col
+                            xs={12}
+                            style={{
+                                height: '50vh',
+                            }}
+                        >
+                            <Table<OutwardsDispatch['details'][number]>
+                                fileName={form.values.invoiceNumber}
+                                rowData={form.values.details}
+                                columnDefs={detailsColumnDef}
+                                pagination={false}
+                            />
+                        </Grid.Col>
+                    </>
+                )}
+
+                {error && (
+                    <Grid.Col xs={12}>
+                        <Text c="red">{error}</Text>
+                    </Grid.Col>
+                )}
+                {activeStep === 1 && (
+                    <>
+                        <Grid.Col xs={2}>
+                            <Button
+                                fullWidth
+                                size="md"
+                                variant="default"
+                                onClick={handleBack}
+                            >
+                                Back
+                            </Button>
+                        </Grid.Col>
+                        <Grid.Col xs={8} />
+                        <Grid.Col xs={2}>
+                            <Button
+                                fullWidth
+                                size="md"
+                                type="submit"
+                                variant="filled"
+                                color="primary"
+                                onClick={() => {
+                                    const result = form.validate()
+                                    if (!result.hasErrors) {
+                                        openModal()
+                                    }
+                                }}
+                            >
+                                Create
+                            </Button>
+                        </Grid.Col>
+                    </>
+                )}
+            </Grid>
+        </form>
     )
 }
 

@@ -56,10 +56,7 @@ function DispatchReport() {
                         },
                         {
                             createdAt: {
-                                lte: dayjs(value[1])
-                                    .add(1, 'day')
-                                    .endOf('d')
-                                    .toISOString(),
+                                lte: dayjs(value[1]).endOf('d').toISOString(),
                             },
                         },
                     ],

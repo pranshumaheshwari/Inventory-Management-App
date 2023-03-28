@@ -111,16 +111,12 @@ function ById() {
                     AND: [
                         {
                             createdAt: {
-                                gte: value[0]?.toISOString(),
+                                gte: dayjs(value[0]).startOf('d').toISOString(),
                             },
                         },
                         {
                             createdAt: {
-                                lte: dayjs(value[1])
-                                    .add(1, 'day')
-                                    .endOf('d')
-                                    .toDate()
-                                    .toISOString(),
+                                lte: dayjs(value[1]).endOf('d').toISOString(),
                             },
                         },
                     ],
