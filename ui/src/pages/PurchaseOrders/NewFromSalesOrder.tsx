@@ -245,13 +245,16 @@ const NewFromSalesOrder = () => {
                                         rm.stock) /
                                         rm.mpq
                                 ) * rm.mpq
-                            if (rm.quantity < rm.moq) {
-                                rm.quantity = rm.moq
-                            }
                         }
                     })
                     .then(() => {
                         data = data.filter((d) => d.quantity > 0)
+                    })
+                    .then(() => {
+                        data = data.map((d) => ({
+                            ...d,
+                            quantity: Math.max(d.quantity, d.moq),
+                        }))
                     })
             })
         ).then(() => {

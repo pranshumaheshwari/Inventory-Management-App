@@ -532,7 +532,12 @@ const Form = () => {
                                     size="md"
                                     variant="filled"
                                     color="primary"
-                                    onClick={openModal}
+                                    onClick={() => {
+                                        const result = form.validate()
+                                        if (!result.hasErrors) {
+                                            openModal()
+                                        }
+                                    }}
                                 >
                                     {isEdit ? 'Update' : 'Create'}
                                 </Button>
