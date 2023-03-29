@@ -5,7 +5,6 @@ import {
     SelectItem,
     Skeleton,
     Stepper,
-    Table,
     Text,
 } from '@mantine/core'
 import { Fetch, useAuth } from '../../services'
@@ -13,22 +12,26 @@ import {
     FormInputNumber,
     FormInputText,
     FormMultiSelect,
+    Table,
 } from '../../components'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { isNotEmpty, useForm } from '@mantine/form'
 
+import { ColDef } from 'ag-grid-community'
 import dayjs from 'dayjs'
 import { openConfirmModal } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
 import { useNavigate } from 'react-router-dom'
 
-export interface PurchaseOrderFromSalesOrderInterface {
+interface PurchaseOrderFromSalesOrderInterface {
     salesOrders: string[]
     finishedGoods: {
         fgId: string
         quantity: number
     }[]
     rawMaterials: {
+        description: string
+        dtplCode: string
         supplierId: string
         rmId: string
         quantity: number
@@ -38,6 +41,7 @@ export interface PurchaseOrderFromSalesOrderInterface {
         stock: number
         mpq: number
         moq: number
+        satisfiedRequirement: number
     }[]
 }
 
@@ -171,11 +175,15 @@ const NewFromSalesOrder = () => {
                         authToken: token,
                         params: {
                             select: JSON.stringify({
+                                storeStock: true,
+                                oqcPendingStock: true,
                                 bom: {
                                     select: {
                                         rm: {
                                             select: {
                                                 id: true,
+                                                description: true,
+                                                dtplCode: true,
                                                 supplierId: true,
                                                 storeStock: true,
                                                 lineStock: true,
@@ -195,10 +203,14 @@ const NewFromSalesOrder = () => {
                 })
                     .then(
                         (f: {
+                            storeStock: number
+                            oqcPendingStock: number
                             bom: {
                                 quantity: number
                                 rm: {
                                     id: string
+                                    description: string
+                                    dtplCode: string
                                     supplierId: string
                                     price: number
                                     storeStock: number
@@ -217,9 +229,14 @@ const NewFromSalesOrder = () => {
                                 if (idx !== -1) {
                                     data[idx].requirement +=
                                         rm.quantity * fg.quantity
+                                    data[idx].satisfiedRequirement +=
+                                        rm.quantity *
+                                        (f.oqcPendingStock + f.storeStock)
                                 } else {
                                     data.push({
                                         rmId: rm.rm.id,
+                                        description: rm.rm.description,
+                                        dtplCode: rm.rm.dtplCode,
                                         quantity: 0,
                                         supplierId: rm.rm.supplierId,
                                         poId: `${rm.rm.supplierId}-${month}-001`,
@@ -232,6 +249,9 @@ const NewFromSalesOrder = () => {
                                             rm.rm.poPendingStock,
                                         mpq: rm.rm.mpq,
                                         moq: rm.rm.moq,
+                                        satisfiedRequirement:
+                                            rm.quantity *
+                                            (f.oqcPendingStock + f.storeStock),
                                     })
                                 }
                             }
@@ -242,16 +262,20 @@ const NewFromSalesOrder = () => {
                             rm.quantity =
                                 Math.ceil(
                                     (rm.requirement * EXTRA_QUANTITY -
-                                        rm.stock) /
+                                        rm.stock -
+                                        rm.satisfiedRequirement) /
                                         rm.mpq
                                 ) * rm.mpq
-                            if (rm.quantity < rm.moq) {
-                                rm.quantity = rm.moq
-                            }
                         }
                     })
                     .then(() => {
                         data = data.filter((d) => d.quantity > 0)
+                    })
+                    .then(() => {
+                        data = data.map((d) => ({
+                            ...d,
+                            quantity: Math.max(d.quantity, d.moq),
+                        }))
                     })
             })
         ).then(() => {
@@ -305,6 +329,97 @@ const NewFromSalesOrder = () => {
     useEffect(() => {
         Promise.all([getSalesOrders()])
     }, [])
+
+    const detailsColumnDef = useMemo<
+        ColDef<PurchaseOrderFromSalesOrderInterface['rawMaterials'][number]>[]
+    >(
+        () => [
+            {
+                field: 'rmId',
+                headerName: 'Raw Material',
+                pinned: 'left',
+            },
+            {
+                field: 'description',
+                headerName: 'Description',
+            },
+            {
+                field: 'dtplCode',
+                headerName: 'DTPL Part Number',
+            },
+            {
+                field: 'supplierId',
+                headerName: 'Supplier',
+            },
+            {
+                field: 'poId',
+                headerName: 'Purchase Order',
+            },
+            {
+                field: 'requirement',
+                headerName: 'Requirement',
+            },
+            {
+                field: 'stock',
+                headerName: 'Stock',
+            },
+            {
+                headerName: 'PO Quantity',
+                editable: true,
+                valueParser: ({ newValue }) => parseFloat(newValue),
+                valueGetter: ({ data }) =>
+                    form.values.rawMaterials.find(
+                        (rm) => rm.rmId === data?.rmId
+                    )?.quantity,
+                valueSetter: ({ newValue, data }) => {
+                    form.setFieldValue(
+                        `rawMaterials.${form.values.rawMaterials.findIndex(
+                            (rm) => rm.rmId === data?.rmId
+                        )}.quantity`,
+                        newValue
+                    )
+                    return true
+                },
+            },
+            {
+                headerName: 'Price',
+                editable: true,
+                valueParser: ({ newValue }) => parseFloat(newValue),
+                valueGetter: ({ data }) =>
+                    form.values.rawMaterials.find(
+                        (rm) => rm.rmId === data?.rmId
+                    )?.price,
+                valueSetter: ({ data, newValue }) => {
+                    form.setFieldValue(
+                        `rawMaterials.${form.values.rawMaterials.findIndex(
+                            (rm) => rm.rmId === data?.rmId
+                        )}.price`,
+                        newValue
+                    )
+                    return true
+                },
+            },
+            {
+                field: '#',
+                onCellClicked: ({ data }) => {
+                    if (data) {
+                        form.removeListItem(
+                            'rawMaterials',
+                            form.values.rawMaterials.findIndex(
+                                (d) => d.rmId === data.rmId
+                            )
+                        )
+                    }
+                },
+                cellRenderer: () => (
+                    <Button fullWidth size="xs" variant="outline" color="red">
+                        REMOVE
+                    </Button>
+                ),
+            },
+        ],
+        [form]
+    )
 
     if (!salesOrder) {
         return <Skeleton width="90vw" height="100%" />
@@ -412,7 +527,7 @@ const NewFromSalesOrder = () => {
                                                 )
                                             }}
                                         >
-                                            DELETE
+                                            REMOVE
                                         </Button>
                                     </Grid.Col>
                                 </Grid>
@@ -447,90 +562,20 @@ const NewFromSalesOrder = () => {
                 )}
                 {activeStep === 2 && (
                     <>
-                        {form.values.rawMaterials.length !== 0 && (
-                            <Table withColumnBorders>
-                                <thead>
-                                    <tr>
-                                        <th>RM</th>
-                                        <th>Supplier</th>
-                                        <th>Puchase Order</th>
-                                        <th>Requirement</th>
-                                        <th>Stock</th>
-                                        <th>PO Quantity</th>
-                                        <th>Price</th>
-                                    </tr>
-                                </thead>
-                                {form.values.rawMaterials.map((item, index) => (
-                                    <tr key={index}>
-                                        <td>
-                                            {
-                                                form.values.rawMaterials[index]
-                                                    .rmId
-                                            }
-                                        </td>
-                                        <td>
-                                            {
-                                                form.values.rawMaterials[index]
-                                                    .supplierId
-                                            }
-                                        </td>
-                                        <td>
-                                            {
-                                                form.values.rawMaterials[index]
-                                                    .poId
-                                            }
-                                        </td>
-                                        <td>
-                                            {
-                                                form.values.rawMaterials[index]
-                                                    .requirement
-                                            }
-                                        </td>
-                                        <td>
-                                            {
-                                                form.values.rawMaterials[index]
-                                                    .stock
-                                            }
-                                        </td>
-                                        <td>
-                                            <FormInputNumber
-                                                precision={2}
-                                                {...form.getInputProps(
-                                                    `rawMaterials.${index}.quantity`
-                                                )}
-                                                xs={2}
-                                            />
-                                        </td>
-                                        <td>
-                                            <FormInputNumber
-                                                precision={2}
-                                                {...form.getInputProps(
-                                                    `rawMaterials.${index}.price`
-                                                )}
-                                                xs={5}
-                                            />
-                                        </td>
-                                        <td>
-                                            <Button
-                                                fullWidth
-                                                size="xs"
-                                                variant="outline"
-                                                color="red"
-                                                onClick={() => {
-                                                    form.removeListItem(
-                                                        'rawMaterials',
-                                                        index
-                                                    )
-                                                }}
-                                            >
-                                                DELETE
-                                            </Button>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </Table>
-                        )}
-
+                        <Grid.Col
+                            xs={12}
+                            style={{
+                                height: '60vh',
+                            }}
+                        >
+                            <Table<
+                                PurchaseOrderFromSalesOrderInterface['rawMaterials'][number]
+                            >
+                                rowData={form.values.rawMaterials}
+                                columnDefs={detailsColumnDef}
+                                pagination={false}
+                            />
+                        </Grid.Col>
                         <Grid.Col xs={2}>
                             <Button
                                 fullWidth

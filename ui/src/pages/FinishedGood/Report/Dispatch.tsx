@@ -51,14 +51,12 @@ function DispatchReport() {
                     AND: [
                         {
                             createdAt: {
-                                gte: value[0].toISOString(),
+                                gte: dayjs(value[0]).startOf('d').toISOString(),
                             },
                         },
                         {
                             createdAt: {
-                                lte: dayjs(value[1])
-                                    .add(1, 'day')
-                                    .toISOString(),
+                                lte: dayjs(value[1]).endOf('d').toISOString(),
                             },
                         },
                     ],
@@ -104,7 +102,6 @@ function DispatchReport() {
                         xs={6}
                         name="dateRange"
                         label="Select Date Range"
-                        range={value}
                         clearable
                         value={value}
                         onChange={(value) => {

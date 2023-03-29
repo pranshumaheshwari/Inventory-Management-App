@@ -1,10 +1,9 @@
 import { Button, Grid, SelectItem, Skeleton, Text } from '@mantine/core'
 import { Fetch, useAuth } from '../../../services'
 import { FormInputNumber, FormSelect } from '../../../components'
-import { OutwardsQualtiyFormProvider, useOutwardsQualtiyForm } from './context'
 import React, { useEffect, useState } from 'react'
+import { isNotEmpty, useForm } from '@mantine/form'
 
-import { isNotEmpty } from '@mantine/form'
 import { openConfirmModal } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
 
@@ -32,7 +31,7 @@ const QualityCheck = () => {
         quantity: 0,
     }
 
-    const form = useOutwardsQualtiyForm({
+    const form = useForm({
         initialValues,
         validate: {
             soId: isNotEmpty(),
@@ -265,150 +264,141 @@ const QualityCheck = () => {
     }
 
     return (
-        <OutwardsQualtiyFormProvider form={form}>
-            <form
-                onSubmit={(e) => {
-                    e.preventDefault()
-                }}
-            >
-                <Grid>
-                    <FormSelect
-                        xs={6}
-                        label="Customer"
-                        placeholder="Select Customer"
-                        data={customer}
-                        withAsterisk
-                        {...form.getInputProps('customerId')}
-                        onChange={(value) => {
-                            if (value) {
-                                form.setFieldValue('customerId', value)
-                                updateSalesOrder(value)
-                            }
-                        }}
-                    />
-                    <FormSelect
-                        xs={6}
-                        label="Sales Order"
-                        placeholder="Select Sales Order"
-                        data={salesorder}
-                        withAsterisk
-                        {...form.getInputProps('soId')}
-                        onChange={(value) => {
-                            if (value) {
-                                form.setFieldValue('soId', value)
-                                getFinishedGoods(value)
-                            }
-                        }}
-                    />
-                    <FormSelect
-                        xs={4}
-                        id="fgId"
-                        label="Finished Good"
-                        placeholder="Select Finished Good"
-                        data={[
-                            ...new Set(finishedGoods.map((item) => item.value)),
-                        ]}
-                        withAsterisk
-                        {...form.getInputProps('fgId')}
-                    />
-                    <FormSelect
-                        xs={4}
-                        id="productionId"
-                        label="Production ID"
-                        placeholder="Select Production ID"
-                        data={[
-                            ...finishedGoods
-                                .filter((item) => {
-                                    if (form.values.fgId) {
-                                        return item.fgId === form.values.fgId
+        <form
+            onSubmit={(e) => {
+                e.preventDefault()
+            }}
+        >
+            <Grid>
+                <FormSelect
+                    xs={6}
+                    label="Customer"
+                    placeholder="Select Customer"
+                    data={customer}
+                    withAsterisk
+                    {...form.getInputProps('customerId')}
+                    onChange={(value) => {
+                        if (value) {
+                            form.setFieldValue('customerId', value)
+                            updateSalesOrder(value)
+                        }
+                    }}
+                />
+                <FormSelect
+                    xs={6}
+                    label="Sales Order"
+                    placeholder="Select Sales Order"
+                    data={salesorder}
+                    withAsterisk
+                    {...form.getInputProps('soId')}
+                    onChange={(value) => {
+                        if (value) {
+                            form.setFieldValue('soId', value)
+                            getFinishedGoods(value)
+                        }
+                    }}
+                />
+                <FormSelect
+                    xs={4}
+                    id="fgId"
+                    label="Finished Good"
+                    placeholder="Select Finished Good"
+                    data={[...new Set(finishedGoods.map((item) => item.value))]}
+                    withAsterisk
+                    {...form.getInputProps('fgId')}
+                />
+                <FormSelect
+                    xs={4}
+                    id="productionId"
+                    label="Production ID"
+                    placeholder="Select Production ID"
+                    data={[
+                        ...finishedGoods
+                            .filter((item) => {
+                                if (form.values.fgId) {
+                                    return item.fgId === form.values.fgId
+                                }
+                                return false
+                            })
+                            .map((item) => ({
+                                value: item.productionId.toString(),
+                                label: item.productionId.toString(),
+                            })),
+                    ]}
+                    withAsterisk
+                    {...form.getInputProps('productionId')}
+                    onChange={(value) => {
+                        if (value) {
+                            form.setFieldValue('productionId', value)
+                            const productionId = parseInt(value)
+                            const quantity = finishedGoods.filter((item) => {
+                                if (
+                                    item.fgId === form.values.fgId &&
+                                    item.productionId === productionId
+                                ) {
+                                    return true
+                                }
+                                return false
+                            })
+                            form.setFieldValue('quantity', quantity[0].quantity)
+                        }
+                    }}
+                />
+                <FormInputNumber
+                    name="quantity"
+                    xs={4}
+                    label="Quantity"
+                    placeholder="Enter Quantity"
+                    min={0}
+                    withAsterisk
+                    {...form.getInputProps('quantity')}
+                    disabled
+                />
+                {error && (
+                    <Grid.Col xs={12}>
+                        <Text c="red">{error}</Text>
+                    </Grid.Col>
+                )}
+                {
+                    <>
+                        <Grid.Col xs={2}>
+                            <Button
+                                fullWidth
+                                size="md"
+                                variant="outline"
+                                color="red"
+                                onClick={() => {
+                                    const result = form.validate()
+                                    if (!result.hasErrors) {
+                                        openDeleteModal()
                                     }
-                                    return false
-                                })
-                                .map((item) => ({
-                                    value: item.productionId.toString(),
-                                    label: item.productionId.toString(),
-                                })),
-                        ]}
-                        withAsterisk
-                        {...form.getInputProps('productionId')}
-                        onChange={(value) => {
-                            if (value) {
-                                form.setFieldValue('productionId', value)
-                                const productionId = parseInt(value)
-                                const quantity = finishedGoods.filter(
-                                    (item) => {
-                                        if (
-                                            item.fgId === form.values.fgId &&
-                                            item.productionId === productionId
-                                        ) {
-                                            return true
-                                        }
-                                        return false
-                                    }
-                                )
-                                form.setFieldValue(
-                                    'quantity',
-                                    quantity[0].quantity
-                                )
-                            }
-                        }}
-                    />
-                    <FormInputNumber
-                        name="quantity"
-                        xs={4}
-                        label="Quantity"
-                        placeholder="Enter Quantity"
-                        min={0}
-                        withAsterisk
-                        {...form.getInputProps('quantity')}
-                        disabled
-                    />
-                    {error && (
-                        <Grid.Col xs={12}>
-                            <Text c="red">{error}</Text>
+                                }}
+                            >
+                                Reject
+                            </Button>
                         </Grid.Col>
-                    )}
-                    {
-                        <>
-                            <Grid.Col xs={2}>
-                                <Button
-                                    fullWidth
-                                    size="md"
-                                    variant="outline"
-                                    color="red"
-                                    onClick={() => {
-                                        const result = form.validate()
-                                        if (!result.hasErrors) {
-                                            openDeleteModal()
-                                        }
-                                    }}
-                                >
-                                    Reject
-                                </Button>
-                            </Grid.Col>
-                            <Grid.Col xs={8} />
-                            <Grid.Col xs={2}>
-                                <Button
-                                    fullWidth
-                                    size="md"
-                                    type="button"
-                                    variant="filled"
-                                    color="primary"
-                                    onClick={() => {
-                                        const result = form.validate()
-                                        if (!result.hasErrors) {
-                                            openModal()
-                                        }
-                                    }}
-                                >
-                                    Approve
-                                </Button>
-                            </Grid.Col>
-                        </>
-                    }
-                </Grid>
-            </form>
-        </OutwardsQualtiyFormProvider>
+                        <Grid.Col xs={8} />
+                        <Grid.Col xs={2}>
+                            <Button
+                                fullWidth
+                                size="md"
+                                type="button"
+                                variant="filled"
+                                color="primary"
+                                onClick={() => {
+                                    const result = form.validate()
+                                    if (!result.hasErrors) {
+                                        openModal()
+                                    }
+                                }}
+                            >
+                                Approve
+                            </Button>
+                        </Grid.Col>
+                    </>
+                }
+            </Grid>
+        </form>
     )
 }
 

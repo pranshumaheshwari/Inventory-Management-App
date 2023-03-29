@@ -12,6 +12,7 @@ export interface InvoiceInterface {
     id: string
     status: string
     invoiceDetails: {
+        poId: string
         rmId: string
         quantity: number
     }[]

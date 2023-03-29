@@ -15,17 +15,24 @@ import {
     FormSelect,
     Table,
 } from '../../../components'
-import { PurchaseOrdersFormProvider, usePurchaseOrdersForm } from './context'
 import { RawMaterialSelectFilter, RawMaterialSelectItem } from '../../common'
 import React, { useEffect, useMemo, useState } from 'react'
+import { isNotEmpty, useForm } from '@mantine/form'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import { ColDef } from 'ag-grid-community'
 import { PurchaseOrdersInterface } from '../PurchaseOrders'
 import { RawMaterialInterface } from '../../RawMaterial/RawMaterial'
-import { isNotEmpty } from '@mantine/form'
 import { openConfirmModal } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
+
+interface PurchaseOrdersInterfaceForm extends PurchaseOrdersInterface {
+    selectedRm: {
+        rmId: string
+        quantity: number
+        price: number
+    }
+}
 
 const Form = () => {
     const navigate = useNavigate()
@@ -38,16 +45,7 @@ const Form = () => {
     const [error, setError] = useState('')
     const [activeStep, setActiveStep] = React.useState(0)
     const [rawMaterial, setRawMaterial] = useState<SelectItem[]>([])
-    const [selectedRm, setSelectedRm] = useState<{
-        rm: SelectItem
-        quantity: number
-    }>({
-        rm: {
-            value: '',
-        },
-        quantity: 0,
-    })
-    let initialValues: PurchaseOrdersInterface = {
+    let initialValues: PurchaseOrdersInterfaceForm = {
         id: '',
         supplierId: '',
         status: 'Open',
@@ -55,16 +53,21 @@ const Form = () => {
         supplier: {
             name: '',
         },
+        selectedRm: {
+            rmId: '',
+            quantity: 0,
+            price: 0,
+        },
     }
 
     if (isEdit) {
         initialValues = {
             ...initialValues,
-            ...(location.state as PurchaseOrdersInterface),
+            ...(location.state as PurchaseOrdersInterfaceForm),
         }
     }
 
-    const form = usePurchaseOrdersForm({
+    const form = useForm({
         initialValues,
         validate: {
             id: isNotEmpty(),
@@ -277,32 +280,27 @@ const Form = () => {
             },
             {
                 field: '#',
-                cellRenderer: ({
-                    data,
-                }: {
-                    data: PurchaseOrdersInterface['poDetails'][number]
-                }) => (
-                    <Button
-                        fullWidth
-                        size="xs"
-                        variant="outline"
-                        color="red"
-                        onClick={() => {
-                            form.removeListItem(
-                                'poDetails',
-                                form.values.poDetails.findIndex(
-                                    (d) => d.rmId === data.rmId
-                                )
+                onCellClicked: ({ data }) => {
+                    if (data) {
+                        form.removeListItem(
+                            'poDetails',
+                            form.values.poDetails.findIndex(
+                                (d) => d.rmId === data.rmId
                             )
+                        )
+                        if (isEdit) {
                             onDeleteRm(data.rmId)
-                        }}
-                    >
+                        }
+                    }
+                },
+                cellRenderer: () => (
+                    <Button fullWidth size="xs" variant="outline" color="red">
                         DELETE
                     </Button>
                 ),
             },
         ],
-        [rawMaterial]
+        [rawMaterial, form]
     )
 
     if (!supplier) {
@@ -310,247 +308,209 @@ const Form = () => {
     }
 
     return (
-        <PurchaseOrdersFormProvider form={form}>
-            <form
-                onSubmit={(e) => {
-                    e.preventDefault()
-                }}
-            >
-                <Grid justify="center" align="center" grow>
-                    <Grid.Col xs={3} />
-                    <Grid.Col xs={6}>
-                        <Stepper
-                            active={activeStep}
-                            onStepClick={setActiveStep}
-                        >
-                            {['Basic Details', 'List of Raw Material'].map(
-                                (label, index) => {
-                                    return (
-                                        <Stepper.Step
-                                            key={label}
-                                            label={label}
-                                        />
+        <form
+            onSubmit={(e) => {
+                e.preventDefault()
+            }}
+        >
+            <Grid justify="center" align="center" grow>
+                <Grid.Col xs={3} />
+                <Grid.Col xs={6}>
+                    <Stepper active={activeStep} onStepClick={setActiveStep}>
+                        {['Basic Details', 'List of Raw Material'].map(
+                            (label, index) => {
+                                return (
+                                    <Stepper.Step key={label} label={label} />
+                                )
+                            }
+                        )}
+                    </Stepper>
+                </Grid.Col>
+                <Grid.Col xs={3} />
+                {activeStep === 0 && (
+                    <>
+                        <FormInputText
+                            name="id"
+                            xs={2}
+                            type="text"
+                            label="ID"
+                            placeholder="Enter ID"
+                            withAsterisk
+                            {...form.getInputProps('id')}
+                        />
+                        <FormSelect
+                            name="supplierId"
+                            xs={6}
+                            label="Supplier"
+                            placeholder="Select Supplier"
+                            data={supplier}
+                            withAsterisk
+                            {...form.getInputProps('supplierId')}
+                            onChange={(supplierId) => {
+                                if (supplierId) {
+                                    form.setFieldValue('supplierId', supplierId)
+                                    getRawMaterials(supplierId)
+                                }
+                            }}
+                        />
+                        <Grid.Col xs={12}>
+                            <Button
+                                fullWidth
+                                size="md"
+                                variant="filled"
+                                color="primary"
+                                onClick={handleNext}
+                                disabled={!form.values.supplierId}
+                            >
+                                Next
+                            </Button>
+                        </Grid.Col>
+                    </>
+                )}{' '}
+                {activeStep === 1 && (
+                    <>
+                        <FormSelect
+                            xs={6}
+                            name="selectedRm.rmId"
+                            label="Raw Material"
+                            data={rawMaterial}
+                            itemComponent={RawMaterialSelectItem}
+                            filter={RawMaterialSelectFilter}
+                            {...form.getInputProps('selectedRm.rmId')}
+                            onChange={(rmId) => {
+                                if (rmId) {
+                                    form.setFieldValue('selectedRm.rmId', rmId)
+                                    form.setFieldValue(
+                                        'selectedRm.price',
+                                        rawMaterial.find((rm) => rm.id === rmId)
+                                            ?.price
                                     )
                                 }
-                            )}
-                        </Stepper>
-                    </Grid.Col>
-                    <Grid.Col xs={3} />
-                    {activeStep === 0 && (
-                        <>
-                            <FormInputText
-                                name="id"
-                                xs={2}
-                                type="text"
-                                label="ID"
-                                placeholder="Enter ID"
-                                withAsterisk
-                                {...form.getInputProps('id')}
-                            />
-                            <FormSelect
-                                name="supplierId"
-                                xs={6}
-                                label="Supplier"
-                                placeholder="Select Supplier"
-                                data={supplier}
-                                withAsterisk
-                                {...form.getInputProps('supplierId')}
-                                onChange={(supplierId) => {
-                                    if (supplierId) {
-                                        form.setFieldValue(
-                                            'supplierId',
-                                            supplierId
-                                        )
-                                        getRawMaterials(supplierId)
-                                    }
-                                }}
-                            />
-                            <Grid.Col xs={12}>
-                                <Button
-                                    fullWidth
-                                    size="md"
-                                    variant="filled"
-                                    color="primary"
-                                    onClick={handleNext}
-                                >
-                                    Next
-                                </Button>
-                            </Grid.Col>
-                        </>
-                    )}{' '}
-                    {activeStep === 1 && (
-                        <>
-                            <FormSelect
-                                xs={6}
-                                id="rmId"
-                                label="Raw Material"
-                                data={rawMaterial}
-                                itemComponent={RawMaterialSelectItem}
-                                filter={RawMaterialSelectFilter}
-                                {...form.getInputProps('rmId')}
-                                onChange={(value) =>
-                                    setSelectedRm((selectedRm) => {
-                                        let rm = rawMaterial.find(
-                                            (d) => d.value === value
-                                        )
-                                        if (rm)
-                                            return {
-                                                ...selectedRm,
-                                                rm,
-                                            }
-                                        return selectedRm
-                                    })
-                                }
-                                withAsterisk
-                            />
-                            <FormInputNumber
-                                name="quantity"
-                                xs={3}
-                                label="Quantity"
-                                placeholder="Enter Quantity"
-                                withAsterisk
-                                min={0}
-                                {...form.getInputProps('quantity')}
-                                onChange={(val) => {
-                                    if (val) {
-                                        setSelectedRm((selectedRm) => ({
-                                            ...selectedRm,
-                                            quantity: val,
-                                        }))
-                                    }
-                                }}
-                            />
-                            <FormInputNumber
-                                name="price"
-                                xs={3}
-                                min={0}
-                                precision={2}
-                                label="Price"
-                                placeholder="Enter Price"
-                                {...form.getInputProps('price')}
-                                value={selectedRm ? selectedRm.rm.price : 0}
-                                onChange={(val) => {
-                                    if (val) {
-                                        setSelectedRm((selectedRm) => ({
-                                            ...selectedRm,
-                                            rm: {
-                                                ...selectedRm.rm,
-                                                price: val,
-                                            },
-                                        }))
-                                    }
-                                }}
-                            />
-                            <Grid.Col xs={12}>
-                                <Button
-                                    fullWidth
-                                    size="md"
-                                    variant="filled"
-                                    color="primary"
-                                    onClick={() => {
+                            }}
+                        />
+                        <FormInputNumber
+                            name="selectedRm.quantity"
+                            xs={3}
+                            label="Quantity"
+                            placeholder="Enter Quantity"
+                            withAsterisk
+                            min={0}
+                            {...form.getInputProps('selectedRm.quantity')}
+                        />
+                        <FormInputNumber
+                            name="selectedRm.price"
+                            xs={3}
+                            min={0}
+                            precision={2}
+                            label="Price"
+                            placeholder="Enter Price"
+                            {...form.getInputProps('selectedRm.price')}
+                        />
+                        <Grid.Col xs={12}>
+                            <Button
+                                fullWidth
+                                size="md"
+                                variant="filled"
+                                color="primary"
+                                onClick={() => {
+                                    if (
+                                        form.values.selectedRm.quantity &&
+                                        form.values.selectedRm.rmId
+                                    ) {
                                         if (
-                                            selectedRm.quantity &&
-                                            selectedRm.rm &&
-                                            selectedRm.rm.id
+                                            !form.values.poDetails.find(
+                                                (r) =>
+                                                    r.rmId ===
+                                                    form.values.selectedRm.rmId
+                                            )
                                         ) {
-                                            if (
-                                                !form.values.poDetails.find(
-                                                    (r) =>
-                                                        r.rmId ===
-                                                        selectedRm.rm.id
-                                                )
-                                            ) {
-                                                form.insertListItem(
-                                                    'poDetails',
-                                                    {
-                                                        rmId: selectedRm.rm.id,
-                                                        quantity:
-                                                            selectedRm.quantity,
-                                                        price: selectedRm.rm
-                                                            .price,
-                                                    }
-                                                )
-                                            }
+                                            form.insertListItem(
+                                                'poDetails',
+                                                form.values.selectedRm
+                                            )
+                                            form.setFieldValue('selectedRm', {
+                                                rmId: '',
+                                                quantity: 0,
+                                                price: 0,
+                                            })
                                         }
-                                    }}
-                                >
-                                    Add to Purchase Order
-                                </Button>
-                            </Grid.Col>
-                            <Grid.Col xs={12}>
-                                <Divider />
-                            </Grid.Col>
-                            <Grid.Col
-                                xs={12}
-                                style={{
-                                    height: '50vh',
+                                    }
                                 }}
                             >
-                                <Table<
-                                    PurchaseOrdersInterface['poDetails'][number]
-                                >
-                                    fileName={form.values.id}
-                                    rowData={form.values.poDetails}
-                                    columnDefs={detailsColumnDef}
-                                    pagination={false}
-                                />
-                            </Grid.Col>
-                        </>
-                    )}
-                    {error && (
-                        <Grid.Col xs={12}>
-                            <Text c="red">{error}</Text>
+                                Add to Purchase Order
+                            </Button>
                         </Grid.Col>
-                    )}
-                    {activeStep === 1 && (
-                        <>
-                            <Grid.Col xs={2}>
-                                <Button
-                                    fullWidth
-                                    size="md"
-                                    variant="default"
-                                    onClick={handleBack}
-                                >
-                                    Back
-                                </Button>
-                            </Grid.Col>
-                            <Grid.Col xs={8} />
-                            <Grid.Col xs={2}>
-                                <Button
-                                    fullWidth
-                                    size="md"
-                                    type="submit"
-                                    variant="filled"
-                                    color="primary"
-                                    onClick={() => {
-                                        const result = form.validate()
-                                        if (!result.hasErrors) {
-                                            openModal()
-                                        }
-                                    }}
-                                >
-                                    {isEdit ? 'Update' : 'Create'}
-                                </Button>
-                            </Grid.Col>
-                        </>
-                    )}
-                    {isEdit && (
                         <Grid.Col xs={12}>
-                            <Center>
-                                <Button
-                                    size="xs"
-                                    variant="filled"
-                                    color="red"
-                                    onClick={openDeleteModal}
-                                >
-                                    DELETE
-                                </Button>
-                            </Center>
+                            <Divider />
                         </Grid.Col>
-                    )}
-                </Grid>
-            </form>
-        </PurchaseOrdersFormProvider>
+                        <Grid.Col
+                            xs={12}
+                            style={{
+                                height: '50vh',
+                            }}
+                        >
+                            <Table<PurchaseOrdersInterface['poDetails'][number]>
+                                fileName={form.values.id}
+                                rowData={form.values.poDetails}
+                                columnDefs={detailsColumnDef}
+                                pagination={false}
+                            />
+                        </Grid.Col>
+                    </>
+                )}
+                {error && (
+                    <Grid.Col xs={12}>
+                        <Text c="red">{error}</Text>
+                    </Grid.Col>
+                )}
+                {activeStep === 1 && (
+                    <>
+                        <Grid.Col xs={2}>
+                            <Button
+                                fullWidth
+                                size="md"
+                                variant="default"
+                                onClick={handleBack}
+                            >
+                                Back
+                            </Button>
+                        </Grid.Col>
+                        <Grid.Col xs={8} />
+                        <Grid.Col xs={2}>
+                            <Button
+                                fullWidth
+                                size="md"
+                                type="submit"
+                                variant="filled"
+                                color="primary"
+                                onClick={() => {
+                                    const result = form.validate()
+                                    if (!result.hasErrors) {
+                                        openModal()
+                                    }
+                                }}
+                            >
+                                {isEdit ? 'Update' : 'Create'}
+                            </Button>
+                        </Grid.Col>
+                    </>
+                )}
+                {isEdit && (
+                    <Grid.Col xs={12}>
+                        <Center>
+                            <Button
+                                size="xs"
+                                variant="filled"
+                                color="red"
+                                onClick={openDeleteModal}
+                            >
+                                DELETE
+                            </Button>
+                        </Center>
+                    </Grid.Col>
+                )}
+            </Grid>
+        </form>
     )
 }
 

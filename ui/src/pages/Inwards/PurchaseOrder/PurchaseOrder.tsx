@@ -1,13 +1,9 @@
-import { Button, Divider, Grid, Skeleton, Text } from '@mantine/core'
+import { Button, Divider, Grid, Text } from '@mantine/core'
 import { Fetch, useAuth } from '../../../services'
 import { FormInputText, FormSelect } from '../../../components'
-import {
-    InwardsPurchaseOrderFormProvider,
-    useInwardsPurchaseOrderForm,
-} from './context'
 import React, { useEffect, useState } from 'react'
+import { isNotEmpty, useForm } from '@mantine/form'
 
-import { isNotEmpty } from '@mantine/form'
 import { openConfirmModal } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
 
@@ -49,7 +45,7 @@ const PurchaseOrder = () => {
         details: [],
     }
 
-    const form = useInwardsPurchaseOrderForm({
+    const form = useForm({
         initialValues,
         validate: {
             invoiceId: isNotEmpty(),
@@ -154,15 +150,30 @@ const PurchaseOrder = () => {
     const getSupplier = async () => {
         try {
             const data = await Fetch({
-                url: '/suppliers',
+                url: '/inwards/po',
                 options: {
                     authToken: token,
+                    params: {
+                        where: JSON.stringify({
+                            status: 'PendingPoVerification',
+                        }),
+                        select: JSON.stringify({
+                            supplier: {
+                                select: {
+                                    name: true,
+                                    id: true,
+                                },
+                            },
+                        }),
+                    },
                 },
             }).then((data) => {
-                return data.map((supplier: { name: string; id: string }) => ({
-                    label: supplier.name,
-                    value: supplier.id,
-                }))
+                return data.map(
+                    (supplier: { supplier: { name: string; id: string } }) => ({
+                        label: supplier.supplier.name,
+                        value: supplier.supplier.id,
+                    })
+                )
             })
             setSupplier(data)
         } catch (e) {
@@ -192,7 +203,6 @@ const PurchaseOrder = () => {
                 return data.map((invoice: { invoiceId: string }) => ({
                     value: invoice.invoiceId,
                     label: invoice.invoiceId,
-                    // ...invoice,
                 }))
             })
             setInvoice(data)
@@ -244,7 +254,7 @@ const PurchaseOrder = () => {
     const updatePoValues = async () => {
         try {
             if (form.values.invoiceId && form.values.details) {
-                const details = await form.values.details.map((d) => {
+                const details = form.values.details.map((d) => {
                     const poDetails = po
                         ?.find(({ id }) => id === form.values.poId)
                         ?.poDetails.find(({ rmId }) => rmId === d.rmId)
@@ -318,177 +328,171 @@ const PurchaseOrder = () => {
         getSupplier()
     }, [])
 
-    if (!supplier) {
-        return <Skeleton width="90vw" height="100%" />
-    }
-
     return (
-        <InwardsPurchaseOrderFormProvider form={form}>
-            <form
-                onSubmit={(e) => {
-                    e.preventDefault()
-                }}
-            >
-                <Grid justify="center" align="center" grow>
-                    <FormSelect
-                        name="supplierId"
-                        xs={12}
-                        label="Supplier"
-                        placeholder="Select Supplier"
-                        data={supplier}
-                        withAsterisk
-                        {...form.getInputProps('supplierId')}
-                        onChange={(value) => {
-                            if (value) {
-                                form.setFieldValue('supplierId', value)
-                                updateSupplier(value)
-                            }
-                        }}
-                    />
-                    <FormSelect
-                        name="poId"
-                        xs={5}
-                        label="Purchase Order"
-                        placeholder="Select Purchase Order"
-                        data={po ? po : []}
-                        withAsterisk
-                        {...form.getInputProps('poId')}
-                        onChange={(value) => {
-                            if (value) {
-                                form.setFieldValue('poId', value)
-                                updatePoValues()
-                            }
-                        }}
-                    />
-                    <FormSelect
-                        name="invoiceId"
-                        xs={5}
-                        label="Invoice"
-                        placeholder="Select Invoice"
-                        data={invoice ? invoice : []}
-                        withAsterisk
-                        {...form.getInputProps('invoiceId')}
-                        onChange={(value) => {
-                            if (value) {
-                                form.setFieldValue('invoiceId', value)
-                                getRawMaterials(value)
-                            }
-                        }}
-                    />
-                    <FormInputText
-                        name="status"
-                        xs={2}
-                        label="Status"
-                        placeholder="Select Status"
-                        defaultValue="IQC"
-                        disabled
-                        withAsterisk
-                        {...form.getInputProps('status')}
-                    />
-                    <>
+        <form
+            onSubmit={(e) => {
+                e.preventDefault()
+            }}
+        >
+            <Grid justify="center" align="center" grow>
+                <FormSelect
+                    name="supplierId"
+                    xs={12}
+                    label="Supplier"
+                    placeholder="Select Supplier"
+                    data={supplier ? supplier : []}
+                    withAsterisk
+                    {...form.getInputProps('supplierId')}
+                    onChange={(value) => {
+                        if (value) {
+                            form.setFieldValue('supplierId', value)
+                            updateSupplier(value)
+                        }
+                    }}
+                />
+                <FormSelect
+                    name="poId"
+                    xs={5}
+                    label="Purchase Order"
+                    placeholder="Select Purchase Order"
+                    data={po ? po : []}
+                    withAsterisk
+                    {...form.getInputProps('poId')}
+                    onChange={(value) => {
+                        if (value) {
+                            form.setFieldValue('poId', value)
+                            updatePoValues()
+                        }
+                    }}
+                />
+                <FormSelect
+                    name="invoiceId"
+                    xs={5}
+                    label="Invoice"
+                    placeholder="Select Invoice"
+                    data={invoice ? invoice : []}
+                    withAsterisk
+                    {...form.getInputProps('invoiceId')}
+                    onChange={(value) => {
+                        if (value) {
+                            form.setFieldValue('invoiceId', value)
+                            getRawMaterials(value)
+                        }
+                    }}
+                />
+                <FormInputText
+                    name="status"
+                    xs={2}
+                    label="Status"
+                    placeholder="Select Status"
+                    defaultValue="IQC"
+                    disabled
+                    withAsterisk
+                    {...form.getInputProps('status')}
+                />
+                <>
+                    <Grid.Col xs={12}>
+                        <Divider />
+                    </Grid.Col>
+                    {form.values.details.length !== 0 && (
                         <Grid.Col xs={12}>
-                            <Divider />
-                        </Grid.Col>
-                        {form.values.details.length !== 0 && (
-                            <Grid.Col xs={12}>
-                                <Grid justify="center" align="center" grow>
-                                    <Grid.Col xs={3}>
-                                        <Text fz="lg">
-                                            Raw Material Part Number
-                                        </Text>
-                                    </Grid.Col>
-                                    <Grid.Col xs={3}>
-                                        <Text fz="lg">Invoice Quantity</Text>
-                                    </Grid.Col>
-                                    <Grid.Col xs={3}>
-                                        <Text fz="lg">PO Quantity</Text>
-                                    </Grid.Col>
-                                    <Grid.Col xs={3}>
-                                        <Text fz="lg">PO Price</Text>
-                                    </Grid.Col>
-                                </Grid>
-                            </Grid.Col>
-                        )}
-                        {form.values.details.map((item, index) => (
-                            <Grid.Col xs={12} key={index}>
-                                <Grid justify="center" align="center" grow>
-                                    <FormInputText
-                                        xs={3}
-                                        {...form.getInputProps(
-                                            `details.${index}.rmId`
-                                        )}
-                                        disabled
-                                    />
-                                    <FormInputText
-                                        xs={3}
-                                        {...form.getInputProps(
-                                            `details.${index}.quantity`
-                                        )}
-                                        disabled
-                                    />
-                                    <FormInputText
-                                        xs={3}
-                                        {...form.getInputProps(
-                                            `details.${index}.poQuantity`
-                                        )}
-                                        disabled
-                                    />
-                                    <FormInputText
-                                        xs={3}
-                                        {...form.getInputProps(
-                                            `details.${index}.poPrice`
-                                        )}
-                                        disabled
-                                    />
-                                </Grid>
-                            </Grid.Col>
-                        ))}
-                    </>
-                    {error && (
-                        <Grid.Col xs={12}>
-                            <Text c="red">{error}</Text>
+                            <Grid justify="center" align="center" grow>
+                                <Grid.Col xs={3}>
+                                    <Text fz="lg">
+                                        Raw Material Part Number
+                                    </Text>
+                                </Grid.Col>
+                                <Grid.Col xs={3}>
+                                    <Text fz="lg">Invoice Quantity</Text>
+                                </Grid.Col>
+                                <Grid.Col xs={3}>
+                                    <Text fz="lg">PO Quantity</Text>
+                                </Grid.Col>
+                                <Grid.Col xs={3}>
+                                    <Text fz="lg">PO Price</Text>
+                                </Grid.Col>
+                            </Grid>
                         </Grid.Col>
                     )}
-                    {
-                        <>
-                            <Grid.Col xs={2}>
-                                <Button
-                                    fullWidth
-                                    size="md"
-                                    variant="filled"
-                                    color="orange"
-                                    onClick={() => {
-                                        const result = form.validate()
-                                        if (!result.hasErrors) {
-                                            openRejectModal()
-                                        }
-                                    }}
-                                >
-                                    Reject
-                                </Button>
-                            </Grid.Col>
-                            <Grid.Col xs={8} />
-                            <Grid.Col xs={2}>
-                                <Button
-                                    fullWidth
-                                    size="md"
-                                    variant="filled"
-                                    color="primary"
-                                    onClick={() => {
-                                        const result = form.validate()
-                                        if (!result.hasErrors) {
-                                            openModal()
-                                        }
-                                    }}
-                                >
-                                    Approve
-                                </Button>
-                            </Grid.Col>
-                        </>
-                    }
-                </Grid>
-            </form>
-        </InwardsPurchaseOrderFormProvider>
+                    {form.values.details.map((item, index) => (
+                        <Grid.Col xs={12} key={index}>
+                            <Grid justify="center" align="center" grow>
+                                <FormInputText
+                                    xs={3}
+                                    {...form.getInputProps(
+                                        `details.${index}.rmId`
+                                    )}
+                                    disabled
+                                />
+                                <FormInputText
+                                    xs={3}
+                                    {...form.getInputProps(
+                                        `details.${index}.quantity`
+                                    )}
+                                    disabled
+                                />
+                                <FormInputText
+                                    xs={3}
+                                    {...form.getInputProps(
+                                        `details.${index}.poQuantity`
+                                    )}
+                                    disabled
+                                />
+                                <FormInputText
+                                    xs={3}
+                                    {...form.getInputProps(
+                                        `details.${index}.poPrice`
+                                    )}
+                                    disabled
+                                />
+                            </Grid>
+                        </Grid.Col>
+                    ))}
+                </>
+                {error && (
+                    <Grid.Col xs={12}>
+                        <Text c="red">{error}</Text>
+                    </Grid.Col>
+                )}
+                {
+                    <>
+                        <Grid.Col xs={2}>
+                            <Button
+                                fullWidth
+                                size="md"
+                                variant="filled"
+                                color="orange"
+                                onClick={() => {
+                                    const result = form.validate()
+                                    if (!result.hasErrors) {
+                                        openRejectModal()
+                                    }
+                                }}
+                            >
+                                Reject
+                            </Button>
+                        </Grid.Col>
+                        <Grid.Col xs={8} />
+                        <Grid.Col xs={2}>
+                            <Button
+                                fullWidth
+                                size="md"
+                                variant="filled"
+                                color="primary"
+                                onClick={() => {
+                                    const result = form.validate()
+                                    if (!result.hasErrors) {
+                                        openModal()
+                                    }
+                                }}
+                            >
+                                Approve
+                            </Button>
+                        </Grid.Col>
+                    </>
+                }
+            </Grid>
+        </form>
     )
 }
 

@@ -54,13 +54,16 @@ function Report() {
                             AND: [
                                 {
                                     date: {
-                                        gte: value[0].toISOString(),
+                                        gte: dayjs(value[0])
+                                            .startOf('d')
+                                            .toISOString(),
                                     },
                                 },
                                 {
                                     date: {
                                         lte: dayjs(value[1])
                                             .add(1, 'day')
+                                            .endOf('d')
                                             .toISOString(),
                                     },
                                 },
@@ -93,7 +96,6 @@ function Report() {
                         xs={6}
                         name="dateRange"
                         label="Select Date Range"
-                        range={value}
                         clearable
                         value={value}
                         onChange={(value) => {

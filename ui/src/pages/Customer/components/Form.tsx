@@ -1,12 +1,11 @@
 import { Button, Center, Grid, Text } from '@mantine/core'
-import { CustomerFormProvider, useCustomerForm } from './context'
 import { Fetch, useAuth } from '../../../services'
 import React, { useState } from 'react'
+import { isNotEmpty, useForm } from '@mantine/form'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import { CustomerInterface } from '../Customers'
 import { FormInputText } from '../../../components'
-import { isNotEmpty } from '@mantine/form'
 import { openConfirmModal } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
 
@@ -29,7 +28,7 @@ const Form = () => {
               state: '',
               gst: '',
           }
-    const form = useCustomerForm({
+    const form = useForm({
         initialValues,
         validate: {
             id: isNotEmpty(),
@@ -129,113 +128,111 @@ const Form = () => {
     }
 
     return (
-        <CustomerFormProvider form={form}>
-            <form
-                onSubmit={(e) => {
-                    e.preventDefault()
-                }}
-            >
-                <Grid justify="center" align="center" grow>
-                    <FormInputText
-                        name="id"
-                        xs={4}
-                        type="text"
-                        label="ID"
-                        placeholder="Enter ID"
-                        withAsterisk
-                        {...form.getInputProps('id')}
-                    />
-                    <FormInputText
-                        name="name"
-                        xs={8}
-                        type="text"
-                        label="Name"
-                        placeholder="Enter name"
-                        withAsterisk
-                        {...form.getInputProps('name')}
-                    />
-                    <FormInputText
-                        name="address1"
-                        xs={6}
-                        type="text"
-                        label="Address 1"
-                        placeholder="Address 1"
-                        {...form.getInputProps('address1')}
-                    />
-                    <FormInputText
-                        name="address2"
-                        xs={6}
-                        type="text"
-                        label="Address 2"
-                        placeholder="Address 2"
-                        {...form.getInputProps('address2')}
-                    />
-                    <FormInputText
-                        name="city"
-                        xs={4}
-                        type="text"
-                        label="City"
-                        placeholder="City"
-                        withAsterisk
-                        {...form.getInputProps('city')}
-                    />
-                    <FormInputText
-                        name="state"
-                        xs={4}
-                        type="text"
-                        label="State"
-                        placeholder="State"
-                        withAsterisk
-                        {...form.getInputProps('state')}
-                    />
-                    <FormInputText
-                        name="gst"
-                        xs={4}
-                        type="text"
-                        label="GST"
-                        placeholder="GST"
-                        withAsterisk
-                        {...form.getInputProps('gst')}
-                    />
-                    {error && (
-                        <Grid.Col xs={12}>
-                            <Text c="red">{error}</Text>
-                        </Grid.Col>
-                    )}
+        <form
+            onSubmit={(e) => {
+                e.preventDefault()
+            }}
+        >
+            <Grid justify="center" align="center" grow>
+                <FormInputText
+                    name="id"
+                    xs={4}
+                    type="text"
+                    label="ID"
+                    placeholder="Enter ID"
+                    withAsterisk
+                    {...form.getInputProps('id')}
+                />
+                <FormInputText
+                    name="name"
+                    xs={8}
+                    type="text"
+                    label="Name"
+                    placeholder="Enter name"
+                    withAsterisk
+                    {...form.getInputProps('name')}
+                />
+                <FormInputText
+                    name="address1"
+                    xs={6}
+                    type="text"
+                    label="Address 1"
+                    placeholder="Address 1"
+                    {...form.getInputProps('address1')}
+                />
+                <FormInputText
+                    name="address2"
+                    xs={6}
+                    type="text"
+                    label="Address 2"
+                    placeholder="Address 2"
+                    {...form.getInputProps('address2')}
+                />
+                <FormInputText
+                    name="city"
+                    xs={4}
+                    type="text"
+                    label="City"
+                    placeholder="City"
+                    withAsterisk
+                    {...form.getInputProps('city')}
+                />
+                <FormInputText
+                    name="state"
+                    xs={4}
+                    type="text"
+                    label="State"
+                    placeholder="State"
+                    withAsterisk
+                    {...form.getInputProps('state')}
+                />
+                <FormInputText
+                    name="gst"
+                    xs={4}
+                    type="text"
+                    label="GST"
+                    placeholder="GST"
+                    withAsterisk
+                    {...form.getInputProps('gst')}
+                />
+                {error && (
                     <Grid.Col xs={12}>
-                        <Button
-                            fullWidth
-                            size="xs"
-                            type="submit"
-                            variant="filled"
-                            color="primary"
-                            onClick={() => {
-                                const result = form.validate()
-                                if (!result.hasErrors) {
-                                    openModal()
-                                }
-                            }}
-                        >
-                            {isEdit ? 'Update' : 'Create'}
-                        </Button>
+                        <Text c="red">{error}</Text>
                     </Grid.Col>
-                    {isEdit && (
-                        <Grid.Col xs={12}>
-                            <Center>
-                                <Button
-                                    size="xs"
-                                    variant="filled"
-                                    color="red"
-                                    onClick={openDeleteModal}
-                                >
-                                    DELETE
-                                </Button>
-                            </Center>
-                        </Grid.Col>
-                    )}
-                </Grid>
-            </form>
-        </CustomerFormProvider>
+                )}
+                <Grid.Col xs={12}>
+                    <Button
+                        fullWidth
+                        size="xs"
+                        type="submit"
+                        variant="filled"
+                        color="primary"
+                        onClick={() => {
+                            const result = form.validate()
+                            if (!result.hasErrors) {
+                                openModal()
+                            }
+                        }}
+                    >
+                        {isEdit ? 'Update' : 'Create'}
+                    </Button>
+                </Grid.Col>
+                {isEdit && (
+                    <Grid.Col xs={12}>
+                        <Center>
+                            <Button
+                                size="xs"
+                                variant="filled"
+                                color="red"
+                                onClick={openDeleteModal}
+                            >
+                                DELETE
+                            </Button>
+                        </Center>
+                    </Grid.Col>
+                )}
+            </Grid>
+        </form>
     )
 }
 

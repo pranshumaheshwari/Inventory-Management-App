@@ -306,7 +306,7 @@ const Form = () => {
                         type="number"
                         label="Minimum Order Quantity"
                         placeholder="Enter MOQ"
-                        min={1}
+                        min={0}
                         precision={2}
                         {...form.getInputProps('moq')}
                     />

@@ -1,13 +1,9 @@
 import { Button, Divider, Grid, Text } from '@mantine/core'
 import { Fetch, useAuth } from '../../../services'
 import { FormInputText, FormSelect } from '../../../components'
-import {
-    InwardsQualityCheckFormProvider,
-    useInwardsQualityCheckForm,
-} from './context'
 import React, { useEffect, useState } from 'react'
+import { isNotEmpty, useForm } from '@mantine/form'
 
-import { isNotEmpty } from '@mantine/form'
 import { openConfirmModal } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
 
@@ -34,7 +30,7 @@ const QualityCheck = () => {
         details: [],
     }
 
-    const form = useInwardsQualityCheckForm({
+    const form = useForm({
         initialValues,
         validate: {
             invoiceId: isNotEmpty(),
@@ -257,148 +253,146 @@ const QualityCheck = () => {
     }, [])
 
     return (
-        <InwardsQualityCheckFormProvider form={form}>
-            <form
-                onSubmit={(e) => {
-                    e.preventDefault()
-                }}
-            >
-                <Grid justify="center" align="center" grow>
-                    <FormSelect
-                        name="supplierId"
-                        xs={5}
-                        label="Supplier"
-                        placeholder="Select Supplier"
-                        data={supplier ? supplier : []}
-                        withAsterisk
-                        {...form.getInputProps('supplierId')}
-                        onChange={(value) => {
-                            if (value) {
-                                form.setFieldValue('supplierId', value)
-                                updateInvoice(value)
-                            }
-                        }}
-                    />
-                    <FormSelect
-                        name="invoiceId"
-                        xs={5}
-                        label="Invoice"
-                        placeholder="Select Invoice"
-                        data={invoice ? invoice : []}
-                        withAsterisk
-                        {...form.getInputProps('invoiceId')}
-                        onChange={(value) => {
-                            if (value) {
-                                form.setFieldValue('invoiceId', value)
-                                getRawMaterials(value)
-                            }
-                        }}
-                    />
-                    <FormInputText
-                        name="status"
-                        xs={2}
-                        label="Status"
-                        placeholder="Select Status"
-                        defaultValue="Accepted"
-                        disabled
-                        withAsterisk
-                        {...form.getInputProps('status')}
-                    />
-                    <>
+        <form
+            onSubmit={(e) => {
+                e.preventDefault()
+            }}
+        >
+            <Grid justify="center" align="center" grow>
+                <FormSelect
+                    name="supplierId"
+                    xs={5}
+                    label="Supplier"
+                    placeholder="Select Supplier"
+                    data={supplier ? supplier : []}
+                    withAsterisk
+                    {...form.getInputProps('supplierId')}
+                    onChange={(value) => {
+                        if (value) {
+                            form.setFieldValue('supplierId', value)
+                            updateInvoice(value)
+                        }
+                    }}
+                />
+                <FormSelect
+                    name="invoiceId"
+                    xs={5}
+                    label="Invoice"
+                    placeholder="Select Invoice"
+                    data={invoice ? invoice : []}
+                    withAsterisk
+                    {...form.getInputProps('invoiceId')}
+                    onChange={(value) => {
+                        if (value) {
+                            form.setFieldValue('invoiceId', value)
+                            getRawMaterials(value)
+                        }
+                    }}
+                />
+                <FormInputText
+                    name="status"
+                    xs={2}
+                    label="Status"
+                    placeholder="Select Status"
+                    defaultValue="Accepted"
+                    disabled
+                    withAsterisk
+                    {...form.getInputProps('status')}
+                />
+                <>
+                    <Grid.Col xs={12}>
+                        <Divider />
+                    </Grid.Col>
+                    {form.values.details.length !== 0 && (
                         <Grid.Col xs={12}>
-                            <Divider />
-                        </Grid.Col>
-                        {form.values.details.length !== 0 && (
-                            <Grid.Col xs={12}>
-                                <Grid justify="center" align="center" grow>
-                                    <Grid.Col xs={4}>
-                                        <Text fz="lg">
-                                            Raw Material Part Number
-                                        </Text>
-                                    </Grid.Col>
-                                    <Grid.Col xs={4}>
-                                        <Text fz="lg">Invoice Quantity</Text>
-                                    </Grid.Col>
-                                    <Grid.Col xs={4}>
-                                        <Text fz="lg">PO Inwards ID</Text>
-                                    </Grid.Col>
-                                </Grid>
-                            </Grid.Col>
-                        )}
-                        {form.values.details.map((item, index) => (
-                            <Grid.Col xs={12} key={index}>
-                                <Grid justify="center" align="center" grow>
-                                    <FormInputText
-                                        xs={4}
-                                        {...form.getInputProps(
-                                            `details.${index}.rmId`
-                                        )}
-                                        disabled
-                                    />
-                                    <FormInputText
-                                        xs={4}
-                                        {...form.getInputProps(
-                                            `details.${index}.quantity`
-                                        )}
-                                        disabled
-                                    />
-                                    <FormInputText
-                                        xs={4}
-                                        {...form.getInputProps(
-                                            `details.${index}.inwardsIQCPendingId`
-                                        )}
-                                        disabled
-                                    />
-                                </Grid>
-                            </Grid.Col>
-                        ))}
-                    </>
-
-                    {error && (
-                        <Grid.Col xs={12}>
-                            <Text c="red">{error}</Text>
+                            <Grid justify="center" align="center" grow>
+                                <Grid.Col xs={4}>
+                                    <Text fz="lg">
+                                        Raw Material Part Number
+                                    </Text>
+                                </Grid.Col>
+                                <Grid.Col xs={4}>
+                                    <Text fz="lg">Invoice Quantity</Text>
+                                </Grid.Col>
+                                <Grid.Col xs={4}>
+                                    <Text fz="lg">PO Inwards ID</Text>
+                                </Grid.Col>
+                            </Grid>
                         </Grid.Col>
                     )}
-                    {
-                        <>
-                            <Grid.Col xs={2}>
-                                <Button
-                                    fullWidth
-                                    size="md"
-                                    variant="filled"
-                                    color="orange"
-                                    onClick={() => {
-                                        const result = form.validate()
-                                        if (!result.hasErrors) {
-                                            openRejectModal()
-                                        }
-                                    }}
-                                >
-                                    Reject
-                                </Button>
-                            </Grid.Col>
-                            <Grid.Col xs={8} />
-                            <Grid.Col xs={2}>
-                                <Button
-                                    fullWidth
-                                    size="md"
-                                    variant="filled"
-                                    color="primary"
-                                    onClick={() => {
-                                        const result = form.validate()
-                                        if (!result.hasErrors) {
-                                            openModal()
-                                        }
-                                    }}
-                                >
-                                    Approve
-                                </Button>
-                            </Grid.Col>
-                        </>
-                    }
-                </Grid>
-            </form>
-        </InwardsQualityCheckFormProvider>
+                    {form.values.details.map((item, index) => (
+                        <Grid.Col xs={12} key={index}>
+                            <Grid justify="center" align="center" grow>
+                                <FormInputText
+                                    xs={4}
+                                    {...form.getInputProps(
+                                        `details.${index}.rmId`
+                                    )}
+                                    disabled
+                                />
+                                <FormInputText
+                                    xs={4}
+                                    {...form.getInputProps(
+                                        `details.${index}.quantity`
+                                    )}
+                                    disabled
+                                />
+                                <FormInputText
+                                    xs={4}
+                                    {...form.getInputProps(
+                                        `details.${index}.inwardsIQCPendingId`
+                                    )}
+                                    disabled
+                                />
+                            </Grid>
+                        </Grid.Col>
+                    ))}
+                </>
+
+                {error && (
+                    <Grid.Col xs={12}>
+                        <Text c="red">{error}</Text>
+                    </Grid.Col>
+                )}
+                {
+                    <>
+                        <Grid.Col xs={2}>
+                            <Button
+                                fullWidth
+                                size="md"
+                                variant="filled"
+                                color="orange"
+                                onClick={() => {
+                                    const result = form.validate()
+                                    if (!result.hasErrors) {
+                                        openRejectModal()
+                                    }
+                                }}
+                            >
+                                Reject
+                            </Button>
+                        </Grid.Col>
+                        <Grid.Col xs={8} />
+                        <Grid.Col xs={2}>
+                            <Button
+                                fullWidth
+                                size="md"
+                                variant="filled"
+                                color="primary"
+                                onClick={() => {
+                                    const result = form.validate()
+                                    if (!result.hasErrors) {
+                                        openModal()
+                                    }
+                                }}
+                            >
+                                Approve
+                            </Button>
+                        </Grid.Col>
+                    </>
+                }
+            </Grid>
+        </form>
     )
 }
 

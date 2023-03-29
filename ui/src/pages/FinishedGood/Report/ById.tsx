@@ -13,6 +13,7 @@ import { FinishedGoodSelectFilter, FinishedGoodSelectItem } from '../../common'
 import React, { useEffect, useState } from 'react'
 
 import { ColDef } from 'ag-grid-community'
+import { DatesRangeValue } from '@mantine/dates'
 import { FinishedGoodsInterface } from '../FinishedGood'
 import dayjs from 'dayjs'
 
@@ -37,7 +38,10 @@ function ById() {
             value: '',
         },
     })
-    const [value, setValue] = useState<[Date, Date]>([new Date(), new Date()])
+    const [value, setValue] = useState<DatesRangeValue>([
+        new Date(),
+        new Date(),
+    ])
 
     const handleNext = () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1)
@@ -107,15 +111,12 @@ function ById() {
                     AND: [
                         {
                             createdAt: {
-                                gte: value[0].toISOString(),
+                                gte: dayjs(value[0]).startOf('d').toISOString(),
                             },
                         },
                         {
                             createdAt: {
-                                lte: dayjs(value[1])
-                                    .add(1, 'day')
-                                    .toDate()
-                                    .toISOString(),
+                                lte: dayjs(value[1]).endOf('d').toISOString(),
                             },
                         },
                     ],
@@ -210,7 +211,6 @@ function ById() {
                         xs={6}
                         name="dateRange"
                         label="Select Date Range"
-                        range={value}
                         clearable
                         value={value}
                         onChange={(value) => {

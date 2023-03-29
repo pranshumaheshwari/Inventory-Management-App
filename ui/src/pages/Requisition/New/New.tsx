@@ -2,10 +2,9 @@ import { Button, Grid, SelectItem, Skeleton, Text } from '@mantine/core'
 import { DatePicker, FormInputNumber, FormSelect } from '../../../components'
 import { Fetch, useAuth } from '../../../services'
 import { FinishedGoodSelectFilter, FinishedGoodSelectItem } from '../../common'
-import { NewRequisitionFormProvider, useNewRequisitionForm } from './context'
 import React, { useEffect, useState } from 'react'
+import { isNotEmpty, useForm } from '@mantine/form'
 
-import { isNotEmpty } from '@mantine/form'
 import { openConfirmModal } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
 
@@ -30,7 +29,7 @@ const NewRequisition = () => {
         quantity: 0,
     }
 
-    const form = useNewRequisitionForm({
+    const form = useForm({
         initialValues,
         validate: {
             fgId: isNotEmpty(),
@@ -160,79 +159,77 @@ const NewRequisition = () => {
     }
 
     return (
-        <NewRequisitionFormProvider form={form}>
-            <form
-                onSubmit={(e) => {
-                    e.preventDefault()
-                }}
-            >
-                <Grid justify="center" align="center" grow>
-                    <FormSelect
-                        xs={12}
-                        id="fgId"
-                        label="Finished Good"
-                        data={finishedGood}
-                        itemComponent={FinishedGoodSelectItem}
-                        filter={FinishedGoodSelectFilter}
-                        placeholder="Select Finished Good"
-                        withAsterisk
-                        {...form.getInputProps('fgId')}
-                        onChange={(finishedGood) => {
-                            if (finishedGood) {
-                                form.setFieldValue('fgId', finishedGood)
-                                getSalesOrders(finishedGood)
+        <form
+            onSubmit={(e) => {
+                e.preventDefault()
+            }}
+        >
+            <Grid justify="center" align="center" grow>
+                <FormSelect
+                    xs={12}
+                    id="fgId"
+                    label="Finished Good"
+                    data={finishedGood}
+                    itemComponent={FinishedGoodSelectItem}
+                    filter={FinishedGoodSelectFilter}
+                    placeholder="Select Finished Good"
+                    withAsterisk
+                    {...form.getInputProps('fgId')}
+                    onChange={(finishedGood) => {
+                        if (finishedGood) {
+                            form.setFieldValue('fgId', finishedGood)
+                            getSalesOrders(finishedGood)
+                        }
+                    }}
+                />
+                <FormSelect
+                    name="soId"
+                    xs={6}
+                    label="Sales Order"
+                    placeholder="Select Sales Order"
+                    data={salesOrder ? salesOrder : []}
+                    withAsterisk
+                    {...form.getInputProps('soId')}
+                />
+                <FormInputNumber
+                    name="quantity"
+                    xs={3}
+                    label="Quantity"
+                    placeholder="Enter Quantity"
+                    withAsterisk
+                    min={0}
+                    {...form.getInputProps('quantity')}
+                />
+                <DatePicker
+                    xs={3}
+                    name="date"
+                    label="Date"
+                    withAsterisk
+                    {...form.getInputProps('date')}
+                />
+                {error && (
+                    <Grid.Col xs={12}>
+                        <Text c="red">{error}</Text>
+                    </Grid.Col>
+                )}
+                <Grid.Col xs={12}>
+                    <Button
+                        fullWidth
+                        size="md"
+                        variant="filled"
+                        color="primary"
+                        onClick={() => {
+                            const result = form.validate()
+                            if (!result.hasErrors) {
+                                openModal()
                             }
                         }}
-                    />
-                    <FormSelect
-                        name="soId"
-                        xs={6}
-                        label="Sales Order"
-                        placeholder="Select Sales Order"
-                        data={salesOrder ? salesOrder : []}
-                        withAsterisk
-                        {...form.getInputProps('soId')}
-                    />
-                    <FormInputNumber
-                        name="quantity"
-                        xs={3}
-                        label="Quantity"
-                        placeholder="Enter Quantity"
-                        withAsterisk
-                        min={0}
-                        {...form.getInputProps('quantity')}
-                    />
-                    <DatePicker
-                        xs={3}
-                        name="date"
-                        label="Date"
-                        withAsterisk
-                        {...form.getInputProps('date')}
-                    />
-                    {error && (
-                        <Grid.Col xs={12}>
-                            <Text c="red">{error}</Text>
-                        </Grid.Col>
-                    )}
-                    <Grid.Col xs={12}>
-                        <Button
-                            fullWidth
-                            size="md"
-                            variant="filled"
-                            color="primary"
-                            onClick={() => {
-                                const result = form.validate()
-                                if (!result.hasErrors) {
-                                    openModal()
-                                }
-                            }}
-                        >
-                            Create
-                        </Button>
-                    </Grid.Col>
-                </Grid>
-            </form>
-        </NewRequisitionFormProvider>
+                    >
+                        Create
+                    </Button>
+                </Grid.Col>
+            </Grid>
+        </form>
     )
 }
 

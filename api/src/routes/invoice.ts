@@ -37,6 +37,7 @@ app.post('/', async (req: Request, res: Response) => {
         id: string
         status: BinaryStatus
         invoiceDetails: {
+            poId: string
             rmId: string
             quantity: number
         }[]
@@ -100,7 +101,9 @@ app.put('/', async (req: Request, res: Response) => {
                         ({
                             rmId,
                             quantity,
+                            poId,
                         }: {
+                            poId: string
                             rmId: string
                             quantity: number
                         }) => {
@@ -112,6 +115,7 @@ app.put('/', async (req: Request, res: Response) => {
                                 },
                                 data: {
                                     quantity,
+                                    poId,
                                 },
                             }
                         }
@@ -153,7 +157,7 @@ app.delete('/', async (req: Request, res: Response) => {
 app.delete('/details', async (req: Request, res: Response) => {
     const { invoiceId, supplierId, rmId } = req.body
     try {
-        const result = await PrismaService.inwardsPoPending.delete({
+        const result = await PrismaService.invoiceDetails.delete({
             where: {
                 invoiceId_supplierId_rmId: {
                     invoiceId: invoiceId as string,

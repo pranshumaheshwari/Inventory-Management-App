@@ -1,17 +1,17 @@
-import { DatePicker, DatePickerProps } from '@mantine/dates'
+import { DatePickerInput, DatePickerInputProps } from '@mantine/dates'
 
 import { Grid } from '@mantine/core'
 import React from 'react'
 
-interface DatePickerInterface extends DatePickerProps {
+interface DatePickerInterface extends DatePickerInputProps {
     xs: number
 }
 
 const MDatePicker = ({ xs, ...props }: DatePickerInterface) => {
     return (
         <Grid.Col xs={xs}>
-            <DatePicker
-                inputFormat="DD/MM/YYYY"
+            <DatePickerInput
+                valueFormat="DD/MM/YYYY"
                 maxDate={new Date()}
                 {...props}
             />

@@ -6,7 +6,7 @@ import { PrismaService } from '../service'
 const app: Router = express.Router()
 
 app.get('/po', async (req: Request, res: Response) => {
-    const args: Prisma.InwardsPoPendingFindManyArgs = {}
+    const args: Prisma.InvoiceDetailsFindManyArgs = {}
     const { select, include, where, distinct } = req.query
     if (select) {
         args.select = JSON.parse(select as string)
@@ -20,7 +20,7 @@ app.get('/po', async (req: Request, res: Response) => {
     if (distinct) {
         args.distinct = JSON.parse(distinct as string)
     }
-    const data = await PrismaService.inwardsPoPending.findMany(args)
+    const data = await PrismaService.invoiceDetails.findMany(args)
     res.json(data)
 })
 
@@ -66,12 +66,10 @@ app.put('/rejectPO', async (req: Request, res: Response) => {
     const {
         supplierId,
         invoiceId,
-        poId,
         details,
     }: {
         supplierId: string
         invoiceId: string
-        poId: string
         details: {
             rmId: string
             quantity: number
@@ -80,7 +78,7 @@ app.put('/rejectPO', async (req: Request, res: Response) => {
     try {
         const result = await PrismaService.$transaction([
             ...details.map(({ rmId, quantity }) => {
-                return PrismaService.inwardsPoPending.update({
+                return PrismaService.invoiceDetails.update({
                     where: {
                         invoiceId_supplierId_rmId: {
                             rmId,
@@ -90,11 +88,6 @@ app.put('/rejectPO', async (req: Request, res: Response) => {
                     },
                     data: {
                         status: 'RejectedPoVerification',
-                        po: {
-                            connect: {
-                                id: poId,
-                            },
-                        },
                         rm: {
                             update: {
                                 poPendingStock: {
@@ -121,12 +114,10 @@ app.put('/acceptPO', async (req: Request, res: Response) => {
     const {
         supplierId,
         invoiceId,
-        poId,
         details,
     }: {
         supplierId: string
         invoiceId: string
-        poId: string
         details: {
             rmId: string
             quantity: number
@@ -135,7 +126,7 @@ app.put('/acceptPO', async (req: Request, res: Response) => {
     try {
         const result = await PrismaService.$transaction([
             ...details.map(({ rmId, quantity }) => {
-                return PrismaService.inwardsPoPending.update({
+                return PrismaService.invoiceDetails.update({
                     where: {
                         invoiceId_supplierId_rmId: {
                             rmId,
@@ -160,11 +151,6 @@ app.put('/acceptPO', async (req: Request, res: Response) => {
                                 iqcPendingStock: {
                                     increment: quantity,
                                 },
-                            },
-                        },
-                        po: {
-                            connect: {
-                                id: poId,
                             },
                         },
                     },
