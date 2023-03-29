@@ -42,6 +42,7 @@ const dashboard: ItemInterface = {
                 '/purchaseOrders',
                 '/purchaseOrders/new',
                 '/purchaseOrders/edit',
+                '/purchaseOrders/newFromSalesOrder',
             ],
         },
         {

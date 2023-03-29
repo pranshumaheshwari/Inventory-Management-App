@@ -63,7 +63,7 @@ function Table<Type>({
                     pinnedTopRowData={pinnedTopRowData}
                     pagination={pagination}
                     columnTypes={columnTypes}
-                    paginationAutoPageSize
+                    paginationAutoPageSize={pagination}
                     defaultExcelExportParams={{
                         fileName: fileName ? fileName + '.xlsx' : 'export.xlsx',
                         columnKeys: columnDefs

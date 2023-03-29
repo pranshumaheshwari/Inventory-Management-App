@@ -29,6 +29,7 @@ import { showNotification } from '@mantine/notifications'
 
 interface InvoiceInterfaceForm extends InvoiceInterface {
     selectedRm: {
+        poId: string
         rmId: string
         quantity: number
     }
@@ -43,6 +44,7 @@ const Form = () => {
     } = useAuth()
     const [activeStep, setActiveStep] = React.useState(0)
     const [rawmaterial, setRawmaterial] = useState<SelectItem[]>([])
+    const [purchaseOrders, setPurchaseOrders] = useState<SelectItem[]>([])
     const [supplier, setSupplier] = useState<{ value: string }[] | null>()
     const [error, setError] = useState('')
     let initialValues: InvoiceInterfaceForm = {
@@ -56,6 +58,7 @@ const Form = () => {
         date: new Date(),
         selectedRm: {
             rmId: '',
+            poId: '',
             quantity: 0,
         },
     }
@@ -190,7 +193,7 @@ const Form = () => {
 
     const updateSupplier = async (supplierId: string) => {
         try {
-            const data = await Fetch({
+            await Fetch({
                 url: '/rawmaterial',
                 options: {
                     authToken: token,
@@ -206,15 +209,41 @@ const Form = () => {
                         }),
                     },
                 },
-            }).then((data) =>
-                data.map((d: Partial<RawMaterialInterface>) => ({
-                    ...d,
-                    value: d.id,
-                    label: d.description,
-                    group: d.category,
-                }))
-            )
-            setRawmaterial(data)
+            })
+                .then((data) =>
+                    data.map((d: Partial<RawMaterialInterface>) => ({
+                        ...d,
+                        value: d.id,
+                        label: d.description,
+                        group: d.category,
+                    }))
+                )
+                .then((data) => {
+                    setRawmaterial(data)
+                })
+            await Fetch({
+                url: '/purchaseorders',
+                options: {
+                    authToken: token,
+                    params: {
+                        select: JSON.stringify({
+                            id: true,
+                        }),
+                        where: JSON.stringify({
+                            supplierId,
+                        }),
+                    },
+                },
+            })
+                .then((data) =>
+                    data.map((d: { id: string }) => ({
+                        value: d.id,
+                        label: d.id,
+                    }))
+                )
+                .then((data) => {
+                    setPurchaseOrders(data)
+                })
         } catch (e) {
             setError((e as Error).message)
         }
@@ -268,6 +297,10 @@ const Form = () => {
             {
                 field: 'quantity',
                 headerName: 'Quantity',
+            },
+            {
+                field: 'poId',
+                headerName: 'Purchase Order',
             },
             {
                 field: '#',
@@ -329,8 +362,8 @@ const Form = () => {
                             withAsterisk
                             {...form.getInputProps('supplierId')}
                             onChange={(value) => {
-                                form.getInputProps('supplierId').onChange(value)
                                 if (value) {
+                                    form.setFieldValue('supplierId', value)
                                     updateSupplier(value)
                                 }
                             }}
@@ -394,7 +427,14 @@ const Form = () => {
                             min={0}
                             {...form.getInputProps('selectedRm.quantity')}
                         />
-                        <Grid.Col xs={3} />
+                        <FormSelect
+                            xs={3}
+                            name="selectedRm.poId"
+                            label="Purchase Order"
+                            data={purchaseOrders}
+                            withAsterisk
+                            {...form.getInputProps('selectedRm.poId')}
+                        />
                         <Grid.Col xs={12}>
                             <Button
                                 fullWidth
@@ -403,8 +443,9 @@ const Form = () => {
                                 color="primary"
                                 onClick={() => {
                                     if (
-                                        form.values.selectedRm &&
-                                        form.values.selectedRm.rmId
+                                        form.values.selectedRm.rmId &&
+                                        form.values.selectedRm.poId &&
+                                        form.values.selectedRm.quantity
                                     ) {
                                         if (
                                             !form.values.invoiceDetails.find(
@@ -418,6 +459,7 @@ const Form = () => {
                                                 form.values.selectedRm
                                             )
                                             form.setFieldValue('selectedRm', {
+                                                ...form.values.selectedRm,
                                                 rmId: '',
                                                 quantity: 0,
                                             })

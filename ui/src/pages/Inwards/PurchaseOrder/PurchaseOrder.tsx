@@ -1,4 +1,4 @@
-import { Button, Divider, Grid, Skeleton, Text } from '@mantine/core'
+import { Button, Divider, Grid, Text } from '@mantine/core'
 import { Fetch, useAuth } from '../../../services'
 import { FormInputText, FormSelect } from '../../../components'
 import React, { useEffect, useState } from 'react'
@@ -150,15 +150,30 @@ const PurchaseOrder = () => {
     const getSupplier = async () => {
         try {
             const data = await Fetch({
-                url: '/suppliers',
+                url: '/inwards/po',
                 options: {
                     authToken: token,
+                    params: {
+                        where: JSON.stringify({
+                            status: 'PendingPoVerification',
+                        }),
+                        select: JSON.stringify({
+                            supplier: {
+                                select: {
+                                    name: true,
+                                    id: true,
+                                },
+                            },
+                        }),
+                    },
                 },
             }).then((data) => {
-                return data.map((supplier: { name: string; id: string }) => ({
-                    label: supplier.name,
-                    value: supplier.id,
-                }))
+                return data.map(
+                    (supplier: { supplier: { name: string; id: string } }) => ({
+                        label: supplier.supplier.name,
+                        value: supplier.supplier.id,
+                    })
+                )
             })
             setSupplier(data)
         } catch (e) {
@@ -188,7 +203,6 @@ const PurchaseOrder = () => {
                 return data.map((invoice: { invoiceId: string }) => ({
                     value: invoice.invoiceId,
                     label: invoice.invoiceId,
-                    // ...invoice,
                 }))
             })
             setInvoice(data)
@@ -240,7 +254,7 @@ const PurchaseOrder = () => {
     const updatePoValues = async () => {
         try {
             if (form.values.invoiceId && form.values.details) {
-                const details = await form.values.details.map((d) => {
+                const details = form.values.details.map((d) => {
                     const poDetails = po
                         ?.find(({ id }) => id === form.values.poId)
                         ?.poDetails.find(({ rmId }) => rmId === d.rmId)
@@ -314,10 +328,6 @@ const PurchaseOrder = () => {
         getSupplier()
     }, [])
 
-    if (!supplier) {
-        return <Skeleton width="90vw" height="100%" />
-    }
-
     return (
         <form
             onSubmit={(e) => {
@@ -330,7 +340,7 @@ const PurchaseOrder = () => {
                     xs={12}
                     label="Supplier"
                     placeholder="Select Supplier"
-                    data={supplier}
+                    data={supplier ? supplier : []}
                     withAsterisk
                     {...form.getInputProps('supplierId')}
                     onChange={(value) => {
