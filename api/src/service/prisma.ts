@@ -24,14 +24,14 @@ prisma.$use(async (params, next) => {
     const result: any = await next(params)
 
     if (
-        params.model === 'InwardsPoPending' &&
+        params.model === 'InvoiceDetails' &&
         params.action === 'update' &&
         params.args.data &&
         params.args.data.status
     ) {
         if (params.args.data.status === 'Accepted') {
             // Check if PO need to be closed
-            const acceptedPoQtys = await prisma.inwardsPoPending.groupBy({
+            const acceptedPoQtys = await prisma.invoiceDetails.groupBy({
                 by: ['rmId'],
                 where: {
                     poId: (result as InwardsPoPending).poId,
@@ -81,7 +81,7 @@ prisma.$use(async (params, next) => {
             }
         }
         // Close invoice if no more pending entries
-        const pending = await prisma.inwardsPoPending.count({
+        const pending = await prisma.invoiceDetails.count({
             where: {
                 invoiceId: (result as InwardsPoPending).invoiceId,
                 status: 'PendingPoVerification',
