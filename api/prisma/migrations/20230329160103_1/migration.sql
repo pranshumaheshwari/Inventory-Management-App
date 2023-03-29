@@ -147,7 +147,7 @@ CREATE TABLE `inwards_po_pending` (
     `supplier_id` VARCHAR(191) NOT NULL,
     `rm_id` VARCHAR(191) NOT NULL,
     `quantity` DOUBLE NOT NULL,
-    `po_id` VARCHAR(191) NULL,
+    `po_id` VARCHAR(191) NOT NULL,
     `created_at` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
     `store_stock_before` DOUBLE NULL,
     `line_stock_before` DOUBLE NULL,
