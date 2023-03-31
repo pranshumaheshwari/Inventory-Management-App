@@ -1,9 +1,10 @@
 import { Button, Grid, Skeleton, Stepper, Text } from '@mantine/core'
 import { Fetch, useAuth } from '../../../services'
-import { FormInputNumber, FormInputText, FormSelect } from '../../../components'
-import React, { useEffect, useState } from 'react'
+import { FormSelect, Table } from '../../../components'
+import React, { useEffect, useMemo, useState } from 'react'
 import { isNotEmpty, useForm } from '@mantine/form'
 
+import { ColDef } from 'ag-grid-community'
 import { openConfirmModal } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
 
@@ -11,6 +12,8 @@ export interface RequisitionIssueInterface {
     requisitionId: number
     details: {
         rmId: string
+        description: string
+        dtplCode: string
         quantity: number
         storeStock: number
         lineStock: number
@@ -155,6 +158,8 @@ const RequisitionIssue = () => {
                                             rm: {
                                                 select: {
                                                     id: true,
+                                                    description: true,
+                                                    dtplCode: true,
                                                     storeStock: true,
                                                     lineStock: true,
                                                 },
@@ -185,6 +190,8 @@ const RequisitionIssue = () => {
                                     quantity: number
                                     rm: {
                                         id: string
+                                        description: string
+                                        dtplCode: string
                                         storeStock: number
                                         lineStock: number
                                     }
@@ -238,6 +245,83 @@ const RequisitionIssue = () => {
     useEffect(() => {
         getFinishedGoods()
     }, [])
+
+    const detailsColumnDef = useMemo<
+        ColDef<RequisitionIssueInterface['details'][number]>[]
+    >(
+        () => [
+            {
+                field: 'rmId',
+                headerName: 'Raw Material',
+            },
+            {
+                field: 'Description',
+                valueGetter: (params) => {
+                    return form.values.details.find(
+                        (rm) => rm.rmId === params.data?.rmId
+                    )?.description
+                },
+            },
+            {
+                field: 'DTPL Part Number',
+                valueGetter: (params) => {
+                    return form.values.details.find(
+                        (rm) => rm.rmId === params.data?.rmId
+                    )?.dtplCode
+                },
+            },
+            {
+                field: 'storeStock',
+                headerName: 'Store Stock',
+                type: 'numberColumn',
+            },
+            {
+                field: 'lineStock',
+                headerName: 'Line Stock',
+                type: 'numberColumn',
+            },
+            {
+                field: 'issuedQuantity',
+                headerName: 'Issued Quantity',
+                type: 'numberColumn',
+            },
+            {
+                field: 'maxQuantity',
+                headerName: 'Remaining Quantity',
+            },
+            {
+                field: 'quantity',
+                headerName: 'Quantity',
+                editable: true,
+                valueParser: ({ newValue, data }) => {
+                    const val = parseFloat(newValue)
+                    if (val > data.maxQuantity) {
+                        return data.maxQuantity
+                    }
+                    return val
+                },
+            },
+            {
+                field: '#',
+                onCellClicked: ({ data }) => {
+                    if (data) {
+                        form.removeListItem(
+                            'details',
+                            form.values.details.findIndex(
+                                (d) => d.rmId === data.rmId
+                            )
+                        )
+                    }
+                },
+                cellRenderer: () => (
+                    <Button fullWidth size="xs" variant="outline" color="red">
+                        DELETE
+                    </Button>
+                ),
+            },
+        ],
+        [form]
+    )
 
     if (!finishedGoods) {
         return <Skeleton width="90vw" height="100%" />
@@ -295,82 +379,19 @@ const RequisitionIssue = () => {
                 )}
                 {activeStep === 1 && (
                     <>
-                        {form.values.details.length !== 0 && (
-                            <Grid.Col xs={12}>
-                                <Grid justify="center" align="center" grow>
-                                    <Grid.Col xs={2}>
-                                        <Text fz="lg">Raw Material</Text>
-                                    </Grid.Col>
-                                    <Grid.Col xs={2}>
-                                        <Text fz="lg">Store Stock</Text>
-                                    </Grid.Col>
-                                    <Grid.Col xs={2}>
-                                        <Text fz="lg">Line Stock</Text>
-                                    </Grid.Col>
-                                    <Grid.Col xs={2}>
-                                        <Text fz="lg">Issued Quantity</Text>
-                                    </Grid.Col>
-                                    <Grid.Col xs={2}>
-                                        <Text fz="lg">Remaining Quantity</Text>
-                                    </Grid.Col>
-                                    <Grid.Col xs={2}>
-                                        <Text fz="lg">Quantity</Text>
-                                    </Grid.Col>
-                                </Grid>
-                            </Grid.Col>
-                        )}
-                        {form.values.details.map((item, index) => (
-                            <Grid.Col xs={12} key={index}>
-                                <Grid justify="center" align="center" grow>
-                                    <FormInputText
-                                        xs={2}
-                                        disabled
-                                        {...form.getInputProps(
-                                            `details.${index}.rmId`
-                                        )}
-                                    />
-                                    <FormInputNumber
-                                        xs={2}
-                                        {...form.getInputProps(
-                                            `details.${index}.storeStock`
-                                        )}
-                                        disabled
-                                    />
-                                    <FormInputNumber
-                                        xs={2}
-                                        {...form.getInputProps(
-                                            `details.${index}.lineStock`
-                                        )}
-                                        disabled
-                                    />
-                                    <FormInputNumber
-                                        xs={2}
-                                        {...form.getInputProps(
-                                            `details.${index}.issuedQuantity`
-                                        )}
-                                        disabled
-                                    />
-                                    <FormInputNumber
-                                        xs={2}
-                                        {...form.getInputProps(
-                                            `details.${index}.maxQuantity`
-                                        )}
-                                        disabled
-                                    />
-                                    <FormInputNumber
-                                        xs={2}
-                                        {...form.getInputProps(
-                                            `details.${index}.quantity`
-                                        )}
-                                        min={0}
-                                        max={
-                                            form.values.details[index]
-                                                .maxQuantity
-                                        }
-                                    />
-                                </Grid>
-                            </Grid.Col>
-                        ))}
+                        <Grid.Col
+                            xs={12}
+                            style={{
+                                height: '70vh',
+                            }}
+                        >
+                            <Table<RequisitionIssueInterface['details'][number]>
+                                fileName={form.values.requisitionId.toString()}
+                                rowData={form.values.details}
+                                columnDefs={detailsColumnDef}
+                                pagination={false}
+                            />
+                        </Grid.Col>
                     </>
                 )}
                 {error && (
