@@ -1,9 +1,11 @@
 import { Button, Divider, Grid, Text } from '@mantine/core'
 import { Fetch, useAuth } from '../../../services'
-import { FormInputText, FormSelect } from '../../../components'
-import React, { useEffect, useState } from 'react'
+import { FormInputText, FormSelect, Table } from '../../../components'
+import React, { useEffect, useMemo, useState } from 'react'
 import { isNotEmpty, useForm } from '@mantine/form'
 
+import { ColDef } from 'ag-grid-community'
+import { RawMaterialInterface } from '../../RawMaterial/RawMaterial'
 import { openConfirmModal } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
 
@@ -13,9 +15,13 @@ export interface InwardsPurchaseOrderInterface {
     poId: string
     details: {
         rmId: string
+        description: string
+        dtplCode: string
         quantity: number
-        poPrice: number
-        poQuantity: number
+        acceptedQuantity: number
+        rejectedQuantity: number
+        poPrice?: number
+        poQuantity?: number
     }[]
 }
 
@@ -65,86 +71,87 @@ const PurchaseOrder = () => {
             centered: true,
             children: <Text size="sm">Are you sure you want to proceed</Text>,
             labels: { confirm: 'Confirm', cancel: 'Cancel' },
-            onConfirm: acceptPo,
+            onConfirm: onSubmit,
         })
 
-    const openRejectModal = () =>
-        openConfirmModal({
-            title: 'Delete this item',
-            centered: true,
-            children: (
-                <Text size="sm">
-                    Are you sure you want to reject this item? This action is
-                    destructive and irreversible. All data will be lost
-                </Text>
-            ),
-            labels: { confirm: 'Reject', cancel: "No don't reject it" },
-            confirmProps: { color: 'orange' },
-            onConfirm: rejectPo,
-        })
-
-    const rejectPo = async () => {
-        if (form.isValid()) {
-            try {
-                const resp = await Fetch({
-                    url: '/inwards/rejectPO',
-                    options: {
-                        authToken: token,
-                        method: 'PUT',
-                        body: form.values,
-                    },
-                })
+    const onSubmit = async () => {
+        await Promise.all([
+            ...form.values.details
+                .filter((d) => d.rejectedQuantity > 0)
+                .map((d) => {
+                    return rejectPo({
+                        ...d,
+                        quantity: d.rejectedQuantity,
+                    })
+                }),
+            ...form.values.details
+                .filter((d) => d.acceptedQuantity > 0)
+                .map((d) => {
+                    return acceptPo({
+                        ...d,
+                        quantity: d.acceptedQuantity,
+                    })
+                }),
+        ])
+            .then(() => {
                 showNotification({
                     title: 'Success',
                     message: (
-                        <Text>Rejected PO check with ID - {resp[0].id}</Text>
-                    ),
-                    color: 'orange',
-                })
-                form.reset()
-                setPo([])
-                setInvoice([])
-            } catch (err) {
-                setError((err as Error).message)
-                showNotification({
-                    title: 'Error',
-                    message: <Text>{(err as Error).message}</Text>,
-                    color: 'red',
-                })
-            }
-        }
-    }
-
-    const acceptPo = async () => {
-        if (form.isValid()) {
-            try {
-                const resp = await Fetch({
-                    url: '/inwards/acceptPO',
-                    options: {
-                        authToken: token,
-                        method: 'PUT',
-                        body: form.values,
-                    },
-                })
-                showNotification({
-                    title: 'Success',
-                    message: (
-                        <Text>Accpected PO check with ID - {resp[0].id}</Text>
+                        <Text>
+                            Succesfully verified Invoice {form.values.invoiceId}{' '}
+                            against PO{' '}
+                        </Text>
                     ),
                     color: 'green',
                 })
                 form.reset()
                 setPo([])
                 setInvoice([])
-            } catch (err) {
+            })
+            .catch((err) => {
                 setError((err as Error).message)
                 showNotification({
                     title: 'Error',
                     message: <Text>{(err as Error).message}</Text>,
                     color: 'red',
                 })
-            }
-        }
+            })
+    }
+
+    const rejectPo = async (
+        detail: InwardsPurchaseOrderInterface['details'][number]
+    ) => {
+        return Fetch({
+            url: '/inwards/rejectPO',
+            options: {
+                authToken: token,
+                method: 'PUT',
+                body: {
+                    supplierId: form.values.supplierId,
+                    invoiceId: form.values.invoiceId,
+                    poId: form.values.poId,
+                    details: [detail],
+                },
+            },
+        })
+    }
+
+    const acceptPo = async (
+        detail: InwardsPurchaseOrderInterface['details'][number]
+    ) => {
+        return Fetch({
+            url: '/inwards/acceptPO',
+            options: {
+                authToken: token,
+                method: 'PUT',
+                body: {
+                    supplierId: form.values.supplierId,
+                    invoiceId: form.values.invoiceId,
+                    poId: form.values.poId,
+                    details: [detail],
+                },
+            },
+        })
     }
 
     const getSupplier = async () => {
@@ -288,7 +295,13 @@ const PurchaseOrder = () => {
                         select: JSON.stringify({
                             invoiceDetails: {
                                 select: {
-                                    rmId: true,
+                                    rm: {
+                                        select: {
+                                            id: true,
+                                            description: true,
+                                            dtplCode: true,
+                                        },
+                                    },
                                     quantity: true,
                                 },
                             },
@@ -298,23 +311,43 @@ const PurchaseOrder = () => {
             })
                 .then((data) => data[0]['invoiceDetails'])
                 .then(
-                    async (data: InwardsPurchaseOrderInterface['details']) => {
+                    async (
+                        data: {
+                            rm: Pick<
+                                RawMaterialInterface,
+                                'id' | 'description' | 'dtplCode'
+                            >
+                            quantity: number
+                        }[]
+                    ) => {
                         return data.map((d) => {
                             if (form.values.poId) {
                                 const poDetails = po
                                     ?.find(({ id }) => id === form.values.poId)
                                     ?.poDetails.find(
-                                        ({ rmId }) => rmId === d.rmId
+                                        ({ rmId }) => rmId === d.rm.id
                                     )
                                 if (poDetails) {
                                     return {
-                                        ...d,
+                                        rmId: d.rm.id,
+                                        description: d.rm.description,
+                                        dtplCode: d.rm.dtplCode,
+                                        rejectedQuantity: 0,
+                                        acceptedQuantity: d.quantity,
+                                        quantity: d.quantity,
                                         poQuantity: poDetails.quantity,
                                         poPrice: poDetails.price,
                                     }
                                 }
                             }
-                            return d
+                            return {
+                                rmId: d.rm.id,
+                                description: d.rm.description,
+                                dtplCode: d.rm.dtplCode,
+                                rejectedQuantity: 0,
+                                quantity: d.quantity,
+                                acceptedQuantity: d.quantity,
+                            }
                         })
                     }
                 )
@@ -327,6 +360,109 @@ const PurchaseOrder = () => {
     useEffect(() => {
         getSupplier()
     }, [])
+
+    const detailsColumnDef = useMemo<
+        ColDef<InwardsPurchaseOrderInterface['details'][number]>[]
+    >(
+        () => [
+            {
+                field: 'rmId',
+                headerName: 'Raw Material',
+            },
+            {
+                field: 'Description',
+                valueGetter: (params) => {
+                    return form.values.details.find(
+                        (rm) => rm.rmId === params.data?.rmId
+                    )?.description
+                },
+            },
+            {
+                field: 'DTPL Part Number',
+                valueGetter: (params) => {
+                    return form.values.details.find(
+                        (rm) => rm.rmId === params.data?.rmId
+                    )?.dtplCode
+                },
+            },
+            {
+                field: 'quantity',
+                headerName: 'Invoice Quantity',
+                type: 'numberColumn',
+            },
+            {
+                field: 'poQuantity',
+                headerName: 'PO Quantity',
+                type: 'numberColumn',
+            },
+            {
+                field: 'poPrice',
+                headerName: 'PO Price',
+                type: 'numberColumn',
+            },
+            {
+                field: 'acceptedQuantity',
+                headerName: 'Accept Quantity',
+                editable: true,
+                valueParser: ({ newValue, data }) => {
+                    const val = parseFloat(newValue)
+                    if (val > data.quantity) {
+                        return data.quantity
+                    }
+                    return val
+                },
+                onCellValueChanged: ({ newValue, data }) => {
+                    form.setFieldValue(
+                        `details.${form.values.details.findIndex(
+                            (rm) => rm.rmId === data?.rmId
+                        )}.rejectedQuantity`,
+                        data.quantity - newValue
+                    )
+                },
+                type: 'numberColumn',
+            },
+            {
+                field: 'rejectedQuantity',
+                headerName: 'Reject Quantity',
+                editable: true,
+                valueParser: ({ newValue, data }) => {
+                    const val = parseFloat(newValue)
+                    if (val > data.quantity) {
+                        return data.quantity
+                    }
+                    return val
+                },
+                onCellValueChanged: ({ newValue, data }) => {
+                    form.setFieldValue(
+                        `details.${form.values.details.findIndex(
+                            (rm) => rm.rmId === data?.rmId
+                        )}.acceptedQuantity`,
+                        data.quantity - newValue
+                    )
+                },
+                type: 'numberColumn',
+            },
+            {
+                field: '#',
+                onCellClicked: ({ data }) => {
+                    if (data) {
+                        form.removeListItem(
+                            'details',
+                            form.values.details.findIndex(
+                                (d) => d.rmId === data.rmId
+                            )
+                        )
+                    }
+                },
+                cellRenderer: () => (
+                    <Button fullWidth size="xs" variant="outline" color="red">
+                        DELETE
+                    </Button>
+                ),
+            },
+        ],
+        [form]
+    )
 
     return (
         <form
@@ -390,65 +526,22 @@ const PurchaseOrder = () => {
                     withAsterisk
                     {...form.getInputProps('status')}
                 />
-                <>
-                    <Grid.Col xs={12}>
-                        <Divider />
-                    </Grid.Col>
-                    {form.values.details.length !== 0 && (
-                        <Grid.Col xs={12}>
-                            <Grid justify="center" align="center" grow>
-                                <Grid.Col xs={3}>
-                                    <Text fz="lg">
-                                        Raw Material Part Number
-                                    </Text>
-                                </Grid.Col>
-                                <Grid.Col xs={3}>
-                                    <Text fz="lg">Invoice Quantity</Text>
-                                </Grid.Col>
-                                <Grid.Col xs={3}>
-                                    <Text fz="lg">PO Quantity</Text>
-                                </Grid.Col>
-                                <Grid.Col xs={3}>
-                                    <Text fz="lg">PO Price</Text>
-                                </Grid.Col>
-                            </Grid>
-                        </Grid.Col>
-                    )}
-                    {form.values.details.map((item, index) => (
-                        <Grid.Col xs={12} key={index}>
-                            <Grid justify="center" align="center" grow>
-                                <FormInputText
-                                    xs={3}
-                                    {...form.getInputProps(
-                                        `details.${index}.rmId`
-                                    )}
-                                    disabled
-                                />
-                                <FormInputText
-                                    xs={3}
-                                    {...form.getInputProps(
-                                        `details.${index}.quantity`
-                                    )}
-                                    disabled
-                                />
-                                <FormInputText
-                                    xs={3}
-                                    {...form.getInputProps(
-                                        `details.${index}.poQuantity`
-                                    )}
-                                    disabled
-                                />
-                                <FormInputText
-                                    xs={3}
-                                    {...form.getInputProps(
-                                        `details.${index}.poPrice`
-                                    )}
-                                    disabled
-                                />
-                            </Grid>
-                        </Grid.Col>
-                    ))}
-                </>
+                <Grid.Col xs={12}>
+                    <Divider />
+                </Grid.Col>
+                <Grid.Col
+                    xs={12}
+                    style={{
+                        height: '50vh',
+                    }}
+                >
+                    <Table<InwardsPurchaseOrderInterface['details'][number]>
+                        fileName={form.values.invoiceId}
+                        rowData={form.values.details}
+                        columnDefs={detailsColumnDef}
+                        pagination={false}
+                    />
+                </Grid.Col>
                 {error && (
                     <Grid.Col xs={12}>
                         <Text c="red">{error}</Text>
@@ -456,24 +549,8 @@ const PurchaseOrder = () => {
                 )}
                 {
                     <>
-                        <Grid.Col xs={2}>
-                            <Button
-                                fullWidth
-                                size="md"
-                                variant="filled"
-                                color="orange"
-                                onClick={() => {
-                                    const result = form.validate()
-                                    if (!result.hasErrors) {
-                                        openRejectModal()
-                                    }
-                                }}
-                            >
-                                Reject
-                            </Button>
-                        </Grid.Col>
-                        <Grid.Col xs={8} />
-                        <Grid.Col xs={2}>
+                        <Grid.Col xs={3} />
+                        <Grid.Col xs={6}>
                             <Button
                                 fullWidth
                                 size="md"
@@ -486,9 +563,10 @@ const PurchaseOrder = () => {
                                     }
                                 }}
                             >
-                                Approve
+                                Submit
                             </Button>
                         </Grid.Col>
+                        <Grid.Col xs={3} />
                     </>
                 }
             </Grid>

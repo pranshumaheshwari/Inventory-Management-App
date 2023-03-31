@@ -367,37 +367,11 @@ const NewFromSalesOrder = () => {
                 headerName: 'PO Quantity',
                 editable: true,
                 valueParser: ({ newValue }) => parseFloat(newValue),
-                valueGetter: ({ data }) =>
-                    form.values.rawMaterials.find(
-                        (rm) => rm.rmId === data?.rmId
-                    )?.quantity,
-                valueSetter: ({ newValue, data }) => {
-                    form.setFieldValue(
-                        `rawMaterials.${form.values.rawMaterials.findIndex(
-                            (rm) => rm.rmId === data?.rmId
-                        )}.quantity`,
-                        newValue
-                    )
-                    return true
-                },
             },
             {
                 headerName: 'Price',
                 editable: true,
                 valueParser: ({ newValue }) => parseFloat(newValue),
-                valueGetter: ({ data }) =>
-                    form.values.rawMaterials.find(
-                        (rm) => rm.rmId === data?.rmId
-                    )?.price,
-                valueSetter: ({ data, newValue }) => {
-                    form.setFieldValue(
-                        `rawMaterials.${form.values.rawMaterials.findIndex(
-                            (rm) => rm.rmId === data?.rmId
-                        )}.price`,
-                        newValue
-                    )
-                    return true
-                },
             },
             {
                 field: '#',
