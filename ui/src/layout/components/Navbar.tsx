@@ -12,7 +12,7 @@ export default function MNavbar({ opened }: NavbarInterface) {
             p="md"
             hiddenBreakpoint="sm"
             hidden={!opened}
-            width={{ sm: 200, lg: 300 }}
+            width={{ sm: 200, lg: 250 }}
         >
             <Navigation />
         </Navbar>
