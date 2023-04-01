@@ -184,9 +184,9 @@ function ManPower() {
                     ),
                     ...Object.fromEntries(
                         data[0].productionQuantity.map((pq, idx) => [
-                            idx.toString(),
+                            (idx + 1).toString(),
                             records.reduce((prevValue, curVal) => {
-                                if (curVal.date === idx) {
+                                if (curVal.date === idx + 1) {
                                     return prevValue + curVal.number
                                 }
                                 return prevValue
@@ -260,7 +260,7 @@ function ManPower() {
                     ...Object.fromEntries(
                         data[0].productionQuantity.map((pq, idx) => [
                             (idx + 1).toString(),
-                            data.reduce((prevValue, curVal) => {
+                            (data.reduce((prevValue, curVal) => {
                                 return (
                                     prevValue +
                                     curVal.productionQuantity[idx] *
@@ -271,7 +271,8 @@ function ManPower() {
                                     ? (attendace[
                                           (idx + 1).toString()
                                       ] as number)
-                                    : 1),
+                                    : 1)) *
+                                100,
                         ])
                     ),
                 },

@@ -16,7 +16,6 @@ function Table<Type>({
     defaultColDef,
     pinnedBottomRowData,
     pinnedTopRowData,
-    pagination = true,
     ...otherProps
 }: TableInterface<Type>) {
     const cDefaultColDef = useMemo(
@@ -61,9 +60,7 @@ function Table<Type>({
                     defaultColDef={cDefaultColDef}
                     pinnedBottomRowData={pinnedBottomRowData}
                     pinnedTopRowData={pinnedTopRowData}
-                    pagination={pagination}
                     columnTypes={columnTypes}
-                    paginationAutoPageSize={pagination}
                     defaultExcelExportParams={{
                         fileName: fileName ? fileName + '.xlsx' : 'export.xlsx',
                         columnKeys: columnDefs
