@@ -13,6 +13,7 @@ import { RawMaterialSelectFilter, RawMaterialSelectItem } from '../../common'
 import React, { useEffect, useState } from 'react'
 
 import { ColDef } from 'ag-grid-community'
+import { DatesRangeValue } from '@mantine/dates'
 import { RawMaterialInterface } from '../RawMaterial'
 import dayjs from 'dayjs'
 
@@ -36,7 +37,10 @@ function ById() {
             value: '',
         },
     })
-    const [value, setValue] = useState<[Date, Date]>([new Date(), new Date()])
+    const [value, setValue] = useState<DatesRangeValue>([
+        new Date(),
+        new Date(),
+    ])
 
     const handleNext = () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1)
@@ -228,11 +232,7 @@ function ById() {
                         label="Select Date Range"
                         clearable
                         value={value}
-                        onChange={(value) => {
-                            if (value[0] && value[1]) {
-                                setValue([value[0], value[1]])
-                            }
-                        }}
+                        onChange={setValue}
                     />
                     <Grid.Col xs={3} />
                     <Grid.Col xs={3} />

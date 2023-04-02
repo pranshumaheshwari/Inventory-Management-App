@@ -73,6 +73,25 @@ app.post('/', async (req: Request, res: Response) => {
     }
 })
 
+app.get('/manualUpdate', async (req: Request, res: Response) => {
+    const args: Prisma.FgManualUpdateLogFindManyArgs = {}
+    const { select, include, where, distinct } = req.query
+    if (select) {
+        args.select = JSON.parse(select as string)
+    }
+    if (include) {
+        args.include = JSON.parse(include as string)
+    }
+    if (where) {
+        args.where = JSON.parse(where as string)
+    }
+    if (distinct) {
+        args.distinct = JSON.parse(distinct as string)
+    }
+    const data = await PrismaService.fgManualUpdateLog.findMany(args)
+    res.json(data)
+})
+
 app.get('/:id', async (req: Request, res: Response) => {
     const { id } = req.params
     const args: Prisma.FgFindUniqueArgs = {
@@ -149,6 +168,73 @@ app.put('/:id', async (req: Request, res: Response) => {
             },
         })
         res.json(result)
+    } catch (e) {
+        res.status(500).json({
+            message: (e as Error).message,
+        })
+    }
+})
+
+app.put('/:id/stock', async (req: Request, res: Response) => {
+    const { storeStock, price, oqcPendingStock } = req.body
+
+    const { id } = req.params
+
+    try {
+        const resp = await PrismaService.$transaction(async (tq) => {
+            const data = await tq.fg.findUniqueOrThrow({
+                where: {
+                    id,
+                },
+                select: {
+                    storeStock: true,
+                    oqcPendingStock: true,
+                },
+            })
+            await tq.fgManualUpdateLog.create({
+                data: {
+                    user: req.user ? req.user.username : '',
+                    fgId: id,
+                    ...(storeStock
+                        ? {
+                              storeStock:
+                                  data.storeStock - parseFloat(storeStock),
+                          }
+                        : {}),
+                    ...(oqcPendingStock
+                        ? {
+                              oqcPendingStock:
+                                  data.oqcPendingStock -
+                                  parseFloat(oqcPendingStock),
+                          }
+                        : {}),
+                },
+            })
+            return await tq.fg.update({
+                where: {
+                    id,
+                },
+                data: {
+                    ...(storeStock
+                        ? {
+                              storeStock: parseFloat(storeStock),
+                          }
+                        : {}),
+                    ...(oqcPendingStock
+                        ? {
+                              oqcPendingStock: parseFloat(oqcPendingStock),
+                          }
+                        : {}),
+                    ...(price
+                        ? {
+                              price: parseFloat(price),
+                          }
+                        : {}),
+                },
+            })
+        })
+
+        res.json(resp)
     } catch (e) {
         res.status(500).json({
             message: (e as Error).message,
