@@ -323,6 +323,38 @@ CREATE TABLE `so_details` (
     PRIMARY KEY (`so_id`, `fg_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+-- CreateTable
+CREATE TABLE `rm_manual_update` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `user` VARCHAR(191) NOT NULL,
+    `rm_id` VARCHAR(191) NOT NULL,
+    `store_stock` DOUBLE NULL,
+    `line_stock` DOUBLE NULL,
+    `created_at` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `store_stock_before` DOUBLE NULL,
+    `line_stock_before` DOUBLE NULL,
+    `po_pending_stock_before` DOUBLE NULL,
+    `iqc_pending_stock_before` DOUBLE NULL,
+    `iqc_rejected_stock_before` DOUBLE NULL,
+    `po_rejected_stock_before` DOUBLE NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `fg_manual_update` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `user` VARCHAR(191) NOT NULL,
+    `fg_id` VARCHAR(191) NOT NULL,
+    `store_stock` DOUBLE NULL,
+    `oqc_pending_stock` DOUBLE NULL,
+    `created_at` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `store_stock_before` DOUBLE NULL,
+    `oqc_pending_stock_before` DOUBLE NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 -- AddForeignKey
 ALTER TABLE `rm` ADD CONSTRAINT `rm_supplier_id_fkey` FOREIGN KEY (`supplier_id`) REFERENCES `supplier`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
@@ -454,3 +486,15 @@ ALTER TABLE `so_details` ADD CONSTRAINT `so_details_fg_id_fkey` FOREIGN KEY (`fg
 
 -- AddForeignKey
 ALTER TABLE `so_details` ADD CONSTRAINT `so_details_so_id_fkey` FOREIGN KEY (`so_id`) REFERENCES `so`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `rm_manual_update` ADD CONSTRAINT `rm_manual_update_rm_id_fkey` FOREIGN KEY (`rm_id`) REFERENCES `rm`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `rm_manual_update` ADD CONSTRAINT `rm_manual_update_user_fkey` FOREIGN KEY (`user`) REFERENCES `users`(`username`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `fg_manual_update` ADD CONSTRAINT `fg_manual_update_fg_id_fkey` FOREIGN KEY (`fg_id`) REFERENCES `fg`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `fg_manual_update` ADD CONSTRAINT `fg_manual_update_user_fkey` FOREIGN KEY (`user`) REFERENCES `users`(`username`) ON DELETE RESTRICT ON UPDATE CASCADE;

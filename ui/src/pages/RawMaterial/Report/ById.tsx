@@ -18,7 +18,7 @@ import dayjs from 'dayjs'
 
 interface RecordInterface {
     createdAt: string
-    type: 'Production' | 'Inwards' | 'Requisition'
+    type: 'Production' | 'Inwards' | 'Requisition' | 'Manual Update'
 }
 
 function ById() {
@@ -158,10 +158,26 @@ function ById() {
                 }))
             )
 
+            const manualUpdate = await Fetch({
+                url: '/rawmaterial/manualUpdate',
+                options: {
+                    authToken: token,
+                    params: {
+                        ...query,
+                    },
+                },
+            }).then((data) =>
+                data.map((d: RecordInterface) => ({
+                    ...d,
+                    type: 'Manual Update',
+                }))
+            )
+
             const data = [
                 ...production,
                 ...inwardsVerified,
                 ...requisitionOutwards,
+                ...manualUpdate,
             ]
             data.sort((a, b) => b.createdAt - a.createdAt)
             setRecords(data)

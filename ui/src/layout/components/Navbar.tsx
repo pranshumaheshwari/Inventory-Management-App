@@ -1,5 +1,6 @@
 import { Navbar } from '@mantine/core'
 import Navigation from './Navigation'
+import { Profile } from '../../components'
 import React from 'react'
 
 interface NavbarInterface {
@@ -14,7 +15,12 @@ export default function MNavbar({ opened }: NavbarInterface) {
             hidden={!opened}
             width={{ sm: 200, lg: 250 }}
         >
-            <Navigation />
+            <Navbar.Section grow>
+                <Navigation />
+            </Navbar.Section>
+            <Navbar.Section>
+                <Profile />
+            </Navbar.Section>
         </Navbar>
     )
 }

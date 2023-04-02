@@ -213,11 +213,7 @@ function ById() {
                         label="Select Date Range"
                         clearable
                         value={value}
-                        onChange={(value) => {
-                            if (value[0] && value[1]) {
-                                setValue([value[0], value[1]])
-                            }
-                        }}
+                        onChange={setValue}
                     />
                     <Grid.Col xs={3} />
                     <Grid.Col xs={3} />

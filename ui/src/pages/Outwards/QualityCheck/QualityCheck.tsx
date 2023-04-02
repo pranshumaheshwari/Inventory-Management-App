@@ -12,6 +12,8 @@ export interface OutwardsQualityCheck {
     soId: string
     fgId: string
     quantity: number
+    acceptedquantity: number
+    rejectedQuantity: number
     productionId: string
 }
 
@@ -28,6 +30,8 @@ const QualityCheck = () => {
         soId: '',
         fgId: '',
         productionId: '',
+        acceptedquantity: 0,
+        rejectedQuantity: 0,
         quantity: 0,
     }
 
@@ -38,8 +42,10 @@ const QualityCheck = () => {
             fgId: isNotEmpty(),
             customerId: isNotEmpty(),
             productionId: isNotEmpty(),
-            quantity: (value) =>
-                value <= 0 ? 'Quantity should be more than 0' : null,
+            acceptedquantity: (value) =>
+                value < 0 ? 'Quantity should be more than 0' : null,
+            rejectedQuantity: (value) =>
+                value < 0 ? 'Quantity should be more than 0' : null,
         },
         validateInputOnChange: true,
     })
@@ -50,83 +56,61 @@ const QualityCheck = () => {
             centered: true,
             children: <Text size="sm">Are you sure you want to proceed</Text>,
             labels: { confirm: 'Confirm', cancel: 'Cancel' },
-            onConfirm: acceptOqc,
+            onConfirm: onSubmit,
         })
 
-    const openDeleteModal = () =>
-        openConfirmModal({
-            title: 'Delete this item',
-            centered: true,
-            children: (
-                <Text size="sm">
-                    Are you sure you want to reject this item?
-                </Text>
-            ),
-            labels: { confirm: 'Reject', cancel: "No don't reject it" },
-            confirmProps: { color: 'red' },
-            onConfirm: rejectOqc,
-        })
+    const onSubmit = async () => {
+        await Promise.all([
+            ...(form.values.acceptedquantity ? [acceptOqc()] : []),
+            ...(form.values.rejectedQuantity ? [rejectOqc()] : []),
+        ])
+            .then(() => {
+                showNotification({
+                    title: 'Success',
+                    message: <Text>Succesfully submitted OQC</Text>,
+                    color: 'green',
+                })
+                setError('')
+                form.reset()
+                setFinishedGoods([])
+                setSalesOrder([])
+            })
+            .catch((err) => {
+                setError((err as Error).message)
+                showNotification({
+                    title: 'Error',
+                    message: <Text>{(err as Error).message}</Text>,
+                    color: 'red',
+                })
+            })
+    }
 
     const rejectOqc = async () => {
-        try {
-            const resp = await Fetch({
-                url: '/outwards/oqc/reject',
-                options: {
-                    authToken: token,
-                    method: 'POST',
-                    body: {
-                        ...form.values,
-                        productionId: parseInt(form.values.productionId),
-                    },
+        return Fetch({
+            url: '/outwards/oqc/reject',
+            options: {
+                authToken: token,
+                method: 'POST',
+                body: {
+                    ...form.values,
+                    productionId: parseInt(form.values.productionId),
                 },
-            })
-            showNotification({
-                title: 'Success',
-                message: <Text>Rejected OQC check with ID - {resp[0].id}</Text>,
-                color: 'orange',
-            })
-            form.reset()
-            setSalesOrder([])
-            setFinishedGoods([])
-        } catch (err) {
-            setError((err as Error).message)
-            showNotification({
-                title: 'Error',
-                message: <Text>{(err as Error).message}</Text>,
-                color: 'red',
-            })
-        }
+            },
+        })
     }
 
     const acceptOqc = async () => {
-        try {
-            const resp = await Fetch({
-                url: '/outwards/oqc/accept',
-                options: {
-                    authToken: token,
-                    method: 'POST',
-                    body: {
-                        ...form.values,
-                        productionId: parseInt(form.values.productionId),
-                    },
+        return Fetch({
+            url: '/outwards/oqc/accept',
+            options: {
+                authToken: token,
+                method: 'POST',
+                body: {
+                    ...form.values,
+                    productionId: parseInt(form.values.productionId),
                 },
-            })
-            showNotification({
-                title: 'Success',
-                message: <Text>Accepted OQC check with ID - {resp[0].id}</Text>,
-                color: 'green',
-            })
-            form.reset()
-            setFinishedGoods([])
-            setSalesOrder([])
-        } catch (err) {
-            setError((err as Error).message)
-            showNotification({
-                title: 'Error',
-                message: <Text>{(err as Error).message}</Text>,
-                color: 'red',
-            })
-        }
+            },
+        })
     }
 
     const getCustomer = async () => {
@@ -244,6 +228,8 @@ const QualityCheck = () => {
                             group: d.fg.category,
                             productionId: d.id,
                             quantity: d.quantity,
+                            acceptedQuantity: d.quantity,
+                            rejectedQuantity: 0,
                             createdAt: d.createdAt,
                             fgId: d.fg.id,
                         }))
@@ -340,19 +326,53 @@ const QualityCheck = () => {
                                 }
                                 return false
                             })
+                            form.setFieldValue(
+                                'acceptedQuantity',
+                                quantity[0].quantity
+                            )
                             form.setFieldValue('quantity', quantity[0].quantity)
                         }
                     }}
                 />
                 <FormInputNumber
-                    name="quantity"
-                    xs={4}
-                    label="Quantity"
+                    name="acceptedQuantity"
+                    xs={2}
+                    label="Accepted Quantity"
                     placeholder="Enter Quantity"
                     min={0}
+                    max={form.values.quantity}
                     withAsterisk
-                    {...form.getInputProps('quantity')}
-                    disabled
+                    {...form.getInputProps('acceptedQuantity')}
+                    onChange={(value) => {
+                        if (value !== '') {
+                            form.setFieldValue('acceptedquantity', value)
+                            form.setFieldValue(
+                                'rejectedQuantity',
+                                form.values.quantity - value
+                            )
+                        }
+                    }}
+                    value={form.values.acceptedquantity}
+                />
+                <FormInputNumber
+                    name="rejectedQuantity"
+                    xs={2}
+                    label="Rejected Quantity"
+                    placeholder="Enter Quantity"
+                    min={0}
+                    max={form.values.quantity}
+                    withAsterisk
+                    {...form.getInputProps('rejectedQuantity')}
+                    onChange={(value) => {
+                        if (value !== '') {
+                            form.setFieldValue('rejectedQuantity', value)
+                            form.setFieldValue(
+                                'acceptedquantity',
+                                form.values.quantity - value
+                            )
+                        }
+                    }}
+                    value={form.values.rejectedQuantity}
                 />
                 {error && (
                     <Grid.Col xs={12}>
@@ -361,24 +381,8 @@ const QualityCheck = () => {
                 )}
                 {
                     <>
-                        <Grid.Col xs={2}>
-                            <Button
-                                fullWidth
-                                size="md"
-                                variant="outline"
-                                color="red"
-                                onClick={() => {
-                                    const result = form.validate()
-                                    if (!result.hasErrors) {
-                                        openDeleteModal()
-                                    }
-                                }}
-                            >
-                                Reject
-                            </Button>
-                        </Grid.Col>
-                        <Grid.Col xs={8} />
-                        <Grid.Col xs={2}>
+                        <Grid.Col xs={3} />
+                        <Grid.Col xs={6}>
                             <Button
                                 fullWidth
                                 size="md"
@@ -392,9 +396,10 @@ const QualityCheck = () => {
                                     }
                                 }}
                             >
-                                Approve
+                                Submit
                             </Button>
                         </Grid.Col>
+                        <Grid.Col xs={3} />
                     </>
                 }
             </Grid>

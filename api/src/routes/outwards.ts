@@ -249,7 +249,7 @@ app.post('/oqc/reject', async (req: Request, res: Response) => {
                     id: productionId,
                 },
                 data: {
-                    status: 'RejectedOqcVerification',
+                    status: 'Accepted',
                 },
             }),
             PrismaService.fg.update({

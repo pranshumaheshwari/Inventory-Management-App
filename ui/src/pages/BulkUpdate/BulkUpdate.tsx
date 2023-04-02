@@ -32,11 +32,7 @@ const BulkUpdate = () => {
                                                 url:
                                                     '/' +
                                                     file.name.split('.')[0] +
-                                                    `/${
-                                                        row['username']
-                                                            ? row['username']
-                                                            : row['id']
-                                                    }`,
+                                                    `/${row['id']}/stock`,
                                                 options: {
                                                     method: 'PUT',
                                                     authToken: token,

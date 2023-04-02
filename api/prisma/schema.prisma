@@ -32,6 +32,8 @@ model Users {
     inwardsIQC           InwardsVerified[]
     OutwardsQualityCheck OutwardsQualityCheck[]
     ProductionLog        ProductionLog[]
+    RmManualUpdateLog    RmManualUpdateLog[]
+    FgManualUpdateLog    FgManualUpdateLog[]
 
     @@map("users")
 }
@@ -93,6 +95,7 @@ model Rm {
     inwardsIqcPending  InwardsIQCPending[]
     inwardsVerified    InwardsVerified[]
     ProductionLog      ProductionLog[]
+    RmManualUpdateLog  RmManualUpdateLog[]
 
     @@index([supplierId], name: "supplier_id")
     @@map("rm")
@@ -118,6 +121,7 @@ model Fg {
     soDetails            SoDetails[]
     OutwardsQualityCheck OutwardsQualityCheck[]
     ProductionLog        ProductionLog[]
+    FgManualUpdateLog    FgManualUpdateLog[]
 
     @@index([customerId], name: "customer_id")
     @@map("fg")
@@ -408,6 +412,43 @@ model SoDetails {
     @@id([soId, fgId])
     @@index([fgId], name: "fg_id")
     @@map("so_details")
+}
+
+model RmManualUpdateLog {
+    id                     Int       @id @default(autoincrement())
+    user                   String
+    rmId                   String    @map("rm_id")
+    storeStock             Float?    @map("store_stock")
+    lineStock              Float?    @map("line_stock")
+    createdAt              DateTime? @default(now()) @map("created_at")
+    storeStockBefore       Float?    @map("store_stock_before")
+    lineStockBefore        Float?    @map("line_stock_before")
+    poPendingStockBefore   Float?    @map("po_pending_stock_before")
+    iqcPendingStockBefore  Float?    @map("iqc_pending_stock_before")
+    iqcRejectedStockBefore Float?    @map("iqc_rejected_stock_before")
+    poRejectedStockBefore  Float?    @map("po_rejected_stock_before")
+
+    rm    Rm    @relation(fields: [rmId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    Users Users @relation(fields: [user], references: [username], onDelete: Restrict, onUpdate: Cascade)
+
+    @@map("rm_manual_update")
+}
+
+model FgManualUpdateLog {
+    id              Int    @id @default(autoincrement())
+    user            String
+    fgId            String @map("fg_id")
+    storeStock      Float? @map("store_stock")
+    oqcPendingStock Float? @map("oqc_pending_stock")
+
+    createdAt             DateTime? @default(now()) @map("created_at")
+    storeStockBefore      Float?    @map("store_stock_before")
+    oqcPendingStockBefore Float?    @map("oqc_pending_stock_before")
+
+    fg    Fg    @relation(fields: [fgId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    Users Users @relation(fields: [user], references: [username], onDelete: Restrict, onUpdate: Cascade)
+
+    @@map("fg_manual_update")
 }
 
 enum DispatchOqcStatus {
