@@ -65,7 +65,7 @@ app.post('/', async (req: Request, res: Response) => {
 })
 
 app.get('/manualUpdate', async (req: Request, res: Response) => {
-    const args: Prisma.RmFindManyArgs = {}
+    const args: Prisma.RmManualUpdateLogFindManyArgs = {}
     const { select, include, where, distinct } = req.query
     if (select) {
         args.select = JSON.parse(select as string)
@@ -79,7 +79,7 @@ app.get('/manualUpdate', async (req: Request, res: Response) => {
     if (distinct) {
         args.distinct = JSON.parse(distinct as string)
     }
-    const data = await prisma.findMany(args)
+    const data = await PrismaService.rmManualUpdateLog.findMany(args)
     res.json(data)
 })
 
@@ -143,8 +143,8 @@ app.put('/:id/stock', async (req: Request, res: Response) => {
                     id,
                 },
                 select: {
-                    storeStock,
-                    lineStock,
+                    storeStock: true,
+                    lineStock: true,
                 },
             })
             await tq.rmManualUpdateLog.create({
