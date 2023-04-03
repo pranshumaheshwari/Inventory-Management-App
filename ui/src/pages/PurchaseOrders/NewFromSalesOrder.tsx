@@ -165,7 +165,8 @@ const NewFromSalesOrder = () => {
     const getRawMaterials = async (
         finishedGoods: PurchaseOrderFromSalesOrderInterface['finishedGoods']
     ) => {
-        const month = months[(dayjs().month() + 1) % 12]
+        const intMonth = dayjs().month()
+        const month = months[(intMonth + 1) % 12]
         let data: PurchaseOrderFromSalesOrderInterface['rawMaterials'] = []
         Promise.all(
             finishedGoods.map(async (fg) => {
@@ -192,6 +193,7 @@ const NewFromSalesOrder = () => {
                                                 price: true,
                                                 mpq: true,
                                                 moq: true,
+                                                poDetails: true,
                                             },
                                         },
                                         quantity: true,
@@ -219,6 +221,10 @@ const NewFromSalesOrder = () => {
                                     poPendingStock: number
                                     mpq: number
                                     moq: number
+                                    poDetails: {
+                                        poId: string
+                                        createdAt: string
+                                    }[]
                                 }
                             }[]
                         }) => {
@@ -239,7 +245,16 @@ const NewFromSalesOrder = () => {
                                         dtplCode: rm.rm.dtplCode,
                                         quantity: 0,
                                         supplierId: rm.rm.supplierId,
-                                        poId: `${rm.rm.supplierId}-${month}-001`,
+                                        poId: `${rm.rm.supplierId}-${month}-${(
+                                            '000' +
+                                            (rm.rm.poDetails.filter(
+                                                (po) =>
+                                                    dayjs(
+                                                        po.createdAt
+                                                    ).month() === intMonth
+                                            ).length +
+                                                1)
+                                        ).slice(-3)}`,
                                         price: rm.rm.price,
                                         requirement: rm.quantity * fg.quantity,
                                         stock:
@@ -365,12 +380,14 @@ const NewFromSalesOrder = () => {
             },
             {
                 headerName: 'PO Quantity',
+                field: 'quantity',
                 editable: true,
                 valueParser: ({ newValue }) => parseFloat(newValue),
                 type: 'numberColumn',
             },
             {
                 headerName: 'Price',
+                field: 'price',
                 editable: true,
                 valueParser: ({ newValue }) => parseFloat(newValue),
                 type: 'numberColumn',
