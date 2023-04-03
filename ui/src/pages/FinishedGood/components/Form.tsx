@@ -267,6 +267,8 @@ const Form = () => {
                 field: 'quantity',
                 headerName: 'Quantity',
                 editable: true,
+                valueParser: ({ newValue }) => parseFloat(newValue),
+                type: 'numberColumn',
             },
             {
                 field: '#',
