@@ -266,6 +266,7 @@ const Form = () => {
             {
                 field: 'quantity',
                 headerName: 'Quantity',
+                editable: true,
             },
             {
                 field: '#',
@@ -449,6 +450,7 @@ const Form = () => {
                             placeholder="Enter Quantity"
                             withAsterisk
                             min={0}
+                            precision={2}
                             {...form.getInputProps('selectedRm.quantity')}
                         />
                         <Grid.Col xs={1} />
