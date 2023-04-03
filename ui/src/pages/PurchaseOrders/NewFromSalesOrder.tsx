@@ -367,11 +367,13 @@ const NewFromSalesOrder = () => {
                 headerName: 'PO Quantity',
                 editable: true,
                 valueParser: ({ newValue }) => parseFloat(newValue),
+                type: 'numberColumn',
             },
             {
                 headerName: 'Price',
                 editable: true,
                 valueParser: ({ newValue }) => parseFloat(newValue),
+                type: 'numberColumn',
             },
             {
                 field: '#',
