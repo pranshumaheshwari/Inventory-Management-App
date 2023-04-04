@@ -80,25 +80,28 @@ app.put('/:id', async (req: Request, res: Response) => {
     const { id } = req.params
 
     const details = soDetails.map(
-        (fg: Prisma.SoDetailsUncheckedCreateInput) => {
+        (
+            fg: Prisma.SoDetailsUncheckedCreateInput
+        ): Prisma.SoDetailsUpsertWithWhereUniqueWithoutSoInput => {
             return {
-                fgId: fg.fgId,
-                quantity: fg.quantity,
+                where: {
+                    soId_fgId: {
+                        fgId: fg.fgId,
+                        soId: id,
+                    },
+                },
+                update: {
+                    quantity: fg.quantity,
+                },
+                create: {
+                    quantity: fg.quantity,
+                    fgId: fg.fgId,
+                },
             }
         }
     )
 
-    const currentDetails = await PrismaService.soDetails.findMany({
-        where: {
-            soId: id,
-        },
-    })
     try {
-        const del = await PrismaService.soDetails.deleteMany({
-            where: {
-                soId: id,
-            },
-        })
         const result = await prisma.update({
             where: {
                 id,
@@ -108,15 +111,12 @@ app.put('/:id', async (req: Request, res: Response) => {
                 customerId,
                 status,
                 soDetails: {
-                    create: details,
+                    upsert: details,
                 },
             },
         })
         res.json(result)
     } catch (e) {
-        const recreate = await PrismaService.soDetails.createMany({
-            data: currentDetails,
-        })
         res.status(500).json({
             message: (e as Error).message,
         })
