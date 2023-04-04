@@ -12,6 +12,7 @@ import {
     FormInputNumber,
     FormInputText,
     FormMultiSelect,
+    MonthPicker,
     Table,
 } from '../../components'
 import React, { useEffect, useMemo, useState } from 'react'
@@ -29,6 +30,7 @@ interface PurchaseOrderFromSalesOrderInterface {
         fgId: string
         quantity: number
     }[]
+    month: Date
     rawMaterials: {
         description: string
         dtplCode: string
@@ -42,6 +44,7 @@ interface PurchaseOrderFromSalesOrderInterface {
         mpq: number
         moq: number
         satisfiedRequirement: number
+        poQuantity: number
     }[]
 }
 
@@ -75,6 +78,7 @@ const NewFromSalesOrder = () => {
             salesOrders: [],
             finishedGoods: [],
             rawMaterials: [],
+            month: new Date(),
         },
         validate: {
             salesOrders: isNotEmpty(),
@@ -165,8 +169,8 @@ const NewFromSalesOrder = () => {
     const getRawMaterials = async (
         finishedGoods: PurchaseOrderFromSalesOrderInterface['finishedGoods']
     ) => {
-        const intMonth = dayjs().month()
-        const month = months[(intMonth + 1) % 12]
+        const intMonth = dayjs(form.values.month).month()
+        const month = months[intMonth % 12]
         let data: PurchaseOrderFromSalesOrderInterface['rawMaterials'] = []
         Promise.all(
             finishedGoods.map(async (fg) => {
@@ -244,6 +248,7 @@ const NewFromSalesOrder = () => {
                                         description: rm.rm.description,
                                         dtplCode: rm.rm.dtplCode,
                                         quantity: 0,
+                                        poQuantity: 0,
                                         supplierId: rm.rm.supplierId,
                                         poId: `${rm.rm.supplierId}-${month}-${(
                                             '000' +
@@ -274,7 +279,7 @@ const NewFromSalesOrder = () => {
                     )
                     .then(() => {
                         for (let rm of data) {
-                            rm.quantity =
+                            rm.poQuantity =
                                 Math.ceil(
                                     (rm.requirement * EXTRA_QUANTITY -
                                         rm.stock -
@@ -284,12 +289,12 @@ const NewFromSalesOrder = () => {
                         }
                     })
                     .then(() => {
-                        data = data.filter((d) => d.quantity > 0)
+                        data = data.filter((d) => d.poQuantity > 0)
                     })
                     .then(() => {
                         data = data.map((d) => ({
                             ...d,
-                            quantity: Math.max(d.quantity, d.moq),
+                            poQuantity: Math.max(d.poQuantity, d.moq),
                         }))
                     })
             })
@@ -300,25 +305,27 @@ const NewFromSalesOrder = () => {
 
     const onSubmit = async () => {
         Promise.all(
-            form.values.rawMaterials.map(async (rm) => {
-                try {
-                    await Fetch({
-                        url: '/purchaseorders/details',
-                        options: {
-                            method: 'POST',
-                            body: rm,
-                            authToken: token,
-                        },
-                    })
-                } catch (err) {
-                    setError((err as Error).message)
-                    showNotification({
-                        title: 'Error',
-                        message: <Text>{(err as Error).message}</Text>,
-                        color: 'red',
-                    })
-                }
-            })
+            form.values.rawMaterials
+                .filter((rm) => rm.quantity > 0)
+                .map(async (rm) => {
+                    try {
+                        await Fetch({
+                            url: '/purchaseorders/details',
+                            options: {
+                                method: 'POST',
+                                body: rm,
+                                authToken: token,
+                            },
+                        })
+                    } catch (err) {
+                        setError((err as Error).message)
+                        showNotification({
+                            title: 'Error',
+                            message: <Text>{(err as Error).message}</Text>,
+                            color: 'red',
+                        })
+                    }
+                })
         ).then(() => {
             showNotification({
                 title: 'Success',
@@ -379,7 +386,11 @@ const NewFromSalesOrder = () => {
                 headerName: 'Stock',
             },
             {
+                field: 'poQuantity',
                 headerName: 'PO Quantity',
+            },
+            {
+                headerName: 'Final Quantity',
                 field: 'quantity',
                 editable: true,
                 valueParser: ({ newValue }) => parseFloat(newValue),
@@ -391,24 +402,6 @@ const NewFromSalesOrder = () => {
                 editable: true,
                 valueParser: ({ newValue }) => parseFloat(newValue),
                 type: 'numberColumn',
-            },
-            {
-                field: '#',
-                onCellClicked: ({ data }) => {
-                    if (data) {
-                        form.removeListItem(
-                            'rawMaterials',
-                            form.values.rawMaterials.findIndex(
-                                (d) => d.rmId === data.rmId
-                            )
-                        )
-                    }
-                },
-                cellRenderer: () => (
-                    <Button fullWidth size="xs" variant="outline" color="red">
-                        REMOVE
-                    </Button>
-                ),
             },
         ],
         [form]
@@ -440,7 +433,6 @@ const NewFromSalesOrder = () => {
                 <Grid.Col xs={3} />
                 {activeStep === 0 && (
                     <>
-                        <Grid.Col xs={3} />
                         <FormMultiSelect
                             xs={6}
                             data={salesOrder}
@@ -454,7 +446,11 @@ const NewFromSalesOrder = () => {
                                 getFinsihedGoods(salesOrders)
                             }}
                         />
-                        <Grid.Col xs={3} />
+                        <MonthPicker
+                            label="Month"
+                            xs={6}
+                            {...form.getInputProps('month')}
+                        />
                         <Grid.Col xs={12}>
                             <Button
                                 fullWidth

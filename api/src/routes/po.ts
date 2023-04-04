@@ -137,10 +137,17 @@ app.put('/', async (req: Request, res: Response) => {
 app.delete('/', async (req: Request, res: Response) => {
     const { id } = req.body
     try {
-        const result = await prisma.delete({
-            where: {
-                id: id as string,
-            },
+        const result = await PrismaService.$transaction(async (tq) => {
+            await tq.poDetails.deleteMany({
+                where: {
+                    poId: id,
+                },
+            })
+            return tq.po.delete({
+                where: {
+                    id: id as string,
+                },
+            })
         })
         res.json(result)
     } catch (e) {
