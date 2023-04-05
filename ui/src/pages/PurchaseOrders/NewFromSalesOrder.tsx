@@ -380,14 +380,17 @@ const NewFromSalesOrder = () => {
             {
                 field: 'requirement',
                 headerName: 'Requirement',
+                type: 'numberColumn',
             },
             {
                 field: 'stock',
                 headerName: 'Stock',
+                type: 'numberColumn',
             },
             {
                 field: 'poQuantity',
                 headerName: 'PO Quantity',
+                type: 'numberColumn',
             },
             {
                 headerName: 'Final Quantity',
