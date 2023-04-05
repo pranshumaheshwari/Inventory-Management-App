@@ -304,37 +304,66 @@ const NewFromSalesOrder = () => {
     }
 
     const onSubmit = async () => {
-        Promise.all(
+        await Promise.all(
             form.values.rawMaterials
                 .filter((rm) => rm.quantity > 0)
-                .map(async (rm) => {
-                    try {
-                        await Fetch({
-                            url: '/purchaseorders/details',
-                            options: {
-                                method: 'POST',
-                                body: rm,
-                                authToken: token,
+                .map((v) => ({
+                    poId: v.poId,
+                    supplierId: v.supplierId,
+                }))
+                .filter(
+                    (val, idx, arr) =>
+                        arr.findIndex((item) => item.poId === val.poId) === idx
+                )
+                .map((po) =>
+                    Fetch({
+                        url: '/purchaseorders',
+                        options: {
+                            method: 'POST',
+                            body: {
+                                id: po.poId,
+                                supplierId: po.supplierId,
+                                poDetails: [],
                             },
-                        })
-                    } catch (err) {
-                        setError((err as Error).message)
+                            authToken: token,
+                        },
+                    })
+                )
+        )
+            .then(() => {
+                Promise.all(
+                    form.values.rawMaterials
+                        .filter((rm) => rm.quantity > 0)
+                        .map(async (rm) =>
+                            Fetch({
+                                url: '/purchaseorders/details',
+                                options: {
+                                    method: 'POST',
+                                    body: rm,
+                                    authToken: token,
+                                },
+                            })
+                        )
+                )
+                    .then(() => {
                         showNotification({
-                            title: 'Error',
-                            message: <Text>{(err as Error).message}</Text>,
-                            color: 'red',
+                            title: 'Success',
+                            message: <Text>Succesfully Purchase Orders</Text>,
+                            color: 'green',
                         })
-                    }
-                })
-        ).then(() => {
-            showNotification({
-                title: 'Success',
-                message: <Text>Succesfully Purchase Orders</Text>,
-                color: 'green',
-            })
 
-            navigate('..')
-        })
+                        navigate('..')
+                    })
+                    .catch((err) => {})
+            })
+            .catch((err) => {
+                setError((err as Error).message)
+                showNotification({
+                    title: 'Error',
+                    message: <Text>{(err as Error).message}</Text>,
+                    color: 'red',
+                })
+            })
     }
 
     const openModal = () =>

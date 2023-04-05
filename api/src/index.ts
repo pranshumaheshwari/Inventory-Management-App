@@ -31,7 +31,7 @@ const app: Express = express()
 const port = process.env.PORT
 
 const log = fs.createWriteStream(
-    path.join(__dirname, "logs", "express.log"), { flags: "a" }
+    path.join(__dirname, "..", "..", "logs", "express.log"), { flags: "a" }
   );
   
 
