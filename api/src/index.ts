@@ -23,11 +23,17 @@ import dotenv from 'dotenv'
 import fs from 'fs'
 import https from 'https'
 import morganBody from 'morgan-body'
+import path from 'path'
 
 dotenv.config()
 
 const app: Express = express()
 const port = process.env.PORT
+
+const log = fs.createWriteStream(
+    path.join(__dirname, "logs", "express.log"), { flags: "a" }
+  );
+  
 
 app.use(express.json())
 app.use(
@@ -39,7 +45,13 @@ app.use(
 )
 app.use(cookierParser())
 app.use(bodyParser.urlencoded({ extended: true }))
-morganBody(app)
+morganBody(app, {
+    timezone: "Asia/Kolkata"
+})
+morganBody(app, {
+    stream: log,
+    noColors: true
+})
 
 app.use('/attendance', AuthService, Attendance)
 app.use('/customers', AuthService, Customer)
