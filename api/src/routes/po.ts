@@ -55,8 +55,8 @@ app.post('/details', async (req: Request, res: Response) => {
     try {
         const result = await PrismaService.poDetails.create({
             data: {
-                price,
-                quantity,
+                price: parseFloat(price),
+                quantity: parseFloat(quantity),
                 po: {
                     connectOrCreate: {
                         where: {
