@@ -180,14 +180,25 @@ const PurchaseOrder = () => {
                         }),
                     },
                 },
-            }).then((data) => {
-                return data.map(
-                    (supplier: { supplier: { name: string; id: string } }) => ({
-                        label: supplier.supplier.name,
-                        value: supplier.supplier.id,
-                    })
-                )
-            })
+            }).then(
+                (
+                    data: {
+                        supplier: { name: string; id: string }
+                    }[]
+                ) => {
+                    return data
+                        .filter(
+                            (val, idx, arr) =>
+                                arr.findIndex(
+                                    (a) => a.supplier.id === val.supplier.id
+                                ) === idx
+                        )
+                        .map((supplier) => ({
+                            label: supplier.supplier.name,
+                            value: supplier.supplier.id,
+                        }))
+                }
+            )
             setSupplier(data)
         } catch (e) {
             setError((e as Error).message)
@@ -295,7 +306,10 @@ const PurchaseOrder = () => {
                                 ),
                         }
                     }
-                    return d
+                    return {
+                        ...d,
+                        poQuantity: 0,
+                    }
                 })
                 form.setFieldValue('details', details)
             }
@@ -385,6 +399,7 @@ const PurchaseOrder = () => {
                                 rejectedQuantity: 0,
                                 quantity: d.quantity,
                                 acceptedQuantity: d.quantity,
+                                poQuantity: 0,
                             }
                         })
                     }
@@ -403,6 +418,10 @@ const PurchaseOrder = () => {
         ColDef<InwardsPurchaseOrderInterface['details'][number]>[]
     >(
         () => [
+            {
+                headerName: '#',
+                valueGetter: 'node.rowIndex + 1',
+            },
             {
                 field: 'rmId',
                 headerName: 'Raw Material',
