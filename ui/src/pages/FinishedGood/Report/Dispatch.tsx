@@ -4,6 +4,7 @@ import { Fetch, useAuth } from '../../../services'
 import React, { useState } from 'react'
 
 import { ColDef } from 'ag-grid-community'
+import { DatesRangeValue } from '@mantine/dates'
 import dayjs from 'dayjs'
 
 interface RecordInterface {
@@ -18,7 +19,10 @@ function DispatchReport() {
     const [error, setError] = useState('')
     const [activeStep, setActiveStep] = useState(0)
     const [records, setRecords] = useState<RecordInterface[]>([])
-    const [value, setValue] = useState<[Date, Date]>([new Date(), new Date()])
+    const [value, setValue] = useState<DatesRangeValue>([
+        new Date(),
+        new Date(),
+    ])
 
     const handleNext = () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1)
@@ -104,11 +108,7 @@ function DispatchReport() {
                         label="Select Date Range"
                         clearable
                         value={value}
-                        onChange={(value) => {
-                            if (value[0] && value[1]) {
-                                setValue([value[0], value[1]])
-                            }
-                        }}
+                        onChange={setValue}
                     />
                     <Grid.Col xs={3} />
                     <Grid.Col xs={3} />

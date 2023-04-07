@@ -12,6 +12,7 @@ import {
     FormInputNumber,
     FormInputText,
     FormMultiSelect,
+    FormSegmentedControl,
     MonthPicker,
     Table,
 } from '../../components'
@@ -46,6 +47,7 @@ interface PurchaseOrderFromSalesOrderInterface {
         satisfiedRequirement: number
         poQuantity: number
     }[]
+    useRmInCalculation: 'use' | 'doNotUse'
 }
 
 const EXTRA_QUANTITY = 1.25
@@ -79,6 +81,7 @@ const NewFromSalesOrder = () => {
             finishedGoods: [],
             rawMaterials: [],
             month: new Date(),
+            useRmInCalculation: 'use',
         },
         validate: {
             salesOrders: isNotEmpty(),
@@ -280,12 +283,15 @@ const NewFromSalesOrder = () => {
                     .then(() => {
                         for (let rm of data) {
                             rm.poQuantity =
-                                Math.ceil(
-                                    (rm.requirement * EXTRA_QUANTITY -
-                                        rm.stock -
-                                        rm.satisfiedRequirement) /
-                                        rm.mpq
-                                ) * rm.mpq
+                                form.values.useRmInCalculation === 'use'
+                                    ? Math.ceil(
+                                          (rm.requirement * EXTRA_QUANTITY -
+                                              (rm.stock +
+                                                  rm.satisfiedRequirement)) /
+                                              rm.mpq
+                                      ) * rm.mpq
+                                    : Math.ceil(rm.requirement / rm.mpq) *
+                                      rm.mpq
                         }
                     })
                     .then(() => {
@@ -480,8 +486,24 @@ const NewFromSalesOrder = () => {
                         />
                         <MonthPicker
                             label="Month"
-                            xs={6}
+                            xs={3}
                             {...form.getInputProps('month')}
+                        />
+                        <FormSegmentedControl
+                            xs={3}
+                            color="blue"
+                            label="Use Raw Material Stock"
+                            data={[
+                                {
+                                    label: 'Use',
+                                    value: 'use',
+                                },
+                                {
+                                    label: 'Do not use',
+                                    value: 'doNotUse',
+                                },
+                            ]}
+                            {...form.getInputProps('useRmInCalculation')}
                         />
                         <Grid.Col xs={12}>
                             <Button

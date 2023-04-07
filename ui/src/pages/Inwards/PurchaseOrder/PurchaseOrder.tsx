@@ -22,6 +22,7 @@ export interface InwardsPurchaseOrderInterface {
         rejectedQuantity: number
         poPrice?: number
         poQuantity?: number
+        poApprovedQuantity?: number
     }[]
 }
 
@@ -39,6 +40,11 @@ const PurchaseOrder = () => {
                   rmId: string
                   quantity: number
                   price: number
+              }[]
+              InwardsPoPending: {
+                  status: string
+                  rmId: string
+                  quantity: number
               }[]
           }[]
         | null
@@ -227,6 +233,7 @@ const PurchaseOrder = () => {
                     params: {
                         where: JSON.stringify({
                             supplierId,
+                            status: 'Open',
                         }),
                         select: JSON.stringify({
                             id: true,
@@ -235,6 +242,13 @@ const PurchaseOrder = () => {
                                     rmId: true,
                                     quantity: true,
                                     price: true,
+                                },
+                            },
+                            InwardsPoPending: {
+                                select: {
+                                    rmId: true,
+                                    quantity: true,
+                                    status: true,
                                 },
                             },
                         }),
@@ -270,6 +284,15 @@ const PurchaseOrder = () => {
                             ...d,
                             poQuantity: poDetails.quantity,
                             poPrice: poDetails.price,
+                            poApprovedQuantity: po
+                                ?.find(({ id }) => id === form.values.poId)
+                                ?.InwardsPoPending.filter(
+                                    (inwards) => inwards.status === 'Accepted'
+                                )
+                                .reduce(
+                                    (qty, inwards) => inwards.quantity + qty,
+                                    0
+                                ),
                         }
                     }
                     return d
@@ -337,6 +360,21 @@ const PurchaseOrder = () => {
                                         quantity: d.quantity,
                                         poQuantity: poDetails.quantity,
                                         poPrice: poDetails.price,
+                                        poApprovedQuantity: po
+                                            ?.find(
+                                                ({ id }) =>
+                                                    id === form.values.poId
+                                            )
+                                            ?.InwardsPoPending.filter(
+                                                (inwards) =>
+                                                    inwards.status ===
+                                                    'Accepted'
+                                            )
+                                            .reduce(
+                                                (qty, inwards) =>
+                                                    inwards.quantity + qty,
+                                                0
+                                            ),
                                     }
                                 }
                             }
@@ -394,6 +432,13 @@ const PurchaseOrder = () => {
                 field: 'poQuantity',
                 headerName: 'PO Quantity',
                 type: 'numberColumn',
+            },
+            {
+                field: 'poApprovedQuantity',
+                headerName: 'PO Pending Quantity',
+                type: 'numberColumn',
+                valueGetter: ({ data }) =>
+                    (data?.poQuantity || 0) - (data?.poApprovedQuantity || 0),
             },
             {
                 field: 'poPrice',

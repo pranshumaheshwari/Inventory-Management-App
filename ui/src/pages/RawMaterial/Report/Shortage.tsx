@@ -43,32 +43,12 @@ function ExcessReport() {
             headerName: 'Required Stock',
             type: 'numberColumn',
         },
-        {
-            field: 'issuedQuantity',
-            headerName: 'Issued Stock',
-            type: 'numberColumn',
-        },
-        {
-            field: 'shortageQuantity',
-            headerName: 'Shortage Stock',
-            type: 'numberColumn',
-        },
     ]
 
     const fetchRecords = async () => {
         try {
-            const issuedQuantity: { [key: string]: number } = {}
             const requiredQuantity: { [key: string]: number } = {}
             const data: {
-                production: {
-                    quantity: number
-                    fg: {
-                        bom: {
-                            rmId: string
-                            quantity: number
-                        }[]
-                    }
-                }[]
                 soDetails: {
                     quantity: number
                     fg: {
@@ -102,38 +82,16 @@ function ExcessReport() {
                                     quantity: true,
                                 },
                             },
-                            production: {
-                                select: {
-                                    fg: {
-                                        select: {
-                                            bom: {
-                                                select: {
-                                                    rmId: true,
-                                                    quantity: true,
-                                                },
-                                            },
-                                        },
-                                    },
-                                    quantity: true,
-                                },
-                            },
                         }),
                     },
                 },
             })
 
             data.forEach((d) => {
-                d.production.forEach((p) => {
-                    p.fg.bom.forEach((b) => {
-                        issuedQuantity[b.rmId] = issuedQuantity[b.rmId]
-                            ? issuedQuantity[b.rmId] + b.quantity * p.quantity
-                            : b.quantity * p.quantity
-                    })
-                })
                 d.soDetails.forEach((s) => {
                     s.fg.bom.forEach((b) => {
                         requiredQuantity[b.rmId] = requiredQuantity[b.rmId]
-                            ? issuedQuantity[b.rmId] + b.quantity * s.quantity
+                            ? requiredQuantity[b.rmId] + b.quantity * s.quantity
                             : b.quantity * s.quantity
                     })
                 })
@@ -177,22 +135,19 @@ function ExcessReport() {
                                 rm.storeStock,
                         }))
                         .map((rm) => {
-                            const issuedQty = issuedQuantity[rm.id]
-                                ? issuedQuantity[rm.id]
-                                : 0
                             const requiredQty = requiredQuantity[rm.id]
                                 ? requiredQuantity[rm.id]
                                 : 0
                             return {
                                 ...rm,
                                 requiredQuantity: requiredQty,
-                                issuedQuantity: issuedQty,
-                                shortageQuantity:
-                                    requiredQty - rm.totalQuantity - issuedQty,
                             }
                         })
                         .filter((rm) => {
-                            if (rm.shortageQuantity > 0) {
+                            if (
+                                rm.requiredQuantity * 0.25 - rm.totalQuantity >
+                                0
+                            ) {
                                 return true
                             }
                             return false

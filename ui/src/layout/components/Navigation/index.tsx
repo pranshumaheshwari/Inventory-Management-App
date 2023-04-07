@@ -13,7 +13,11 @@ const Navigation = () => {
         }
     })
 
-    return <ScrollArea sx={{ pt: 2 }}>{navGroups}</ScrollArea>
+    return (
+        <ScrollArea sx={{ pt: 2 }} h="80vh">
+            {navGroups}
+        </ScrollArea>
+    )
 }
 
 export default Navigation
