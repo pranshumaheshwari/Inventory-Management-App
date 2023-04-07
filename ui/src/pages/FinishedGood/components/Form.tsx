@@ -206,6 +206,8 @@ const Form = () => {
                             description: true,
                             dtplCode: true,
                             category: true,
+                            storeStock: true,
+                            lineStock: true,
                         }),
                     },
                 },
@@ -261,6 +263,26 @@ const Form = () => {
                     return rawmaterial?.find(
                         (rm) => rm.value === params.data?.rmId
                     )?.dtplCode
+                },
+            },
+            {
+                field: 'storeStock',
+                headerName: 'Store Stock',
+                type: 'numberColumn',
+                valueGetter: (params) => {
+                    return rawmaterial?.find(
+                        (rm) => rm.value === params.data?.rmId
+                    )?.storeStock
+                },
+            },
+            {
+                field: 'lineStock',
+                headerName: 'Line Stock',
+                type: 'numberColumn',
+                valueGetter: (params) => {
+                    return rawmaterial?.find(
+                        (rm) => rm.value === params.data?.rmId
+                    )?.lineStock
                 },
             },
             {
