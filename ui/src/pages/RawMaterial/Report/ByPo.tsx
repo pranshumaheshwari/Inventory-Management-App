@@ -7,6 +7,11 @@ import { ColDef } from 'ag-grid-community'
 import dayjs from 'dayjs'
 
 interface RecordInterface {
+    rm: {
+        id: string
+    }
+    status: 'Accepted' | 'RejectedPoVerification'
+    quantity: number
     createdAt: string
 }
 
@@ -17,6 +22,9 @@ function ByPo() {
     const [error, setError] = useState('')
     const [activeStep, setActiveStep] = useState(0)
     const [records, setRecords] = useState<RecordInterface[]>([])
+    const [poDetailsRecords, setPoDetailsRecords] = useState<RecordInterface[]>(
+        []
+    )
     const [supplier, setSupplier] = useState<{ value: string }[] | null>()
     const [selectedPo, setSelectedPo] = useState('')
     const [po, setPo] = useState<
@@ -25,6 +33,8 @@ function ByPo() {
               id: string
               poDetails: {
                   rmId: string
+                  description: string
+                  dtplCode: string
                   quantity: number
                   price: number
               }[]
@@ -71,14 +81,85 @@ function ByPo() {
                 return ''
             },
         },
+        {
+            field: 'rmId',
+            headerName: 'Raw Material Identifier',
+        },
+        {
+            field: 'rm.description',
+            headerName: 'Description',
+        },
+        {
+            field: 'rm.dtplCode',
+            headerName: 'DTPL Part Number',
+        },
         { field: 'quantity', headerName: 'Quantity', type: 'numberColumn' },
         {
             field: 'invoiceId',
             headerName: 'Invoice',
         },
+    ]
+
+    const poTablecolumnDefs: ColDef<RecordInterface>[] = [
         {
-            field: 'rmId',
+            field: 'rm.id',
             headerName: 'Raw Material Identifier',
+        },
+        {
+            field: 'rm.description',
+            headerName: 'Description',
+        },
+        {
+            field: 'rm.dtplCode',
+            headerName: 'DTPL Part Number',
+        },
+        { field: 'quantity', headerName: 'PO Quantity', type: 'numberColumn' },
+        {
+            headerName: 'Accepted Quantity',
+            type: 'numberColumn',
+            valueGetter: ({ data }) => {
+                return records.reduce((val, curVal) => {
+                    if (
+                        curVal.status === 'Accepted' &&
+                        curVal.rm.id === data?.rm.id
+                    ) {
+                        return val + curVal.quantity
+                    }
+                    return val
+                }, 0)
+            },
+        },
+        {
+            field: 'rejectedQuantity',
+            headerName: 'Rejected Quantity',
+            type: 'numberColumn',
+            valueGetter: ({ data }) => {
+                return records.reduce((val, curVal) => {
+                    if (
+                        curVal.status === 'RejectedPoVerification' &&
+                        curVal.rm.id === data?.rm.id
+                    ) {
+                        return val + curVal.quantity
+                    }
+                    return val
+                }, 0)
+            },
+        },
+        {
+            field: 'pendingQuantity',
+            headerName: 'Pending Quantity',
+            type: 'numberColumn',
+            valueGetter: ({ data }) => {
+                return (
+                    (data?.quantity || 0) -
+                    records.reduce((val, curVal) => {
+                        if (curVal.rm.id === data?.rm.id) {
+                            return val + curVal.quantity
+                        }
+                        return val
+                    }, 0)
+                )
+            },
         },
     ]
 
@@ -138,10 +219,47 @@ function ByPo() {
                                 in: ['Accepted', 'RejectedPoVerification'],
                             },
                         }),
+                        include: JSON.stringify({
+                            rm: {
+                                select: {
+                                    id: true,
+                                    description: true,
+                                    dtplCode: true,
+                                },
+                            },
+                        }),
                     },
                 },
             })
+            console.log(data)
             setRecords(data)
+            const poDetails = await Fetch({
+                url: '/purchaseorders',
+                options: {
+                    authToken: token,
+                    params: {
+                        where: JSON.stringify({
+                            id: selectedPo,
+                        }),
+                        select: JSON.stringify({
+                            poDetails: {
+                                select: {
+                                    quantity: true,
+                                    price: true,
+                                    rm: {
+                                        select: {
+                                            id: true,
+                                            description: true,
+                                            dtplCode: true,
+                                        },
+                                    },
+                                },
+                            },
+                        }),
+                    },
+                },
+            }).then((records) => records[0])
+            setPoDetailsRecords(poDetails.poDetails)
         } catch (e) {
             setError((e as Error).message)
         }
@@ -206,7 +324,19 @@ function ByPo() {
             {activeStep === 1 && (
                 <>
                     <Grid.Col xs={12}>
-                        <Box h="70vh" w="100%">
+                        <Box h="40vh" w="100%">
+                            <Table<RecordInterface>
+                                columnDefs={poTablecolumnDefs}
+                                rowData={poDetailsRecords}
+                                defaultColDef={{
+                                    sortable: false,
+                                    filter: false,
+                                }}
+                            />
+                        </Box>
+                    </Grid.Col>
+                    <Grid.Col xs={12}>
+                        <Box h="40vh" w="100%">
                             <Table<RecordInterface>
                                 columnDefs={columnDefs}
                                 rowData={records}
