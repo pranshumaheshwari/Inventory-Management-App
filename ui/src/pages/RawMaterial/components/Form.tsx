@@ -1,10 +1,16 @@
-import { Button, Center, Grid, Skeleton, Text } from '@mantine/core'
+import { Button, Center, Divider, Grid, Skeleton, Text } from '@mantine/core'
 import { Fetch, useAuth } from '../../../services'
-import { FormInputNumber, FormInputText, FormSelect } from '../../../components'
+import {
+    FormInputNumber,
+    FormInputText,
+    FormSelect,
+    Table,
+} from '../../../components'
 import { RawMaterialFormProvider, useRawMaterialForm } from './context'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
+import { ColDef } from 'ag-grid-community'
 import { RawMaterialInterface } from '../RawMaterial'
 import { isNotEmpty } from '@mantine/form'
 import { openConfirmModal } from '@mantine/modals'
@@ -20,6 +26,7 @@ const Form = () => {
     const [supplier, setSupplier] = useState<
         { value: string; label: string }[] | null
     >()
+    const [bom, setBom] = useState([])
     const [error, setError] = useState('')
     const initialValues = isEdit
         ? (location.state as RawMaterialInterface)
@@ -163,9 +170,51 @@ const Form = () => {
         }
     }
 
+    const getBOM = async () => {
+        try {
+            const data = await Fetch({
+                url: `/rawmaterial/${encodeURIComponent(initialValues.id)}`,
+                options: {
+                    authToken: token,
+                    params: {
+                        select: JSON.stringify({
+                            bom: true,
+                        }),
+                    },
+                },
+            }).then((d) => d.bom)
+            setBom(data)
+        } catch (e) {
+            setError((e as Error).message)
+        }
+    }
+
     useEffect(() => {
         getSuppliers()
+        if (isEdit) {
+            getBOM()
+        }
     }, [])
+
+    const detailsColumnDef = useMemo<
+        ColDef<{
+            fgId: string
+            quantity: number
+        }>[]
+    >(
+        () => [
+            {
+                field: 'fgId',
+                headerName: 'Finished Good',
+            },
+            {
+                field: 'quantity',
+                headerName: 'Quantity',
+                type: 'numberColumn',
+            },
+        ],
+        []
+    )
 
     if (!supplier) {
         return <Skeleton width="90vw" height="100%" />
@@ -332,6 +381,29 @@ const Form = () => {
                             {isEdit ? 'Update' : 'Create'}
                         </Button>
                     </Grid.Col>
+                    {isEdit && (
+                        <>
+                            <Grid.Col xs={12}>
+                                <Divider />
+                            </Grid.Col>
+                            <Grid.Col
+                                xs={12}
+                                style={{
+                                    height: '40vh',
+                                }}
+                            >
+                                <Table<{
+                                    fgId: string
+                                    quantity: number
+                                }>
+                                    fileName={initialValues.id}
+                                    rowData={bom}
+                                    columnDefs={detailsColumnDef}
+                                    pagination={false}
+                                />
+                            </Grid.Col>
+                        </>
+                    )}
                     {isEdit && (
                         <Grid.Col xs={12}>
                             <Center>

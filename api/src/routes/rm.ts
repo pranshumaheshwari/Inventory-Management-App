@@ -85,11 +85,22 @@ app.get('/manualUpdate', async (req: Request, res: Response) => {
 
 app.get('/:id', async (req: Request, res: Response) => {
     const { id } = req.params
-    const data = await prisma.findUnique({
+    const args: Prisma.RmFindUniqueArgs = {
         where: {
             id,
         },
-    })
+    }
+    const { select, include, where, distinct } = req.query
+    if (select) {
+        args.select = JSON.parse(select as string)
+    }
+    if (include) {
+        args.include = JSON.parse(include as string)
+    }
+    if (where) {
+        args.where = JSON.parse(where as string)
+    }
+    const data = await prisma.findUnique(args)
     res.json(data)
 })
 
