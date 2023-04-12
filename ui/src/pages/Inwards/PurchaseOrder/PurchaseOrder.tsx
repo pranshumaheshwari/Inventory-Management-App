@@ -22,7 +22,7 @@ export interface InwardsPurchaseOrderInterface {
         rejectedQuantity: number
         poPrice?: number
         poQuantity?: number
-        poApprovedQuantity?: number
+        poApprovedQuantity: number
     }[]
 }
 
@@ -295,20 +295,25 @@ const PurchaseOrder = () => {
                             ...d,
                             poQuantity: poDetails.quantity,
                             poPrice: poDetails.price,
-                            poApprovedQuantity: po
-                                ?.find(({ id }) => id === form.values.poId)
-                                ?.InwardsPoPending.filter(
-                                    (inwards) => inwards.status === 'Accepted'
-                                )
-                                .reduce(
-                                    (qty, inwards) => inwards.quantity + qty,
-                                    0
-                                ),
+                            poApprovedQuantity:
+                                po
+                                    ?.find(({ id }) => id === form.values.poId)
+                                    ?.InwardsPoPending.filter(
+                                        (inwards) =>
+                                            inwards.status === 'Accepted' &&
+                                            inwards.rmId === d.rmId
+                                    )
+                                    .reduce(
+                                        (qty, inwards) =>
+                                            inwards.quantity + qty,
+                                        0
+                                    ) || 0,
                         }
                     }
                     return {
                         ...d,
                         poQuantity: 0,
+                        poApprovedQuantity: 0,
                     }
                 })
                 form.setFieldValue('details', details)
@@ -374,21 +379,23 @@ const PurchaseOrder = () => {
                                         quantity: d.quantity,
                                         poQuantity: poDetails.quantity,
                                         poPrice: poDetails.price,
-                                        poApprovedQuantity: po
-                                            ?.find(
-                                                ({ id }) =>
-                                                    id === form.values.poId
-                                            )
-                                            ?.InwardsPoPending.filter(
-                                                (inwards) =>
-                                                    inwards.status ===
-                                                    'Accepted'
-                                            )
-                                            .reduce(
-                                                (qty, inwards) =>
-                                                    inwards.quantity + qty,
-                                                0
-                                            ),
+                                        poApprovedQuantity:
+                                            po
+                                                ?.find(
+                                                    ({ id }) =>
+                                                        id === form.values.poId
+                                                )
+                                                ?.InwardsPoPending.filter(
+                                                    (inwards) =>
+                                                        inwards.status ===
+                                                            'Accepted' &&
+                                                        inwards.rmId === d.rm.id
+                                                )
+                                                .reduce(
+                                                    (qty, inwards) =>
+                                                        inwards.quantity + qty,
+                                                    0
+                                                ) || 0,
                                     }
                                 }
                             }
@@ -400,10 +407,12 @@ const PurchaseOrder = () => {
                                 quantity: d.quantity,
                                 acceptedQuantity: d.quantity,
                                 poQuantity: 0,
+                                poApprovedQuantity: 0,
                             }
                         })
                     }
                 )
+            console.log(data)
             form.setFieldValue('details', data)
         } catch (e) {
             setError((e as Error).message)
@@ -456,8 +465,12 @@ const PurchaseOrder = () => {
                 field: 'poApprovedQuantity',
                 headerName: 'PO Pending Quantity',
                 type: 'numberColumn',
-                valueGetter: ({ data }) =>
-                    (data?.poQuantity || 0) - (data?.poApprovedQuantity || 0),
+                valueGetter: ({ data }) => {
+                    if (data && data.poQuantity) {
+                        return data.poQuantity - data.poApprovedQuantity
+                    }
+                    return 0
+                },
             },
             {
                 field: 'poPrice',

@@ -231,7 +231,6 @@ function ByPo() {
                     },
                 },
             })
-            console.log(data)
             setRecords(data)
             const poDetails = await Fetch({
                 url: '/purchaseorders',
