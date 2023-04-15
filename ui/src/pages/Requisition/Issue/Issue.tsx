@@ -253,14 +253,7 @@ const RequisitionIssue = () => {
             {
                 field: 'rmId',
                 headerName: 'Raw Material',
-            },
-            {
-                field: 'Description',
-                valueGetter: (params) => {
-                    return form.values.details.find(
-                        (rm) => rm.rmId === params.data?.rmId
-                    )?.description
-                },
+                width: 100,
             },
             {
                 field: 'DTPL Part Number',
@@ -269,25 +262,39 @@ const RequisitionIssue = () => {
                         (rm) => rm.rmId === params.data?.rmId
                     )?.dtplCode
                 },
+                width: 150,
+            },
+            {
+                field: 'Description',
+                valueGetter: (params) => {
+                    return form.values.details.find(
+                        (rm) => rm.rmId === params.data?.rmId
+                    )?.description
+                },
+                width: 100,
             },
             {
                 field: 'storeStock',
                 headerName: 'Store Stock',
                 type: 'numberColumn',
+                width: 120,
             },
             {
                 field: 'lineStock',
                 headerName: 'Line Stock',
                 type: 'numberColumn',
+                width: 120,
             },
             {
                 field: 'issuedQuantity',
                 headerName: 'Issued Quantity',
                 type: 'numberColumn',
+                width: 120,
             },
             {
                 field: 'maxQuantity',
                 headerName: 'Remaining Quantity',
+                width: 120,
             },
             {
                 field: 'quantity',
@@ -300,6 +307,7 @@ const RequisitionIssue = () => {
                     }
                     return val
                 },
+                width: 120,
             },
             {
                 field: '#',
@@ -318,6 +326,7 @@ const RequisitionIssue = () => {
                         DELETE
                     </Button>
                 ),
+                width: 110,
             },
         ],
         [form]

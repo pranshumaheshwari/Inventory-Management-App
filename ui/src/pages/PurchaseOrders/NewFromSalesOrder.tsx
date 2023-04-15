@@ -397,12 +397,12 @@ const NewFromSalesOrder = () => {
                 pinned: 'left',
             },
             {
-                field: 'description',
-                headerName: 'Description',
-            },
-            {
                 field: 'dtplCode',
                 headerName: 'DTPL Part Number',
+            },
+            {
+                field: 'description',
+                headerName: 'Description',
             },
             {
                 field: 'supplierId',
