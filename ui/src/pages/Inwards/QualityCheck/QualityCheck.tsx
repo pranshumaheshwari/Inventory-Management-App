@@ -295,19 +295,19 @@ const QualityCheck = () => {
                 headerName: 'Raw Material',
             },
             {
-                field: 'Description',
-                valueGetter: (params) => {
-                    return form.values.details.find(
-                        (rm) => rm.rmId === params.data?.rmId
-                    )?.description
-                },
-            },
-            {
                 field: 'DTPL Part Number',
                 valueGetter: (params) => {
                     return form.values.details.find(
                         (rm) => rm.rmId === params.data?.rmId
                     )?.dtplCode
+                },
+            },
+            {
+                field: 'Description',
+                valueGetter: (params) => {
+                    return form.values.details.find(
+                        (rm) => rm.rmId === params.data?.rmId
+                    )?.description
                 },
             },
             {

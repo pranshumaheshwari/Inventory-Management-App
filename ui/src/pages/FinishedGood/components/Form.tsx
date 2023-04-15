@@ -250,19 +250,19 @@ const Form = () => {
                 headerName: 'Raw Material',
             },
             {
-                field: 'Description',
-                valueGetter: (params) => {
-                    return rawmaterial?.find(
-                        (rm) => rm.value === params.data?.rmId
-                    )?.description
-                },
-            },
-            {
                 field: 'DTPL Part Number',
                 valueGetter: (params) => {
                     return rawmaterial?.find(
                         (rm) => rm.value === params.data?.rmId
                     )?.dtplCode
+                },
+            },
+            {
+                field: 'Description',
+                valueGetter: (params) => {
+                    return rawmaterial?.find(
+                        (rm) => rm.value === params.data?.rmId
+                    )?.description
                 },
             },
             {

@@ -16,8 +16,8 @@ function ExcessReport() {
 
     const columnDefs: ColDef<RecordInterface>[] = [
         { field: 'id', headerName: 'Identifier' },
-        { field: 'description', headerName: 'Description' },
         { field: 'dtplCode', headerName: 'DTPL Part Number' },
+        { field: 'description', headerName: 'Description' },
         {
             field: 'storeStock',
             headerName: 'Store Stock',

@@ -86,12 +86,12 @@ function ByPo() {
             headerName: 'Raw Material Identifier',
         },
         {
-            field: 'rm.description',
-            headerName: 'Description',
-        },
-        {
             field: 'rm.dtplCode',
             headerName: 'DTPL Part Number',
+        },
+        {
+            field: 'rm.description',
+            headerName: 'Description',
         },
         { field: 'quantity', headerName: 'Quantity', type: 'numberColumn' },
         {
@@ -106,12 +106,12 @@ function ByPo() {
             headerName: 'Raw Material Identifier',
         },
         {
-            field: 'rm.description',
-            headerName: 'Description',
-        },
-        {
             field: 'rm.dtplCode',
             headerName: 'DTPL Part Number',
+        },
+        {
+            field: 'rm.description',
+            headerName: 'Description',
         },
         { field: 'quantity', headerName: 'PO Quantity', type: 'numberColumn' },
         {
