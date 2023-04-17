@@ -290,7 +290,9 @@ const Form = () => {
                 headerName: 'Quantity',
                 editable: true,
                 valueParser: ({ newValue }) => parseFloat(newValue),
-                type: 'numberColumn',
+                valueFormatter: (params) => {
+                    return Number(params.value).toFixed(4).toString()
+                },
             },
             {
                 field: '#',
