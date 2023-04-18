@@ -7,6 +7,7 @@ const others: ItemInterface[] = [
         type: 'item',
         url: '/bulkUpdate',
         urls: ['/bulkUpdate'],
+        allowedTypes: ['ppc'],
     },
 ]
 

@@ -6,6 +6,7 @@ const manpower: ItemInterface = {
     id: 'group-manpower',
     title: 'Man Power',
     type: 'group',
+    allowedTypes: ['hr', 'ppc'],
     children: [
         {
             id: 'manpower-attendance',
@@ -14,6 +15,7 @@ const manpower: ItemInterface = {
             url: '/manPower/attendance',
             icon: IconUserPlus,
             urls: ['/manPower/attendance'],
+            allowedTypes: ['hr', 'ppc'],
         },
         {
             id: 'manpower-report',
@@ -22,6 +24,7 @@ const manpower: ItemInterface = {
             url: '/manPower/report',
             icon: IconChartBar,
             urls: ['/manPower/report'],
+            allowedTypes: ['hr', 'ppc'],
         },
     ],
 }

@@ -15,6 +15,7 @@ const dashboard: ItemInterface = {
     id: 'rawmaterial',
     title: 'Raw Material',
     type: 'group',
+    allowedTypes: ['iqc', 'ppc'],
     children: [
         {
             id: 'rawmaterial-inventory',
@@ -22,6 +23,7 @@ const dashboard: ItemInterface = {
             type: 'item',
             url: '/rawMaterial',
             icon: IconBuildingWarehouse,
+            allowedTypes: ['iqc', 'ppc'],
             urls: ['/rawMaterial', '/rawMaterial/new', '/rawMaterial/edit'],
         },
         {
@@ -31,6 +33,7 @@ const dashboard: ItemInterface = {
             url: '/suppliers',
             icon: IconBuildingStore,
             urls: ['/suppliers', '/suppliers/new', '/suppliers/edit'],
+            allowedTypes: ['ppc'],
         },
         {
             id: 'rawmaterial-purchaseOrders',
@@ -44,11 +47,13 @@ const dashboard: ItemInterface = {
                 '/purchaseOrders/edit',
                 '/purchaseOrders/newFromSalesOrder',
             ],
+            allowedTypes: ['ppc'],
         },
         {
             id: 'rawmaterial-inwards',
             title: 'Inwards',
             type: 'group',
+            allowedTypes: ['iqc', 'ppc'],
             children: [
                 {
                     id: 'rawmaterial-inwards-invoice',
@@ -61,6 +66,7 @@ const dashboard: ItemInterface = {
                         '/inwards/invoice/new',
                         '/inwards/invoice/edit',
                     ],
+                    allowedTypes: ['ppc'],
                 },
                 {
                     id: 'rawmaterial-inwards-purchaseOrder',
@@ -69,6 +75,7 @@ const dashboard: ItemInterface = {
                     url: '/inwards/purchaseOrder',
                     icon: IconClipboardPlus,
                     urls: ['/inwards/purchaseOrder'],
+                    allowedTypes: ['ppc'],
                 },
                 {
                     id: 'rawmaterial-inwards-qualityCheck',
@@ -77,6 +84,7 @@ const dashboard: ItemInterface = {
                     url: '/inwards/qualityCheck',
                     icon: IconCheckupList,
                     urls: ['/inwards/qualityCheck'],
+                    allowedTypes: ['iqc', 'ppc'],
                 },
             ],
         },
@@ -92,6 +100,7 @@ const dashboard: ItemInterface = {
                     url: '/requisition/new',
                     icon: IconCirclePlus,
                     urls: ['/requisition/new'],
+                    allowedTypes: ['ppc'],
                 },
                 {
                     id: 'rawmaterial-requisition-issue',
@@ -100,6 +109,7 @@ const dashboard: ItemInterface = {
                     url: '/requisition/issue',
                     icon: IconTextPlus,
                     urls: ['/requisition/issue'],
+                    allowedTypes: ['ppc'],
                 },
             ],
         },
@@ -107,6 +117,7 @@ const dashboard: ItemInterface = {
             id: 'rawmaterial-report',
             title: 'Reports',
             type: 'group',
+            allowedTypes: ['iqc', 'ppc'],
             children: [
                 {
                     id: 'rawmaterial-report-byid',
@@ -114,6 +125,7 @@ const dashboard: ItemInterface = {
                     type: 'item',
                     url: '/rawMaterial/report/byId',
                     urls: ['/rawMaterial/report/byId'],
+                    allowedTypes: ['iqc', 'ppc'],
                 },
                 {
                     id: 'rawmaterial-report-bypo',
@@ -121,6 +133,7 @@ const dashboard: ItemInterface = {
                     type: 'item',
                     url: '/rawMaterial/report/byPo',
                     urls: ['/rawMaterial/report/byPo'],
+                    allowedTypes: ['ppc'],
                 },
                 {
                     id: 'rawmaterial-report-inwards',
@@ -128,6 +141,7 @@ const dashboard: ItemInterface = {
                     type: 'item',
                     url: '/rawMaterial/report/inwards',
                     urls: ['/rawMaterial/report/inwards'],
+                    allowedTypes: ['iqc', 'ppc'],
                 },
                 {
                     id: 'rawmaterial-report-requisition',
@@ -135,6 +149,7 @@ const dashboard: ItemInterface = {
                     type: 'item',
                     url: '/rawMaterial/report/requisition',
                     urls: ['/rawMaterial/report/requisition'],
+                    allowedTypes: ['ppc'],
                 },
                 {
                     id: 'rawmaterial-report-excess',
@@ -142,6 +157,7 @@ const dashboard: ItemInterface = {
                     type: 'item',
                     url: '/rawMaterial/report/excess',
                     urls: ['/rawMaterial/report/excess'],
+                    allowedTypes: ['ppc'],
                 },
                 {
                     id: 'rawmaterial-report-shortage',
@@ -149,6 +165,7 @@ const dashboard: ItemInterface = {
                     type: 'item',
                     url: '/rawMaterial/report/shortage',
                     urls: ['/rawMaterial/report/shortage'],
+                    allowedTypes: ['ppc'],
                 },
             ],
         },

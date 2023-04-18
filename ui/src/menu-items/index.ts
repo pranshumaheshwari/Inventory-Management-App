@@ -20,6 +20,7 @@ export interface ItemInterface {
     url?: string
     disabled?: boolean
     urls?: string[]
+    allowedTypes?: string[]
 }
 
 export interface MenuItemsInterface {
