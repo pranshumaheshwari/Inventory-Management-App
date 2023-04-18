@@ -1,5 +1,5 @@
 import { Box, Grid, Skeleton, Text } from '@mantine/core'
-import { ColDef, ValueGetterParams } from 'ag-grid-community'
+import { CellClassParams, ColDef, ValueGetterParams } from 'ag-grid-community'
 import { Fetch, useAuth } from '../../../services'
 import React, { useEffect, useMemo, useState } from 'react'
 
@@ -21,13 +21,13 @@ interface BottomRecordInterface {
     description: string
     category: string
     manPower: string
-    totalQuantity: number
+    totalQuantity: string | number
     [key: string]: string | number
 }
 
 function ManPower() {
     const {
-        token: { token },
+        token: { token, user },
     } = useAuth()
     const [error, setError] = useState('')
     const [records, setRecords] = useState<RecordInterface[]>([])
@@ -35,17 +35,87 @@ function ManPower() {
         BottomRecordInterface[]
     >([])
 
-    const columnDefs = useMemo<ColDef<RecordInterface>[]>(
-        () => [
+    const getEfficiencyCodedData = (efficiency: number) => {
+        if (efficiency >= 100 && efficiency < 110) {
+            return (
+                'E' +
+                (user.type === 'admin'
+                    ? ' (' + efficiency.toString() + ')'
+                    : '')
+            )
+        } else if (efficiency >= 110 && efficiency < 115) {
+            return (
+                'D' +
+                (user.type === 'admin'
+                    ? ' (' + efficiency.toString() + ')'
+                    : '')
+            )
+        } else if (efficiency >= 115 && efficiency < 120) {
+            return (
+                'C' +
+                (user.type === 'admin'
+                    ? ' (' + efficiency.toString() + ')'
+                    : '')
+            )
+        } else if (efficiency >= 120 && efficiency < 125) {
+            return (
+                'B' +
+                (user.type === 'admin'
+                    ? ' (' + efficiency.toString() + ')'
+                    : '')
+            )
+        } else if (efficiency >= 125) {
+            return (
+                'A' +
+                (user.type === 'admin'
+                    ? ' (' + efficiency.toString() + ')'
+                    : '')
+            )
+        } else {
+            return (
+                'F' +
+                (user.type === 'admin'
+                    ? ' (' + efficiency.toString() + ')'
+                    : '')
+            )
+        }
+    }
+
+    const getEfficiencyCodedColour = (effieciency: string) => {
+        if (effieciency.startsWith('F')) {
+            return {
+                'background-color': '#FF0000',
+            }
+        } else if (effieciency.startsWith('E')) {
+            return {
+                'background-color': '#FE9751',
+            }
+        } else if (effieciency.startsWith('D')) {
+            return {
+                'background-color': '#FECF00',
+            }
+        } else if (effieciency.startsWith('C')) {
+            return {
+                'background-color': '#06FFE9',
+            }
+        } else if (effieciency.startsWith('B')) {
+            return {
+                'background-color': '#0163FE',
+            }
+        } else if (effieciency.startsWith('A')) {
+            return {
+                'background-color': '#0DFF00',
+            }
+        }
+        return null
+    }
+
+    const columnDefs = useMemo<ColDef<RecordInterface>[]>(() => {
+        const def: ColDef<RecordInterface>[] = [
             { field: 'id', headerName: 'Part Number', pinned: 'left' },
             { field: 'description', headerName: 'Description' },
             { field: 'category', headerName: 'Category' },
-            {
-                field: 'manPower',
-                headerName: 'MP per Unit',
-                type: 'numberColumn',
-            },
-            ...[...Array(dayjs().date()).keys()].map((d, idx) => ({
+            ...[...Array(dayjs().date()).keys()].map((_d, idx) => ({
                 field: (idx + 1).toString(),
                 valueGetter: (params: ValueGetterParams<RecordInterface>) => {
                     if (params.node?.rowPinned) {
@@ -55,15 +125,35 @@ function ManPower() {
                     }
                     return params.data?.productionQuantity[idx]
                 },
-                type: 'numberColumn',
+                cellStyle: ({
+                    data,
+                    value,
+                }: CellClassParams<RecordInterface>) => {
+                    if (data?.id === 'Efficiency (%)') {
+                        return getEfficiencyCodedColour(value)
+                    }
+                    return null
+                },
             })),
             {
                 field: 'totalQuantity',
                 headerName: 'Total Production',
-                type: 'numberColumn',
                 pinned: 'right',
+                cellStyle: ({ data, value }) => {
+                    if (data?.id === 'Efficiency (%)') {
+                        return getEfficiencyCodedColour(value)
+                    }
+                    return null
+                },
             },
-            {
+        ]
+        if (user.type === 'admin') {
+            def.splice(3, 0, {
+                field: 'manPower',
+                headerName: 'MP per Unit',
+                type: 'numberColumn',
+            })
+            def.splice(-1, 0, {
                 field: 'totalManPower',
                 headerName: 'Total MP',
                 type: 'numberColumn',
@@ -77,10 +167,10 @@ function ManPower() {
                     return 0
                 },
                 pinned: 'right',
-            },
-        ],
-        []
-    )
+            })
+        }
+        return def
+    }, [])
 
     const fetchRecords = async () => {
         try {
@@ -128,7 +218,7 @@ function ManPower() {
                         ),
                         productionQuantity: [
                             ...Array(dayjs().date()).keys(),
-                        ].map((ini, idx) =>
+                        ].map((_ini, idx) =>
                             d.production.reduce((prevVal, curVal) => {
                                 if (
                                     dayjs(curVal.createdAt).date() - 1 ===
@@ -183,7 +273,7 @@ function ManPower() {
                         0
                     ),
                     ...Object.fromEntries(
-                        data[0].productionQuantity.map((pq, idx) => [
+                        data[0].productionQuantity.map((_pq, idx) => [
                             (idx + 1).toString(),
                             records.reduce((prevValue, curVal) => {
                                 if (curVal.date === idx + 1) {
@@ -202,7 +292,7 @@ function ManPower() {
                     description: '',
                     manPower: '',
                     ...Object.fromEntries(
-                        data[0].productionQuantity.map((pq, idx) => [
+                        data[0].productionQuantity.map((_pq, idx) => [
                             (idx + 1).toString(),
                             data.reduce((prevValue, curVal) => {
                                 return (
@@ -216,13 +306,59 @@ function ManPower() {
                         0
                     ),
                 },
+                attendace,
                 {
+                    id: 'Efficiency (%)',
+                    category: '',
+                    description: '',
+                    manPower: '',
+                    totalQuantity: getEfficiencyCodedData(
+                        parseFloat(
+                            (
+                                (data.reduce(
+                                    (prevVal, curVal) =>
+                                        prevVal +
+                                        curVal.totalQuantity * curVal.manPower,
+                                    0
+                                ) /
+                                    parseFloat(
+                                        attendace.totalQuantity as string
+                                    )) *
+                                100
+                            ).toFixed(2)
+                        )
+                    ),
+                    ...Object.fromEntries(
+                        data[0].productionQuantity.map((_pq, idx) => [
+                            (idx + 1).toString(),
+                            getEfficiencyCodedData(
+                                (data.reduce((prevValue, curVal) => {
+                                    return (
+                                        prevValue +
+                                        curVal.productionQuantity[idx] *
+                                            curVal.manPower
+                                    )
+                                }, 0) /
+                                    (attendace[(idx + 1).toString()]
+                                        ? (attendace[
+                                              (idx + 1).toString()
+                                          ] as number)
+                                        : 1)) *
+                                    100
+                            ),
+                        ])
+                    ),
+                },
+            ]
+
+            if (user.type === 'admin') {
+                bottomData.splice(1, 0, {
                     id: 'Total MP Required',
                     category: '',
                     description: '',
                     manPower: '',
                     ...Object.fromEntries(
-                        data[0].productionQuantity.map((pq, idx) => [
+                        data[0].productionQuantity.map((_pq, idx) => [
                             (idx + 1).toString(),
                             data.reduce((prevValue, curVal) => {
                                 return (
@@ -238,45 +374,8 @@ function ManPower() {
                             prevVal + curVal.totalQuantity * curVal.manPower,
                         0
                     ),
-                },
-                attendace,
-                {
-                    id: 'Efficiency (%)',
-                    category: '',
-                    description: '',
-                    manPower: '',
-                    totalQuantity: parseFloat(
-                        (
-                            (data.reduce(
-                                (prevVal, curVal) =>
-                                    prevVal +
-                                    curVal.totalQuantity * curVal.manPower,
-                                0
-                            ) /
-                                attendace.totalQuantity) *
-                            100
-                        ).toFixed(2)
-                    ),
-                    ...Object.fromEntries(
-                        data[0].productionQuantity.map((pq, idx) => [
-                            (idx + 1).toString(),
-                            (data.reduce((prevValue, curVal) => {
-                                return (
-                                    prevValue +
-                                    curVal.productionQuantity[idx] *
-                                        curVal.manPower
-                                )
-                            }, 0) /
-                                (attendace[(idx + 1).toString()]
-                                    ? (attendace[
-                                          (idx + 1).toString()
-                                      ] as number)
-                                    : 1)) *
-                                100,
-                        ])
-                    ),
-                },
-            ]
+                })
+            }
 
             setRecords(data)
             setBottomPinnedData(bottomData)

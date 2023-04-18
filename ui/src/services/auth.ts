@@ -4,7 +4,7 @@ interface tokenInterface {
     token: string
     user: {
         username: string
-        type: string
+        type: 'admin' | 'planthead' | 'ppc'
         name: string
     }
 }
