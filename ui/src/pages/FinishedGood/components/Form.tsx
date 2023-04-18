@@ -38,7 +38,7 @@ const Form = () => {
     const location = useLocation()
     const isEdit = location.state ? true : false
     const {
-        token: { token },
+        token: { token, user },
     } = useAuth()
     const [customer, setCustomer] = useState<SelectItem[]>()
     const [error, setError] = useState('')
@@ -426,24 +426,28 @@ const Form = () => {
                             min={0}
                             {...form.getInputProps('storeStock')}
                         />
-                        <FormInputNumber
-                            xs={3}
-                            type="number"
-                            label="Man Power"
-                            placeholder="Enter Man Power"
-                            precision={2}
-                            min={0}
-                            {...form.getInputProps('manPower')}
-                        />
-                        <FormInputNumber
-                            xs={3}
-                            type="number"
-                            label="Overheads"
-                            placeholder="Enter Overheads"
-                            precision={2}
-                            min={0}
-                            {...form.getInputProps('overheads')}
-                        />
+                        {user.type === 'admin' && (
+                            <>
+                                <FormInputNumber
+                                    xs={3}
+                                    type="number"
+                                    label="Man Power"
+                                    placeholder="Enter Man Power"
+                                    precision={2}
+                                    min={0}
+                                    {...form.getInputProps('manPower')}
+                                />
+                                <FormInputNumber
+                                    xs={3}
+                                    type="number"
+                                    label="Overheads"
+                                    placeholder="Enter Overheads"
+                                    precision={2}
+                                    min={0}
+                                    {...form.getInputProps('overheads')}
+                                />
+                            </>
+                        )}
                         <Grid.Col xs={12}>
                             <Button
                                 fullWidth
