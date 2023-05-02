@@ -10,15 +10,15 @@ const Navigation = () => {
     } = useAuth()
 
     const navGroups = menuItem.items
-        .filter((item) => {
-            if (
-                user.type === 'admin' ||
-                item.allowedTypes?.includes(user.type)
-            ) {
-                return true
-            }
-            return false
-        })
+        // .filter((item) => {
+        //     if (
+        //         user.type === 'admin' ||
+        //         item.allowedTypes?.includes(user.type)
+        //     ) {
+        //         return true
+        //     }
+        //     return false
+        // })
         .map((item) => {
             switch (item.type) {
                 case 'group':
