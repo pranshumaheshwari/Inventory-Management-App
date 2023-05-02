@@ -13,6 +13,7 @@ const dashboard: ItemInterface = {
     id: 'finishedgood',
     title: 'Finished Goods',
     type: 'group',
+    allowedTypes: ['oqc', 'ppc'],
     children: [
         {
             id: 'finishedgood-inventory',
@@ -25,6 +26,7 @@ const dashboard: ItemInterface = {
                 '/finishedGoods/new',
                 '/finishedGoods/edit',
             ],
+            allowedTypes: ['oqc', 'ppc'],
         },
         {
             id: 'finishedgood-customer',
@@ -33,6 +35,7 @@ const dashboard: ItemInterface = {
             url: '/customers',
             icon: IconBuildingStore,
             urls: ['/customers', '/customers/new', '/customers/edit'],
+            allowedTypes: ['ppc'],
         },
         {
             id: 'finishedgood-salesOrders',
@@ -41,11 +44,13 @@ const dashboard: ItemInterface = {
             url: '/salesOrders',
             icon: IconPackage,
             urls: ['/salesOrders', '/salesOrders/new', '/salesOrders/edit'],
+            allowedTypes: ['ppc'],
         },
         {
             id: 'finishedgood-outwards',
             title: 'Outwards',
             type: 'group',
+            allowedTypes: ['oqc', 'ppc'],
             children: [
                 {
                     id: 'finishedgood-outwards-production',
@@ -54,6 +59,7 @@ const dashboard: ItemInterface = {
                     url: '/outwards/production',
                     icon: IconAssembly,
                     urls: ['/outwards/production'],
+                    allowedTypes: ['ppc'],
                 },
                 {
                     id: 'finishedgood-outwards-qualityCheck',
@@ -62,6 +68,7 @@ const dashboard: ItemInterface = {
                     url: '/outwards/qualityCheck',
                     icon: IconCheckupList,
                     urls: ['/outwards/qualityCheck'],
+                    allowedTypes: ['oqc', 'ppc'],
                 },
                 {
                     id: 'finishedgood-outwards-dispatch',
@@ -70,6 +77,7 @@ const dashboard: ItemInterface = {
                     url: '/outwards/dispatch',
                     icon: IconTruckDelivery,
                     urls: ['/outwards/dispatch'],
+                    allowedTypes: ['ppc'],
                 },
             ],
         },
@@ -77,6 +85,7 @@ const dashboard: ItemInterface = {
             id: 'finishedgood-report',
             title: 'Reports',
             type: 'group',
+            allowedTypes: ['oqc', 'ppc'],
             children: [
                 {
                     id: 'finishedgood-report-byid',
@@ -84,6 +93,7 @@ const dashboard: ItemInterface = {
                     type: 'item',
                     url: '/finishedGoods/report/byId',
                     urls: ['/finishedGoods/report/byId'],
+                    allowedTypes: ['oqc', 'ppc'],
                 },
                 {
                     id: 'finishedgood-report-byso',
@@ -91,6 +101,7 @@ const dashboard: ItemInterface = {
                     type: 'item',
                     url: '/finishedGoods/report/bySo',
                     urls: ['/finishedGoods/report/bySo'],
+                    allowedTypes: ['ppc'],
                 },
                 {
                     id: 'finishedgood-report-production',
@@ -98,6 +109,7 @@ const dashboard: ItemInterface = {
                     type: 'item',
                     url: '/finishedGoods/report/production',
                     urls: ['/finishedGoods/report/production'],
+                    allowedTypes: ['ppc'],
                 },
                 {
                     id: 'finishedgood-report-dispatch',
@@ -105,6 +117,7 @@ const dashboard: ItemInterface = {
                     type: 'item',
                     url: '/finishedGoods/report/dispatch',
                     urls: ['/finishedGoods/report/dispatch'],
+                    allowedTypes: ['ppc'],
                 },
                 {
                     id: 'finishedgood-report-productiontracker',
@@ -112,6 +125,7 @@ const dashboard: ItemInterface = {
                     type: 'item',
                     url: '/finishedGoods/report/productionTracker',
                     urls: ['/finishedGoods/report/productionTracker'],
+                    allowedTypes: ['ppc'],
                 },
                 {
                     id: 'finishedgood-report-dispatchtracker',
@@ -119,6 +133,7 @@ const dashboard: ItemInterface = {
                     type: 'item',
                     url: '/finishedGoods/report/dispatchTracker',
                     urls: ['/finishedGoods/report/dispatchTracker'],
+                    allowedTypes: ['ppc'],
                 },
                 {
                     id: 'finishedgood-report-manpowerefficiency',
@@ -126,6 +141,7 @@ const dashboard: ItemInterface = {
                     type: 'item',
                     url: '/finishedGoods/report/manpowerEfficiency',
                     urls: ['/finishedGoods/report/manpowerEfficiency'],
+                    allowedTypes: ['ppc'],
                 },
             ],
         },

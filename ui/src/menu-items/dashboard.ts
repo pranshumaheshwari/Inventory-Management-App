@@ -5,6 +5,7 @@ const dashboard: ItemInterface = {
     id: 'group-dashboard',
     title: '',
     type: 'group',
+    allowedTypes: ['hr', 'iqc', 'oqc', 'ppc'],
     children: [
         {
             id: 'dashboard',
@@ -13,6 +14,7 @@ const dashboard: ItemInterface = {
             url: '/',
             icon: IconGridDots,
             urls: ['/'],
+            allowedTypes: ['hr', 'iqc', 'oqc', 'ppc'],
         },
     ],
 }

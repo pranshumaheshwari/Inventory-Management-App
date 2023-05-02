@@ -12,7 +12,6 @@ import {
     FormInputNumber,
     FormInputText,
     FormMultiSelect,
-    FormSegmentedControl,
     MonthPicker,
     Table,
 } from '../../components'
@@ -47,7 +46,6 @@ interface PurchaseOrderFromSalesOrderInterface {
         satisfiedRequirement: number
         poQuantity: number
     }[]
-    useRmInCalculation: 'use' | 'doNotUse'
 }
 
 const EXTRA_QUANTITY = 1.25
@@ -81,7 +79,6 @@ const NewFromSalesOrder = () => {
             finishedGoods: [],
             rawMaterials: [],
             month: new Date(),
-            useRmInCalculation: 'use',
         },
         validate: {
             salesOrders: isNotEmpty(),
@@ -174,9 +171,10 @@ const NewFromSalesOrder = () => {
     ) => {
         const intMonth = dayjs(form.values.month).month()
         const month = months[intMonth % 12]
-        let data: PurchaseOrderFromSalesOrderInterface['rawMaterials'] = []
+        let data: PurchaseOrderFromSalesOrderInterface['rawMaterials'][] =
+            Array.apply(null, Array(finishedGoods.length)).map(() => [])
         Promise.all(
-            finishedGoods.map(async (fg) => {
+            finishedGoods.map(async (fg, index) => {
                 await Fetch({
                     url: `/finishedgoods/${encodeURIComponent(fg.fgId)}`,
                     options: {
@@ -209,167 +207,153 @@ const NewFromSalesOrder = () => {
                             }),
                         },
                     },
-                })
-                    .then(
-                        (f: {
-                            storeStock: number
-                            oqcPendingStock: number
-                            bom: {
-                                quantity: number
-                                rm: {
-                                    id: string
-                                    description: string
-                                    dtplCode: string
-                                    supplierId: string
-                                    price: number
-                                    storeStock: number
-                                    lineStock: number
-                                    iqcPendingStock: number
-                                    poPendingStock: number
-                                    mpq: number
-                                    moq: number
-                                    poDetails: {
-                                        poId: string
-                                        createdAt: string
-                                    }[]
-                                }
-                            }[]
-                        }) => {
-                            for (let rm of f.bom) {
-                                const idx = data.findIndex(
-                                    (d) => d.rmId === rm.rm.id
-                                )
-                                if (idx !== -1) {
-                                    data[idx].requirement +=
-                                        rm.quantity * fg.quantity
-                                    data[idx].satisfiedRequirement +=
+                }).then(
+                    (f: {
+                        storeStock: number
+                        oqcPendingStock: number
+                        bom: {
+                            quantity: number
+                            rm: {
+                                id: string
+                                description: string
+                                dtplCode: string
+                                supplierId: string
+                                price: number
+                                storeStock: number
+                                lineStock: number
+                                iqcPendingStock: number
+                                poPendingStock: number
+                                mpq: number
+                                moq: number
+                                poDetails: {
+                                    poId: string
+                                    createdAt: string
+                                }[]
+                            }
+                        }[]
+                    }) => {
+                        for (let rm of f.bom) {
+                            const idx = data[index].findIndex(
+                                (d) => d.rmId === rm.rm.id
+                            )
+                            if (idx !== -1) {
+                                data[index][idx].requirement +=
+                                    rm.quantity * fg.quantity
+                                data[index][idx].satisfiedRequirement +=
+                                    rm.quantity *
+                                    (f.oqcPendingStock + f.storeStock)
+                            } else {
+                                data[index].push({
+                                    rmId: rm.rm.id,
+                                    description: rm.rm.description,
+                                    dtplCode: rm.rm.dtplCode,
+                                    quantity: 0,
+                                    poQuantity: 0,
+                                    supplierId: rm.rm.supplierId,
+                                    poId: `${rm.rm.supplierId}-${month}-${(
+                                        '000' +
+                                        (rm.rm.poDetails.filter(
+                                            (po) =>
+                                                dayjs(po.createdAt).month() ===
+                                                intMonth
+                                        ).length +
+                                            1)
+                                    ).slice(-3)}`,
+                                    price: rm.rm.price,
+                                    requirement: rm.quantity * fg.quantity,
+                                    stock:
+                                        rm.rm.storeStock +
+                                        rm.rm.lineStock +
+                                        rm.rm.iqcPendingStock +
+                                        rm.rm.poPendingStock,
+                                    mpq: rm.rm.mpq,
+                                    moq: rm.rm.moq,
+                                    satisfiedRequirement:
                                         rm.quantity *
-                                        (f.oqcPendingStock + f.storeStock)
-                                } else {
-                                    data.push({
-                                        rmId: rm.rm.id,
-                                        description: rm.rm.description,
-                                        dtplCode: rm.rm.dtplCode,
-                                        quantity: 0,
-                                        poQuantity: 0,
-                                        supplierId: rm.rm.supplierId,
-                                        poId: `${rm.rm.supplierId}-${month}-${(
-                                            '000' +
-                                            (rm.rm.poDetails.filter(
-                                                (po) =>
-                                                    dayjs(
-                                                        po.createdAt
-                                                    ).month() === intMonth
-                                            ).length +
-                                                1)
-                                        ).slice(-3)}`,
-                                        price: rm.rm.price,
-                                        requirement: rm.quantity * fg.quantity,
-                                        stock:
-                                            rm.rm.storeStock +
-                                            rm.rm.lineStock +
-                                            rm.rm.iqcPendingStock +
-                                            rm.rm.poPendingStock,
-                                        mpq: rm.rm.mpq,
-                                        moq: rm.rm.moq,
-                                        satisfiedRequirement:
-                                            rm.quantity *
-                                            (f.oqcPendingStock + f.storeStock),
-                                    })
-                                }
+                                        (f.oqcPendingStock + f.storeStock),
+                                })
                             }
                         }
-                    )
-                    .then(() => {
-                        for (let rm of data) {
-                            rm.poQuantity =
-                                form.values.useRmInCalculation === 'use'
-                                    ? Math.ceil(
-                                          (rm.requirement * EXTRA_QUANTITY -
-                                              (rm.stock +
-                                                  rm.satisfiedRequirement)) /
-                                              rm.mpq
-                                      ) * rm.mpq
-                                    : Math.ceil(rm.requirement / rm.mpq) *
-                                      rm.mpq
-                        }
-                    })
-                    .then(() => {
-                        data = data.filter((d) => d.poQuantity > 0)
-                    })
-                    .then(() => {
-                        data = data.map((d) => ({
-                            ...d,
-                            poQuantity: Math.max(d.poQuantity, d.moq),
-                        }))
-                    })
+                    }
+                )
             })
-        ).then(() => {
-            form.setFieldValue('rawMaterials', data)
-        })
+        )
+            .then(() => {
+                const d: PurchaseOrderFromSalesOrderInterface['rawMaterials'] =
+                    []
+
+                for (const entry of data) {
+                    for (const rm of entry) {
+                        const idx = d.findIndex((d) => d.rmId === rm.rmId)
+                        if (idx !== -1) {
+                            d[idx].requirement += rm.requirement
+                            d[idx].satisfiedRequirement +=
+                                rm.satisfiedRequirement
+                        } else {
+                            d.push(rm)
+                        }
+                    }
+                }
+
+                return d
+            })
+            .then((d) => {
+                for (let rm of d) {
+                    rm.poQuantity =
+                        Math.ceil(
+                            (rm.requirement * EXTRA_QUANTITY -
+                                rm.stock -
+                                rm.satisfiedRequirement) /
+                                rm.mpq
+                        ) * rm.mpq
+                }
+
+                return d
+            })
+            .then((d) => d.filter((rm) => rm.poQuantity > 0))
+            .then((d) =>
+                d.map((rm) => ({
+                    ...rm,
+                    poQuantity: Math.max(rm.poQuantity, rm.moq),
+                }))
+            )
+            .then((d) => {
+                form.setFieldValue('rawMaterials', d)
+            })
     }
 
     const onSubmit = async () => {
-        await Promise.all(
+        Promise.all(
             form.values.rawMaterials
                 .filter((rm) => rm.quantity > 0)
-                .map((v) => ({
-                    poId: v.poId,
-                    supplierId: v.supplierId,
-                }))
-                .filter(
-                    (val, idx, arr) =>
-                        arr.findIndex((item) => item.poId === val.poId) === idx
-                )
-                .map((po) =>
-                    Fetch({
-                        url: '/purchaseorders',
-                        options: {
-                            method: 'POST',
-                            body: {
-                                id: po.poId,
-                                supplierId: po.supplierId,
-                                poDetails: [],
+                .map(async (rm) => {
+                    try {
+                        await Fetch({
+                            url: '/purchaseorders/details',
+                            options: {
+                                method: 'POST',
+                                body: rm,
+                                authToken: token,
                             },
-                            authToken: token,
-                        },
-                    })
-                )
-        )
-            .then(() => {
-                Promise.all(
-                    form.values.rawMaterials
-                        .filter((rm) => rm.quantity > 0)
-                        .map(async (rm) =>
-                            Fetch({
-                                url: '/purchaseorders/details',
-                                options: {
-                                    method: 'POST',
-                                    body: rm,
-                                    authToken: token,
-                                },
-                            })
-                        )
-                )
-                    .then(() => {
-                        showNotification({
-                            title: 'Success',
-                            message: <Text>Succesfully Purchase Orders</Text>,
-                            color: 'green',
                         })
-
-                        navigate('..')
-                    })
-                    .catch((err) => {})
-            })
-            .catch((err) => {
-                setError((err as Error).message)
-                showNotification({
-                    title: 'Error',
-                    message: <Text>{(err as Error).message}</Text>,
-                    color: 'red',
+                    } catch (err) {
+                        setError((err as Error).message)
+                        showNotification({
+                            title: 'Error',
+                            message: <Text>{(err as Error).message}</Text>,
+                            color: 'red',
+                        })
+                    }
                 })
+        ).then(() => {
+            showNotification({
+                title: 'Success',
+                message: <Text>Succesfully Purchase Orders</Text>,
+                color: 'green',
             })
+
+            navigate('..')
+        })
     }
 
     const openModal = () =>
@@ -397,12 +381,12 @@ const NewFromSalesOrder = () => {
                 pinned: 'left',
             },
             {
-                field: 'dtplCode',
-                headerName: 'DTPL Part Number',
-            },
-            {
                 field: 'description',
                 headerName: 'Description',
+            },
+            {
+                field: 'dtplCode',
+                headerName: 'DTPL Part Number',
             },
             {
                 field: 'supplierId',
@@ -415,17 +399,14 @@ const NewFromSalesOrder = () => {
             {
                 field: 'requirement',
                 headerName: 'Requirement',
-                type: 'numberColumn',
             },
             {
                 field: 'stock',
                 headerName: 'Stock',
-                type: 'numberColumn',
             },
             {
                 field: 'poQuantity',
                 headerName: 'PO Quantity',
-                type: 'numberColumn',
             },
             {
                 headerName: 'Final Quantity',
@@ -486,24 +467,8 @@ const NewFromSalesOrder = () => {
                         />
                         <MonthPicker
                             label="Month"
-                            xs={3}
+                            xs={6}
                             {...form.getInputProps('month')}
-                        />
-                        <FormSegmentedControl
-                            xs={3}
-                            color="blue"
-                            label="Use Raw Material Stock"
-                            data={[
-                                {
-                                    label: 'Use',
-                                    value: 'use',
-                                },
-                                {
-                                    label: 'Do not use',
-                                    value: 'doNotUse',
-                                },
-                            ]}
-                            {...form.getInputProps('useRmInCalculation')}
                         />
                         <Grid.Col xs={12}>
                             <Button
