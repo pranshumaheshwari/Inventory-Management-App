@@ -109,13 +109,21 @@ app.post('/issueMany', async (req: Request, res: Response) => {
     try {
         const result = await PrismaService.$transaction([
             ...details.map(
-                ({ rmId, quantity }: { rmId: string; quantity: number }) =>
+                ({
+                    rmId,
+                    quantity,
+                    requisitionId,
+                }: {
+                    rmId: string
+                    quantity: number
+                    requisitionId: number
+                }) =>
                     PrismaService.requisitionOutward.create({
                         data: {
                             rmId,
                             quantity,
                             user: req.user ? req.user.username : '',
-                            requisitionId: parseInt(details.requisitionId),
+                            requisitionId,
                         },
                     })
             ),
