@@ -25,6 +25,25 @@ app.get('/', async (req: Request, res: Response) => {
     res.json(data)
 })
 
+app.get('/details', async (req: Request, res: Response) => {
+    const args: Prisma.RequisitionDetailsFindManyArgs = {}
+    const { select, include, where, distinct } = req.query
+    if (select) {
+        args.select = JSON.parse(select as string)
+    }
+    if (include) {
+        args.include = JSON.parse(include as string)
+    }
+    if (where) {
+        args.where = JSON.parse(where as string)
+    }
+    if (distinct) {
+        args.distinct = JSON.parse(distinct as string)
+    }
+    const data = await PrismaService.requisitionDetails.findMany(args)
+    res.json(data)
+})
+
 app.get('/issue', async (req: Request, res: Response) => {
     const args: Prisma.RequisitionOutwardFindManyArgs = {}
     const { select, include, where, distinct } = req.query
@@ -48,6 +67,16 @@ app.post('/', async (req: Request, res: Response) => {
     const { quantity, fgId, soId, createdAt } = req.body
 
     try {
+        const bom = await PrismaService.fg
+            .findUniqueOrThrow({
+                where: {
+                    id: fgId,
+                },
+                select: {
+                    bom: true,
+                },
+            })
+            .then((fg) => fg?.bom)
         const result = await prisma.create({
             data: {
                 quantity,
@@ -55,6 +84,15 @@ app.post('/', async (req: Request, res: Response) => {
                 soId,
                 user: req.user ? req.user.username : '',
                 createdAt,
+                details: {
+                    createMany: {
+                        data: bom?.map((rm) => ({
+                            rmId: rm.rmId,
+                            quantity: quantity * rm.quantity,
+                            user: req.user ? req.user.username : '',
+                        })),
+                    },
+                },
             },
         })
         res.json(result)
