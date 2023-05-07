@@ -248,11 +248,11 @@ const RequisitionIssue = () => {
                                     0
                                 ),
                             maxQuantity:
-                                d.rm.requisitionDetails.reduce(
+                                d.rm.requisitionOutward.reduce(
                                     (acc, curVal) => acc + curVal.quantity,
                                     0
                                 ) -
-                                d.rm.requisitionOutward.reduce(
+                                d.rm.requisitionDetails.reduce(
                                     (acc, curVal) => acc + curVal.quantity,
                                     0
                                 ),
@@ -342,11 +342,13 @@ const RequisitionIssue = () => {
                 field: 'maxQuantity',
                 headerName: 'Excess/Less Quantity',
                 width: 120,
+                type: 'numberColumn',
             },
             {
                 field: 'quantity',
                 headerName: 'Quantity',
                 editable: true,
+                type: 'numberColumn',
                 valueParser: ({ newValue }) => {
                     const val = parseFloat(newValue)
                     if (val < 0) {
