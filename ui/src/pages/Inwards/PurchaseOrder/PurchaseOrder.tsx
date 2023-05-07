@@ -412,7 +412,6 @@ const PurchaseOrder = () => {
                         })
                     }
                 )
-            console.log(data)
             form.setFieldValue('details', data)
         } catch (e) {
             setError((e as Error).message)

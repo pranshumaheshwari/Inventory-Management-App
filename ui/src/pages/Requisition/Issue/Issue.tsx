@@ -18,6 +18,8 @@ export interface RequisitionIssueInterface {
         storeStock: number
         lineStock: number
         maxQuantity: number
+        requisitionQuantity: number
+        issuedQuantity: number
     }[]
 }
 
@@ -65,10 +67,12 @@ const RequisitionIssue = () => {
                 options: {
                     method: 'POST',
                     body: {
-                        requisitionId: form.values.requisitionId,
-                        details: form.values.details.filter(
-                            (d) => d.quantity > 0
-                        ),
+                        details: form.values.details
+                            .filter((d) => d.quantity > 0)
+                            .map((d) => ({
+                                ...d,
+                                requisitionId: form.values.requisitionId,
+                            })),
                     },
                     authToken: token,
                 },
@@ -97,34 +101,59 @@ const RequisitionIssue = () => {
     const getFinishedGoods = async () => {
         try {
             const data = await Fetch({
-                url: '/requisition',
+                url: '/requisition/details',
                 options: {
                     authToken: token,
                     params: {
                         select: JSON.stringify({
-                            id: true,
-                            fgId: true,
-                            quantity: true,
+                            requisition: {
+                                select: {
+                                    id: true,
+                                    fgId: true,
+                                    quantity: true,
+                                },
+                            },
                         }),
                         where: JSON.stringify({
-                            status: {
-                                in: ['Ready', 'Running'],
-                            },
+                            status: 'Open',
                         }),
                     },
                 },
-            }).then((data) => {
-                return data.map(
-                    (requisition: {
-                        fgId: string
-                        id: string
-                        quantity: number
-                    }) => ({
+            })
+                .then(
+                    (
+                        data: {
+                            requisition: {
+                                fgId: string
+                                id: number
+                                quantity: number
+                            }
+                        }[]
+                    ) =>
+                        data.reduce(
+                            (acc, curVal) => {
+                                if (
+                                    acc.findIndex(
+                                        (d) => d.id === curVal.requisition.id
+                                    ) === -1
+                                ) {
+                                    acc.push(curVal.requisition)
+                                }
+                                return acc
+                            },
+                            [] as {
+                                fgId: string
+                                id: number
+                                quantity: number
+                            }[]
+                        )
+                )
+                .then((data) =>
+                    data.map((requisition) => ({
                         label: `${requisition.id} - ${requisition.fgId} WITH QTY ${requisition.quantity}`,
                         value: requisition.id.toString(),
-                    })
+                    }))
                 )
-            })
             setFinishedGoods(data)
         } catch (e) {
             setError((e as Error).message)
@@ -134,98 +163,120 @@ const RequisitionIssue = () => {
     const getRawmaterial = async (requisitionId: number) => {
         try {
             const data = await Fetch({
-                url: '/requisition',
+                url: '/requisition/details',
                 options: {
                     authToken: token,
                     params: {
                         select: JSON.stringify({
                             quantity: true,
-                            fg: {
+                            rm: {
                                 select: {
-                                    bom: {
+                                    id: true,
+                                    description: true,
+                                    dtplCode: true,
+                                    storeStock: true,
+                                    lineStock: true,
+                                    requisitionDetails: {
                                         select: {
                                             quantity: true,
-                                            rm: {
-                                                select: {
-                                                    id: true,
-                                                    description: true,
-                                                    dtplCode: true,
-                                                    storeStock: true,
-                                                    lineStock: true,
-                                                },
-                                            },
+                                        },
+                                    },
+                                    requisitionOutward: {
+                                        select: {
+                                            quantity: true,
                                         },
                                     },
                                 },
                             },
-                            requisitionOutward: {
+                            requisition: {
                                 select: {
-                                    rmId: true,
-                                    quantity: true,
+                                    requisitionOutward: {
+                                        select: {
+                                            rmId: true,
+                                            quantity: true,
+                                        },
+                                    },
                                 },
                             },
                         }),
                         where: JSON.stringify({
-                            id: requisitionId,
+                            requisitionId,
                         }),
                     },
                 },
             })
+                .then((data) => {
+                    console.log(data)
+                    return data
+                })
                 .then(
                     (
                         data: {
                             quantity: number
-                            fg: {
-                                bom: {
+                            rm: {
+                                id: string
+                                description: string
+                                dtplCode: string
+                                storeStock: number
+                                lineStock: number
+                                requisitionDetails: {
                                     quantity: number
-                                    rm: {
-                                        id: string
-                                        description: string
-                                        dtplCode: string
-                                        storeStock: number
-                                        lineStock: number
-                                    }
+                                }[]
+                                requisitionOutward: {
+                                    quantity: number
                                 }[]
                             }
-                            requisitionOutward: {
-                                rmId: string
-                                quantity: number
-                            }[]
+                            requisition: {
+                                requisitionOutward: {
+                                    rmId: string
+                                    quantity: number
+                                }[]
+                            }
                         }[]
-                    ) => data[0]
-                )
-                .then((data) =>
-                    data.fg.bom.map((b) => ({
-                        ...b,
-                        requisitionQuantity: data.quantity,
-                        issuedQuantity: data.requisitionOutward.reduce(
-                            (total, obj, idx) => {
-                                if (
-                                    data.requisitionOutward[idx].rmId ===
-                                    b.rm.id
-                                ) {
-                                    return total + obj.quantity
-                                }
-                                return total
-                            },
-                            0
-                        ),
-                    }))
-                )
-                .then((data) =>
-                    data
-                        .map((b) => ({
-                            ...b,
-                            ...b.rm,
-                            rmId: b.rm.id,
-                            maxQuantity: Math.ceil(
-                                b.quantity * b.requisitionQuantity -
-                                    b.issuedQuantity
-                            ),
+                    ) =>
+                        data.map((d) => ({
+                            rmId: d.rm.id,
+                            description: d.rm.description,
+                            dtplCode: d.rm.dtplCode,
+                            storeStock: d.rm.storeStock,
+                            lineStock: d.rm.lineStock,
+                            requisitionQuantity: d.quantity,
+                            issuedQuantity: d.requisition.requisitionOutward
+                                .filter((r) => r.rmId === d.rm.id)
+                                .reduce(
+                                    (acc, curVal) => acc + curVal.quantity,
+                                    0
+                                ),
+                            maxQuantity:
+                                d.rm.requisitionDetails.reduce(
+                                    (acc, curVal) => acc + curVal.quantity,
+                                    0
+                                ) -
+                                d.rm.requisitionOutward.reduce(
+                                    (acc, curVal) => acc + curVal.quantity,
+                                    0
+                                ),
                             quantity: 0,
                         }))
-                        .filter((b) => b.maxQuantity > 0)
                 )
+                .then((data) => {
+                    console.log(data)
+                    return data
+                })
+            // .then((data) =>
+            //     data
+            //         .map((b) => ({
+            //             ...b,
+            //             ...b.rm,
+            //             rmId: b.rm.id,
+            //             maxQuantity: Math.ceil(
+            //                 b.quantity * b.requisitionQuantity -
+            //                     b.issuedQuantity
+            //             ),
+            //             quantity: 0,
+            //         }))
+            //         .filter((b) => b.maxQuantity > 0)
+            // )
             form.setFieldValue('details', data)
         } catch (e) {
             setError((e as Error).message)
@@ -276,6 +327,12 @@ const RequisitionIssue = () => {
                 width: 120,
             },
             {
+                field: 'requisitionQuantity',
+                headerName: 'Requisition Quantity',
+                type: 'numberColumn',
+                width: 120,
+            },
+            {
                 field: 'issuedQuantity',
                 headerName: 'Issued Quantity',
                 type: 'numberColumn',
@@ -283,17 +340,17 @@ const RequisitionIssue = () => {
             },
             {
                 field: 'maxQuantity',
-                headerName: 'Remaining Quantity',
+                headerName: 'Excess/Less Quantity',
                 width: 120,
             },
             {
                 field: 'quantity',
                 headerName: 'Quantity',
                 editable: true,
-                valueParser: ({ newValue, data }) => {
+                valueParser: ({ newValue }) => {
                     const val = parseFloat(newValue)
-                    if (val > data.maxQuantity) {
-                        return data.maxQuantity
+                    if (val < 0) {
+                        return 0
                     }
                     return val
                 },
