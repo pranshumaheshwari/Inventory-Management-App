@@ -16,6 +16,7 @@ function Table<Type>({
     defaultColDef,
     pinnedBottomRowData,
     pinnedTopRowData,
+    domLayout = 'normal',
     ...otherProps
 }: TableInterface<Type>) {
     const cDefaultColDef = useMemo(
@@ -61,6 +62,7 @@ function Table<Type>({
                     pinnedBottomRowData={pinnedBottomRowData}
                     pinnedTopRowData={pinnedTopRowData}
                     columnTypes={columnTypes}
+                    domLayout={domLayout}
                     defaultExcelExportParams={{
                         fileName: fileName ? fileName + '.xlsx' : 'export.xlsx',
                         columnKeys: columnDefs

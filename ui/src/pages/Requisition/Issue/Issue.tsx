@@ -1,4 +1,4 @@
-import { Button, Grid, Skeleton, Stepper, Text } from '@mantine/core'
+import { Button, Grid, Skeleton, Text } from '@mantine/core'
 import { Fetch, useAuth } from '../../../services'
 import { FormSelect, Table } from '../../../components'
 import React, { useEffect, useMemo, useState } from 'react'
@@ -25,7 +25,6 @@ const RequisitionIssue = () => {
     const {
         token: { token },
     } = useAuth()
-    const [activeStep, setActiveStep] = React.useState(0)
     const [finishedGoods, setFinishedGoods] = useState<
         {
             value: string
@@ -59,14 +58,6 @@ const RequisitionIssue = () => {
             onConfirm: onSubmit,
         })
 
-    const handleNext = () => {
-        setActiveStep((prevActiveStep) => prevActiveStep + 1)
-    }
-
-    const handleBack = () => {
-        setActiveStep((prevActiveStep) => prevActiveStep - 1)
-    }
-
     const onSubmit = async () => {
         try {
             await Fetch({
@@ -93,7 +84,6 @@ const RequisitionIssue = () => {
                 color: 'green',
             })
             form.reset()
-            setActiveStep(0)
         } catch (err) {
             setError((err as Error).message)
             showNotification({
@@ -343,102 +333,52 @@ const RequisitionIssue = () => {
             }}
         >
             <Grid justify="center" align="center" grow>
-                <Grid.Col xs={3} />
-                <Grid.Col xs={6}>
-                    <Stepper active={activeStep} onStepClick={setActiveStep}>
-                        {['Basic Details', 'Raw Material'].map((label) => {
-                            return <Stepper.Step key={label} label={label} />
-                        })}
-                    </Stepper>
+                <FormSelect
+                    xs={12}
+                    label="Requisition"
+                    name="requisitionId"
+                    placeholder="Select Requisition"
+                    data={finishedGoods}
+                    withAsterisk
+                    {...form.getInputProps('requisitionId')}
+                    value={form.values.requisitionId.toString()}
+                    onChange={(value) => {
+                        if (value) {
+                            form.setFieldValue('requisitionId', parseInt(value))
+                            getRawmaterial(parseInt(value))
+                        }
+                    }}
+                />
+                <Grid.Col xs={12}>
+                    <Table<RequisitionIssueInterface['details'][number]>
+                        fileName={form.values.requisitionId.toString()}
+                        rowData={form.values.details}
+                        columnDefs={detailsColumnDef}
+                        pagination={false}
+                        domLayout="print"
+                    />
                 </Grid.Col>
-                <Grid.Col xs={3} />
-                {activeStep === 0 && (
-                    <>
-                        <FormSelect
-                            xs={12}
-                            label="Requisition"
-                            name="requisitionId"
-                            placeholder="Select Requisition"
-                            data={finishedGoods}
-                            withAsterisk
-                            {...form.getInputProps('requisitionId')}
-                            value={form.values.requisitionId.toString()}
-                            onChange={(value) => {
-                                if (value) {
-                                    form.setFieldValue(
-                                        'requisitionId',
-                                        parseInt(value)
-                                    )
-                                    getRawmaterial(parseInt(value))
-                                }
-                            }}
-                        />
-                        <Grid.Col xs={12}>
-                            <Button
-                                fullWidth
-                                size="md"
-                                variant="filled"
-                                color="primary"
-                                onClick={handleNext}
-                            >
-                                Next
-                            </Button>
-                        </Grid.Col>
-                    </>
-                )}
-                {activeStep === 1 && (
-                    <>
-                        <Grid.Col
-                            xs={12}
-                            style={{
-                                height: '70vh',
-                            }}
-                        >
-                            <Table<RequisitionIssueInterface['details'][number]>
-                                fileName={form.values.requisitionId.toString()}
-                                rowData={form.values.details}
-                                columnDefs={detailsColumnDef}
-                                pagination={false}
-                            />
-                        </Grid.Col>
-                    </>
-                )}
                 {error && (
                     <Grid.Col xs={12}>
                         <Text c="red">{error}</Text>
                     </Grid.Col>
                 )}
-                {activeStep === 1 && (
-                    <>
-                        <Grid.Col xs={2}>
-                            <Button
-                                fullWidth
-                                size="md"
-                                variant="default"
-                                onClick={handleBack}
-                            >
-                                Back
-                            </Button>
-                        </Grid.Col>
-                        <Grid.Col xs={8} />
-                        <Grid.Col xs={2}>
-                            <Button
-                                fullWidth
-                                size="md"
-                                variant="filled"
-                                color="primary"
-                                onClick={() => {
-                                    const result = form.validate()
-                                    if (!result.hasErrors) {
-                                        openModal()
-                                    }
-                                }}
-                            >
-                                Issue
-                            </Button>
-                        </Grid.Col>
-                    </>
-                )}
+                <Grid.Col xs={2}>
+                    <Button
+                        fullWidth
+                        size="md"
+                        variant="filled"
+                        color="primary"
+                        onClick={() => {
+                            const result = form.validate()
+                            if (!result.hasErrors) {
+                                openModal()
+                            }
+                        }}
+                    >
+                        Issue
+                    </Button>
+                </Grid.Col>
             </Grid>
         </form>
     )
