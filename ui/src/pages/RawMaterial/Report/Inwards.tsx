@@ -34,7 +34,9 @@ function InwardsReport() {
 
     const columnDefs: ColDef<RecordInterface>[] = [
         { field: 'id', headerName: 'ID' },
-        { field: 'rmId', headerName: 'Raw Material' },
+        { field: 'rm.id', headerName: 'RM Identifier' },
+        { field: 'rm.dtplCode', headerName: 'RM DTPL Code' },
+        { field: 'rm.description', headerName: 'RM Description' },
         {
             field: 'createdAt',
             headerName: 'Date',
@@ -70,6 +72,18 @@ function InwardsReport() {
                         id: 'asc',
                     },
                 ]),
+                select: JSON.stringify({
+                    rm: {
+                        select: {
+                            id: true,
+                            description: true,
+                            dtplCode: true,
+                        },
+                    },
+                    id: true,
+                    createdAt: true,
+                    quantity: true,
+                }),
             }
 
             const data = await Fetch({
