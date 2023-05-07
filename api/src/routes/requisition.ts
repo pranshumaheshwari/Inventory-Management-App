@@ -103,59 +103,23 @@ app.post('/', async (req: Request, res: Response) => {
     }
 })
 
-app.post('/issue', async (req: Request, res: Response) => {
-    const { quantity, requisitionId, rmId } = req.body
-
-    // TODO - Add logic to close finished requisitions
-    try {
-        const result = await PrismaService.$transaction([
-            PrismaService.requisitionOutward.create({
-                data: {
-                    user: req.user ? req.user.username : '',
-                    quantity,
-                    requisitionId: parseInt(requisitionId),
-                    rmId,
-                },
-            }),
-            PrismaService.rm.update({
-                where: {
-                    id: rmId,
-                },
-                data: {
-                    lineStock: {
-                        increment: quantity,
-                    },
-                    storeStock: {
-                        decrement: quantity,
-                    },
-                },
-            }),
-        ])
-        res.json(result)
-    } catch (e) {
-        res.status(500).json({
-            message: (e as Error).message,
-        })
-    }
-})
-
 app.post('/issueMany', async (req: Request, res: Response) => {
-    const { requisitionId, details } = req.body
+    const { details } = req.body
 
     try {
         const result = await PrismaService.$transaction([
-            ...(await details.map(
+            ...details.map(
                 ({ rmId, quantity }: { rmId: string; quantity: number }) =>
                     PrismaService.requisitionOutward.create({
                         data: {
                             rmId,
                             quantity,
                             user: req.user ? req.user.username : '',
-                            requisitionId: parseInt(requisitionId),
+                            requisitionId: parseInt(details.requisitionId),
                         },
                     })
-            )),
-            ...(await details.map(
+            ),
+            ...details.map(
                 ({ rmId, quantity }: { rmId: string; quantity: number }) =>
                     PrismaService.rm.update({
                         where: {
@@ -170,7 +134,7 @@ app.post('/issueMany', async (req: Request, res: Response) => {
                             },
                         },
                     })
-            )),
+            ),
         ])
 
         res.json(result)

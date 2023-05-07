@@ -13,108 +13,111 @@ interface InwardsPoPending {
     poId: string
 }
 
-prisma.$use(async (params, next) => {
-    try {
-        if (
-            params.model === 'RequisitionOutward' &&
-            params.action === 'create' &&
-            params.args.data
-        ) {
-            const requisitionOutwards = params.args
-                .data as Prisma.RequisitionOutwardUncheckedCreateInput
-            const issuedQty =
-                (await prisma.requisitionOutward
-                    .aggregate({
-                        where: {
-                            requisitionId: requisitionOutwards.requisitionId,
-                            rmId: requisitionOutwards.rmId,
-                        },
-                        _sum: {
-                            quantity: true,
-                        },
-                    })
-                    .then((d) => d._sum.quantity)) || 0
+// prisma.$use(async (params, next) => {
+//     try {
+//         if (
+//             params.model === 'RequisitionOutward' &&
+//             params.action === 'create' &&
+//             params.args.data
+//         ) {
+//             const requisitionOutwards = params.args
+//                 .data as Prisma.RequisitionOutwardUncheckedCreateInput
+//             const issuedQty =
+//                 (await prisma.requisitionOutward
+//                     .aggregate({
+//                         where: {
+//                             requisitionId: requisitionOutwards.requisitionId,
+//                             rmId: requisitionOutwards.rmId,
+//                         },
+//                         _sum: {
+//                             quantity: true,
+//                         },
+//                     })
+//                     .then((d) => d._sum.quantity)) || 0
 
-            const details = await prisma.requisitionDetails.findUniqueOrThrow({
-                where: {
-                    requisitionId_rmId: {
-                        rmId: requisitionOutwards.rmId,
-                        requisitionId: requisitionOutwards.requisitionId,
-                    },
-                },
-            })
-            if (details.quantity <= requisitionOutwards.quantity + issuedQty) {
-                await prisma.requisitionDetails.update({
-                    where: {
-                        requisitionId_rmId: {
-                            rmId: requisitionOutwards.rmId,
-                            requisitionId: requisitionOutwards.requisitionId,
-                        },
-                    },
-                    data: {
-                        status: 'Closed',
-                    },
-                })
-                let remainingQuantity =
-                    requisitionOutwards.quantity + issuedQty - details.quantity
-                const openRequisitions =
-                    await prisma.requisitionDetails.findMany({
-                        where: {
-                            rmId: requisitionOutwards.rmId,
-                            status: 'Open',
-                        },
-                        orderBy: {
-                            requisitionId: 'asc',
-                        },
-                    })
-                for (const r of openRequisitions) {
-                    if (remainingQuantity <= 0) {
-                        break
-                    }
-                    const issuedQty =
-                        (await prisma.requisitionOutward
-                            .aggregate({
-                                where: {
-                                    requisitionId: r.requisitionId,
-                                    rmId: r.rmId,
-                                },
-                                _sum: {
-                                    quantity: true,
-                                },
-                            })
-                            .then((d) => d._sum.quantity)) || 0
-                    const quantity = Math.min(
-                        remainingQuantity,
-                        r.quantity - issuedQty
-                    )
-                    if (quantity > 0) {
-                        await prisma.requisitionOutward.create({
-                            data: {
-                                requisitionId: r.requisitionId,
-                                rmId: r.rmId,
-                                quantity,
-                                user: requisitionOutwards.user,
-                            },
-                        })
-                        remainingQuantity -= quantity
-                    }
-                }
-                const result = await prisma.requisitionOutward.create({
-                    data: {
-                        ...requisitionOutwards,
-                        quantity: Math.min(
-                            details.quantity - issuedQty,
-                            requisitionOutwards.quantity
-                        ),
-                    },
-                })
-                return result
-            }
-        }
-    } catch {}
-    const result: any = await next(params)
-    return result
-})
+//             const details = await prisma.requisitionDetails.findUniqueOrThrow({
+//                 where: {
+//                     requisitionId_rmId: {
+//                         rmId: requisitionOutwards.rmId,
+//                         requisitionId: requisitionOutwards.requisitionId,
+//                     },
+//                 },
+//             })
+//             if (details.quantity <= requisitionOutwards.quantity + issuedQty) {
+//                 await prisma.requisitionDetails.update({
+//                     where: {
+//                         requisitionId_rmId: {
+//                             rmId: requisitionOutwards.rmId,
+//                             requisitionId: requisitionOutwards.requisitionId,
+//                         },
+//                     },
+//                     data: {
+//                         status: 'Closed',
+//                     },
+//                 })
+//                 let remainingQuantity =
+//                     requisitionOutwards.quantity + issuedQty - details.quantity
+//                 const openRequisitions =
+//                     await prisma.requisitionDetails.findMany({
+//                         where: {
+//                             rmId: requisitionOutwards.rmId,
+//                             status: 'Open',
+//                         },
+//                         orderBy: {
+//                             requisitionId: 'asc',
+//                         },
+//                     })
+//                 for (const r of openRequisitions) {
+//                     if (r.requisitionId === requisitionOutwards.requisitionId) {
+//                         continue
+//                     }
+//                     if (remainingQuantity <= 0) {
+//                         break
+//                     }
+//                     const issuedQty =
+//                         (await prisma.requisitionOutward
+//                             .aggregate({
+//                                 where: {
+//                                     requisitionId: r.requisitionId,
+//                                     rmId: r.rmId,
+//                                 },
+//                                 _sum: {
+//                                     quantity: true,
+//                                 },
+//                             })
+//                             .then((d) => d._sum.quantity)) || 0
+//                     const quantity = Math.min(
+//                         remainingQuantity,
+//                         r.quantity - issuedQty
+//                     )
+//                     if (quantity > 0) {
+//                         await prisma.requisitionOutward.create({
+//                             data: {
+//                                 requisitionId: r.requisitionId,
+//                                 rmId: r.rmId,
+//                                 quantity,
+//                                 user: requisitionOutwards.user,
+//                             },
+//                         })
+//                         remainingQuantity -= quantity
+//                     }
+//                 }
+//                 const result = await prisma.requisitionOutward.create({
+//                     data: {
+//                         ...requisitionOutwards,
+//                         quantity: Math.min(
+//                             details.quantity - issuedQty,
+//                             requisitionOutwards.quantity
+//                         ),
+//                     },
+//                 })
+//                 return result
+//             }
+//         }
+//     } catch {}
+//     const result: any = await next(params)
+//     return result
+// })
 
 prisma.$use(async (params, next) => {
     const result: any = await next(params)
