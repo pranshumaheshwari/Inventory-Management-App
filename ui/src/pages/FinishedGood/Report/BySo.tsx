@@ -86,7 +86,7 @@ function BySo() {
         return <Skeleton width="90vw" height="100%" />
     }
 
-    const updateSo = async (csutomerId: string) => {
+    const updateSo = async (customerId: string) => {
         try {
             const data = await Fetch({
                 url: '/salesorders',
@@ -94,7 +94,7 @@ function BySo() {
                     authToken: token,
                     params: {
                         where: JSON.stringify({
-                            csutomerId,
+                            customerId,
                         }),
                         select: JSON.stringify({
                             id: true,
