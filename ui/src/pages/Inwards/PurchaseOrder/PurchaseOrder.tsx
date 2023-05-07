@@ -41,7 +41,7 @@ const PurchaseOrder = () => {
                   quantity: number
                   price: number
               }[]
-              InwardsPoPending: {
+              inwardsPoPending: {
                   status: string
                   rmId: string
                   quantity: number
@@ -255,7 +255,7 @@ const PurchaseOrder = () => {
                                     price: true,
                                 },
                             },
-                            InwardsPoPending: {
+                            inwardsPoPending: {
                                 select: {
                                     rmId: true,
                                     quantity: true,
@@ -298,7 +298,7 @@ const PurchaseOrder = () => {
                             poApprovedQuantity:
                                 po
                                     ?.find(({ id }) => id === form.values.poId)
-                                    ?.InwardsPoPending.filter(
+                                    ?.inwardsPoPending.filter(
                                         (inwards) =>
                                             inwards.status === 'Accepted' &&
                                             inwards.rmId === d.rmId
@@ -385,7 +385,7 @@ const PurchaseOrder = () => {
                                                     ({ id }) =>
                                                         id === form.values.poId
                                                 )
-                                                ?.InwardsPoPending.filter(
+                                                ?.inwardsPoPending.filter(
                                                     (inwards) =>
                                                         inwards.status ===
                                                             'Accepted' &&

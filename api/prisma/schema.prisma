@@ -30,10 +30,11 @@ model Users {
     invoice              Invoice[]
     inwardsPO            InwardsIQCPending[]
     inwardsIQC           InwardsVerified[]
-    OutwardsQualityCheck OutwardsQualityCheck[]
-    ProductionLog        ProductionLog[]
-    RmManualUpdateLog    RmManualUpdateLog[]
-    FgManualUpdateLog    FgManualUpdateLog[]
+    outwardsQualityCheck OutwardsQualityCheck[]
+    productionLog        ProductionLog[]
+    rmManualUpdateLog    RmManualUpdateLog[]
+    fgManualUpdateLog    FgManualUpdateLog[]
+    requisitionDetails   RequisitionDetails[]
 
     @@map("users")
 }
@@ -94,8 +95,9 @@ model Rm {
     inwardsPoPending   InvoiceDetails[]
     inwardsIqcPending  InwardsIQCPending[]
     inwardsVerified    InwardsVerified[]
-    ProductionLog      ProductionLog[]
-    RmManualUpdateLog  RmManualUpdateLog[]
+    productionLog      ProductionLog[]
+    rmManualUpdateLog  RmManualUpdateLog[]
+    requisitionDetails RequisitionDetails[]
 
     @@index([supplierId], name: "supplier_id")
     @@map("rm")
@@ -119,9 +121,9 @@ model Fg {
     production           Production[]
     requisition          Requisition[]
     soDetails            SoDetails[]
-    OutwardsQualityCheck OutwardsQualityCheck[]
-    ProductionLog        ProductionLog[]
-    FgManualUpdateLog    FgManualUpdateLog[]
+    outwardsQualityCheck OutwardsQualityCheck[]
+    productionLog        ProductionLog[]
+    fgManualUpdateLog    FgManualUpdateLog[]
 
     @@index([customerId], name: "customer_id")
     @@map("fg")
@@ -150,7 +152,7 @@ model Po {
     supplier         Supplier         @relation(fields: [supplierId], references: [id], onDelete: Restrict, onUpdate: Cascade)
     poDetails        PoDetails[]
     users            Users            @relation(fields: [user], references: [username], onDelete: Restrict, onUpdate: Cascade)
-    InwardsPoPending InvoiceDetails[]
+    inwardsPoPending InvoiceDetails[]
 
     @@index([supplierId], name: "supplier_id")
     @@map("po")
@@ -260,21 +262,38 @@ model InwardsVerified {
 }
 
 model Requisition {
-    id                 Int                  @id @default(autoincrement())
-    user               String
-    soId               String               @map("so_id")
-    fgId               String               @map("fg_id")
-    quantity           Float
-    status             RequisitionStatus    @default(Ready)
+    id       Int    @id @default(autoincrement())
+    user     String
+    soId     String @map("so_id")
+    fgId     String @map("fg_id")
+    quantity Float
+
     createdAt          DateTime?            @default(now()) @map("created_at")
     fg                 Fg                   @relation(fields: [fgId], references: [id], onDelete: Restrict, onUpdate: Cascade)
     so                 So                   @relation(fields: [soId], references: [id], onDelete: Restrict, onUpdate: Cascade)
     users              Users                @relation(fields: [user], references: [username], onDelete: Restrict, onUpdate: Cascade)
+    details            RequisitionDetails[]
     requisitionOutward RequisitionOutward[]
 
     @@index([fgId], name: "fg_id")
     @@index([soId], name: "so_id")
     @@map("requisition")
+}
+
+model RequisitionDetails {
+    user          String
+    requisitionId Int          @map("requisition_id")
+    rmId          String       @map("rm_id")
+    quantity      Float
+    createdAt     DateTime?    @default(now()) @map("created_at")
+    status        BinaryStatus @default(Open)
+
+    requisition Requisition @relation(fields: [requisitionId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    rm          Rm          @relation(fields: [rmId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    users       Users       @relation(fields: [user], references: [username], onDelete: Restrict, onUpdate: Cascade)
+
+    @@id([requisitionId, rmId])
+    @@map("requisition_details")
 }
 
 model RequisitionOutward {
@@ -340,7 +359,7 @@ model ProductionLog {
     bom        Bom        @relation(fields: [rmId, fgId], references: [rmId, fgId], onDelete: Restrict, onUpdate: Cascade)
     production Production @relation(fields: [productionId], references: [id], onDelete: Restrict, onUpdate: Cascade)
     rm         Rm         @relation(fields: [rmId], references: [id], onDelete: Restrict, onUpdate: Cascade)
-    Users      Users      @relation(fields: [user], references: [username], onDelete: Restrict, onUpdate: Cascade)
+    users      Users      @relation(fields: [user], references: [username], onDelete: Restrict, onUpdate: Cascade)
 
     @@id([rmId, productionId])
     @@map("production_log")
@@ -394,7 +413,7 @@ model So {
     production  Production[]
     requisition Requisition[]
     soDetails   SoDetails[]
-    Dispatch    Dispatch[]
+    dispatch    Dispatch[]
 
     @@index([customerId], name: "customer_id")
     @@map("so")
@@ -407,7 +426,7 @@ model SoDetails {
     createdAt DateTime?  @default(now()) @map("created_at")
     fg        Fg         @relation(fields: [fgId], references: [id], onDelete: Restrict, onUpdate: Cascade)
     so        So         @relation(fields: [soId], references: [id], onDelete: Restrict, onUpdate: Cascade)
-    Dispatch  Dispatch[]
+    dispatch  Dispatch[]
 
     @@id([soId, fgId])
     @@index([fgId], name: "fg_id")
@@ -429,7 +448,7 @@ model RmManualUpdateLog {
     poRejectedStockBefore  Float?    @map("po_rejected_stock_before")
 
     rm    Rm    @relation(fields: [rmId], references: [id], onDelete: Restrict, onUpdate: Cascade)
-    Users Users @relation(fields: [user], references: [username], onDelete: Restrict, onUpdate: Cascade)
+    users Users @relation(fields: [user], references: [username], onDelete: Restrict, onUpdate: Cascade)
 
     @@map("rm_manual_update")
 }
@@ -446,7 +465,7 @@ model FgManualUpdateLog {
     oqcPendingStockBefore Float?    @map("oqc_pending_stock_before")
 
     fg    Fg    @relation(fields: [fgId], references: [id], onDelete: Restrict, onUpdate: Cascade)
-    Users Users @relation(fields: [user], references: [username], onDelete: Restrict, onUpdate: Cascade)
+    users Users @relation(fields: [user], references: [username], onDelete: Restrict, onUpdate: Cascade)
 
     @@map("fg_manual_update")
 }

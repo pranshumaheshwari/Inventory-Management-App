@@ -35,6 +35,8 @@ export interface OutwardsDispatch {
     selectedFg: {
         fgId: string
         quantity: number
+        storeStock: number
+        oqcPendingStock: number
     }
 }
 
@@ -56,6 +58,8 @@ const Dispatch = () => {
         selectedFg: {
             fgId: '',
             quantity: 0,
+            storeStock: 0,
+            oqcPendingStock: 0,
         },
     }
 
@@ -186,6 +190,8 @@ const Dispatch = () => {
                                     id: true,
                                     description: true,
                                     category: true,
+                                    storeStock: true,
+                                    oqcPendingStock: true,
                                 },
                             },
                         }),
@@ -198,6 +204,8 @@ const Dispatch = () => {
                             id: string
                             description: string
                             category: string
+                            storeStock: number
+                            oqcPendingStock: number
                         }
                     }[]
                 ) =>
@@ -345,9 +353,8 @@ const Dispatch = () => {
 
                 {activeStep === 1 && (
                     <>
-                        <Grid.Col xs={1} />
                         <FormSelect
-                            xs={6}
+                            xs={5}
                             name="selectedFg.fgId"
                             label="Finished Good"
                             placeholder="Select Finished Good"
@@ -355,16 +362,49 @@ const Dispatch = () => {
                             itemComponent={FinishedGoodSelectItem}
                             filter={FinishedGoodSelectFilter}
                             {...form.getInputProps('selectedFg.fgId')}
+                            onChange={(fgId) => {
+                                if (fgId) {
+                                    form.setFieldValue('selectedFg.fgId', fgId)
+                                    const fg = finishedgoods.find(
+                                        (fg) => fg.value === fgId
+                                    )
+                                    if (fg) {
+                                        form.setFieldValue(
+                                            'selectedFg.oqcPendingStock',
+                                            fg.oqcPendingStock
+                                        )
+                                        form.setFieldValue(
+                                            'selectedFg.storeStock',
+                                            fg.storeStock
+                                        )
+                                    }
+                                }
+                            }}
                         />
                         <FormInputNumber
                             name="selectedFg.quantity"
-                            xs={4}
+                            xs={3}
                             label="Quantity"
                             placeholder="Enter Quantity"
                             min={0}
                             {...form.getInputProps('selectedFg.quantity')}
                         />
-                        <Grid.Col xs={1} />
+                        <FormInputNumber
+                            name="selectedFg.storeStock"
+                            xs={2}
+                            label="Store Stock"
+                            disabled
+                            {...form.getInputProps('selectedFg.storeStock')}
+                        />
+                        <FormInputNumber
+                            name="selectedFg.oqcPendingStock"
+                            xs={2}
+                            label="OQC Pending Stock"
+                            disabled
+                            {...form.getInputProps(
+                                'selectedFg.oqcPendingStock'
+                            )}
+                        />
                         <Grid.Col xs={12}>
                             <Button
                                 fullWidth
@@ -383,6 +423,8 @@ const Dispatch = () => {
                                         form.setFieldValue('selectedFg', {
                                             fgId: '',
                                             quantity: 0,
+                                            storeStock: 0,
+                                            oqcPendingStock: 0,
                                         })
                                     }
                                 }}

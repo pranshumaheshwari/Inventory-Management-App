@@ -1,4 +1,4 @@
-const API_URL = 'http://oberon.whatbox.ca:17190'
+const API_URL = 'http://ims.vistaarauto.com:17190'
 
 export interface FetchInterface {
     url: string
