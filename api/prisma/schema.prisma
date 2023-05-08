@@ -288,9 +288,10 @@ model RequisitionDetails {
     createdAt     DateTime?    @default(now()) @map("created_at")
     status        BinaryStatus @default(Open)
 
-    requisition Requisition @relation(fields: [requisitionId], references: [id], onDelete: Restrict, onUpdate: Cascade)
-    rm          Rm          @relation(fields: [rmId], references: [id], onDelete: Restrict, onUpdate: Cascade)
-    users       Users       @relation(fields: [user], references: [username], onDelete: Restrict, onUpdate: Cascade)
+    requisition        Requisition          @relation(fields: [requisitionId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    rm                 Rm                   @relation(fields: [rmId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    users              Users                @relation(fields: [user], references: [username], onDelete: Restrict, onUpdate: Cascade)
+    requisitionOutward RequisitionOutward[]
 
     @@id([requisitionId, rmId])
     @@map("requisition_details")
@@ -310,9 +311,10 @@ model RequisitionOutward {
     iqcRejectedStockBefore Float?    @map("iqc_rejected_stock_before")
     poRejectedStockBefore  Float?    @map("po_rejected_stock_before")
 
-    requisition Requisition @relation(fields: [requisitionId], references: [id], onDelete: Restrict, onUpdate: Cascade)
-    rm          Rm          @relation(fields: [rmId], references: [id], onDelete: Restrict, onUpdate: Cascade)
-    users       Users       @relation(fields: [user], references: [username], onDelete: Restrict, onUpdate: Cascade)
+    requisition        Requisition        @relation(fields: [requisitionId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    requisitionDetails RequisitionDetails @relation(fields: [requisitionId, rmId], references: [requisitionId, rmId], onDelete: Restrict, onUpdate: Cascade)
+    rm                 Rm                 @relation(fields: [rmId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    users              Users              @relation(fields: [user], references: [username], onDelete: Restrict, onUpdate: Cascade)
 
     @@index([requisitionId], name: "requisition_id")
     @@index([rmId], name: "rm_id")
