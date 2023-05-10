@@ -224,7 +224,7 @@ prisma.$use(async (params, next) => {
                 },
             })
             if (
-                details.quantity <=
+                details.quantity ===
                 details.requisitionOutward.reduce(
                     (acc, curVal) => acc + curVal.quantity,
                     0
