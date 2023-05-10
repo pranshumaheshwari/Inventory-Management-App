@@ -11,6 +11,7 @@ import { showNotification } from '@mantine/notifications'
 export interface RequisitionIssueInterface {
     requisitionId: number
     details: {
+        requisitionId: number
         rmId: string
         description: string
         dtplCode: string
@@ -20,6 +21,13 @@ export interface RequisitionIssueInterface {
         maxQuantity: number
         requisitionQuantity: number
         issuedQuantity: number
+        excessQuantity: number
+        pendingRequisitions: {
+            issuedQuantity: number
+            requisitionId: number
+            quantity: number
+            status: 'Open' | 'Closed'
+        }[]
     }[]
 }
 
@@ -68,11 +76,63 @@ const RequisitionIssue = () => {
                     method: 'POST',
                     body: {
                         details: form.values.details
-                            .filter((d) => d.quantity > 0)
                             .map((d) => ({
                                 ...d,
-                                requisitionId: form.values.requisitionId,
-                            })),
+                                totalQuantity: d.quantity + d.excessQuantity,
+                            }))
+                            .filter((d) => d.totalQuantity > 0)
+                            .reduce((acc, d) => {
+                                if (
+                                    d.totalQuantity >
+                                    d.requisitionQuantity - d.issuedQuantity
+                                ) {
+                                    acc.push({
+                                        ...d,
+                                        quantity:
+                                            d.requisitionQuantity -
+                                            d.issuedQuantity,
+                                    })
+                                    let remainingQuantity =
+                                        d.totalQuantity -
+                                        d.requisitionQuantity +
+                                        d.issuedQuantity
+                                    for (const req of d.pendingRequisitions) {
+                                        if (remainingQuantity > 0) {
+                                            const qty = Math.min(
+                                                remainingQuantity,
+                                                req.quantity - d.issuedQuantity
+                                            )
+                                            remainingQuantity -= qty
+                                            acc.push({
+                                                ...d,
+                                                quantity: qty,
+                                                requisitionId:
+                                                    req.requisitionId,
+                                            })
+                                        } else {
+                                            break
+                                        }
+                                    }
+                                    if (remainingQuantity > 0) {
+                                        acc.push({
+                                            ...d,
+                                            quantity: remainingQuantity,
+                                            requisitionId: 0,
+                                        })
+                                    }
+                                } else {
+                                    acc.push({
+                                        ...d,
+                                        quantity: d.totalQuantity,
+                                    })
+                                    acc.push({
+                                        ...d,
+                                        quantity: 0,
+                                        requisitionId: 0,
+                                    })
+                                }
+                                return acc
+                            }, [] as RequisitionIssueInterface['details']),
                     },
                     authToken: token,
                 },
@@ -149,7 +209,7 @@ const RequisitionIssue = () => {
                         )
                 )
                 .then((data) =>
-                    data.map((requisition) => ({
+                    data.reverse().map((requisition) => ({
                         label: `${requisition.id} - ${requisition.fgId} WITH QTY ${requisition.quantity}`,
                         value: requisition.id.toString(),
                     }))
@@ -176,23 +236,21 @@ const RequisitionIssue = () => {
                                     dtplCode: true,
                                     storeStock: true,
                                     lineStock: true,
+                                    requisitionExcessOnLine: {
+                                        select: {
+                                            quantity: true,
+                                        },
+                                    },
                                     requisitionDetails: {
                                         select: {
+                                            requisitionId: true,
                                             quantity: true,
+                                            status: true,
                                         },
                                     },
                                     requisitionOutward: {
                                         select: {
-                                            quantity: true,
-                                        },
-                                    },
-                                },
-                            },
-                            requisition: {
-                                select: {
-                                    requisitionOutward: {
-                                        select: {
-                                            rmId: true,
+                                            requisitionId: true,
                                             quantity: true,
                                         },
                                     },
@@ -204,79 +262,73 @@ const RequisitionIssue = () => {
                         }),
                     },
                 },
-            })
-                .then((data) => {
-                    console.log(data)
-                    return data
-                })
-                .then(
-                    (
-                        data: {
-                            quantity: number
-                            rm: {
-                                id: string
-                                description: string
-                                dtplCode: string
-                                storeStock: number
-                                lineStock: number
-                                requisitionDetails: {
-                                    quantity: number
-                                }[]
-                                requisitionOutward: {
-                                    quantity: number
-                                }[]
+            }).then(
+                (
+                    data: {
+                        quantity: number
+                        rm: {
+                            id: string
+                            description: string
+                            dtplCode: string
+                            storeStock: number
+                            lineStock: number
+                            requisitionExcessOnLine?: {
+                                quantity: number
                             }
-                            requisition: {
-                                requisitionOutward: {
-                                    rmId: string
-                                    quantity: number
-                                }[]
-                            }
-                        }[]
-                    ) =>
-                        data.map((d) => ({
-                            rmId: d.rm.id,
-                            description: d.rm.description,
-                            dtplCode: d.rm.dtplCode,
-                            storeStock: d.rm.storeStock,
-                            lineStock: d.rm.lineStock,
-                            requisitionQuantity: d.quantity,
-                            issuedQuantity: d.requisition.requisitionOutward
-                                .filter((r) => r.rmId === d.rm.id)
-                                .reduce(
-                                    (acc, curVal) => acc + curVal.quantity,
-                                    0
-                                ),
-                            maxQuantity:
-                                d.rm.requisitionOutward.reduce(
-                                    (acc, curVal) => acc + curVal.quantity,
-                                    0
-                                ) -
-                                d.rm.requisitionDetails.reduce(
-                                    (acc, curVal) => acc + curVal.quantity,
-                                    0
-                                ),
-                            quantity: 0,
-                        }))
-                )
-                .then((data) => {
-                    console.log(data)
-                    return data
-                })
-            // .then((data) =>
-            //     data
-            //         .map((b) => ({
-            //             ...b,
-            //             ...b.rm,
-            //             rmId: b.rm.id,
-            //             maxQuantity: Math.ceil(
-            //                 b.quantity * b.requisitionQuantity -
-            //                     b.issuedQuantity
-            //             ),
-            //             quantity: 0,
-            //         }))
-            //         .filter((b) => b.maxQuantity > 0)
-            // )
+                            requisitionDetails: {
+                                requisitionId: number
+                                quantity: number
+                                status: 'Open' | 'Closed'
+                            }[]
+                            requisitionOutward: {
+                                requisitionId: number
+                                quantity: number
+                            }[]
+                        }
+                    }[]
+                ) =>
+                    data.map((d) => ({
+                        requisitionId: requisitionId,
+                        rmId: d.rm.id,
+                        description: d.rm.description,
+                        dtplCode: d.rm.dtplCode,
+                        storeStock: d.rm.storeStock,
+                        lineStock: d.rm.lineStock,
+                        requisitionQuantity: d.quantity,
+                        excessQuantity:
+                            d.rm.requisitionExcessOnLine?.quantity || 0,
+                        pendingRequisitions: d.rm.requisitionDetails
+                            .filter((d) => d.status === 'Open')
+                            .filter((d) => d.requisitionId !== requisitionId)
+                            .map((req) => ({
+                                ...req,
+                                issuedQuantity: d.rm.requisitionOutward
+                                    .filter(
+                                        (r) =>
+                                            r.requisitionId ===
+                                            req.requisitionId
+                                    )
+                                    .reduce(
+                                        (acc, curVal) => acc + curVal.quantity,
+                                        0
+                                    ),
+                            })),
+                        issuedQuantity: d.rm.requisitionOutward
+                            .filter((r) => r.requisitionId === requisitionId)
+                            .reduce((acc, curVal) => acc + curVal.quantity, 0),
+                        maxQuantity:
+                            (d.rm.requisitionExcessOnLine?.quantity || 0) +
+                            d.rm.requisitionOutward.reduce(
+                                (acc, curVal) => acc + curVal.quantity,
+                                0
+                            ) -
+                            d.rm.requisitionDetails.reduce(
+                                (acc, curVal) => acc + curVal.quantity,
+                                0
+                            ),
+                        quantity: 0,
+                    }))
+            )
             form.setFieldValue('details', data)
         } catch (e) {
             setError((e as Error).message)
