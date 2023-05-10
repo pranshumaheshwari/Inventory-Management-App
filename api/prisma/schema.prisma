@@ -72,32 +72,33 @@ model Customer {
 }
 
 model Rm {
-    id                 String               @id
-    description        String               @unique
-    dtplCode           String?              @map("DTPL_code")
-    supplierId         String               @map("supplier_id")
-    category           RmCategory
-    unit               String
-    price              Float                @default(0.00)
-    storeStock         Float                @default(0.00) @map("store_stock")
-    iqcPendingStock    Float                @default(0.00) @map("iqc_pending_stock")
-    iqcRejectedStock   Float                @default(0.00) @map("iqc_rejected_stock")
-    poPendingStock     Float                @default(0.00) @map("po_pending_stock")
-    poRejectedStock    Float                @default(0.00) @map("po_rejected_stock")
-    lineStock          Float                @default(0.00) @map("line_stock")
-    mpq                Float                @default(1.00)
-    moq                Float                @default(0.00)
-    createdAt          DateTime?            @default(now()) @map("created_at")
-    supplier           Supplier             @relation(fields: [supplierId], references: [id], onDelete: Restrict, onUpdate: Cascade)
-    bom                Bom[]
-    poDetails          PoDetails[]
-    requisitionOutward RequisitionOutward[]
-    inwardsPoPending   InvoiceDetails[]
-    inwardsIqcPending  InwardsIQCPending[]
-    inwardsVerified    InwardsVerified[]
-    productionLog      ProductionLog[]
-    rmManualUpdateLog  RmManualUpdateLog[]
-    requisitionDetails RequisitionDetails[]
+    id                      String                    @id
+    description             String                    @unique
+    dtplCode                String?                   @map("DTPL_code")
+    supplierId              String                    @map("supplier_id")
+    category                RmCategory
+    unit                    String
+    price                   Float                     @default(0.00)
+    storeStock              Float                     @default(0.00) @map("store_stock")
+    iqcPendingStock         Float                     @default(0.00) @map("iqc_pending_stock")
+    iqcRejectedStock        Float                     @default(0.00) @map("iqc_rejected_stock")
+    poPendingStock          Float                     @default(0.00) @map("po_pending_stock")
+    poRejectedStock         Float                     @default(0.00) @map("po_rejected_stock")
+    lineStock               Float                     @default(0.00) @map("line_stock")
+    mpq                     Float                     @default(1.00)
+    moq                     Float                     @default(0.00)
+    createdAt               DateTime?                 @default(now()) @map("created_at")
+    supplier                Supplier                  @relation(fields: [supplierId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    bom                     Bom[]
+    poDetails               PoDetails[]
+    requisitionOutward      RequisitionOutward[]
+    inwardsPoPending        InvoiceDetails[]
+    inwardsIqcPending       InwardsIQCPending[]
+    inwardsVerified         InwardsVerified[]
+    productionLog           ProductionLog[]
+    rmManualUpdateLog       RmManualUpdateLog[]
+    requisitionDetails      RequisitionDetails[]
+    requisitionExcessOnLine RequisitionExcessOnLine[]
 
     @@index([supplierId], name: "supplier_id")
     @@map("rm")
@@ -288,12 +289,23 @@ model RequisitionDetails {
     createdAt     DateTime?    @default(now()) @map("created_at")
     status        BinaryStatus @default(Open)
 
-    requisition Requisition @relation(fields: [requisitionId], references: [id], onDelete: Restrict, onUpdate: Cascade)
-    rm          Rm          @relation(fields: [rmId], references: [id], onDelete: Restrict, onUpdate: Cascade)
-    users       Users       @relation(fields: [user], references: [username], onDelete: Restrict, onUpdate: Cascade)
+    requisition        Requisition          @relation(fields: [requisitionId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    rm                 Rm                   @relation(fields: [rmId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    users              Users                @relation(fields: [user], references: [username], onDelete: Restrict, onUpdate: Cascade)
+    requisitionOutward RequisitionOutward[]
 
     @@id([requisitionId, rmId])
     @@map("requisition_details")
+}
+
+model RequisitionExcessOnLine {
+    rmId      String    @id @map("rm_id")
+    quantity  Float
+    createdAt DateTime? @default(now()) @map("created_at")
+
+    rm Rm @relation(fields: [rmId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+    @@map("requisition_excess_on_line")
 }
 
 model RequisitionOutward {
@@ -310,9 +322,10 @@ model RequisitionOutward {
     iqcRejectedStockBefore Float?    @map("iqc_rejected_stock_before")
     poRejectedStockBefore  Float?    @map("po_rejected_stock_before")
 
-    requisition Requisition @relation(fields: [requisitionId], references: [id], onDelete: Restrict, onUpdate: Cascade)
-    rm          Rm          @relation(fields: [rmId], references: [id], onDelete: Restrict, onUpdate: Cascade)
-    users       Users       @relation(fields: [user], references: [username], onDelete: Restrict, onUpdate: Cascade)
+    requisition        Requisition        @relation(fields: [requisitionId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    requisitionDetails RequisitionDetails @relation(fields: [requisitionId, rmId], references: [requisitionId, rmId], onDelete: Restrict, onUpdate: Cascade)
+    rm                 Rm                 @relation(fields: [rmId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    users              Users              @relation(fields: [user], references: [username], onDelete: Restrict, onUpdate: Cascade)
 
     @@index([requisitionId], name: "requisition_id")
     @@index([rmId], name: "rm_id")

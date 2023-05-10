@@ -200,6 +200,49 @@ prisma.$use(async (params, next) => {
                 })
             }
         }
+        if (
+            params.model === 'RequisitionOutward' &&
+            params.action === 'create' &&
+            params.args.data
+        ) {
+            const requisitionOutwards = params.args
+                .data as Prisma.RequisitionOutwardUncheckedCreateInput
+            const details = await prisma.requisitionDetails.findUniqueOrThrow({
+                where: {
+                    requisitionId_rmId: {
+                        rmId: requisitionOutwards.rmId,
+                        requisitionId: requisitionOutwards.requisitionId,
+                    },
+                },
+                select: {
+                    quantity: true,
+                    requisitionOutward: {
+                        select: {
+                            quantity: true,
+                        },
+                    },
+                },
+            })
+            if (
+                details.quantity <=
+                details.requisitionOutward.reduce(
+                    (acc, curVal) => acc + curVal.quantity,
+                    0
+                )
+            ) {
+                await prisma.requisitionDetails.update({
+                    where: {
+                        requisitionId_rmId: {
+                            rmId: requisitionOutwards.rmId,
+                            requisitionId: requisitionOutwards.requisitionId,
+                        },
+                    },
+                    data: {
+                        status: 'Closed',
+                    },
+                })
+            }
+        }
     } catch {}
 
     return result

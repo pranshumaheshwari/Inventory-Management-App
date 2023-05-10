@@ -118,14 +118,27 @@ app.post('/issueMany', async (req: Request, res: Response) => {
                     quantity: number
                     requisitionId: number
                 }) =>
-                    PrismaService.requisitionOutward.create({
-                        data: {
-                            rmId,
-                            quantity,
-                            user: req.user ? req.user.username : '',
-                            requisitionId,
-                        },
-                    })
+                    requisitionId === 0
+                        ? PrismaService.requisitionExcessOnLine.upsert({
+                              where: {
+                                  rmId,
+                              },
+                              update: {
+                                  quantity,
+                              },
+                              create: {
+                                  rmId,
+                                  quantity,
+                              },
+                          })
+                        : PrismaService.requisitionOutward.create({
+                              data: {
+                                  rmId,
+                                  quantity,
+                                  user: req.user ? req.user.username : '',
+                                  requisitionId,
+                              },
+                          })
             ),
             ...details.map(
                 ({ rmId, quantity }: { rmId: string; quantity: number }) =>
