@@ -54,6 +54,11 @@ app.post('/', async (req: Request, res: Response) => {
                 lineStock,
                 mpq,
                 moq,
+                requisitionExcessOnLine: {
+                    create: {
+                        quantity: 0,
+                    },
+                },
             },
         })
         res.json(result)
