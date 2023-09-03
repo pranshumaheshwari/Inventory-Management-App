@@ -44,7 +44,7 @@ function Table<Type>({
                 headerClass: 'ag-right-aligned-header',
                 cellClass: 'ag-right-aligned-cell',
                 valueFormatter: (params) => {
-                    return Number(params.value).toFixed(2).toString()
+                    return Number(params.value).toFixed(5).toString()
                 },
             },
         }),
