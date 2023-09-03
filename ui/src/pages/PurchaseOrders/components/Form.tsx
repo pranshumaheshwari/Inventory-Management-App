@@ -401,7 +401,7 @@ const Form = () => {
                             name="selectedRm.price"
                             xs={3}
                             min={0}
-                            precision={2}
+                            precision={5}
                             label="Price"
                             placeholder="Enter Price"
                             {...form.getInputProps('selectedRm.price')}

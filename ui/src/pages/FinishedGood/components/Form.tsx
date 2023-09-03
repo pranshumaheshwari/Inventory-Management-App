@@ -414,7 +414,7 @@ const Form = () => {
                             label="Price"
                             placeholder="Enter Price"
                             min={0}
-                            precision={2}
+                            precision={5}
                             withAsterisk
                             {...form.getInputProps('price')}
                         />
@@ -480,7 +480,7 @@ const Form = () => {
                             placeholder="Enter Quantity"
                             withAsterisk
                             min={0}
-                            precision={2}
+                            precision={5}
                             {...form.getInputProps('selectedRm.quantity')}
                         />
                         <Grid.Col xs={1} />
