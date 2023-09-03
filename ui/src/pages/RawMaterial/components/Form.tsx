@@ -303,7 +303,7 @@ const Form = () => {
                         placeholder="Enter Price"
                         withAsterisk
                         min={0}
-                        precision={2}
+                        precision={5}
                         {...form.getInputProps('price')}
                     />
                     <FormInputNumber
@@ -313,7 +313,7 @@ const Form = () => {
                         label="IQC Pending Stock"
                         placeholder="Enter IQC Stock"
                         min={0}
-                        precision={2}
+                        precision={5}
                         disabled
                         {...form.getInputProps('iqcPendingStock')}
                     />
@@ -324,7 +324,7 @@ const Form = () => {
                         label="Store Stock"
                         placeholder="Enter Store Stock"
                         min={0}
-                        precision={2}
+                        precision={5}
                         disabled
                         {...form.getInputProps('storeStock')}
                     />
@@ -335,7 +335,7 @@ const Form = () => {
                         label="Line Stock"
                         placeholder="Enter Line Stock"
                         min={0}
-                        precision={2}
+                        precision={5}
                         disabled
                         {...form.getInputProps('lineStock')}
                     />
