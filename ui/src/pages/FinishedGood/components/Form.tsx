@@ -404,6 +404,22 @@ const Form = () => {
                                     value: 'SPD',
                                     label: 'SPD',
                                 },
+                                {
+                                    value: 'BAL_SPD',
+                                    label: 'BAL SPD',
+                                },
+                                {
+                                    value: 'REML_Pigtail',
+                                    label: 'REML Pigtail',
+                                },
+                                {
+                                    value: 'BAL_Pigtail',
+                                    label: 'BAL Pigtail',
+                                },
+                                {
+                                    value: 'BGLiin',
+                                    label: 'BGLiin',
+                                },
                             ]}
                             withAsterisk
                             {...form.getInputProps('category')}
