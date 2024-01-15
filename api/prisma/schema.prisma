@@ -564,4 +564,8 @@ enum FgCategory {
     Piaggio
     Pigtail
     SPD
+    BAL_SPD
+    REML_Pigtail
+    BAL_Pigtail
+    BGLiin
 }
