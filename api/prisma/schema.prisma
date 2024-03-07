@@ -368,10 +368,10 @@ model ProductionLog {
     iqcRejectedStockBefore Float?    @map("iqc_rejected_stock_before")
     poRejectedStockBefore  Float?    @map("po_rejected_stock_before")
 
-    fg         Fg         @relation(fields: [fgId], references: [id], onDelete: Restrict, onUpdate: Cascade)
-    bom        Bom        @relation(fields: [rmId, fgId], references: [rmId, fgId], onDelete: Restrict, onUpdate: Cascade)
-    production Production @relation(fields: [productionId], references: [id], onDelete: Restrict, onUpdate: Cascade)
-    rm         Rm         @relation(fields: [rmId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    fg         Fg         @relation(fields: [fgId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    bom        Bom        @relation(fields: [rmId, fgId], references: [rmId, fgId], onDelete: Cascade, onUpdate: Cascade)
+    production Production @relation(fields: [productionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    rm         Rm         @relation(fields: [rmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
     users      Users      @relation(fields: [user], references: [username], onDelete: Restrict, onUpdate: Cascade)
 
     @@id([rmId, productionId])

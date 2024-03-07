@@ -38,45 +38,27 @@ function ManPower() {
     const getEfficiencyCodedData = (efficiency: number) => {
         if (efficiency >= 100 && efficiency < 110) {
             return (
-                'E' +
-                (user.type === 'admin'
-                    ? ' (' + efficiency.toString() + ')'
-                    : '')
+                'E' + ' (' + efficiency.toFixed(2) + ')'
             )
         } else if (efficiency >= 110 && efficiency < 115) {
             return (
-                'D' +
-                (user.type === 'admin'
-                    ? ' (' + efficiency.toString() + ')'
-                    : '')
+                'D' + ' (' + efficiency.toFixed(2) + ')'
             )
         } else if (efficiency >= 115 && efficiency < 120) {
             return (
-                'C' +
-                (user.type === 'admin'
-                    ? ' (' + efficiency.toString() + ')'
-                    : '')
+                'C' + ' (' + efficiency.toFixed(2) + ')'
             )
         } else if (efficiency >= 120 && efficiency < 125) {
             return (
-                'B' +
-                (user.type === 'admin'
-                    ? ' (' + efficiency.toString() + ')'
-                    : '')
+                'B' + ' (' + efficiency.toFixed(2) + ')'
             )
         } else if (efficiency >= 125) {
             return (
-                'A' +
-                (user.type === 'admin'
-                    ? ' (' + efficiency.toString() + ')'
-                    : '')
+                'A' + ' (' + efficiency.toFixed(2) + ')'
             )
         } else {
             return (
-                'F' +
-                (user.type === 'admin'
-                    ? ' (' + efficiency.toString() + ')'
-                    : '')
+                'F' + ' (' + efficiency.toFixed(2) + ')'
             )
         }
     }
@@ -351,7 +333,7 @@ function ManPower() {
                 },
             ]
 
-            if (user.type === 'admin') {
+            // if (user.type === 'admin') {
                 bottomData.splice(1, 0, {
                     id: 'Total MP Required',
                     category: '',
@@ -375,7 +357,7 @@ function ManPower() {
                         0
                     ),
                 })
-            }
+            // }
 
             setRecords(data)
             setBottomPinnedData(bottomData)
