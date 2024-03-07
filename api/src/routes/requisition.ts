@@ -104,19 +104,32 @@ app.post('/', async (req: Request, res: Response) => {
 })
 
 app.post('/issueMany', async (req: Request, res: Response) => {
-    const { details } = req.body
-
+    const { details }: {
+        details: {
+            rmId: string
+            quantity: number
+            requisitionId: number
+        }[]
+    } = req.body
+    // TODO: Test this
     try {
+        const excessOnLine = await Promise.all(details.filter(({requisitionId}) => requisitionId === 0).map(async ({rmId}) => {
+            return await PrismaService.requisitionExcessOnLine.findUnique({
+                where: {
+                    rmId
+                },
+                select: {
+                    rmId: true,
+                    quantity: true
+                }
+            })
+        }))
         const result = await PrismaService.$transaction([
             ...details.map(
                 ({
                     rmId,
                     quantity,
                     requisitionId,
-                }: {
-                    rmId: string
-                    quantity: number
-                    requisitionId: number
                 }) =>
                     requisitionId === 0
                         ? PrismaService.requisitionExcessOnLine.upsert({
@@ -140,8 +153,21 @@ app.post('/issueMany', async (req: Request, res: Response) => {
                               },
                           })
             ),
+            ...excessOnLine.map((rm) => PrismaService.rm.update({
+                where: {
+                    id: rm?.rmId
+                },
+                data: {
+                    storeStock: {
+                        increment: rm?.quantity
+                    },
+                    lineStock: {
+                        decrement: rm?.quantity
+                    }
+                }
+            })),
             ...details.map(
-                ({ rmId, quantity }: { rmId: string; quantity: number }) =>
+                ({ rmId, quantity }) =>
                     PrismaService.rm.update({
                         where: {
                             id: rmId,
