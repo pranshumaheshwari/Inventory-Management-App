@@ -152,8 +152,10 @@ prisma.$use(async (params, next) => {
                 if (poQtys.length === acceptedPoQtys.length) {
                     let shouldClose = true
                     for (const poQty of poQtys) {
+                        let foundItem = false
                         for (const acceptedPoQty of acceptedPoQtys) {
                             if (poQty.rmId === acceptedPoQty.rmId) {
+                                foundItem = true
                                 if (
                                     acceptedPoQty._sum.quantity &&
                                     poQty.quantity > acceptedPoQty._sum.quantity
@@ -162,6 +164,9 @@ prisma.$use(async (params, next) => {
                                     break
                                 }
                             }
+                        }
+                        if (!foundItem) {
+                            shouldClose = false
                         }
                         if (!shouldClose) {
                             break
