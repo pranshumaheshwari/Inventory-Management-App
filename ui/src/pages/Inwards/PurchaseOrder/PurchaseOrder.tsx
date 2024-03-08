@@ -408,10 +408,11 @@ const PurchaseOrder = () => {
                                 acceptedQuantity: d.quantity,
                                 poQuantity: 0,
                                 poApprovedQuantity: 0,
+                                poPrice: 0,
                             }
                         })
                     }
-                )
+                ).then(data => data.filter(d => d.poQuantity > 0))
             form.setFieldValue('details', data)
         } catch (e) {
             setError((e as Error).message)
