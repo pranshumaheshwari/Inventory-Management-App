@@ -9,6 +9,7 @@ import {
 } from '@mantine/core'
 import { Fetch, useAuth } from '../../services'
 import {
+    FormCheckbox,
     FormInputNumber,
     FormInputText,
     FormMultiSelect,
@@ -31,6 +32,7 @@ interface PurchaseOrderFromSalesOrderInterface {
         quantity: number
     }[]
     month: Date
+    includeInventory: boolean
     rawMaterials: {
         description: string
         dtplCode: string
@@ -79,6 +81,7 @@ const NewFromSalesOrder = () => {
             finishedGoods: [],
             rawMaterials: [],
             month: new Date(),
+            includeInventory: true,
         },
         validate: {
             salesOrders: isNotEmpty(),
@@ -167,7 +170,8 @@ const NewFromSalesOrder = () => {
     }
 
     const getRawMaterials = async (
-        finishedGoods: PurchaseOrderFromSalesOrderInterface['finishedGoods']
+        finishedGoods: PurchaseOrderFromSalesOrderInterface['finishedGoods'],
+        includeInventory: boolean
     ) => {
         const intMonth = dayjs(form.values.month).month()
         const month = months[intMonth % 12]
@@ -301,10 +305,7 @@ const NewFromSalesOrder = () => {
                 for (let rm of d) {
                     rm.poQuantity =
                         Math.ceil(
-                            (rm.requirement * EXTRA_QUANTITY -
-                                rm.stock -
-                                rm.satisfiedRequirement) /
-                                rm.mpq
+                            (rm.requirement * EXTRA_QUANTITY - (includeInventory ? (rm.stock - rm.satisfiedRequirement) : 0)) / rm.mpq
                         ) * rm.mpq
                 }
 
@@ -437,8 +438,8 @@ const NewFromSalesOrder = () => {
             }}
         >
             <Grid justify="center" align="center" grow>
-                <Grid.Col xs={3} />
-                <Grid.Col xs={6}>
+                <Grid.Col xs={1} />
+                <Grid.Col xs={10}>
                     <Stepper active={activeStep} onStepClick={setActiveStep}>
                         {[
                             'Select Sales Orders',
@@ -449,7 +450,7 @@ const NewFromSalesOrder = () => {
                         })}
                     </Stepper>
                 </Grid.Col>
-                <Grid.Col xs={3} />
+                <Grid.Col xs={1} />
                 {activeStep === 0 && (
                     <>
                         <FormMultiSelect
@@ -467,8 +468,21 @@ const NewFromSalesOrder = () => {
                         />
                         <MonthPicker
                             label="Month"
-                            xs={6}
+                            xs={3}
                             {...form.getInputProps('month')}
+                        />
+                        <FormCheckbox
+                            style={{
+                                paddingTop: 25
+                            }}
+                            description="Calculation will include store stock and previous PO requirements"
+                            label="Include Inventory"
+                            xs={3}
+                            defaultChecked
+                            {...form.getInputProps('includeInventory')}
+                            onChange={(event) => {
+                                form.setFieldValue('includeInventory', event.currentTarget.checked)
+                            }}
                         />
                         <Grid.Col xs={12}>
                             <Button
@@ -559,7 +573,7 @@ const NewFromSalesOrder = () => {
                                 variant="filled"
                                 color="primary"
                                 onClick={() => {
-                                    getRawMaterials(form.values.finishedGoods)
+                                    getRawMaterials(form.values.finishedGoods, form.values.includeInventory)
                                     handleNext()
                                 }}
                             >

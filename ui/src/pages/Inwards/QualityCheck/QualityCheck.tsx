@@ -159,20 +159,31 @@ const QualityCheck = () => {
                         }),
                     },
                 },
-            }).then((data) =>
-                data.map(
-                    (supplier: {
-                        inwardsPoPending: {
-                            supplier: {
-                                name: string
-                                id: string
+            }).then((data) => {
+                const unique_supplier = new Set()
+                return data
+                    .map(
+                        (supplier: {
+                            inwardsPoPending: {
+                                supplier: {
+                                    name: string
+                                    id: string
+                                }
                             }
+                        }) => ({
+                            label: supplier.inwardsPoPending.supplier.name,
+                            value: supplier.inwardsPoPending.supplier.id,
+                        })
+                    ).filter((d: {
+                        value: string
+                    }) => {
+                        if (unique_supplier.has(d["value"])) {
+                            return false
                         }
-                    }) => ({
-                        label: supplier.inwardsPoPending.supplier.name,
-                        value: supplier.inwardsPoPending.supplier.id,
+                        unique_supplier.add(d["value"])
+                        return true
                     })
-                )
+            }
             )
             setSupplier(data)
         } catch (e) {
