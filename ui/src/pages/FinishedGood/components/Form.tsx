@@ -449,7 +449,7 @@ const Form = () => {
                                     type="number"
                                     label="Man Power"
                                     placeholder="Enter Man Power"
-                                    precision={2}
+                                    precision={4}
                                     min={0}
                                     {...form.getInputProps('manPower')}
                                 />
@@ -458,7 +458,7 @@ const Form = () => {
                                     type="number"
                                     label="Overheads"
                                     placeholder="Enter Overheads"
-                                    precision={2}
+                                    precision={4}
                                     min={0}
                                     {...form.getInputProps('overheads')}
                                 />
