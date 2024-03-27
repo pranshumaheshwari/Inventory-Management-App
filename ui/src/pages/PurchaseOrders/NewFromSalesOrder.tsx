@@ -305,7 +305,7 @@ const NewFromSalesOrder = () => {
                 for (let rm of d) {
                     rm.poQuantity =
                         Math.ceil(
-                            (rm.requirement * EXTRA_QUANTITY - (includeInventory ? (rm.stock - rm.satisfiedRequirement) : 0)) / rm.mpq
+                            (rm.requirement * (includeInventory ? EXTRA_QUANTITY : 1) - (includeInventory ? (rm.stock + rm.satisfiedRequirement) : 0)) / rm.mpq
                         ) * rm.mpq
                 }
 

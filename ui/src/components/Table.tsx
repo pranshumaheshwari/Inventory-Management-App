@@ -14,8 +14,6 @@ function Table<Type>({
     fileName,
     rowData,
     defaultColDef,
-    pinnedBottomRowData,
-    pinnedTopRowData,
     domLayout = 'normal',
     ...otherProps
 }: TableInterface<Type>) {
@@ -56,11 +54,9 @@ function Table<Type>({
             {rowData ? (
                 <AgGridReact<Type>
                     animateRows
-                    columnDefs={columnDefs}
+                    columnDefs={columnDefs ? [{headerName: "#", valueGetter: "node.rowIndex + 1"}, ...columnDefs] : null}
                     rowData={rowData}
                     defaultColDef={cDefaultColDef}
-                    pinnedBottomRowData={pinnedBottomRowData}
-                    pinnedTopRowData={pinnedTopRowData}
                     columnTypes={columnTypes}
                     domLayout={domLayout}
                     defaultExcelExportParams={{

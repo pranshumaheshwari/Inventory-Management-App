@@ -144,7 +144,7 @@ function ManPower() {
                         return ''
                     }
                     if (params.data?.totalQuantity && params.data.manPower) {
-                        return params.data.totalQuantity * params.data.manPower
+                        return +((params.data.totalQuantity * params.data.manPower).toFixed(2))
                     }
                     return 0
                 },
