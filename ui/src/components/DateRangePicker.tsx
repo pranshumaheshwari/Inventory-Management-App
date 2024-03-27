@@ -14,6 +14,7 @@ const MDateRangePicker = ({ xs, ...props }: DateRangePickerInterface) => {
                 type="range"
                 valueFormat="DD/MM/YYYY"
                 maxDate={new Date()}
+                allowSingleDateInRange
                 {...props}
             />
         </Grid.Col>
