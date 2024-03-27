@@ -227,7 +227,7 @@ app.put('/acceptIQCs', async (req: Request, res: Response) => {
                         id: inwardsIQCPendingId,
                     },
                     data: {
-                        status: 'RejectedIqcVerification',
+                        status: 'Accepted',
                         rm: {
                             update: {
                                 iqcPendingStock: {
@@ -274,7 +274,7 @@ app.put('/acceptIQC', async (req: Request, res: Response) => {
                 id: inwardsPoPendingId,
             },
             data: {
-                status: 'RejectedIqcVerification',
+                status: 'Accepted',
                 rm: {
                     update: {
                         iqcPendingStock: {

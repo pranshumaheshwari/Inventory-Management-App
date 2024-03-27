@@ -40,14 +40,19 @@ function InwardsReport() {
         {
             field: 'createdAt',
             headerName: 'Date',
+            sortable: true,
+            sort: 'asc',
             valueGetter: ({ data }) => {
                 if (data?.createdAt) {
-                    return dayjs(data?.createdAt).format('DD/MM/YYYY')
+                    return dayjs(data?.createdAt).format('DD/MM/YYYY HH:mm:ss')
                 }
                 return ''
             },
         },
         { field: 'quantity', headerName: 'Quantity', type: 'numberColumn' },
+        { field: 'status', headerName: 'Status' },
+        { field: 'storeStockBefore', headerName: 'Store Stock (Before)', type: 'numberColumn' },
+        { field: 'lineStockBefore', headerName: 'Line Stock (Before)', type: 'numberColumn' },
     ]
 
     const fetchRecords = async () => {
@@ -67,11 +72,6 @@ function InwardsReport() {
                         },
                     ],
                 }),
-                orderBy: JSON.stringify([
-                    {
-                        id: 'asc',
-                    },
-                ]),
                 select: JSON.stringify({
                     rm: {
                         select: {
@@ -83,10 +83,13 @@ function InwardsReport() {
                     id: true,
                     createdAt: true,
                     quantity: true,
+                    status: true,
+                    storeStockBefore: true,
+                    lineStockBefore: true,
                 }),
             }
-
-            const data = await Fetch({
+   
+            const verified = await Fetch({
                 url: '/inwards/verified',
                 options: {
                     authToken: token,
@@ -95,8 +98,36 @@ function InwardsReport() {
                     },
                 },
             })
+            const iqc = await Fetch({
+                url: '/inwards/iqc',
+                options: {
+                    authToken: token,
+                    params: {
+                        ...query,
+                    },
+                },
+            }).then(data => data.map((d: {status: string}) => {
+                if (d.status === "Accepted") {
+                    d.status = "Accepted IQC"
+                }
+                return d
+            }))
+            const po = await Fetch({
+                url: '/inwards/po',
+                options: {
+                    authToken: token,
+                    params: {
+                        ...query,
+                    },
+                },
+            }).then(data => data.map((d: {status: string}) => {
+                if (d.status === "Accepted") {
+                    d.status = "Accepted PO Verification"
+                }
+                return d
+            }))
 
-            setRecords(data)
+            setRecords([...verified, ...iqc, ...po])
         } catch (e) {
             setError((e as Error).message)
         }
@@ -154,7 +185,6 @@ function InwardsReport() {
                                 rowData={records}
                                 defaultColDef={{
                                     sortable: false,
-                                    filter: false,
                                 }}
                             />
                         </Box>

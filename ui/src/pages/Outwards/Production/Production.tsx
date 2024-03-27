@@ -9,7 +9,6 @@ import { openConfirmModal } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
 
 export interface ProductionInterface {
-    createdAt: Date
     fgId: string
     quantity: number
     soId: string
@@ -27,7 +26,6 @@ const Production = () => {
         fgId: '',
         soId: '',
         quantity: 0,
-        createdAt: new Date(),
     }
 
     const form = useForm({
@@ -58,7 +56,6 @@ const Production = () => {
                     method: 'POST',
                     body: {
                         ...form.values,
-                        createdAt: form.values.createdAt.toISOString(),
                     },
                     authToken: token,
                 },
@@ -179,7 +176,7 @@ const Production = () => {
                     }}
                 />
                 <FormSelect
-                    xs={6}
+                    xs={7}
                     label="Sales Order"
                     placeholder="Select Sales Order"
                     data={salesOrder}
@@ -188,19 +185,12 @@ const Production = () => {
                 />
                 <FormInputNumber
                     name="quantity"
-                    xs={4}
+                    xs={5}
                     label="Quantity"
                     placeholder="Enter Quantity"
                     min={0}
                     withAsterisk
                     {...form.getInputProps('quantity')}
-                />
-                <DatePicker
-                    xs={2}
-                    label="Date"
-                    placeholder="Enter Date"
-                    withAsterisk
-                    {...form.getInputProps('createdAt')}
                 />
                 {error && (
                     <Grid.Col xs={12}>
