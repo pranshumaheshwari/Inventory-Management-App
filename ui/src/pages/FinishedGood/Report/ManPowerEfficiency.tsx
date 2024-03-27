@@ -333,7 +333,7 @@ function ManPower() {
                 },
             ]
 
-            // if (user.type === 'admin') {
+            if (user.type === 'admin') {
                 bottomData.splice(1, 0, {
                     id: 'Total MP Required',
                     category: '',
@@ -348,16 +348,16 @@ function ManPower() {
                                     curVal.productionQuantity[idx] *
                                         curVal.manPower
                                 )
-                            }, 0),
+                            }, 0).toFixed(2),
                         ])
                     ),
                     totalQuantity: data.reduce(
                         (prevVal, curVal) =>
                             prevVal + curVal.totalQuantity * curVal.manPower,
                         0
-                    ),
+                    ).toFixed(2),
                 })
-            // }
+            }
 
             setRecords(data)
             setBottomPinnedData(bottomData)

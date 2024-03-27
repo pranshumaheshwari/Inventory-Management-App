@@ -428,10 +428,6 @@ const PurchaseOrder = () => {
     >(
         () => [
             {
-                headerName: '#',
-                valueGetter: 'node.rowIndex + 1',
-            },
-            {
                 field: 'rmId',
                 headerName: 'Raw Material',
             },

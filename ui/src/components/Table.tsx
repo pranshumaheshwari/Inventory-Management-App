@@ -54,7 +54,12 @@ function Table<Type>({
             {rowData ? (
                 <AgGridReact<Type>
                     animateRows
-                    columnDefs={columnDefs ? [{headerName: "#", valueGetter: "node.rowIndex + 1"}, ...columnDefs] : null}
+                    columnDefs={columnDefs ? [
+                        {
+                            headerName: "#", 
+                            valueGetter: "node.rowIndex + 1",
+                            pinned: "left"
+                        }, ...columnDefs] : null}
                     rowData={rowData}
                     defaultColDef={cDefaultColDef}
                     columnTypes={columnTypes}
