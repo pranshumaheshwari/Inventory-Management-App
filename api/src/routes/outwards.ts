@@ -44,7 +44,7 @@ app.get('/productionlog', async (req: Request, res: Response) => {
 })
 
 app.post('/production', async (req: Request, res: Response) => {
-    const { fgId, soId, quantity, createdAt } = req.body
+    const { fgId, soId, quantity } = req.body
 
     try {
         const bom = await PrismaService.bom.findMany({
@@ -58,7 +58,6 @@ app.post('/production', async (req: Request, res: Response) => {
                     soId,
                     fgId,
                     quantity,
-                    createdAt,
                     user: req.user ? req.user.username : '',
                     productionLog: {
                         createMany: {
@@ -67,7 +66,6 @@ app.post('/production', async (req: Request, res: Response) => {
                                 rmId: bom.rmId,
                                 quantity: bom.quantity * quantity,
                                 user: req.user ? req.user.username : '',
-                                createdAt,
                             })),
                         },
                     },

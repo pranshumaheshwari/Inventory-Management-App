@@ -19,9 +19,9 @@ import dayjs from 'dayjs'
 
 interface RecordInterface {
     id: string | number
-    production_id?: number
-    store_stock_before: number
-    line_stock_before: number
+    productionId?: number
+    storeStockBefore: number
+    lineStockBefore: number
     quantity: number
     createdAt: string
     type: 'Production' | 'Inwards' | 'Requisition' | 'Manual Update'
@@ -71,8 +71,8 @@ function ById() {
         },
         { field: 'type', headerName: 'Stage' },
         { field: 'quantity', headerName: 'Quantity', type: 'numberColumn' },
-        { field: 'store_stock_before', headerName: 'Store Stock', type: 'numberColumn' },
-        { field: 'line_stock_before', headerName: 'Line Stock', type: 'numberColumn' },
+        { field: 'storeStockBefore', headerName: 'Store Stock (Before)', type: 'numberColumn' },
+        { field: 'lineStockBefore', headerName: 'Line Stock (Before)', type: 'numberColumn' },
     ]
 
     const getRawmaterials = async () => {
@@ -141,7 +141,7 @@ function ById() {
                     },
                 },
             }).then((data) =>
-                data.map((d: RecordInterface) => ({ ...d, id: d.production_id, type: 'Production' }))
+                data.map((d: RecordInterface) => ({ ...d, id: d.productionId, type: 'Production' }))
             )
 
             const inwardsVerified = await Fetch({
