@@ -18,6 +18,11 @@ import { RawMaterialInterface } from '../RawMaterial'
 import dayjs from 'dayjs'
 
 interface RecordInterface {
+    id: string | number
+    production_id?: number
+    store_stock_before: number
+    line_stock_before: number
+    quantity: number
     createdAt: string
     type: 'Production' | 'Inwards' | 'Requisition' | 'Manual Update'
 }
@@ -52,18 +57,22 @@ function ById() {
 
     const columnDefs: ColDef<RecordInterface>[] = [
         { field: 'id', headerName: 'ID' },
-        { field: 'type', headerName: 'Stage' },
         {
             field: 'createdAt',
             headerName: 'Date',
+            sort: 'asc',
+            sortable: true,
             valueGetter: ({ data }) => {
                 if (data?.createdAt) {
-                    return dayjs(data?.createdAt).format('DD/MM/YYYY')
+                    return dayjs(data?.createdAt).format('DD/MM/YYYY HH:mm:ss')
                 }
                 return ''
             },
         },
+        { field: 'type', headerName: 'Stage' },
         { field: 'quantity', headerName: 'Quantity', type: 'numberColumn' },
+        { field: 'store_stock_before', headerName: 'Store Stock', type: 'numberColumn' },
+        { field: 'line_stock_before', headerName: 'Line Stock', type: 'numberColumn' },
     ]
 
     const getRawmaterials = async () => {
@@ -132,7 +141,7 @@ function ById() {
                     },
                 },
             }).then((data) =>
-                data.map((d: RecordInterface) => ({ ...d, type: 'Production' }))
+                data.map((d: RecordInterface) => ({ ...d, id: d.production_id, type: 'Production' }))
             )
 
             const inwardsVerified = await Fetch({
@@ -183,7 +192,6 @@ function ById() {
                 ...requisitionOutwards,
                 ...manualUpdate,
             ]
-            data.sort((a, b) => b.createdAt - a.createdAt)
             setRecords(data)
         } catch (e) {
             setError((e as Error).message)
