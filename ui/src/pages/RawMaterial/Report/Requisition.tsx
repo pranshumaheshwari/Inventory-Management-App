@@ -34,6 +34,7 @@ function RequisitionReport() {
 
     const columnDefs: ColDef<RecordInterface>[] = [
         { field: 'id', headerName: 'ID' },
+        { field: 'requisitionId', headerName: 'Requisition' },
         { field: 'rmId', headerName: 'Raw Material' },
         {
             field: 'createdAt',
@@ -48,6 +49,8 @@ function RequisitionReport() {
             },
         },
         { field: 'quantity', headerName: 'Quantity', type: 'numberColumn' },
+        { field: 'storeStockBefore', headerName: 'Store Stock (Before)', type: 'numberColumn' },
+        { field: 'lineStockBefore', headerName: 'Line Stock (Before)', type: 'numberColumn' },
     ]
 
     const fetchRecords = async () => {
@@ -78,6 +81,7 @@ function RequisitionReport() {
                     },
                 },
             })
+            console.log(data)
 
             setRecords(data)
         } catch (e) {
