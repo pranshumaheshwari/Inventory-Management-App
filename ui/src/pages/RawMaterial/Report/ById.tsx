@@ -19,6 +19,8 @@ import dayjs from 'dayjs'
 
 interface RecordInterface {
     id: string | number
+    fgId: string
+    requisitionId: string
     productionId?: number
     storeStockBefore: number
     lineStockBefore: number
@@ -141,7 +143,7 @@ function ById() {
                     },
                 },
             }).then((data) =>
-                data.map((d: RecordInterface) => ({ ...d, id: d.productionId, type: 'Production' }))
+                data.map((d: RecordInterface) => ({ ...d, id: d.productionId, type: `Production (${d.fgId})` }))
             )
 
             const inwardsVerified = await Fetch({
@@ -167,7 +169,7 @@ function ById() {
             }).then((data) =>
                 data.map((d: RecordInterface) => ({
                     ...d,
-                    type: 'Requisition',
+                    type: `Requisition (${d.requisitionId})`,
                 }))
             )
 
