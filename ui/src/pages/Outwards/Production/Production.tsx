@@ -12,6 +12,7 @@ export interface ProductionInterface {
     fgId: string
     quantity: number
     soId: string
+    soRemainingQty: number
 }
 
 const Production = () => {
@@ -26,6 +27,7 @@ const Production = () => {
         fgId: '',
         soId: '',
         quantity: 0,
+        soRemainingQty: 0,
     }
 
     const form = useForm({
@@ -125,6 +127,22 @@ const Production = () => {
                     params: {
                         select: JSON.stringify({
                             id: true,
+                            soDetails: {
+                                select: {
+                                    quantity: true,
+                                },
+                                where: {
+                                    fgId: finishedGood
+                                }
+                            },
+                            dispatch: {
+                                select: {
+                                    quantity: true,
+                                },
+                                where: {
+                                    fgId: finishedGood
+                                }
+                            },
                         }),
                         where: JSON.stringify({
                             soDetails: {
@@ -136,7 +154,24 @@ const Production = () => {
                         }),
                     },
                 },
-            }).then((data) => data.map((d: { id: string }) => d.id))
+            })
+                .then((data) => data.map(
+                    (d: {
+                        id: string,
+                        soDetails: {
+                            quantity: number 
+                        }[],
+                        dispatch: {
+                            quantity: number 
+                        }[]
+                    }) => (
+                        {
+                            label: d.id,
+                            value: d.id,
+                            dispatch: d.dispatch.reduce((prev, cur) => prev + cur.quantity, 0),
+                            sodetails: d.soDetails.reduce((prev, cur) => prev + cur.quantity, 0)
+                        }
+                    )))
             setSalesOrder(data)
         } catch (e) {
             setError((e as Error).message)
@@ -169,6 +204,7 @@ const Production = () => {
                     withAsterisk
                     {...form.getInputProps('fgId')}
                     onChange={(finishedGood) => {
+                        form.reset()
                         if (finishedGood) {
                             form.setFieldValue('fgId', finishedGood)
                             getSalesOrders(finishedGood)
@@ -176,21 +212,38 @@ const Production = () => {
                     }}
                 />
                 <FormSelect
-                    xs={7}
+                    xs={6}
                     label="Sales Order"
                     placeholder="Select Sales Order"
                     data={salesOrder}
                     withAsterisk
                     {...form.getInputProps('soId')}
+                    onChange={(soId) => {
+                        if (soId) {
+                            form.setFieldValue('soId', soId)
+                            let so = salesOrder.find((v) => v.value === soId)
+                            if (so) {
+                                form.setFieldValue('soRemainingQty', so.sodetails - so.dispatch)
+                            }
+                        }
+                    }}
                 />
                 <FormInputNumber
                     name="quantity"
-                    xs={5}
+                    xs={4}
                     label="Quantity"
                     placeholder="Enter Quantity"
                     min={0}
                     withAsterisk
                     {...form.getInputProps('quantity')}
+                />
+                <FormInputNumber
+                    disabled
+                    name="soRemainingQty"
+                    xs={2}
+                    label="Remaining Quantity in Sales Order"
+                    placeholder=""
+                    {...form.getInputProps('soRemainingQty')}
                 />
                 {error && (
                     <Grid.Col xs={12}>
