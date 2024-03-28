@@ -63,10 +63,12 @@ function BySo() {
         { field: 'type', headerName: 'Stage' },
         {
             field: 'createdAt',
+            sortable: true,
+            sort: 'asc',
             headerName: 'Date',
             valueGetter: ({ data }) => {
                 if (data?.createdAt) {
-                    return dayjs(data?.createdAt).format('DD/MM/YYYY')
+                    return dayjs(data?.createdAt).format('DD/MM/YYYY HH:mm:ss')
                 }
                 return ''
             },
@@ -157,7 +159,6 @@ function BySo() {
             )
 
             const data = [...production, ...dispatch]
-            data.sort((a, b) => b.createdAt - a.createdAt)
             setRecords(data)
         } catch (e) {
             setError((e as Error).message)
@@ -227,7 +228,6 @@ function BySo() {
                                 rowData={records}
                                 defaultColDef={{
                                     sortable: false,
-                                    filter: false,
                                 }}
                             />
                         </Box>

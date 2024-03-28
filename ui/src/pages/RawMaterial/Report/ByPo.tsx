@@ -74,9 +74,11 @@ function ByPo() {
         {
             field: 'createdAt',
             headerName: 'Date',
+            sortable: true,
+            sort: 'asc',
             valueGetter: ({ data }) => {
                 if (data?.createdAt) {
-                    return dayjs(data?.createdAt).format('DD/MM/YYYY')
+                    return dayjs(data?.createdAt).format('DD/MM/YYYY HH:mm:ss')
                 }
                 return ''
             },

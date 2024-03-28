@@ -38,9 +38,11 @@ function DispatchReport() {
         {
             field: 'createdAt',
             headerName: 'Date',
+            sortable: true,
+            sort: 'asc',
             valueGetter: ({ data }) => {
                 if (data?.createdAt) {
-                    return dayjs(data?.createdAt).format('DD/MM/YYYY')
+                    return dayjs(data?.createdAt).format('DD/MM/YYYY HH:mm:ss')
                 }
                 return ''
             },
@@ -65,11 +67,6 @@ function DispatchReport() {
                         },
                     ],
                 }),
-                orderBy: JSON.stringify([
-                    {
-                        createdAt: 'asc',
-                    },
-                ]),
             }
 
             const data = await Fetch({
@@ -140,7 +137,6 @@ function DispatchReport() {
                                 rowData={records}
                                 defaultColDef={{
                                     sortable: false,
-                                    filter: false,
                                 }}
                             />
                         </Box>

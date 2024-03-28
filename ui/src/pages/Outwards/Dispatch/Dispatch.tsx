@@ -8,7 +8,6 @@ import {
     Text,
 } from '@mantine/core'
 import {
-    DatePicker,
     FormInputNumber,
     FormInputText,
     FormSelect,
@@ -27,7 +26,6 @@ export interface OutwardsDispatch {
     customerId: string
     invoiceNumber: string
     soId: string
-    createdAt: Date
     details: {
         fgId: string
         quantity: number
@@ -54,7 +52,6 @@ const Dispatch = () => {
         soId: '',
         invoiceNumber: '',
         details: [],
-        createdAt: new Date(),
         selectedFg: {
             fgId: '',
             quantity: 0,
@@ -102,7 +99,6 @@ const Dispatch = () => {
                     method: 'POST',
                     body: {
                         ...form.values,
-                        createdAt: form.values.createdAt.toISOString(),
                     },
                     authToken: token,
                 },
@@ -295,21 +291,14 @@ const Dispatch = () => {
                 {activeStep === 0 && (
                     <>
                         <FormInputText
-                            xs={6}
+                            xs={4}
                             label="Invoice"
                             placeholder="Enter Invoice"
                             withAsterisk
                             {...form.getInputProps('invoiceNumber')}
                         />
-                        <DatePicker
-                            xs={6}
-                            label="Date"
-                            placeholder="Select Date"
-                            withAsterisk
-                            {...form.getInputProps('createdAt')}
-                        />
                         <FormSelect
-                            xs={6}
+                            xs={4}
                             label="Customer"
                             placeholder="Select Customer"
                             data={customer}
@@ -324,7 +313,7 @@ const Dispatch = () => {
                         />
                         <FormSelect
                             name="soId"
-                            xs={6}
+                            xs={4}
                             label="Sales Order"
                             placeholder="Select Sales Order"
                             data={salesorder}
