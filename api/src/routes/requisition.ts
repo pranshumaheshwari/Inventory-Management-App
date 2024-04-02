@@ -153,19 +153,21 @@ app.post('/issueMany', async (req: Request, res: Response) => {
                               },
                           })
             ),
-            ...excessOnLine.map((rm) => PrismaService.rm.update({
-                where: {
-                    id: rm?.rmId
-                },
-                data: {
-                    storeStock: {
-                        increment: rm?.quantity
+            ...excessOnLine
+                .filter((rm) => rm !== null)
+                .map((rm) => PrismaService.rm.update({
+                    where: {
+                        id: rm.rmId
                     },
-                    lineStock: {
-                        decrement: rm?.quantity
+                    data: {
+                        storeStock: {
+                            increment: rm.quantity
+                        },
+                        lineStock: {
+                            decrement: rm.quantity
+                        }
                     }
-                }
-            })),
+                })),
             ...details.map(
                 ({ rmId, quantity }) =>
                     PrismaService.rm.update({

@@ -274,7 +274,6 @@ function ById() {
                                 rowData={records}
                                 defaultColDef={{
                                     sortable: false,
-                                    filter: false,
                                 }}
                             />
                         </Box>

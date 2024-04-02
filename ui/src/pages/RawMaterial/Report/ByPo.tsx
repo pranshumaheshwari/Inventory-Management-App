@@ -331,7 +331,6 @@ function ByPo() {
                                 rowData={poDetailsRecords}
                                 defaultColDef={{
                                     sortable: false,
-                                    filter: false,
                                 }}
                             />
                         </Box>
@@ -343,7 +342,6 @@ function ByPo() {
                                 rowData={records}
                                 defaultColDef={{
                                     sortable: false,
-                                    filter: false,
                                 }}
                             />
                         </Box>
