@@ -13,6 +13,7 @@ export interface FinishedGoodsInterface {
     storeStock: number
     manPower: number
     overheads: number
+    oqcPendingStock?: number
     bom: {
         rmId: string
         quantity: number
@@ -42,6 +43,18 @@ const FinishedGoods = () => {
             type: 'numberColumn',
         },
         { field: 'price', headerName: 'Price', type: 'numberColumn' },
+        {
+            headerName: 'Value',
+            type: 'numberColumn',
+            valueGetter: (data) => {
+                if (data.data) {
+                    return Math.floor(
+                        data.data.price *
+                            (data.data.storeStock + (data.data.oqcPendingStock ? data.data.oqcPendingStock : 0))
+                    )
+                }
+            },
+        },
     ]
     const actions = [
         {
