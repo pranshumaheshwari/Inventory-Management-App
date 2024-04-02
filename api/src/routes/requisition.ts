@@ -154,17 +154,17 @@ app.post('/issueMany', async (req: Request, res: Response) => {
                           })
             ),
             ...excessOnLine
-                .filter((rm) => rm !== null)
+                .filter((rm) => !!rm)
                 .map((rm) => PrismaService.rm.update({
                     where: {
-                        id: rm.rmId
+                        id: rm?.rmId
                     },
                     data: {
                         storeStock: {
-                            increment: rm.quantity
+                            increment: rm?.quantity
                         },
                         lineStock: {
-                            decrement: rm.quantity
+                            decrement: rm?.quantity
                         }
                     }
                 })),
