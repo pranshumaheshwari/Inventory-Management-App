@@ -6,10 +6,12 @@ import React, { useState } from 'react'
 import { ColDef } from 'ag-grid-community'
 import { DatesRangeValue } from '@mantine/dates'
 import dayjs from 'dayjs'
+import { BaseRecordInterface } from '.'
+import { RawMaterialInterface } from '../RawMaterial'
 
-interface RecordInterface {
-    rmId: string
-    createdAt: string
+interface RecordInterface extends BaseRecordInterface {
+    rm: Partial<RawMaterialInterface>
+    status: string
 }
 
 function InwardsReport() {

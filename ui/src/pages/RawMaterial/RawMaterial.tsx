@@ -16,6 +16,8 @@ export interface RawMaterialInterface {
     iqcPendingStock: number
     poPendingStock: number
     lineStock: number
+    iqcRejectedStock?: number
+    poRejectedStock?: number
     mpq: number
     moq: number
 }

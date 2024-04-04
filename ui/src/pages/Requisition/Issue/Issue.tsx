@@ -349,7 +349,7 @@ const RequisitionIssue = () => {
                 width: 100,
             },
             {
-                field: 'DTPL Part Number',
+                headerName: 'DTPL Part Number',
                 valueGetter: (params) => {
                     return form.values.details.find(
                         (rm) => rm.rmId === params.data?.rmId
@@ -358,7 +358,7 @@ const RequisitionIssue = () => {
                 width: 150,
             },
             {
-                field: 'Description',
+                headerName: 'Description',
                 valueGetter: (params) => {
                     return form.values.details.find(
                         (rm) => rm.rmId === params.data?.rmId
@@ -411,7 +411,7 @@ const RequisitionIssue = () => {
                 width: 120,
             },
             {
-                field: '#',
+                headerName: '#',
                 onCellClicked: ({ data }) => {
                     if (data) {
                         form.removeListItem(

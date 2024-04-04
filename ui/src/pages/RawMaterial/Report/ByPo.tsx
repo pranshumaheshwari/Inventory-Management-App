@@ -5,14 +5,16 @@ import React, { useEffect, useState } from 'react'
 
 import { ColDef } from 'ag-grid-community'
 import dayjs from 'dayjs'
+import { RawMaterialInterface } from '../RawMaterial'
 
 interface RecordInterface {
-    rm: {
-        id: string
-    }
+    id: number
+    rmId: string
+    rm: Partial<RawMaterialInterface>
     status: 'Accepted' | 'RejectedPoVerification'
     quantity: number
     createdAt: string
+    invoiceId: string
 }
 
 function ByPo() {
@@ -132,7 +134,6 @@ function ByPo() {
             },
         },
         {
-            field: 'rejectedQuantity',
             headerName: 'Rejected Quantity',
             type: 'numberColumn',
             valueGetter: ({ data }) => {
@@ -148,7 +149,6 @@ function ByPo() {
             },
         },
         {
-            field: 'pendingQuantity',
             headerName: 'Pending Quantity',
             type: 'numberColumn',
             valueGetter: ({ data }) => {

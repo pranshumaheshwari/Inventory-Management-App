@@ -306,7 +306,7 @@ const QualityCheck = () => {
                 headerName: 'Raw Material',
             },
             {
-                field: 'DTPL Part Number',
+                headerName: 'DTPL Part Number',
                 valueGetter: (params) => {
                     return form.values.details.find(
                         (rm) => rm.rmId === params.data?.rmId
@@ -314,7 +314,7 @@ const QualityCheck = () => {
                 },
             },
             {
-                field: 'Description',
+                headerName: 'Description',
                 valueGetter: (params) => {
                     return form.values.details.find(
                         (rm) => rm.rmId === params.data?.rmId
@@ -374,7 +374,7 @@ const QualityCheck = () => {
                 type: 'numberColumn',
             },
             {
-                field: '#',
+                headerName: '#',
                 onCellClicked: ({ data }) => {
                     if (data) {
                         form.removeListItem(

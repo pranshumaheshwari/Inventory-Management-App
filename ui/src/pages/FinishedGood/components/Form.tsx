@@ -250,7 +250,7 @@ const Form = () => {
                 headerName: 'Raw Material',
             },
             {
-                field: 'DTPL Part Number',
+                headerName: 'DTPL Part Number',
                 valueGetter: (params) => {
                     return rawmaterial?.find(
                         (rm) => rm.value === params.data?.rmId
@@ -258,7 +258,7 @@ const Form = () => {
                 },
             },
             {
-                field: 'Description',
+                headerName: 'Description',
                 valueGetter: (params) => {
                     return rawmaterial?.find(
                         (rm) => rm.value === params.data?.rmId
@@ -266,7 +266,6 @@ const Form = () => {
                 },
             },
             {
-                field: 'storeStock',
                 headerName: 'Store Stock',
                 type: 'numberColumn',
                 valueGetter: (params) => {
@@ -276,7 +275,6 @@ const Form = () => {
                 },
             },
             {
-                field: 'lineStock',
                 headerName: 'Line Stock',
                 type: 'numberColumn',
                 valueGetter: (params) => {
@@ -295,7 +293,7 @@ const Form = () => {
                 },
             },
             {
-                field: '#',
+                headerName: '#',
                 onCellClicked: ({ data }) => {
                     if (data) {
                         form.removeListItem(

@@ -16,11 +16,10 @@ import { ColDef } from 'ag-grid-community'
 import { DatesRangeValue } from '@mantine/dates'
 import { FinishedGoodsInterface } from '../FinishedGood'
 import dayjs from 'dayjs'
+import { BaseRecordInterface } from '.'
 
-interface RecordInterface {
-    createdAt: string
+interface RecordInterface extends BaseRecordInterface {
     type: 'Production' | 'OQC' | 'Dispatch'
-    id: string | number
 }
 
 function ById() {
