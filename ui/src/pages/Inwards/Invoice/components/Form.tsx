@@ -32,6 +32,7 @@ interface InvoiceInterfaceForm extends InvoiceInterface {
         poId: string
         rmId: string
         quantity: number
+        poPrice: number
     }
 }
 
@@ -60,6 +61,7 @@ const Form = () => {
             rmId: '',
             poId: '',
             quantity: 0,
+            poPrice: 0,
         },
     }
 
@@ -221,24 +223,37 @@ const Form = () => {
                 .then((data) => {
                     setRawmaterial(data)
                 })
+        } catch (e) {
+            setError((e as Error).message)
+        }
+    }
+
+    const getPurchaseOrders = async (supplierId: string, rmId: string) => {
+        try {
             await Fetch({
-                url: '/purchaseorders',
+                url: '/purchaseorders/details',
                 options: {
                     authToken: token,
                     params: {
                         select: JSON.stringify({
-                            id: true,
+                            poId: true,
+                            price: true,
                         }),
                         where: JSON.stringify({
-                            supplierId,
+                            rmId,
+                            po: {
+                                status: "Open",
+                                supplierId,
+                            }
                         }),
                     },
                 },
             })
                 .then((data) =>
-                    data.map((d: { id: string }) => ({
-                        value: d.id,
-                        label: d.id,
+                    data.map((d: { poId: string, price: number }) => ({
+                        value: d.poId,
+                        label: d.poId,
+                        price: d.price
                     }))
                 )
                 .then((data) => {
@@ -279,7 +294,7 @@ const Form = () => {
                 headerName: 'Raw Material',
             },
             {
-                field: 'DTPL Part Number',
+                headerName: 'DTPL Part Number',
                 valueGetter: (params) => {
                     return rawmaterial?.find(
                         (rm) => rm.value === params.data?.rmId
@@ -287,7 +302,7 @@ const Form = () => {
                 },
             },
             {
-                field: 'Description',
+                headerName: 'Description',
                 valueGetter: (params) => {
                     return rawmaterial?.find(
                         (rm) => rm.value === params.data?.rmId
@@ -303,7 +318,11 @@ const Form = () => {
                 headerName: 'Purchase Order',
             },
             {
-                field: '#',
+                field: 'poPrice',
+                headerName: 'PO Price',
+            },
+            {
+                headerName: '#',
                 onCellClicked: ({ data }) => {
                     if (data) {
                         form.removeListItem(
@@ -417,6 +436,12 @@ const Form = () => {
                             filter={RawMaterialSelectFilter}
                             withAsterisk
                             {...form.getInputProps('selectedRm.rmId')}
+                            onChange={(rmId) => {
+                                if (rmId) {
+                                    form.setFieldValue("selectedRm.rmId", rmId)
+                                    getPurchaseOrders(form.values.supplierId, rmId)
+                                }
+                            }}
                         />
                         <FormInputNumber
                             name="selectedRm.quantity"
@@ -434,6 +459,15 @@ const Form = () => {
                             data={purchaseOrders}
                             withAsterisk
                             {...form.getInputProps('selectedRm.poId')}
+                            onChange={(poId) => {
+                                if (poId) {
+                                    form.setFieldValue("selectedRm.poId", poId)
+                                    const selectedPo = purchaseOrders.find((p) => p.value === poId)
+                                    if (selectedPo) {
+                                        form.setFieldValue("selectedRm.poPrice", selectedPo.price)
+                                    }
+                                }
+                            }}
                         />
                         <Grid.Col xs={12}>
                             <Button
@@ -462,7 +496,10 @@ const Form = () => {
                                                 ...form.values.selectedRm,
                                                 rmId: '',
                                                 quantity: 0,
+                                                poId: '',
+                                                poPrice: 0
                                             })
+                                            setPurchaseOrders([])
                                         }
                                     }
                                 }}
