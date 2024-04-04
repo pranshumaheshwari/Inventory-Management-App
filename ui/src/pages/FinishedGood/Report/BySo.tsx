@@ -5,9 +5,11 @@ import React, { useEffect, useState } from 'react'
 
 import { ColDef } from 'ag-grid-community'
 import dayjs from 'dayjs'
+import { BaseRecordInterface } from '.'
 
-interface RecordInterface {
-    createdAt: string
+interface RecordInterface extends BaseRecordInterface {
+    type: string
+    fgId: string
 }
 
 function BySo() {

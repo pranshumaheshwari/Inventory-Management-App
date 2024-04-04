@@ -24,6 +24,7 @@ function Inventory<Type>({
     url,
     fileName,
     options,
+    ...props
 }: InventoryInterface<Type>) {
     const gridRef = useRef<AgGridReact<Type>>(null)
 
@@ -87,6 +88,7 @@ function Inventory<Type>({
                 columnDefs={columns}
                 fileName={fileName}
                 rowData={rowData}
+                {...props}
             />
             <Affix actions={affixActions} />
         </>

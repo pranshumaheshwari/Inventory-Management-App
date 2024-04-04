@@ -2,12 +2,8 @@ import NavGroup from './NavGroup'
 import NavItem from './NavItem'
 import { ScrollArea } from '@mantine/core'
 import menuItem from '../../../menu-items'
-import { useAuth } from '../../../services'
 
 const Navigation = () => {
-    const {
-        token: { user },
-    } = useAuth()
 
     const navGroups = menuItem.items
         // .filter((item) => {

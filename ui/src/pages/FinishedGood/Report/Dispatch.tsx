@@ -6,10 +6,11 @@ import React, { useState } from 'react'
 import { ColDef } from 'ag-grid-community'
 import { DatesRangeValue } from '@mantine/dates'
 import dayjs from 'dayjs'
+import { BaseRecordInterface } from '.'
 
-interface RecordInterface {
+interface RecordInterface extends BaseRecordInterface {
     fgId: string
-    createdAt: string
+    invoiceNumber: string
 }
 
 function DispatchReport() {

@@ -33,7 +33,7 @@ function ProductionReport() {
                 type: 'numberColumn',
             },
             ...[...Array(dayjs().date()).keys()].map((d, idx) => ({
-                field: (idx + 1).toString(),
+                headerName: (idx + 1).toString(),
                 valueGetter: (params: ValueGetterParams<RecordInterface>) => {
                     return params.data?.productionQuantity[idx]
                 },
@@ -46,7 +46,6 @@ function ProductionReport() {
                 pinned: 'right',
             },
             {
-                field: 'balance',
                 headerName: 'Balance',
                 type: 'numberColumn',
                 valueGetter: (params: ValueGetterParams<RecordInterface>) => {

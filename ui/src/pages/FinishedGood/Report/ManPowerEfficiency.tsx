@@ -38,27 +38,27 @@ function ManPower() {
     const getEfficiencyCodedData = (efficiency: number) => {
         if (efficiency >= 100 && efficiency < 110) {
             return (
-                'E' + ' (' + efficiency.toFixed(2) + ')'
+                'E (' + efficiency.toFixed(2) + ')'
             )
         } else if (efficiency >= 110 && efficiency < 115) {
             return (
-                'D' + ' (' + efficiency.toFixed(2) + ')'
+                'D (' + efficiency.toFixed(2) + ')'
             )
         } else if (efficiency >= 115 && efficiency < 120) {
             return (
-                'C' + ' (' + efficiency.toFixed(2) + ')'
+                'C (' + efficiency.toFixed(2) + ')'
             )
         } else if (efficiency >= 120 && efficiency < 125) {
             return (
-                'B' + ' (' + efficiency.toFixed(2) + ')'
+                'B (' + efficiency.toFixed(2) + ')'
             )
         } else if (efficiency >= 125) {
             return (
-                'A' + ' (' + efficiency.toFixed(2) + ')'
+                'A (' + efficiency.toFixed(2) + ')'
             )
         } else {
             return (
-                'F' + ' (' + efficiency.toFixed(2) + ')'
+                'F (' + efficiency.toFixed(2) + ')'
             )
         }
     }
