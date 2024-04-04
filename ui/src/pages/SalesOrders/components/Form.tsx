@@ -113,18 +113,13 @@ const Form = () => {
 
     const onSubmit = async () => {
         try {
-            const postData: Partial<SalesOrdersInterface> = {
-                id: form.values.id,
-                customerId: form.values.customerId,
-                soDetails: form.values.soDetails,
-            }
             const resp = await Fetch({
                 url:
                     '/salesorders' +
                     (isEdit ? '/' + encodeURIComponent(initialValues.id) : ''),
                 options: {
                     method: isEdit ? 'PUT' : 'POST',
-                    body: postData,
+                    body: form.values,
                     authToken: token,
                 },
             })
@@ -251,7 +246,7 @@ const Form = () => {
                 headerName: 'Part Number',
             },
             {
-                field: 'Description',
+                headerName: 'Description',
                 valueGetter: (params) => {
                     return finishedgoods?.find(
                         (fg) => fg.id === params.data?.fgId
@@ -266,7 +261,7 @@ const Form = () => {
                 type: 'numberColumn',
             },
             {
-                field: '#',
+                headerName: '#',
                 onCellClicked: ({ data }) => {
                     if (data) {
                         form.removeListItem(
@@ -317,7 +312,7 @@ const Form = () => {
                 {activeStep === 0 && (
                     <>
                         <FormInputText
-                            xs={6}
+                            xs={4}
                             label="ID"
                             placeholder="Enter ID"
                             withAsterisk
@@ -336,6 +331,15 @@ const Form = () => {
                                     form.setFieldValue('customerId', customerId)
                                 }
                             }}
+                        />
+                        <FormSelect
+                            name="status"
+                            xs={2}
+                            label="Status"
+                            placeholder="Select Status"
+                            defaultValue="Open"
+                            data={['Open', 'Closed']}
+                            {...form.getInputProps('status')}
                         />
                         <Grid.Col xs={12}>
                             <Button

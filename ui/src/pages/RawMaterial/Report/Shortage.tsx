@@ -4,8 +4,11 @@ import React, { useEffect, useState } from 'react'
 
 import { ColDef } from 'ag-grid-community'
 import { Table } from '../../../components'
+import { RawMaterialInterface } from '../RawMaterial'
 
-interface RecordInterface {}
+interface RecordInterface extends Partial<RawMaterialInterface> {
+    requiredQuantity: number
+}
 
 function ExcessReport() {
     const {
@@ -18,6 +21,7 @@ function ExcessReport() {
         { field: 'id', headerName: 'Identifier' },
         { field: 'dtplCode', headerName: 'DTPL Part Number' },
         { field: 'description', headerName: 'Description' },
+        { field: 'supplierId', headerName: 'Supplier' },
         {
             field: 'storeStock',
             headerName: 'Store Stock',
@@ -43,6 +47,7 @@ function ExcessReport() {
             headerName: 'Required Stock',
             type: 'numberColumn',
         },
+        { field: 'unit', headerName: 'Unit' },
     ]
 
     const fetchRecords = async () => {
@@ -110,20 +115,14 @@ function ExcessReport() {
                             lineStock: true,
                             poPendingStock: true,
                             iqcPendingStock: true,
+                            supplierId: true,
+                            unit: true
                         }),
                     },
                 },
             }).then(
                 (
-                    rms: {
-                        id: string
-                        description: string
-                        dtplCode: string
-                        storeStock: number
-                        lineStock: number
-                        poPendingStock: number
-                        iqcPendingStock: number
-                    }[]
+                    rms: RawMaterialInterface[]
                 ) =>
                     rms
                         .map((rm) => ({
