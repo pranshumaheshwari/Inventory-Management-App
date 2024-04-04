@@ -25,6 +25,25 @@ app.get('/', async (req: Request, res: Response) => {
     res.json(data)
 })
 
+app.get('/details', async (req: Request, res: Response) => {
+    const args: Prisma.PoDetailsFindManyArgs = {}
+    const { select, include, where, distinct } = req.query
+    if (select) {
+        args.select = JSON.parse(select as string)
+    }
+    if (include) {
+        args.include = JSON.parse(include as string)
+    }
+    if (where) {
+        args.where = JSON.parse(where as string)
+    }
+    if (distinct) {
+        args.distinct = JSON.parse(distinct as string)
+    }
+    const data = await PrismaService.poDetails.findMany(args)
+    res.json(data)
+})
+
 app.post('/', async (req: Request, res: Response) => {
     const { supplierId, id, poDetails, status } = req.body
 
