@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom'
 export interface PurchaseOrdersInterface {
     id: string
     supplierId: string
-    status: string
+    status: "Open" | "Closed"
     poDetails: {
         rmId: string
         quantity: number
@@ -27,7 +27,7 @@ const PurchaseOrders = () => {
             headerName: 'Supplier',
             valueGetter: ({ data }) => data?.supplier.name,
         },
-        { field: 'status', headerName: 'Status' },
+        { field: 'status', headerName: 'Status', sort: 'desc' },
     ]
     const actions = [
         {

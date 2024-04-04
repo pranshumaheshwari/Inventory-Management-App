@@ -219,6 +219,7 @@ const Form = () => {
                             dtplCode: true,
                             price: true,
                             category: true,
+                            unit: true,
                         }),
                         where: JSON.stringify({
                             supplierId,
@@ -255,7 +256,7 @@ const Form = () => {
                 headerName: 'Raw Material',
             },
             {
-                field: 'DTPL Part Number',
+                headerName: 'DTPL Part Number',
                 valueGetter: (params) => {
                     return rawMaterial.find(
                         (rm) => rm.value === params.data?.rmId
@@ -263,7 +264,7 @@ const Form = () => {
                 },
             },
             {
-                field: 'Description',
+                headerName: 'Description',
                 valueGetter: (params) => {
                     return rawMaterial.find(
                         (rm) => rm.value === params.data?.rmId
@@ -275,11 +276,19 @@ const Form = () => {
                 headerName: 'Quantity',
             },
             {
+                headerName: 'Unit',
+                valueGetter: (params) => {
+                    return rawMaterial.find(
+                        (rm) => rm.value === params.data?.rmId
+                    )?.unit
+                },
+            },
+            {
                 field: 'price',
                 headerName: 'Price',
             },
             {
-                field: '#',
+                headerName: '#',
                 onCellClicked: ({ data }) => {
                     if (data) {
                         form.removeListItem(
@@ -340,7 +349,7 @@ const Form = () => {
                         />
                         <FormSelect
                             name="supplierId"
-                            xs={6}
+                            xs={4}
                             label="Supplier"
                             placeholder="Select Supplier"
                             data={supplier}
@@ -352,6 +361,15 @@ const Form = () => {
                                     getRawMaterials(supplierId)
                                 }
                             }}
+                        />
+                        <FormSelect
+                            name="status"
+                            xs={2}
+                            label="Status"
+                            placeholder="Select Status"
+                            defaultValue="Open"
+                            data={['Open', 'Closed']}
+                            {...form.getInputProps('status')}
                         />
                         <Grid.Col xs={12}>
                             <Button

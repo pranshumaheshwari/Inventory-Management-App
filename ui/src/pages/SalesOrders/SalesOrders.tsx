@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom'
 export interface SalesOrdersInterface {
     id: string
     customerId: string
-    status: string
+    status: "Open" | "Closed"
     soDetails: {
         fgId: string
         quantity: number
@@ -25,7 +25,7 @@ const SalesOrders = () => {
             headerName: 'Customer',
             valueGetter: ({ data }) => data?.customer.name,
         },
-        { field: 'status', headerName: 'Status' },
+        { field: 'status', headerName: 'Status', sort: 'desc' },
     ]
     const actions = [
         {

@@ -15,6 +15,7 @@ export interface InvoiceInterface {
         poId: string
         rmId: string
         quantity: number
+        poPrice: number
     }[]
     date: Date
 }
