@@ -231,7 +231,7 @@ const Dispatch = () => {
                 headerName: 'Part Number',
             },
             {
-                field: 'Description',
+                headerName: 'Description',
                 valueGetter: (params) => {
                     return finishedgoods?.find(
                         (fg) => fg.value === params.data?.fgId
@@ -243,7 +243,7 @@ const Dispatch = () => {
                 headerName: 'Quantity',
             },
             {
-                field: '#',
+                headerName: '#',
                 onCellClicked: ({ data }) => {
                     if (data) {
                         form.removeListItem(
@@ -405,6 +405,18 @@ const Dispatch = () => {
                                         form.values.selectedFg.quantity &&
                                         form.values.selectedFg.fgId
                                     ) {
+                                        if (form.values.selectedFg.quantity > form.values.selectedFg.storeStock) {
+                                            showNotification({
+                                                title: 'Failure',
+                                                message: (
+                                                    <Text>
+                                                        Cannot dipatch quantity more than store stock
+                                                    </Text>
+                                                ),
+                                                color: 'red',
+                                            })
+                                            return
+                                        }
                                         form.insertListItem(
                                             'details',
                                             form.values.selectedFg
