@@ -26,7 +26,10 @@ interface RecordInterface {
     lineStockBefore: number
     quantity: number
     createdAt: string
-    type: 'Production' | 'Inwards' | 'Requisition' | 'Manual Update'
+    type: string
+    requisition: {
+        fgId: string
+    }
 }
 
 function ById() {
@@ -70,11 +73,13 @@ function ById() {
                 }
                 return ''
             },
+            rowGroup: true,
+            hide: true,
         },
-        { field: 'type', headerName: 'Stage' },
-        { field: 'quantity', headerName: 'Quantity', type: 'numberColumn' },
-        { field: 'storeStockBefore', headerName: 'Store Stock (Before)', type: 'numberColumn' },
-        { field: 'lineStockBefore', headerName: 'Line Stock (Before)', type: 'numberColumn' },
+        { field: 'type', headerName: 'Stage', aggFunc: ({ values }) => values[0].split(" ")[0]},
+        { field: 'quantity', headerName: 'Quantity', type: 'numberColumn', aggFunc: 'sum' },
+        { field: 'storeStockBefore', headerName: 'Store Stock (Before)', type: 'numberColumn', aggFunc: 'first' },
+        { field: 'lineStockBefore', headerName: 'Line Stock (Before)', type: 'numberColumn', aggFunc: 'first' },
     ]
 
     const getRawmaterials = async () => {
@@ -164,12 +169,19 @@ function ById() {
                     authToken: token,
                     params: {
                         ...query,
+                        include: JSON.stringify({
+                            requisition: {
+                                select: {
+                                    fgId: true
+                                }
+                            }
+                        })
                     },
                 },
             }).then((data) =>
                 data.map((d: RecordInterface) => ({
                     ...d,
-                    type: `Requisition (${d.requisitionId})`,
+                    type: `Requisition (${d.requisition.fgId} [${d.requisitionId}])`,
                 }))
             )
 
@@ -270,6 +282,10 @@ function ById() {
                     <Grid.Col xs={12}>
                         <Box h="70vh" w="100%">
                             <Table<RecordInterface>
+                                autoGroupColumnDef={{
+                                    headerName: 'Date'
+                                }}
+                                suppressAggFuncInHeader
                                 columnDefs={columnDefs}
                                 rowData={records}
                                 defaultColDef={{
