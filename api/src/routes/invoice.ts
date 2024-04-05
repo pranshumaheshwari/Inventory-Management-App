@@ -54,7 +54,11 @@ app.post('/', async (req: Request, res: Response) => {
                     status,
                     invoiceDetails: {
                         createMany: {
-                            data: invoiceDetails,
+                            data: invoiceDetails.map(({poId, rmId, quantity}) => ({
+                                rmId,
+                                poId,
+                                quantity,
+                            })),
                         },
                     },
                     date,
