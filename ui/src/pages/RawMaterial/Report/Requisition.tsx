@@ -37,7 +37,6 @@ function RequisitionReport() {
     const columnDefs: ColDef<RecordInterface>[] = [
         { field: 'id', headerName: 'ID' },
         { field: 'requisitionId', headerName: 'Requisition' },
-        { field: 'rmId', headerName: 'Raw Material' },
         {
             field: 'createdAt',
             headerName: 'Date',
@@ -49,10 +48,28 @@ function RequisitionReport() {
                 }
                 return ''
             },
+            rowGroup: true,
+            hide: true,
         },
-        { field: 'quantity', headerName: 'Quantity', type: 'numberColumn' },
-        { field: 'storeStockBefore', headerName: 'Store Stock (Before)', type: 'numberColumn' },
-        { field: 'lineStockBefore', headerName: 'Line Stock (Before)', type: 'numberColumn' },
+        { field: 'rmId', headerName: 'Raw Material', rowGroup: true, hide: true },
+        { field: 'quantity', headerName: 'Quantity', aggFunc: ({rowNode, values}) => {
+            if (rowNode.rowGroupIndex) {
+                return values.reduce((partialSum, a) => partialSum + a, 0)
+            }
+            return null
+        }},
+        { field: 'storeStockBefore', headerName: 'Store Stock (Before)', aggFunc: ({rowNode, values}) => {
+            if (rowNode.rowGroupIndex) {
+                return values[0]
+            }
+            return null
+        }},
+        { field: 'lineStockBefore', headerName: 'Line Stock (Before)', aggFunc: ({rowNode, values}) => {
+            if (rowNode.rowGroupIndex) {
+                return values[0]
+            }
+            return null
+        }},
     ]
 
     const fetchRecords = async () => {
@@ -83,7 +100,6 @@ function RequisitionReport() {
                     },
                 },
             })
-            console.log(data)
 
             setRecords(data)
         } catch (e) {
@@ -141,6 +157,7 @@ function RequisitionReport() {
                             <Table<RecordInterface>
                                 columnDefs={columnDefs}
                                 rowData={records}
+                                suppressAggFuncInHeader
                                 defaultColDef={{
                                     sortable: false,
                                 }}
