@@ -232,6 +232,7 @@ const RequisitionIssue = () => {
                             rm: {
                                 select: {
                                     id: true,
+                                    category: true,
                                     description: true,
                                     dtplCode: true,
                                     storeStock: true,
@@ -268,6 +269,7 @@ const RequisitionIssue = () => {
                         quantity: number
                         rm: {
                             id: string
+                            category: string
                             description: string
                             dtplCode: string
                             storeStock: number
@@ -289,6 +291,7 @@ const RequisitionIssue = () => {
                 ) =>
                     data.map((d) => ({
                         requisitionId: requisitionId,
+                        rmCategory: d.rm.category,
                         rmId: d.rm.id,
                         description: d.rm.description,
                         dtplCode: d.rm.dtplCode,
@@ -397,13 +400,20 @@ const RequisitionIssue = () => {
                 type: 'numberColumn',
             },
             {
+                field: 'excessQuantity',
+                headerName: 'Excess Quantity',
+                width: 120,
+                type: 'numberColumn',
+                hide: true,
+            },
+            {
                 field: 'quantity',
                 headerName: 'Quantity',
                 editable: true,
                 type: 'numberColumn',
-                valueParser: ({ newValue }) => {
+                valueParser: ({ newValue, data }) => {
                     const val = parseFloat(newValue)
-                    if (val < 0) {
+                    if (val < 0 || data.requisitionQuantity <= data.issuedQuantity || data.requisitionQuantity <= data.excessQuantity) {
                         return 0
                     }
                     return val

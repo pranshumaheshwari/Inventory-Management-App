@@ -202,7 +202,20 @@ const NewFromSalesOrder = () => {
                                                 price: true,
                                                 mpq: true,
                                                 moq: true,
-                                                poDetails: true,
+                                                supplier: {
+                                                    select: {
+                                                        po: {
+                                                            select: {
+                                                                id: true,
+                                                            },
+                                                            where: {
+                                                                id: {
+                                                                    contains: month
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
                                             },
                                         },
                                         quantity: true,
@@ -229,10 +242,11 @@ const NewFromSalesOrder = () => {
                                 poPendingStock: number
                                 mpq: number
                                 moq: number
-                                poDetails: {
-                                    poId: string
-                                    createdAt: string
-                                }[]
+                                supplier: {
+                                    po: {
+                                        id: string
+                                    }[]
+                                }
                             }
                         }[]
                     }) => {
@@ -255,13 +269,7 @@ const NewFromSalesOrder = () => {
                                     poQuantity: 0,
                                     supplierId: rm.rm.supplierId,
                                     poId: `${rm.rm.supplierId}-${month}-${(
-                                        '000' +
-                                        (rm.rm.poDetails.filter(
-                                            (po) =>
-                                                dayjs(po.createdAt).month() ===
-                                                intMonth
-                                        ).length +
-                                            1)
+                                        '000' + (rm.rm.supplier.po.length + 1)
                                     ).slice(-3)}`,
                                     price: rm.rm.price,
                                     requirement: rm.quantity * fg.quantity,
@@ -316,6 +324,10 @@ const NewFromSalesOrder = () => {
                 d.map((rm) => ({
                     ...rm,
                     poQuantity: Math.max(rm.poQuantity, rm.moq),
+                }))
+                .map((rm) => ({
+                    ...rm,
+                    quantity: rm.poQuantity,
                 }))
             )
             .then((d) => {
@@ -400,14 +412,17 @@ const NewFromSalesOrder = () => {
             {
                 field: 'requirement',
                 headerName: 'Requirement',
+                type: 'numberColumn',
             },
             {
                 field: 'stock',
                 headerName: 'Stock',
+                type: 'numberColumn',
             },
             {
                 field: 'poQuantity',
                 headerName: 'PO Quantity',
+                type: 'numberColumn',
             },
             {
                 headerName: 'Final Quantity',

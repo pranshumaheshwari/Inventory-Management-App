@@ -1,6 +1,6 @@
 import { AgGridReact, AgGridReactProps } from 'ag-grid-react'
 import { Box, Skeleton } from '@mantine/core'
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useMemo } from 'react'
 
 import { ColDef, GetContextMenuItemsParams, MenuItemDef } from 'ag-grid-community'
 
@@ -43,8 +43,9 @@ function Table<Type>({
                 },
                 headerClass: 'ag-right-aligned-header',
                 cellClass: 'ag-right-aligned-cell',
+                width: 100,
                 valueFormatter: (params) => {
-                    return Number(params.value).toFixed(5).toString()
+                    return Number(params.value).toFixed((params.data && (params.data as unknown as {rmCategory: string}).rmCategory === "Consumables") ? 5 : 2).toString()
                 },
             },
         }),
@@ -63,7 +64,6 @@ function Table<Type>({
                 params.api.setGridOption("domLayout", "print")
                 setTimeout(() => {
                     window.print() 
-                    const eGridDiv = document.querySelector<HTMLElement>("#myGrid")! as any
                     eGridDiv.style.width = "100%"
                     eGridDiv.style.height = "100%"
                     params.api.setGridOption("domLayout", "autoHeight")
@@ -86,6 +86,7 @@ function Table<Type>({
                                 headerName: "#", 
                                 valueGetter: "node.rowIndex + 1",
                                 pinned: "left",
+                                maxWidth: 60,
                             }, ...columnDefs] : null}
                         rowData={rowData}
                         defaultColDef={cDefaultColDef}
