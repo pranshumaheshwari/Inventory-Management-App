@@ -205,6 +205,7 @@ prisma.$use(async (params, next) => {
                 })
             }
         }
+        // Check if Requisition needs to be closed
         if (
             params.model === 'RequisitionOutward' &&
             params.action === 'create' &&

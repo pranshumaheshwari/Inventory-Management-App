@@ -72,6 +72,18 @@ BEGIN
 	SET NEW.iqc_rejected_stock_before = (SELECT iqc_rejected_stock FROM rm WHERE id=NEW.rm_id);
 END$$
 
+CREATE TRIGGER `excess_on_line_set_rm_stock`
+BEFORE INSERT
+ON requisition_excess_on_line FOR EACH ROW
+BEGIN
+	SET NEW.store_stock_before = (SELECT store_stock FROM rm WHERE id=NEW.rm_id);
+	SET NEW.line_stock_before = (SELECT line_stock FROM rm WHERE id=NEW.rm_id);
+	SET NEW.po_pending_stock_before = (SELECT po_pending_stock FROM rm WHERE id=NEW.rm_id);
+	SET NEW.po_rejected_stock_before = (SELECT po_rejected_stock FROM rm WHERE id=NEW.rm_id);
+	SET NEW.iqc_pending_stock_before = (SELECT iqc_pending_stock FROM rm WHERE id=NEW.rm_id);
+	SET NEW.iqc_rejected_stock_before = (SELECT iqc_rejected_stock FROM rm WHERE id=NEW.rm_id);
+END$$
+
 CREATE TRIGGER `fg_manual_set_fg_stock`
 BEFORE INSERT
 ON fg_manual_update FOR EACH ROW
