@@ -103,89 +103,139 @@ app.post('/', async (req: Request, res: Response) => {
     }
 })
 
-app.post('/issueMany', async (req: Request, res: Response) => {
-    const { details }: {
-        details: {
-            rmId: string
-            quantity: number
+app.post('/issueMany/:requisitionId', async (req: Request, res: Response) => {
+    const { requisitionId } = req.params
+    interface DetailsInterface {
+        rmId: string
+        quantity: number
+        totalQuantity: number
+        excessQuantity: number
+        issuedQuantity: number
+        requisitionQuantity: number
+        pendingRequisitions: {
+            issuedQuantity: number
             requisitionId: number
+            quantity: number
         }[]
-    } = req.body
-    // TODO: Test this
+    }
+    let { details }: { details: DetailsInterface[] } = req.body
+    const excessOnLineUpdates: {
+        rmId: string
+        quantity: number
+    }[] = []
+    const requisitionOutwards: {
+        rmId: string
+        quantity: number
+        requisitionId: number
+    }[] = []
+    const requisitionExcessOnLine: {
+        rmId: string
+        quantity: number
+    }[] = []
+    // TODO: We can close requisitons here itself
     try {
-        const excessOnLine = await Promise.all(details.filter(({requisitionId}) => requisitionId === 0).map(async ({rmId}) => {
-            return await PrismaService.requisitionExcessOnLine.findUnique({
-                where: {
-                    rmId
-                },
-                select: {
-                    rmId: true,
-                    quantity: true
-                }
-            })
-        }))
-        const result = await PrismaService.$transaction([
-            ...details.map(
-                ({
-                    rmId,
-                    quantity,
-                    requisitionId,
-                }) =>
-                    requisitionId === 0
-                        ? PrismaService.requisitionExcessOnLine.upsert({
-                              where: {
-                                  rmId,
-                              },
-                              update: {
-                                  quantity,
-                              },
-                              create: {
-                                  rmId,
-                                  quantity,
-                              },
-                          })
-                        : PrismaService.requisitionOutward.create({
-                              data: {
-                                  rmId,
-                                  quantity,
-                                  user: req.user ? req.user.username : '',
-                                  requisitionId,
-                              },
-                          })
-            ),
-            ...excessOnLine
-                .filter((rm) => !!rm)
-                .map((rm) => PrismaService.rm.update({
-                    where: {
-                        id: rm?.rmId
-                    },
-                    data: {
-                        storeStock: {
-                            increment: rm?.quantity
-                        },
-                        lineStock: {
-                            decrement: rm?.quantity
-                        }
+        for (const d of details) {
+            d["totalQuantity"] = d.quantity + d.excessQuantity
+            if (
+                d.totalQuantity >
+                d.requisitionQuantity - d.issuedQuantity
+            ) {
+                // Incase total qty is greater than the qty required by the current requisition
+                // 1. Fulfill the current requisition
+                requisitionOutwards.push({
+                    rmId: d.rmId,
+                    quantity: d.requisitionQuantity - d.issuedQuantity,
+                    requisitionId: parseInt(requisitionId)
+                })
+                let remainingQuantity = d.totalQuantity - d.requisitionQuantity + d.issuedQuantity
+                // 2. Fulfill the previous requisitions
+                for (const req of d.pendingRequisitions) {
+                    if (remainingQuantity > 0) {
+                        const qty = Math.min(
+                            remainingQuantity,
+                            req.quantity - req.issuedQuantity
+                        )
+                        remainingQuantity -= qty
+                        requisitionOutwards.push({
+                            rmId: d.rmId,
+                            quantity: qty,
+                            requisitionId: req.requisitionId,
+                        })
+                    } else {
+                        break
                     }
-                })),
-            ...details.map(
-                ({ rmId, quantity }) =>
-                    PrismaService.rm.update({
-                        where: {
-                            id: rmId,
-                        },
-                        data: {
-                            lineStock: {
-                                increment: quantity,
-                            },
-                            storeStock: {
-                                decrement: quantity,
-                            },
-                        },
+                }
+                // 3. If qty is still remaining then set excess on line
+                if (remainingQuantity > 0) {
+                    excessOnLineUpdates.push({
+                        rmId: d.rmId,
+                        quantity: remainingQuantity,
                     })
-            ),
-        ])
+                    requisitionExcessOnLine.push({
+                        rmId: d.rmId,
+                        quantity: remainingQuantity - d.excessQuantity
+                    })
+                } else {
+                    // 4. In case excess on line stock was used, update `requisitionExcessOnLine`
+                    if (d.excessQuantity !== 0) {
+                        // 2. Set excess on line to 0
+                        excessOnLineUpdates.push({
+                            quantity: 0,
+                            rmId: d.rmId,
+                        })
+                        // 3. In case excess on line stock was used, update `requisitionExcessOnLine`
+                        requisitionExcessOnLine.push({
+                            rmId: d.rmId,
+                            quantity: -1 * d.excessQuantity
+                        })
+                    }
+                }
+            } else {
+                // Incase total qty is required by the current requisition
+                // 1. Update `requisitionOutwards` with total qty
+                requisitionOutwards.push({
+                    rmId: d.rmId,
+                    quantity: d.totalQuantity,
+                    requisitionId: parseInt(requisitionId),
+                })
+                if (d.excessQuantity !== 0) {
+                    // 2. Set excess on line to 0
+                    excessOnLineUpdates.push({
+                        quantity: 0,
+                        rmId: d.rmId,
+                    })
+                    // 3. In case excess on line stock was used, update `requisitionExcessOnLine`
+                    requisitionExcessOnLine.push({
+                        rmId: d.rmId,
+                        quantity: -1 * d.excessQuantity
+                    })
+                }
+            }
+        }
 
+        const result = await PrismaService.$transaction([
+            ...excessOnLineUpdates.map(d => PrismaService.rm.update({
+                where: {
+                    id: d.rmId,
+                },
+                data: {
+                    excessOnLine: d.quantity
+                }
+            })),
+            ...requisitionOutwards.filter(d => d.quantity).map(d => PrismaService.requisitionOutward.create({
+                data: {
+                    ...d,
+                    user: req.user ? req.user.username : '',
+                }
+            })),
+            ...requisitionExcessOnLine.filter(d => d.quantity).map(d => PrismaService.requisitionExcessOnLine.create({
+                data: {
+                    ...d,
+                    user: req.user ? req.user.username : '',
+                }
+            }))
+        ])
+        
         res.json(result)
     } catch (e) {
         res.status(500).json({
