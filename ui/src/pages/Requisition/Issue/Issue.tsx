@@ -71,68 +71,11 @@ const RequisitionIssue = () => {
     const onSubmit = async () => {
         try {
             await Fetch({
-                url: '/requisition/issueMany',
+                url: `/requisition/issueMany/${form.values.requisitionId}`,
                 options: {
                     method: 'POST',
                     body: {
                         details: form.values.details
-                            .map((d) => ({
-                                ...d,
-                                totalQuantity: d.quantity + d.excessQuantity,
-                            }))
-                            .filter((d) => d.totalQuantity > 0)
-                            .reduce((acc, d) => {
-                                if (
-                                    d.totalQuantity >
-                                    d.requisitionQuantity - d.issuedQuantity
-                                ) {
-                                    acc.push({
-                                        ...d,
-                                        quantity:
-                                            d.requisitionQuantity -
-                                            d.issuedQuantity,
-                                    })
-                                    let remainingQuantity =
-                                        d.totalQuantity -
-                                        d.requisitionQuantity +
-                                        d.issuedQuantity
-                                    for (const req of d.pendingRequisitions) {
-                                        if (remainingQuantity > 0) {
-                                            const qty = Math.min(
-                                                remainingQuantity,
-                                                req.quantity - d.issuedQuantity
-                                            )
-                                            remainingQuantity -= qty
-                                            acc.push({
-                                                ...d,
-                                                quantity: qty,
-                                                requisitionId:
-                                                    req.requisitionId,
-                                            })
-                                        } else {
-                                            break
-                                        }
-                                    }
-                                    if (remainingQuantity > 0) {
-                                        acc.push({
-                                            ...d,
-                                            quantity: remainingQuantity,
-                                            requisitionId: 0,
-                                        })
-                                    }
-                                } else {
-                                    acc.push({
-                                        ...d,
-                                        quantity: d.totalQuantity,
-                                    })
-                                    acc.push({
-                                        ...d,
-                                        quantity: 0,
-                                        requisitionId: 0,
-                                    })
-                                }
-                                return acc
-                            }, [] as RequisitionIssueInterface['details']),
                     },
                     authToken: token,
                 },
@@ -237,11 +180,7 @@ const RequisitionIssue = () => {
                                     dtplCode: true,
                                     storeStock: true,
                                     lineStock: true,
-                                    requisitionExcessOnLine: {
-                                        select: {
-                                            quantity: true,
-                                        },
-                                    },
+                                    excessOnLine: true,
                                     requisitionDetails: {
                                         select: {
                                             requisitionId: true,
@@ -274,9 +213,7 @@ const RequisitionIssue = () => {
                             dtplCode: string
                             storeStock: number
                             lineStock: number
-                            requisitionExcessOnLine?: {
-                                quantity: number
-                            }
+                            excessOnLine: number
                             requisitionDetails: {
                                 requisitionId: number
                                 quantity: number
@@ -298,8 +235,7 @@ const RequisitionIssue = () => {
                         storeStock: d.rm.storeStock,
                         lineStock: d.rm.lineStock,
                         requisitionQuantity: d.quantity,
-                        excessQuantity:
-                            d.rm.requisitionExcessOnLine?.quantity || 0,
+                        excessQuantity: d.rm.excessOnLine || 0,
                         pendingRequisitions: d.rm.requisitionDetails
                             .filter((d) => d.status === 'Open')
                             .filter((d) => d.requisitionId !== requisitionId)
@@ -320,7 +256,7 @@ const RequisitionIssue = () => {
                             .filter((r) => r.requisitionId === requisitionId)
                             .reduce((acc, curVal) => acc + curVal.quantity, 0),
                         maxQuantity:
-                            (d.rm.requisitionExcessOnLine?.quantity || 0) +
+                            (d.rm.excessOnLine || 0) +
                             d.rm.requisitionOutward.reduce(
                                 (acc, curVal) => acc + curVal.quantity,
                                 0
@@ -331,6 +267,7 @@ const RequisitionIssue = () => {
                             ),
                         quantity: 0,
                     }))
+                    .filter(d => d.issuedQuantity < d.requisitionQuantity)
             )
             form.setFieldValue('details', data)
         } catch (e) {
