@@ -233,7 +233,20 @@ app.post('/issueMany/:requisitionId', async (req: Request, res: Response) => {
                     ...d,
                     user: req.user ? req.user.username : '',
                 }
-            }))
+            })),
+            ...details.map(d => PrismaService.rm.update({
+                where: {
+                    id: d.rmId,
+                },
+                data: {
+                    lineStock: {
+                        increment: d.quantity
+                    },
+                    storeStock: {
+                        decrement: d.quantity
+                    }
+                }
+            })),
         ])
         
         res.json(result)
