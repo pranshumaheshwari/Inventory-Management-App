@@ -11,7 +11,9 @@ import { BaseRecordInterface } from '.'
 interface RecordInterface extends BaseRecordInterface {
     requisitionId: number
     rmId: string
-
+    requisition: {
+        createdAt: string
+    }
 }
 
 function RequisitionReport() {
@@ -36,7 +38,15 @@ function RequisitionReport() {
 
     const columnDefs: ColDef<RecordInterface>[] = [
         { field: 'id', headerName: 'ID' },
-        { field: 'requisitionId', headerName: 'Requisition' },
+        { 
+            field: 'requisitionId', 
+            headerName: 'Requisition',
+            valueGetter: ({ data }) => {
+                if (data?.requisition && data.requisitionId) {
+                    return `${data?.requisitionId} (${dayjs(data?.requisition.createdAt).format('DD/MM/YYYY')})`
+                }
+            }
+        },
         {
             field: 'createdAt',
             headerName: 'Date',
@@ -52,51 +62,66 @@ function RequisitionReport() {
             hide: true,
         },
         { field: 'rmId', headerName: 'Raw Material', rowGroup: true, hide: true },
-        { field: 'quantity', headerName: 'Quantity', aggFunc: ({rowNode, values}) => {
-            if (rowNode.rowGroupIndex) {
-                return values.reduce((partialSum, a) => partialSum + a, 0)
-            }
-            return null
-        }},
-        { field: 'storeStockBefore', headerName: 'Store Stock (Before)', aggFunc: ({rowNode, values}) => {
-            if (rowNode.rowGroupIndex) {
-                return values[0]
-            }
-            return null
-        }},
-        { field: 'lineStockBefore', headerName: 'Line Stock (Before)', aggFunc: ({rowNode, values}) => {
-            if (rowNode.rowGroupIndex) {
-                return values[0]
-            }
-            return null
-        }},
+        { 
+            field: 'quantity',
+            headerName: 'Quantity',
+            aggFunc: ({rowNode, values}) => {
+                if (rowNode.rowGroupIndex) {
+                    return values.reduce((partialSum, a) => partialSum + a, 0)
+                }
+                return null
+            },
+            type: 'numberColumn',
+        },
+        { 
+            field: 'storeStockBefore',
+            headerName: 'Store Stock (Before)',
+            aggFunc: ({rowNode, values}) => {
+                if (rowNode.rowGroupIndex) {
+                    return values[0]
+                }
+                return null
+            },
+            type: 'numberColumn',
+        },
+        { 
+            field: 'lineStockBefore',
+            headerName: 'Line Stock (Before)', 
+            aggFunc: ({rowNode, values}) => {
+                if (rowNode.rowGroupIndex) {
+                    return values[0]
+                }
+                return null
+            },
+            type: 'numberColumn',
+        },
     ]
 
     const fetchRecords = async () => {
         try {
             const query = {
                 where: JSON.stringify({
-                    AND: [
-                        {
-                            createdAt: {
-                                gte: dayjs(value[0]).startOf('d').toISOString(),
-                            },
-                        },
-                        {
-                            createdAt: {
-                                lte: dayjs(value[1]).endOf('d').toISOString(),
-                            },
-                        },
-                    ],
+                    createdAt: {
+                        gte: dayjs(value[0]).startOf('d').toISOString(),
+                        lte: dayjs(value[1]).endOf('d').toISOString(),
+                    },
                 }),
             }
 
+            // TODO: Add excess on line entries
             const data = await Fetch({
                 url: '/requisition/issue',
                 options: {
                     authToken: token,
                     params: {
                         ...query,
+                        include: JSON.stringify({
+                            requisition: {
+                                select: {
+                                    createdAt: true
+                                }
+                            }
+                        })
                     },
                 },
             })
@@ -179,7 +204,11 @@ function RequisitionReport() {
                             fullWidth
                             size="md"
                             variant="default"
-                            onClick={handleBack}
+                            onClick={() => {
+                                handleBack()
+                                setError("")
+                                setRecords([])
+                            }}
                         >
                             Back
                         </Button>
