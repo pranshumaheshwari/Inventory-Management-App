@@ -205,45 +205,18 @@ const PurchaseOrder = () => {
         }
     }
 
-    const updateInvoice = async (supplierId: string) => {
+    useEffect(() => {
         try {
-            const data = await Fetch({
-                url: '/inwards/po',
-                options: {
-                    authToken: token,
-                    params: {
-                        where: JSON.stringify({
-                            supplierId,
-                            status: 'PendingPoVerification',
-                        }),
-                        select: JSON.stringify({
-                            invoiceId: true,
-                            id: true,
-                        }),
-                        distinct: JSON.stringify(['invoiceId']),
-                    },
-                },
-            }).then((data) => {
-                return data.map((invoice: { invoiceId: string }) => ({
-                    value: invoice.invoiceId,
-                    label: invoice.invoiceId,
-                }))
-            })
-            setInvoice(data)
-        } catch (e) {
-            setError((e as Error).message)
-        }
-    }
-
-    const updatePo = async (supplierId: string) => {
-        try {
-            const data = await Fetch({
+            form.setFieldValue("poId", "")
+            form.setFieldValue("invoiceId", "")
+            form.setFieldValue("details", [])
+            Fetch({
                 url: '/purchaseorders',
                 options: {
                     authToken: token,
                     params: {
                         where: JSON.stringify({
-                            supplierId,
+                            supplierId: form.values.supplierId,
                             status: 'Open',
                         }),
                         select: JSON.stringify({
@@ -271,87 +244,74 @@ const PurchaseOrder = () => {
                     label: po.id,
                     ...po,
                 }))
+            }).then(data => {
+                setPo(data)
             })
-            setPo(data)
         } catch (e) {
             setError((e as Error).message)
         }
-    }
+    }, [form.values.supplierId])
 
-    const updateSupplier = async (supplierId: string) => {
-        updateInvoice(supplierId)
-        updatePo(supplierId)
-    }
-
-    const updatePoValues = async () => {
+    useEffect(() => {
         try {
-            if (form.values.invoiceId && form.values.details) {
-                const details = form.values.details.map((d) => {
-                    const poDetails = po
-                        ?.find(({ id }) => id === form.values.poId)
-                        ?.poDetails.find(({ rmId }) => rmId === d.rmId)
-                    if (poDetails) {
-                        return {
-                            ...d,
-                            poQuantity: poDetails.quantity,
-                            poPrice: poDetails.price,
-                            poApprovedQuantity:
-                                po
-                                    ?.find(({ id }) => id === form.values.poId)
-                                    ?.inwardsPoPending.filter(
-                                        (inwards) =>
-                                            inwards.status === 'Accepted' &&
-                                            inwards.rmId === d.rmId
-                                    )
-                                    .reduce(
-                                        (qty, inwards) =>
-                                            inwards.quantity + qty,
-                                        0
-                                    ) || 0,
-                        }
-                    }
-                    return {
-                        ...d,
-                        poQuantity: 0,
-                        poApprovedQuantity: 0,
-                    }
-                })
-                form.setFieldValue('details', details)
-            }
-        } catch (e) {
-            setError((e as Error).message)
-        }
-    }
-
-    const getRawMaterials = async (invoiceId: string) => {
-        try {
-            const data = await Fetch({
-                url: '/invoice',
+            form.setFieldValue("invoiceId", "")
+            form.setFieldValue("details", [])
+            Fetch({
+                url: '/inwards/po',
                 options: {
                     authToken: token,
                     params: {
                         where: JSON.stringify({
                             supplierId: form.values.supplierId,
-                            id: invoiceId,
+                            poId: form.values.poId,
+                            status: 'PendingPoVerification',
                         }),
                         select: JSON.stringify({
-                            invoiceDetails: {
+                            invoiceId: true,
+                            id: true,
+                        }),
+                        distinct: JSON.stringify(['invoiceId']),
+                    },
+                },
+            }).then((data) => {
+                return data.map((invoice: { invoiceId: string }) => ({
+                    value: invoice.invoiceId,
+                    label: invoice.invoiceId,
+                }))
+            }).then(data => {
+                setInvoice(data)
+            })
+        } catch (e) {
+            setError((e as Error).message)
+        }
+    }, [form.values.poId])
+
+    useEffect(() => {
+        try {
+            form.setFieldValue("details", [])
+            Fetch({
+                url: '/invoice/details',
+                options: {
+                    authToken: token,
+                    params: {
+                        where: JSON.stringify({
+                            supplierId: form.values.supplierId,
+                            invoiceId: form.values.invoiceId,
+                            poId: form.values.poId,
+                        }),
+                        select: JSON.stringify({
+                            rm: {
                                 select: {
-                                    rm: {
-                                        select: {
-                                            id: true,
-                                            description: true,
-                                            dtplCode: true,
-                                        },
-                                    },
-                                    quantity: true,
+                                    id: true,
+                                    description: true,
+                                    dtplCode: true,
                                 },
                             },
+                            quantity: true,
                         }),
                     },
                 },
             })
-                .then((data) => data[0]['invoiceDetails'])
                 .then(
                     async (
                         data: {
@@ -363,61 +323,48 @@ const PurchaseOrder = () => {
                         }[]
                     ) => {
                         return data.map((d) => {
-                            if (form.values.poId) {
-                                const poDetails = po
-                                    ?.find(({ id }) => id === form.values.poId)
-                                    ?.poDetails.find(
-                                        ({ rmId }) => rmId === d.rm.id
-                                    )
-                                if (poDetails) {
-                                    return {
-                                        rmId: d.rm.id,
-                                        description: d.rm.description,
-                                        dtplCode: d.rm.dtplCode,
-                                        rejectedQuantity: 0,
-                                        acceptedQuantity: d.quantity,
-                                        quantity: d.quantity,
-                                        poQuantity: poDetails.quantity,
-                                        poPrice: poDetails.price,
-                                        poApprovedQuantity:
-                                            po
-                                                ?.find(
-                                                    ({ id }) =>
-                                                        id === form.values.poId
-                                                )
-                                                ?.inwardsPoPending.filter(
-                                                    (inwards) =>
-                                                        inwards.status ===
-                                                            'Accepted' &&
-                                                        inwards.rmId === d.rm.id
-                                                )
-                                                .reduce(
-                                                    (qty, inwards) =>
-                                                        inwards.quantity + qty,
-                                                    0
-                                                ) || 0,
-                                    }
+                            const poDetails = po
+                                ?.find(({ id }) => id === form.values.poId)
+                                ?.poDetails.find(
+                                    ({ rmId }) => rmId === d.rm.id
+                                )
+                                return {
+                                    rmId: d.rm.id,
+                                    description: d.rm.description,
+                                    dtplCode: d.rm.dtplCode,
+                                    rejectedQuantity: 0,
+                                    acceptedQuantity: d.quantity,
+                                    quantity: d.quantity,
+                                    poQuantity: poDetails?.quantity,
+                                    poPrice: poDetails?.price,
+                                    poApprovedQuantity:
+                                        po
+                                            ?.find(
+                                                ({ id }) =>
+                                                    id === form.values.poId
+                                            )
+                                            ?.inwardsPoPending.filter(
+                                                (inwards) =>
+                                                    inwards.status ===
+                                                        'Accepted' &&
+                                                    inwards.rmId === d.rm.id
+                                            )
+                                            .reduce(
+                                                (qty, inwards) =>
+                                                    inwards.quantity + qty,
+                                                0
+                                            ) || 0,
                                 }
-                            }
-                            return {
-                                rmId: d.rm.id,
-                                description: d.rm.description,
-                                dtplCode: d.rm.dtplCode,
-                                rejectedQuantity: 0,
-                                quantity: d.quantity,
-                                acceptedQuantity: d.quantity,
-                                poQuantity: 0,
-                                poApprovedQuantity: 0,
-                                poPrice: 0,
-                            }
                         })
                     }
-                ).then(data => data.filter(d => d.poQuantity > 0))
-            form.setFieldValue('details', data)
+                )
+                .then(data => {
+                    form.setFieldValue('details', data)
+                })
         } catch (e) {
             setError((e as Error).message)
         }
-    }
+    }, [form.values.invoiceId])
 
     useEffect(() => {
         getSupplier()
@@ -552,12 +499,6 @@ const PurchaseOrder = () => {
                     data={supplier ? supplier : []}
                     withAsterisk
                     {...form.getInputProps('supplierId')}
-                    onChange={(value) => {
-                        if (value) {
-                            form.setFieldValue('supplierId', value)
-                            updateSupplier(value)
-                        }
-                    }}
                 />
                 <FormSelect
                     name="poId"
@@ -567,12 +508,6 @@ const PurchaseOrder = () => {
                     data={po ? po : []}
                     withAsterisk
                     {...form.getInputProps('poId')}
-                    onChange={(value) => {
-                        if (value) {
-                            form.setFieldValue('poId', value)
-                            updatePoValues()
-                        }
-                    }}
                 />
                 <FormSelect
                     name="invoiceId"
@@ -582,12 +517,6 @@ const PurchaseOrder = () => {
                     data={invoice ? invoice : []}
                     withAsterisk
                     {...form.getInputProps('invoiceId')}
-                    onChange={(value) => {
-                        if (value) {
-                            form.setFieldValue('invoiceId', value)
-                            getRawMaterials(value)
-                        }
-                    }}
                 />
                 <FormInputText
                     name="status"
