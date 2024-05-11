@@ -124,20 +124,13 @@ function ById() {
             const query = {
                 where: JSON.stringify({
                     rmId: selectedRm.rm.id,
-                    AND: [
-                        {
-                            createdAt: {
-                                gte: dayjs(value[0]).startOf('d').toISOString(),
-                            },
-                        },
-                        {
-                            createdAt: {
-                                lte: dayjs(value[1]).endOf('d').toISOString(),
-                            },
-                        },
-                    ],
+                    createdAt: {
+                        gte: dayjs(value[0]).startOf('d').toISOString(),
+                        lte: dayjs(value[1]).endOf('d').toISOString(),
+                    },
                 }),
             }
+            // TODO: Add excess on line entries
 
             const production = await Fetch({
                 url: '/outwards/productionlog',

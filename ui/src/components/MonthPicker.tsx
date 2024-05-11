@@ -10,7 +10,7 @@ interface DatePickerInterface extends MonthPickerInputProps {
 const MDatePicker = ({ xs, ...props }: DatePickerInterface) => {
     return (
         <Grid.Col xs={xs}>
-            <MonthPickerInput valueFormat="MM" {...props} />
+            <MonthPickerInput {...props} />
         </Grid.Col>
     )
 }
