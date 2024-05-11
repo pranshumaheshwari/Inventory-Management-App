@@ -1,10 +1,11 @@
-import { Box, Grid, Skeleton, Text } from '@mantine/core'
+import { Box, Button, Grid, Stepper, Text } from '@mantine/core'
 import { CellClassParams, ColDef, ValueGetterParams } from 'ag-grid-community'
-import { Fetch, useAuth } from '../../../services'
-import React, { useEffect, useMemo, useState } from 'react'
-
-import { Table } from '../../../components'
+import React, { useMemo, useState } from 'react'
+import { DateValue } from '@mantine/dates'
 import dayjs from 'dayjs'
+
+import { Fetch, useAuth } from '../../../services'
+import { Table, MonthPicker } from '../../../components'
 
 interface RecordInterface {
     id: string
@@ -30,12 +31,21 @@ function ManPower() {
         token: { token, user },
     } = useAuth()
     const [error, setError] = useState('')
+    const [activeStep, setActiveStep] = useState(0)
+    const [value, setValue] = useState<DateValue>(new Date())
+    const handleNext = () => {
+        setActiveStep((prevActiveStep) => prevActiveStep + 1)
+    }
+
+    const handleBack = () => {
+        setActiveStep((prevActiveStep) => prevActiveStep - 1)
+    }
     const [records, setRecords] = useState<RecordInterface[]>([])
     const [bottomPinnedData, setBottomPinnedData] = useState<
         BottomRecordInterface[]
     >([])
 
-    const getEfficiencyCodedData = (efficiency: number) => {
+    const getEfficiencyCodedData = (efficiency: number): string => {
         if (efficiency >= 100 && efficiency < 110) {
             return (
                 'E (' + efficiency.toFixed(2) + ')'
@@ -56,6 +66,8 @@ function ManPower() {
             return (
                 'A (' + efficiency.toFixed(2) + ')'
             )
+        } else if (efficiency === 0) {
+            return `0`
         } else {
             return (
                 'F (' + efficiency.toFixed(2) + ')'
@@ -97,8 +109,9 @@ function ManPower() {
             { field: 'id', headerName: 'Part Number', pinned: 'left' },
             { field: 'description', headerName: 'Description' },
             { field: 'category', headerName: 'Category' },
-            ...[...Array(dayjs().date()).keys()].map((_d, idx) => ({
+            ...[...Array(value ? (dayjs(value).daysInMonth()) : 0).keys()].map((_d, idx) => ({
                 field: (idx + 1).toString(),
+                // TODO: Set column as numberType
                 valueGetter: (params: ValueGetterParams<RecordInterface>) => {
                     if (params.node?.rowPinned) {
                         return params.data
@@ -121,9 +134,16 @@ function ManPower() {
                 field: 'totalQuantity',
                 headerName: 'Total Production',
                 pinned: 'right',
+                type: 'numberColumn',
+                valueFormatter: ({ data, value }) => {
+                    if (data?.id === 'Efficiency (%)') {
+                        return getEfficiencyCodedData(data.totalQuantity)
+                    }
+                    return value.toFixed(2)
+                },
                 cellStyle: ({ data, value }) => {
                     if (data?.id === 'Efficiency (%)') {
-                        return getEfficiencyCodedColour(value)
+                        return getEfficiencyCodedColour(getEfficiencyCodedData(value))
                     }
                     return null
                 },
@@ -152,7 +172,7 @@ function ManPower() {
             })
         }
         return def
-    }, [])
+    }, [value])
 
     const fetchRecords = async () => {
         try {
@@ -169,12 +189,8 @@ function ManPower() {
                             production: {
                                 where: {
                                     createdAt: {
-                                        gte: dayjs()
-                                            .startOf('month')
-                                            .toISOString(),
-                                        lte: dayjs()
-                                            .endOf('month')
-                                            .toISOString(),
+                                        gte: dayjs(value).startOf('M').startOf('d').toISOString(),
+                                        lte: dayjs(value).endOf('M').endOf('d').toISOString(),
                                     },
                                 },
                                 select: {
@@ -199,7 +215,7 @@ function ManPower() {
                             0
                         ),
                         productionQuantity: [
-                            ...Array(dayjs().date()).keys(),
+                            ...Array(dayjs(value).daysInMonth()).keys(),
                         ].map((_ini, idx) =>
                             d.production.reduce((prevVal, curVal) => {
                                 if (
@@ -226,8 +242,8 @@ function ManPower() {
                         }),
                         where: JSON.stringify({
                             date: {
-                                gte: dayjs().startOf('month').toISOString(),
-                                lte: dayjs().endOf('month').toISOString(),
+                                gte: dayjs(value).startOf('M').startOf('d').toISOString(),
+                                lte: dayjs(value).endOf('M').endOf('d').toISOString(),
                             },
                         }),
                     },
@@ -294,7 +310,8 @@ function ManPower() {
                     category: '',
                     description: '',
                     manPower: '',
-                    totalQuantity: getEfficiencyCodedData(
+                    totalQuantity: 
+                    // getEfficiencyCodedData(
                         parseFloat(
                             (
                                 (data.reduce(
@@ -308,7 +325,7 @@ function ManPower() {
                                     )) *
                                 100
                             ).toFixed(2)
-                        )
+                        // )
                     ),
                     ...Object.fromEntries(
                         data[0].productionQuantity.map((_pq, idx) => [
@@ -355,40 +372,99 @@ function ManPower() {
                         (prevVal, curVal) =>
                             prevVal + curVal.totalQuantity * curVal.manPower,
                         0
-                    ).toFixed(2),
+                    ),
                 })
             }
 
-            setRecords(data)
+            setRecords(data.filter(d => 
+                d.productionQuantity.reduce((prevVal, curVal) => prevVal + curVal, 0) > 0)
+            )
             setBottomPinnedData(bottomData)
         } catch (e) {
             setError((e as Error).message)
         }
     }
 
-    useEffect(() => {
-        fetchRecords()
-    }, [])
-
-    if (!records) {
-        return <Skeleton width="90vw" height="100%" />
-    }
-
     return (
         <Grid>
-            <Grid.Col xs={12}>
-                <Box h="70vh" w="100%">
-                    <Table<RecordInterface>
-                        columnDefs={columnDefs}
-                        rowData={records}
-                        pinnedBottomRowData={bottomPinnedData}
-                    />
-                </Box>
+            <Grid.Col xs={3} />
+            <Grid.Col xs={6}>
+                <Stepper active={activeStep} onStepClick={setActiveStep}>
+                    {['Inputs', 'Report'].map((label, index) => {
+                        return <Stepper.Step key={label} label={label} />
+                    })}
+                </Stepper>
             </Grid.Col>
+            <Grid.Col xs={3} />
+            {activeStep === 0 && (
+                <>
+                    <Grid.Col xs={3} />
+                    <MonthPicker
+                        xs={6}
+                        name="dateRange"
+                        label="Select Date Range"
+                        clearable
+                        value={value}
+                        onChange={setValue}
+                    />
+                    <Grid.Col xs={3} />
+                    <Grid.Col xs={3} />
+
+                    <Grid.Col xs={6}>
+                        <Button
+                            disabled={!value}
+                            fullWidth
+                            size="md"
+                            variant="filled"
+                            color="primary"
+                            onClick={() => {
+                                fetchRecords()
+                                handleNext()
+                            }}
+                        >
+                            Next
+                        </Button>
+                    </Grid.Col>
+                    <Grid.Col xs={3} />
+                </>
+            )}
+            {activeStep === 1 && (
+                <>
+                    <Grid.Col xs={12}>
+                        <Box h="70vh" w="100%">
+                            <Table<RecordInterface>
+                                columnDefs={columnDefs}
+                                rowData={records}
+                                pinnedBottomRowData={bottomPinnedData}
+                            />
+                        </Box>
+                    </Grid.Col>
+                </>
+            )}
             {error && (
                 <Grid.Col xs={12}>
                     <Text c="red">{error}</Text>
                 </Grid.Col>
+            )}
+            {activeStep === 1 && (
+                <>
+                    <Grid.Col xs={3} />
+                    <Grid.Col xs={6}>
+                        <Button
+                            fullWidth
+                            size="md"
+                            variant="default"
+                            onClick={() => {
+                                handleBack()
+                                setError("")
+                                setRecords([])
+                            }}
+                        >
+                            Back
+                        </Button>
+                    </Grid.Col>
+                    <Grid.Col xs={3} />
+                </>
             )}
         </Grid>
     )

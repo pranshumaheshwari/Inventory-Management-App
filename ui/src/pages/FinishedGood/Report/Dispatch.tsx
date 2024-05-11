@@ -55,18 +55,10 @@ function DispatchReport() {
         try {
             const query = {
                 where: JSON.stringify({
-                    AND: [
-                        {
-                            createdAt: {
-                                gte: dayjs(value[0]).startOf('d').toISOString(),
-                            },
-                        },
-                        {
-                            createdAt: {
-                                lte: dayjs(value[1]).endOf('d').toISOString(),
-                            },
-                        },
-                    ],
+                    createdAt: {
+                        gte: dayjs(value[0]).startOf('d').toISOString(),
+                        lte: dayjs(value[1]).endOf('d').toISOString(),
+                    },
                 }),
             }
 
