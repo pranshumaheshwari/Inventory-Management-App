@@ -410,6 +410,7 @@ const Form = () => {
                             placeholder="Select Status"
                             defaultValue="Open"
                             data={['Open', 'Closed']}
+                            disabled
                             {...form.getInputProps('status')}
                         />
                         <Grid.Col xs={12}>
