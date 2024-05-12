@@ -95,13 +95,6 @@ function Table<Type>({
                         getContextMenuItems={getContextMenuItems}
                         defaultExcelExportParams={{
                             fileName: fileName ? fileName + '.xlsx' : 'export.xlsx',
-                            columnKeys: columnDefs
-                                ?.filter(
-                                    (column: ColDef<Type>) => column.field !== '#'
-                                )
-                                .map((column: ColDef<Type>) =>
-                                    column.field ? column.field : ''
-                                ),
                         }}
                         {...otherProps}
                     />

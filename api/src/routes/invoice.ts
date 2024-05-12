@@ -120,32 +120,45 @@ app.put('/', async (req: Request, res: Response) => {
                 supplierId,
                 status,
                 invoiceDetails: {
-                    updateMany: await invoiceDetails.map(
-                        ({
-                            rmId,
-                            quantity,
-                            poId,
-                        }: {
-                            poId: string
-                            rmId: string
-                            quantity: number
-                        }) => {
-                            return {
-                                where: {
-                                    invoiceId: id,
-                                    supplierId,
-                                    rmId,
-                                },
-                                data: {
-                                    quantity,
-                                    poId,
-                                },
-                            }
-                        }
-                    ),
+                    // updateMany: await invoiceDetails.map(
+                    //     ({
+                    //         rmId,
+                    //         quantity,
+                    //         poId,
+                    //     }: {
+                    //         poId: string
+                    //         rmId: string
+                    //         quantity: number
+                    //     }) => {
+                    //         return {
+                    //             where: {
+                    //                 invoiceId: id,
+                    //                 supplierId,
+                    //                 rmId,
+                    //             },
+                    //             data: {
+                    //                 quantity,
+                    //                 poId,
+                    //             },
+                    //         }
+                    //     }
+                    // ),
                     createMany: {
-                        data: invoiceDetails,
-                        skipDuplicates: true,
+                        data: invoiceDetails.map(
+                            ({
+                                rmId,
+                                quantity,
+                                poId,
+                            }: {
+                                poId: string
+                                rmId: string
+                                quantity: number
+                            }) => ({
+                                rmId,
+                                quantity,
+                                poId,
+                            })
+                        ),
                     },
                 },
             },
