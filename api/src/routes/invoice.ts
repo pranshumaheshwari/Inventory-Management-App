@@ -144,7 +144,21 @@ app.put('/', async (req: Request, res: Response) => {
                         }
                     ),
                     createMany: {
-                        data: invoiceDetails,
+                        data: invoiceDetails.map(
+                            ({
+                                rmId,
+                                quantity,
+                                poId,
+                            }: {
+                                poId: string
+                                rmId: string
+                                quantity: number
+                            }) => ({
+                                rmId,
+                                quantity,
+                                poId,
+                            })
+                        ),
                         skipDuplicates: true,
                     },
                 },
