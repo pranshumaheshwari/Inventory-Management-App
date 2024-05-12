@@ -10,8 +10,8 @@ import {
 } from '@mantine/core'
 import {
     DatePicker,
+    FormAutocomplete,
     FormInputNumber,
-    FormInputText,
     FormSelect,
     Table,
 } from '../../../../components'
@@ -46,6 +46,7 @@ const Form = () => {
     const [activeStep, setActiveStep] = React.useState(0)
     const [rawmaterial, setRawmaterial] = useState<SelectItem[]>([])
     const [purchaseOrders, setPurchaseOrders] = useState<SelectItem[]>([])
+    const [invoices, setInvoices] = useState<string[]>([])
     const [supplier, setSupplier] = useState<{ value: string }[] | null>()
     const [error, setError] = useState('')
     let initialValues: InvoiceInterfaceForm = {
@@ -122,10 +123,11 @@ const Form = () => {
 
     const onSubmit = async (values: InvoiceInterfaceForm) => {
         try {
-            const resp = await Fetch({
+            const isPut = isEdit || invoices.includes(values.id)
+            await Fetch({
                 url: '/invoice',
                 options: {
-                    method: isEdit ? 'PUT' : 'POST',
+                    method: isPut ? 'PUT' : 'POST',
                     body: values,
                     authToken: token,
                 },
@@ -134,8 +136,8 @@ const Form = () => {
                 title: 'Success',
                 message: (
                     <Text>
-                        Successfully {isEdit ? 'updated' : 'created'} invoice{' '}
-                        {resp[0].id}
+                        Successfully {isPut ? 'updated' : 'created'} invoice{' '}
+                        {values.id}
                     </Text>
                 ),
                 color: 'green',
@@ -188,41 +190,6 @@ const Form = () => {
                 }))
             })
             setSupplier(data)
-        } catch (e) {
-            setError((e as Error).message)
-        }
-    }
-
-    const updateSupplier = async (supplierId: string) => {
-        try {
-            await Fetch({
-                url: '/rawmaterial',
-                options: {
-                    authToken: token,
-                    params: {
-                        select: JSON.stringify({
-                            id: true,
-                            description: true,
-                            dtplCode: true,
-                            category: true,
-                        }),
-                        where: JSON.stringify({
-                            supplierId,
-                        }),
-                    },
-                },
-            })
-                .then((data) =>
-                    data.map((d: Partial<RawMaterialInterface>) => ({
-                        ...d,
-                        value: d.id,
-                        label: d.description,
-                        group: d.category,
-                    }))
-                )
-                .then((data) => {
-                    setRawmaterial(data)
-                })
         } catch (e) {
             setError((e as Error).message)
         }
@@ -284,6 +251,65 @@ const Form = () => {
     useEffect(() => {
         getSupplier()
     }, [])
+
+    useEffect(() => {
+        try {
+            Promise.all(
+                [
+                Fetch({
+                    url: '/invoice',
+                    options: {
+                        authToken: token,
+                        params: {
+                            select: JSON.stringify({
+                                id: true,
+                            }),
+                            where: JSON.stringify({
+                                supplierId: form.values.supplierId,
+                                status: "Open",
+                            }),
+                        },
+                    },
+                })
+                    .then((data) =>
+                        data.map((d: Partial<InvoiceInterface>) =>d.id)
+                    )
+                    .then((data) => {
+                        setInvoices(data)
+                    }),
+                Fetch({
+                    url: '/rawmaterial',
+                    options: {
+                        authToken: token,
+                        params: {
+                            select: JSON.stringify({
+                                id: true,
+                                description: true,
+                                dtplCode: true,
+                                category: true,
+                            }),
+                            where: JSON.stringify({
+                                supplierId: form.values.supplierId,
+                            }),
+                        },
+                    },
+                })
+                    .then((data) =>
+                        data.map((d: Partial<RawMaterialInterface>) => ({
+                            ...d,
+                            value: d.id,
+                            label: d.description,
+                            group: d.category,
+                        }))
+                    )
+                    .then((data) => {
+                        setRawmaterial(data)
+                    })
+            ])
+        } catch (e) {
+            setError((e as Error).message)
+        }
+    }, [form.values.supplierId])
 
     const detailsColumnDef = useMemo<
         ColDef<InvoiceInterfaceForm['invoiceDetails'][number]>[]
@@ -380,14 +406,9 @@ const Form = () => {
                             data={supplier}
                             withAsterisk
                             {...form.getInputProps('supplierId')}
-                            onChange={(value) => {
-                                if (value) {
-                                    form.setFieldValue('supplierId', value)
-                                    updateSupplier(value)
-                                }
-                            }}
                         />
-                        <FormInputText
+                        <FormAutocomplete
+                            data={invoices}
                             name="id"
                             xs={4}
                             type="text"
