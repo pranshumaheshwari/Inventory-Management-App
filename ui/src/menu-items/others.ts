@@ -9,6 +9,14 @@ const others: ItemInterface[] = [
         urls: ['/bulkUpdate'],
         allowedTypes: ['ppc'],
     },
+    {
+        id: 'group-delete',
+        title: 'Delete Entries',
+        type: 'item',
+        url: '/delete',
+        urls: ['/delete'],
+        onlyAdmin: true,
+    }
 ]
 
 export default others

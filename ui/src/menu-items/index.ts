@@ -21,6 +21,7 @@ export interface ItemInterface {
     disabled?: boolean
     urls?: string[]
     allowedTypes?: string[]
+    onlyAdmin?: boolean
 }
 
 export interface MenuItemsInterface {

@@ -108,6 +108,9 @@ const AttendanceReport = Loadable(
 const BulkUpdate = Loadable(
     lazy(() => import('../pages/BulkUpdate/BulkUpdate'))
 )
+const Delete = Loadable(
+    lazy(() => import('../pages/Delete/Delete'))
+)
 
 const MainRoutes: RouteObject = {
     path: '/',
@@ -404,6 +407,17 @@ const MainRoutes: RouteObject = {
             element: <BulkUpdate />,
         },
     ],
+}
+
+export const AdminRoutes: RouteObject = {
+    path: '/',
+    element: <MainLayout />,
+    children: [
+        {
+            path: 'delete',
+            element: <Delete />,
+        },
+    ]
 }
 
 export default MainRoutes

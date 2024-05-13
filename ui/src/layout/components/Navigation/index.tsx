@@ -2,19 +2,20 @@ import NavGroup from './NavGroup'
 import NavItem from './NavItem'
 import { ScrollArea } from '@mantine/core'
 import menuItem from '../../../menu-items'
+import { useAuth } from '../../../services'
 
 const Navigation = () => {
-
+    const {
+        token: { user },
+    } = useAuth()
+    const isAdmin = user.type === "admin"
     const navGroups = menuItem.items
-        // .filter((item) => {
-        //     if (
-        //         user.type === 'admin' ||
-        //         item.allowedTypes?.includes(user.type)
-        //     ) {
-        //         return true
-        //     }
-        //     return false
-        // })
+        .filter((item) => {
+            if (!isAdmin) {
+                return !item.onlyAdmin
+            }
+            return true
+        })
         .map((item) => {
             switch (item.type) {
                 case 'group':
