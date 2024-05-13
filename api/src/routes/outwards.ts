@@ -103,39 +103,56 @@ app.post('/production', async (req: Request, res: Response) => {
     }
 })
 
-app.put('/production/:id', async (req: Request, res: Response) => {
-    const { fgId, soId, quantity, createdAt } = req.body
-
-    const { id } = req.params
-
-    try {
-        const result = await PrismaService.production.update({
-            where: {
-                id: parseInt(id),
-            },
-            data: {
-                fgId,
-                soId,
-                quantity,
-                createdAt,
-            },
-        })
-        res.json(result)
-    } catch (e) {
-        res.status(500).json({
-            message: (e as Error).message,
-        })
-    }
-})
-
 app.delete('/production/:id', async (req: Request, res: Response) => {
-    const { id } = req.params
+    const id = parseInt(req.params.id)
     try {
-        const result = await PrismaService.production.delete({
+        const {fgId, quantity, status} = await PrismaService.production.findUniqueOrThrow({
             where: {
-                id: parseInt(id),
+                id
+            },
+            select: {
+                fgId: true,
+                quantity: true,
+                status: true
+            }
+        })
+        if (status !== "PendingOqcVerification") {
+            throw new Error("Production status is not 'PendingOqcVerification'")
+        }
+        const bom = await PrismaService.bom.findMany({
+            where: {
+                fgId: fgId,
             },
         })
+        const result = await PrismaService.$transaction([
+            PrismaService.production.delete({
+                where: {
+                    id
+                }
+            }),
+            PrismaService.fg.update({
+                where: {
+                    id: fgId,
+                },
+                data: {
+                    oqcPendingStock: {
+                        decrement: quantity,
+                    },
+                },
+            }),
+            ...bom.map((bom) => {
+                return PrismaService.rm.update({
+                    where: {
+                        id: bom.rmId,
+                    },
+                    data: {
+                        lineStock: {
+                            increment: quantity * bom.quantity,
+                        },
+                    },
+                })
+            }),
+        ])
         res.json(result)
     } catch (e) {
         res.status(500).json({
