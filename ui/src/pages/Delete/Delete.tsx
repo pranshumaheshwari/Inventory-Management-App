@@ -83,6 +83,8 @@ export default function Delete() {
                     data={[
                         "attendance",
                         "outwards/production",
+                        "outwards/oqc",
+                        "outwards/dispatch",
                     ]}
                     withAsterisk
                     {...form.getInputProps('path')}
