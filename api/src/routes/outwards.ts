@@ -200,14 +200,13 @@ app.get('/dispatch', async (req: Request, res: Response) => {
 })
 
 app.post('/oqc/accept', async (req: Request, res: Response) => {
-    const { fgId, quantity, productionId, createdAt } = req.body
+    const { fgId, quantity, productionId } = req.body
 
     try {
         const result = await PrismaService.$transaction([
             PrismaService.outwardsQualityCheck.create({
                 data: {
                     quantity,
-                    createdAt,
                     fgId,
                     productionId,
                     user: req.user ? req.user.username : '',
@@ -331,75 +330,48 @@ app.post('/dispatch', async (req: Request, res: Response) => {
     }
 })
 
-app.put('/oqc/:id', async (req: Request, res: Response) => {
-    const { fgId, quantity, productionId, createdAt } = req.body
-
-    const { id } = req.params
-
+app.delete('/oqc/:id', async (req: Request, res: Response) => {
+    const id = parseInt(req.params.id)
     try {
-        const result = await PrismaService.outwardsQualityCheck.update({
+        const {fgId, quantity, status, productionId} = await PrismaService.outwardsQualityCheck.findUniqueOrThrow({
             where: {
-                id: parseInt(id),
-            },
-            data: {
-                fgId,
-                quantity,
-                createdAt,
-                productionId,
-            },
+                id
+            }
         })
-        res.json(result)
-    } catch (e) {
-        res.status(500).json({
-            message: (e as Error).message,
-        })
-    }
-})
-
-app.put(
-    '/dispatch/:invoiceNumber/:fgId',
-    async (req: Request, res: Response) => {
-        const {
-            quantity,
-            createdAt,
-            fgId: updatedFgId,
-            invoiceNumber: updatedInvoiceNumber,
-        } = req.body
-
-        const { fgId, invoiceNumber } = req.params
-
-        try {
-            const result = await PrismaService.dispatch.update({
+        const result = await PrismaService.$transaction([
+            PrismaService.production.update({
                 where: {
-                    invoiceNumber_fgId: {
-                        fgId,
-                        invoiceNumber,
-                    },
+                    id: productionId
                 },
                 data: {
-                    quantity,
-                    createdAt,
-                    fgId: updatedFgId,
-                    invoiceNumber: updatedInvoiceNumber,
+                    status: "PendingOqcVerification"
+                }
+            }),
+            PrismaService.outwardsQualityCheck.delete({
+                where: {
+                    id
+                }
+            }),
+            PrismaService.fg.update({
+                where: {
+                    id: fgId,
                 },
-            })
-            res.json(result)
-        } catch (e) {
-            res.status(500).json({
-                message: (e as Error).message,
-            })
-        }
-    }
-)
-
-app.delete('/oqc/:id', async (req: Request, res: Response) => {
-    const { id } = req.params
-    try {
-        const result = await PrismaService.outwardsQualityCheck.delete({
-            where: {
-                id: parseInt(id),
-            },
-        })
+                data: {
+                    oqcPendingStock: {
+                        increment: quantity,
+                    },
+                    ...(status === "Accepted" ? {
+                        storeStock: {
+                            decrement: quantity
+                        }
+                    } : {
+                        oqcRejectedStock: {
+                            decrement: quantity
+                        }
+                    }) 
+                },
+            }),
+        ])
         res.json(result)
     } catch (e) {
         res.status(500).json({
@@ -408,26 +380,67 @@ app.delete('/oqc/:id', async (req: Request, res: Response) => {
     }
 })
 
-app.delete(
-    '/dispatch/:invoiceNumber/:fgId',
-    async (req: Request, res: Response) => {
-        const { invoiceNumber, fgId } = req.params
-        try {
-            const result = await PrismaService.dispatch.delete({
-                where: {
-                    invoiceNumber_fgId: {
-                        fgId,
-                        invoiceNumber,
-                    },
-                },
-            })
-            res.json(result)
-        } catch (e) {
-            res.status(500).json({
-                message: (e as Error).message,
-            })
+app.delete('/dispatch/:invoiceNumber', async (req: Request, res: Response) => {
+    const {invoiceNumber} = req.params
+    try {
+        const details = await PrismaService.dispatch.findMany({
+            where: {
+                invoiceNumber
+            },
+            select: {
+                fgId: true,
+                quantity: true
+            }
+        })
+        if (details.length === 0) {
+            throw new Error("Invalid invoice for dispatch")
         }
+        const result = await PrismaService.$transaction([
+            PrismaService.dispatch.deleteMany({
+                where: {
+                    invoiceNumber
+                }
+            }),
+            ...(await details.map(
+                ({ fgId, quantity }: { fgId: string; quantity: number }) =>
+                    PrismaService.fg.update({
+                        where: {
+                            id: fgId,
+                        },
+                        data: {
+                            storeStock: {
+                                increment: quantity,
+                            },
+                        },
+                    })
+            )),
+        ])
+        res.json(result)
+    } catch (e) {
+        res.status(500).json({
+            message: (e as Error).message,
+        })
     }
-)
+})
+
+
+app.delete('/dispatch/:invoiceNumber/:fgId', async (req: Request, res: Response) => {
+    const { invoiceNumber, fgId } = req.params
+    try {
+        const result = await PrismaService.dispatch.delete({
+            where: {
+                invoiceNumber_fgId: {
+                    fgId,
+                    invoiceNumber,
+                },
+            },
+        })
+        res.json(result)
+    } catch (e) {
+        res.status(500).json({
+            message: (e as Error).message,
+        })
+    }   
+})
 
 export default app
