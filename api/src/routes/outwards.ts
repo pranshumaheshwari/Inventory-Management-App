@@ -199,42 +199,67 @@ app.get('/dispatch', async (req: Request, res: Response) => {
     res.json(data)
 })
 
+const oqcVerificationHelper = async (fgId: string, productionId: number, quantity: number, status: typeof OutwardsStatus.RejectedOqcVerification | typeof OutwardsStatus.Accepted, username: string) => {
+    return await PrismaService.$transaction(async (tx) => {
+        const production = await tx.production.findUniqueOrThrow({
+                where: {
+                id: productionId
+                },
+            select: {
+                status: true
+            }
+        })
+        if (production.status !== OutwardsStatus.PendingOqcVerification) {
+            throw new Error(`${productionId} for ${fgId} status is not ${OutwardsStatus.PendingOqcVerification}`)
+        }
+        const data = await tx.production.update({
+                where: {
+                id: productionId
+                },
+                data: {
+                status: status,
+                fg: {
+                    update: {
+                    oqcPendingStock: {
+                        decrement: quantity,
+                    },
+                        oqcRejectedStock: {
+                            increment: status === OutwardsStatus.RejectedOqcVerification ? quantity : 0,
+                        },
+                    storeStock: {
+                            increment: status === OutwardsStatus.Accepted ? quantity : 0,
+                    },
+                },
+                },
+                outwardsQualityCheck: {
+                    create: {
+                        quantity,
+                        fgId,
+                        user: username,
+                        status,
+                    }
+                }
+            },
+            select: {
+                fg: {
+                    select: {
+                        oqcPendingStock: true,
+                    }
+                }
+            }
+        })
+        if (data.fg.oqcPendingStock < 0) {
+            throw new Error(`When setting ${productionId} status to ${status}, ${fgId} oqcPendingStock will be not valid ${data.fg.oqcPendingStock}`)
+        }
+        return data
+    })
+}
+
 app.post('/oqc/accept', async (req: Request, res: Response) => {
     const { fgId, quantity, productionId } = req.body
 
     try {
-        const result = await PrismaService.$transaction([
-            PrismaService.outwardsQualityCheck.create({
-                data: {
-                    quantity,
-                    fgId,
-                    productionId,
-                    user: req.user ? req.user.username : '',
-                },
-            }),
-            PrismaService.production.update({
-                where: {
-                    id: productionId,
-                },
-                data: {
-                    status: 'Accepted',
-                },
-            }),
-            PrismaService.fg.update({
-                where: {
-                    id: fgId,
-                },
-                data: {
-                    oqcPendingStock: {
-                        decrement: quantity,
-                    },
-                    storeStock: {
-                        increment: quantity,
-                    },
-                },
-            }),
-        ])
-
+        const result = await oqcVerificationHelper(fgId, productionId, quantity, OutwardsStatus.Accepted, req.user ? req.user.username : '')
         res.json(result)
     } catch (e) {
         res.status(500).json({
@@ -247,40 +272,7 @@ app.post('/oqc/reject', async (req: Request, res: Response) => {
     const { fgId, quantity, productionId, createdAt } = req.body
 
     try {
-        const result = await PrismaService.$transaction([
-            PrismaService.outwardsQualityCheck.create({
-                data: {
-                    quantity,
-                    createdAt,
-                    fgId,
-                    productionId,
-                    user: req.user ? req.user.username : '',
-                    status: 'RejectedOqcVerification',
-                },
-            }),
-            PrismaService.production.update({
-                where: {
-                    id: productionId,
-                },
-                data: {
-                    status: 'Accepted',
-                },
-            }),
-            PrismaService.fg.update({
-                where: {
-                    id: fgId,
-                },
-                data: {
-                    oqcPendingStock: {
-                        decrement: quantity,
-                    },
-                    oqcRejectedStock: {
-                        increment: quantity,
-                    },
-                },
-            }),
-        ])
-
+        const result = await oqcVerificationHelper(fgId, productionId, quantity, OutwardsStatus.RejectedOqcVerification, req.user ? req.user.username : '')
         res.json(result)
     } catch (e) {
         res.status(500).json({
