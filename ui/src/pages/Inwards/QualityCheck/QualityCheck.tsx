@@ -227,13 +227,16 @@ const QualityCheck = () => {
                     )
                 })
                 .then((data) =>
-                    data.filter(
-                        (value: object, index: number, self: Array<object>) => {
-                            return self.indexOf(value) === index
+                    [...new Map(data.map((item: {
+                        inwardsPoPending: {
+                            invoiceId: string
                         }
-                    )
+                    }) =>
+                        [item.inwardsPoPending.invoiceId, item])).values()]
                 )
-            setInvoice(data)
+            setInvoice(data as {
+                value: string
+            }[])
         } catch (e) {
             setError((e as Error).message)
         }

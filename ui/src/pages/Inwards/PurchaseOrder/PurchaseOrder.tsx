@@ -298,6 +298,7 @@ const PurchaseOrder = () => {
                             supplierId: form.values.supplierId,
                             invoiceId: form.values.invoiceId,
                             poId: form.values.poId,
+                            status: "PendingPoVerification",
                         }),
                         select: JSON.stringify({
                             rm: {
