@@ -1,6 +1,6 @@
 import express, { Request, Response, Router } from 'express'
 
-import { Prisma } from '@prisma/client'
+import { InwardsStatus, Prisma } from '@prisma/client'
 import { PrismaService } from '../service'
 
 const app: Router = express.Router()
@@ -62,6 +62,67 @@ app.get('/verified', async (req: Request, res: Response) => {
     res.json(data)
 })
 
+const poVerificationHelper = async (supplierId: string, invoiceId: string, details: {
+    rmId: string
+    quantity: number
+}[], status: typeof InwardsStatus.RejectedPoVerification | typeof InwardsStatus.Accepted) => {
+    return await PrismaService.$transaction(async (tx) => {
+        return details.map(async ({ rmId, quantity }) => {
+            const invoiceDetails = await tx.invoiceDetails.findUniqueOrThrow({
+                where: {
+                    invoiceId_supplierId_rmId: {
+                        invoiceId,
+                        supplierId,
+                        rmId,
+                    }
+                },
+                select: {
+                    status: true
+                }
+            })
+            if (invoiceDetails.status !== InwardsStatus.PendingPoVerification) {
+                throw new Error(`${invoiceId} status is not ${InwardsStatus.PendingPoVerification}`)
+            }
+            const data = await tx.invoiceDetails.update({
+                where: {
+                    invoiceId_supplierId_rmId: {
+                        rmId,
+                        supplierId,
+                        invoiceId,
+                    },
+                },
+                data: {
+                    status: status,
+                    rm: {
+                        update: {
+                            poPendingStock: {
+                                decrement: quantity,
+                            },
+                            poRejectedStock: {
+                                increment: status === InwardsStatus.RejectedPoVerification ? quantity : 0,
+                            },
+                            iqcPendingStock: {
+                                increment: status === InwardsStatus.Accepted ? quantity : 0,
+                            },
+                        },
+                    },
+                },
+                select: {
+                    rm: {
+                        select: {
+                            poPendingStock: true,
+                        }
+                    }
+                }
+            })
+            if (data.rm.poPendingStock < 0) {
+                throw new Error(`When setting ${invoiceId} status to ${status}, ${rmId} poPendingStock will be not valid ${data.rm.poPendingStock}`)
+            }
+            return data
+        })
+    })
+}
+
 app.put('/rejectPO', async (req: Request, res: Response) => {
     const {
         supplierId,
@@ -76,32 +137,7 @@ app.put('/rejectPO', async (req: Request, res: Response) => {
         }[]
     } = req.body
     try {
-        const result = await PrismaService.$transaction([
-            ...details.map(({ rmId, quantity }) => {
-                return PrismaService.invoiceDetails.update({
-                    where: {
-                        invoiceId_supplierId_rmId: {
-                            rmId,
-                            supplierId,
-                            invoiceId,
-                        },
-                    },
-                    data: {
-                        status: 'RejectedPoVerification',
-                        rm: {
-                            update: {
-                                poPendingStock: {
-                                    decrement: quantity,
-                                },
-                                poRejectedStock: {
-                                    increment: quantity,
-                                },
-                            },
-                        },
-                    },
-                })
-            }),
-        ])
+        const result = await poVerificationHelper(supplierId, invoiceId, details, InwardsStatus.RejectedPoVerification)
         res.json(result)
     } catch (e) {
         res.status(500).json({
@@ -124,39 +160,7 @@ app.put('/acceptPO', async (req: Request, res: Response) => {
         }[]
     } = req.body
     try {
-        const result = await PrismaService.$transaction([
-            ...details.map(({ rmId, quantity }) => {
-                return PrismaService.invoiceDetails.update({
-                    where: {
-                        invoiceId_supplierId_rmId: {
-                            rmId,
-                            supplierId,
-                            invoiceId,
-                        },
-                    },
-                    data: {
-                        status: 'Accepted',
-                        inwardsIQCPending: {
-                            create: {
-                                quantity,
-                                rmId,
-                                user: req.user?.username as string,
-                            },
-                        },
-                        rm: {
-                            update: {
-                                poPendingStock: {
-                                    decrement: quantity,
-                                },
-                                iqcPendingStock: {
-                                    increment: quantity,
-                                },
-                            },
-                        },
-                    },
-                })
-            }),
-        ])
+        const result = await poVerificationHelper(supplierId, invoiceId, details, InwardsStatus.Accepted)
         res.json(result)
     } catch (e) {
         res.status(500).json({
@@ -164,6 +168,69 @@ app.put('/acceptPO', async (req: Request, res: Response) => {
         })
     }
 })
+
+const iqcVerificationHelper = async (details: {
+    rmId: string
+    quantity: number
+    inwardsIQCPendingId: number
+}[], status: typeof InwardsStatus.RejectedIqcVerification | typeof InwardsStatus.Accepted, username: string) => {
+    return await PrismaService.$transaction(async (tx) => {
+        return details.map(async ({ rmId, quantity, inwardsIQCPendingId }) => {
+            const inwardsIQCPending = await tx.inwardsIQCPending.findUniqueOrThrow({
+                where: {
+                    id: inwardsIQCPendingId,
+                },
+                select: {
+                    status: true,
+                }
+            })
+            if (inwardsIQCPending.status !== InwardsStatus.PendingIqcVerification) {
+                throw new Error(`${inwardsIQCPendingId} for ${rmId} status is not ${InwardsStatus.PendingIqcVerification}`)
+            }
+            const data = await tx.inwardsIQCPending.update({
+                where: {
+                    id: inwardsIQCPendingId,
+                },
+                data: {
+                    status: status,
+                    rm: {
+                        update: {
+                            iqcPendingStock: {
+                                decrement: quantity,
+                            },
+                            iqcRejectedStock: {
+                                increment: status === InwardsStatus.RejectedIqcVerification ? quantity : 0,
+                            },
+                            storeStock: {
+                                increment: status === InwardsStatus.Accepted ? quantity : 0,
+                            },
+                        },
+                    },
+                    ...(status === InwardsStatus.Accepted ? {
+                        inwardsVerified: {
+                            create: {
+                                quantity,
+                                rmId,
+                                user: username
+                            },
+                        },
+                    } : {})
+                },
+                select: {
+                    rm: {
+                        select: {
+                            iqcPendingStock: true,
+                        }
+                    }
+                }
+            })
+            if (data.rm.iqcPendingStock < 0) {
+                throw new Error(`When setting ${inwardsIQCPendingId} status to ${status}, ${rmId} iqcPendingStock will be not valid ${data.rm.iqcPendingStock}`)
+            }
+            return data
+        })
+    })
+}
 
 app.put('/rejectIQCs', async (req: Request, res: Response) => {
     const {
@@ -178,28 +245,7 @@ app.put('/rejectIQCs', async (req: Request, res: Response) => {
     } = req.body
 
     try {
-        const result = await PrismaService.$transaction([
-            ...details.map(({ quantity, inwardsIQCPendingId }) => {
-                return PrismaService.inwardsIQCPending.update({
-                    where: {
-                        id: inwardsIQCPendingId,
-                    },
-                    data: {
-                        status: 'RejectedIqcVerification',
-                        rm: {
-                            update: {
-                                iqcPendingStock: {
-                                    decrement: quantity,
-                                },
-                                iqcRejectedStock: {
-                                    increment: quantity,
-                                },
-                            },
-                        },
-                    },
-                })
-            }),
-        ])
+        const result = await iqcVerificationHelper(details, InwardsStatus.RejectedIqcVerification, req.user?.username as string)
         res.json(result)
     } catch (e) {
         res.status(500).json({
@@ -220,118 +266,7 @@ app.put('/acceptIQCs', async (req: Request, res: Response) => {
     } = req.body
 
     try {
-        const result = await PrismaService.$transaction([
-            ...details.map(({ rmId, quantity, inwardsIQCPendingId }) => {
-                return PrismaService.inwardsIQCPending.update({
-                    where: {
-                        id: inwardsIQCPendingId,
-                    },
-                    data: {
-                        status: 'Accepted',
-                        rm: {
-                            update: {
-                                iqcPendingStock: {
-                                    decrement: quantity,
-                                },
-                                storeStock: {
-                                    increment: quantity,
-                                },
-                            },
-                        },
-                        inwardsVerified: {
-                            create: {
-                                quantity,
-                                rmId,
-                                user: req.user?.username as string,
-                            },
-                        },
-                    },
-                })
-            }),
-        ])
-        res.json(result)
-    } catch (e) {
-        res.status(500).json({
-            message: (e as Error).message,
-        })
-    }
-})
-
-app.put('/acceptIQC', async (req: Request, res: Response) => {
-    const {
-        rmId,
-        quantity,
-        inwardsPoPendingId,
-    }: {
-        rmId: string
-        quantity: number
-        inwardsPoPendingId: number
-    } = req.body
-
-    try {
-        const result = await PrismaService.inwardsIQCPending.update({
-            where: {
-                id: inwardsPoPendingId,
-            },
-            data: {
-                status: 'Accepted',
-                rm: {
-                    update: {
-                        iqcPendingStock: {
-                            decrement: quantity,
-                        },
-                        storeStock: {
-                            increment: quantity,
-                        },
-                    },
-                },
-                inwardsVerified: {
-                    create: {
-                        quantity,
-                        rmId,
-                        user: req.user?.username as string,
-                    },
-                },
-            },
-        })
-        res.json(result)
-    } catch (e) {
-        res.status(500).json({
-            message: (e as Error).message,
-        })
-    }
-})
-
-app.put('/rejectIQC', async (req: Request, res: Response) => {
-    const {
-        rmId,
-        quantity,
-        inwardsPoPendingId,
-    }: {
-        rmId: string
-        quantity: number
-        inwardsPoPendingId: number
-    } = req.body
-
-    try {
-        const result = await PrismaService.inwardsIQCPending.update({
-            where: {
-                id: inwardsPoPendingId,
-            },
-            data: {
-                status: 'RejectedIqcVerification',
-                rm: {
-                    update: {
-                        iqcPendingStock: {
-                            decrement: quantity,
-                        },
-                        iqcRejectedStock: {
-                            increment: quantity,
-                        },
-                    },
-                },
-            },
-        })
+        const result = await iqcVerificationHelper(details, InwardsStatus.Accepted, req.user?.username as string)
         res.json(result)
     } catch (e) {
         res.status(500).json({
