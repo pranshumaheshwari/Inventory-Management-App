@@ -65,9 +65,10 @@ app.get('/verified', async (req: Request, res: Response) => {
 const poVerificationHelper = async (supplierId: string, invoiceId: string, details: {
     rmId: string
     quantity: number
-}[], status: typeof InwardsStatus.RejectedPoVerification | typeof InwardsStatus.Accepted) => {
+}[], status: typeof InwardsStatus.RejectedPoVerification | typeof InwardsStatus.Accepted, username: string) => {
     return await PrismaService.$transaction(async (tx) => {
-        return details.map(async ({ rmId, quantity }) => {
+        const resp = []
+        for (const {rmId, quantity} of details) {
             const invoiceDetails = await tx.invoiceDetails.findUniqueOrThrow({
                 where: {
                     invoiceId_supplierId_rmId: {
@@ -106,6 +107,15 @@ const poVerificationHelper = async (supplierId: string, invoiceId: string, detai
                             },
                         },
                     },
+                    ...(status === InwardsStatus.Accepted ? {
+                        inwardsIQCPending: {
+                            create: {
+                                quantity,
+                                rmId,
+                                user: username
+                            },
+                        },
+                    } : {})
                 },
                 select: {
                     rm: {
@@ -118,8 +128,9 @@ const poVerificationHelper = async (supplierId: string, invoiceId: string, detai
             if (data.rm.poPendingStock < 0) {
                 throw new Error(`When setting ${invoiceId} status to ${status}, ${rmId} poPendingStock will be not valid ${data.rm.poPendingStock}`)
             }
-            return data
-        })
+            resp.push(data)
+        }
+        return resp
     })
 }
 
@@ -137,7 +148,7 @@ app.put('/rejectPO', async (req: Request, res: Response) => {
         }[]
     } = req.body
     try {
-        const result = await poVerificationHelper(supplierId, invoiceId, details, InwardsStatus.RejectedPoVerification)
+        const result = await poVerificationHelper(supplierId, invoiceId, details, InwardsStatus.RejectedPoVerification, req.user?.username as string)
         res.json(result)
     } catch (e) {
         res.status(500).json({
@@ -160,7 +171,7 @@ app.put('/acceptPO', async (req: Request, res: Response) => {
         }[]
     } = req.body
     try {
-        const result = await poVerificationHelper(supplierId, invoiceId, details, InwardsStatus.Accepted)
+        const result = await poVerificationHelper(supplierId, invoiceId, details, InwardsStatus.Accepted, req.user?.username as string,)
         res.json(result)
     } catch (e) {
         res.status(500).json({
@@ -175,7 +186,8 @@ const iqcVerificationHelper = async (details: {
     inwardsIQCPendingId: number
 }[], status: typeof InwardsStatus.RejectedIqcVerification | typeof InwardsStatus.Accepted, username: string) => {
     return await PrismaService.$transaction(async (tx) => {
-        return details.map(async ({ rmId, quantity, inwardsIQCPendingId }) => {
+        const resp = []
+        for (const { rmId, quantity, inwardsIQCPendingId } of details) {
             const inwardsIQCPending = await tx.inwardsIQCPending.findUniqueOrThrow({
                 where: {
                     id: inwardsIQCPendingId,
@@ -227,8 +239,9 @@ const iqcVerificationHelper = async (details: {
             if (data.rm.iqcPendingStock < 0) {
                 throw new Error(`When setting ${inwardsIQCPendingId} status to ${status}, ${rmId} iqcPendingStock will be not valid ${data.rm.iqcPendingStock}`)
             }
-            return data
-        })
+            resp.push(data)
+        }
+        return resp
     })
 }
 
