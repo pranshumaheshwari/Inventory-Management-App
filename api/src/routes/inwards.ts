@@ -172,13 +172,13 @@ app.put('/acceptPO', async (req: Request, res: Response) => {
     } = req.body
     try {
         const result = await poVerificationHelper(supplierId, invoiceId, details, InwardsStatus.Accepted, req.user?.username as string,)
-        res.json(result)
         await MailTransport.sendMail({
             from: "sandeep@vistaarauto.com",
             to: "iqc@vistaarauto.com",
             subject: `Inwards PO Accepted for ${supplierId}`,
             text: "New Inwards PO Accept entry created"
         })
+        res.json(result)
     } catch (e) {
         res.status(500).json({
             message: (e as Error).message,
