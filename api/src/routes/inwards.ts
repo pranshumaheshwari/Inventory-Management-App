@@ -1,7 +1,7 @@
 import express, { Request, Response, Router } from 'express'
 
 import { InwardsStatus, Prisma } from '@prisma/client'
-import { PrismaService } from '../service'
+import { PrismaService, MailTransport } from '../service'
 
 const app: Router = express.Router()
 
@@ -173,6 +173,12 @@ app.put('/acceptPO', async (req: Request, res: Response) => {
     try {
         const result = await poVerificationHelper(supplierId, invoiceId, details, InwardsStatus.Accepted, req.user?.username as string,)
         res.json(result)
+        await MailTransport.sendMail({
+            from: "sandeep@vistaarauto.com",
+            to: "iqc@vistaarauto.com",
+            subject: `Inwards PO Accepted for ${supplierId}`,
+            text: "New Inwards PO Accept entry created"
+        })
     } catch (e) {
         res.status(500).json({
             message: (e as Error).message,
