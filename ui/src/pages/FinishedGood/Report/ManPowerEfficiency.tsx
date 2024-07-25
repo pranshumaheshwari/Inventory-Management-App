@@ -27,6 +27,7 @@ interface BottomRecordInterface {
 }
 
 function ManPower() {
+    const TO_REDUCE_EFF = 12
     const {
         token: { token, user },
     } = useAuth()
@@ -311,10 +312,9 @@ function ManPower() {
                     description: '',
                     manPower: '',
                     totalQuantity: 
-                    // getEfficiencyCodedData(
                         parseFloat(
                             (
-                                (data.reduce(
+                                Math.max((data.reduce(
                                     (prevVal, curVal) =>
                                         prevVal +
                                         curVal.totalQuantity * curVal.manPower,
@@ -323,15 +323,14 @@ function ManPower() {
                                     parseFloat(
                                         attendace.totalQuantity as string
                                     )) *
-                                100
+                                100 - TO_REDUCE_EFF, 0)
                             ).toFixed(2)
-                        // )
                     ),
                     ...Object.fromEntries(
                         data[0].productionQuantity.map((_pq, idx) => [
                             (idx + 1).toString(),
                             getEfficiencyCodedData(
-                                (data.reduce((prevValue, curVal) => {
+                                Math.max(((data.reduce((prevValue, curVal) => {
                                     return (
                                         prevValue +
                                         curVal.productionQuantity[idx] *
@@ -343,7 +342,7 @@ function ManPower() {
                                               (idx + 1).toString()
                                           ] as number)
                                         : 1)) *
-                                    100
+                                    100) - TO_REDUCE_EFF, 0)
                             ),
                         ])
                     ),
