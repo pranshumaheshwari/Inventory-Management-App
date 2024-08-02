@@ -96,12 +96,12 @@ app.post('/', async (req: Request, res: Response) => {
                 })
             }),
         ])
-        await MailTransport.sendMail({
-            from: "sandeep@vistaarauto.com",
-            to: "ppc@vistaarauto.com",
-            subject: `New Invoice for ${supplierId}`,
-            text: `New Invoice ${id} created for supplier ${supplierId}`
-        })
+        // await MailTransport.sendMail({
+        //     from: "sandeep@vistaarauto.com",
+        //     to: "ppc@vistaarauto.com",
+        //     subject: `New Invoice for ${supplierId}`,
+        //     text: `New Invoice ${id} created for supplier ${supplierId}`
+        // })
         res.json(result)
     } catch (e) {
         res.status(500).json({
