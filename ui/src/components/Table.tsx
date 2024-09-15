@@ -48,6 +48,23 @@ function Table<Type>({
                     return Number(params.value).toFixed((params.data && (params.data as unknown as {rmCategory: string}).rmCategory === "Consumables") ? 5 : 2).toString()
                 },
             },
+            numberColumn4: {
+                filter: 'agNumberColumnFilter',
+                filterParams: {
+                    allowedCharPattern: '\\d\\-\\,',
+                    numberParser: (text: string) => {
+                        return text == null
+                            ? null
+                            : parseFloat(text.replace(',', '.'))
+                    },
+                },
+                headerClass: 'ag-right-aligned-header',
+                cellClass: 'ag-right-aligned-cell',
+                width: 100,
+                valueFormatter: (params) => {
+                    return Number(params.value).toFixed(4).toString()
+                },
+            },
         }),
         []
     )

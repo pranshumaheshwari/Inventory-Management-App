@@ -150,28 +150,26 @@ function ManPower() {
                 },
             },
         ]
-        if (user.type === 'admin') {
-            def.splice(3, 0, {
-                field: 'manPower',
-                headerName: 'MP per Unit',
-                type: 'numberColumn',
-            })
-            def.splice(-1, 0, {
-                field: 'totalManPower',
-                headerName: 'Total MP',
-                type: 'numberColumn',
-                valueGetter: (params: ValueGetterParams<RecordInterface>) => {
-                    if (params.node?.rowPinned) {
-                        return ''
-                    }
-                    if (params.data?.totalQuantity && params.data.manPower) {
-                        return +((params.data.totalQuantity * params.data.manPower).toFixed(2))
-                    }
-                    return 0
-                },
-                pinned: 'right',
-            })
-        }
+        def.splice(3, 0, {
+            field: 'manPower',
+            headerName: 'MP per Unit',
+            type: 'numberColumn4',
+        })
+        def.splice(-1, 0, {
+            field: 'totalManPower',
+            headerName: 'Total MP',
+            type: 'numberColumn',
+            valueGetter: (params: ValueGetterParams<RecordInterface>) => {
+                if (params.node?.rowPinned) {
+                    return ''
+                }
+                if (params.data?.totalQuantity && params.data.manPower) {
+                    return +((params.data.totalQuantity * params.data.manPower).toFixed(2))
+                }
+                return 0
+            },
+            pinned: 'right',
+        })
         return def
     }, [value])
 
@@ -349,31 +347,29 @@ function ManPower() {
                 },
             ]
 
-            if (user.type === 'admin') {
-                bottomData.splice(1, 0, {
-                    id: 'Total MP Required',
-                    category: '',
-                    description: '',
-                    manPower: '',
-                    ...Object.fromEntries(
-                        data[0].productionQuantity.map((_pq, idx) => [
-                            (idx + 1).toString(),
-                            data.reduce((prevValue, curVal) => {
-                                return (
-                                    prevValue +
-                                    curVal.productionQuantity[idx] *
-                                        curVal.manPower
-                                )
-                            }, 0).toFixed(2),
-                        ])
-                    ),
-                    totalQuantity: data.reduce(
-                        (prevVal, curVal) =>
-                            prevVal + curVal.totalQuantity * curVal.manPower,
-                        0
-                    ),
-                })
-            }
+            bottomData.splice(1, 0, {
+                id: 'Total MP Required',
+                category: '',
+                description: '',
+                manPower: '',
+                ...Object.fromEntries(
+                    data[0].productionQuantity.map((_pq, idx) => [
+                        (idx + 1).toString(),
+                        data.reduce((prevValue, curVal) => {
+                            return (
+                                prevValue +
+                                curVal.productionQuantity[idx] *
+                                    curVal.manPower
+                            )
+                        }, 0).toFixed(2),
+                    ])
+                ),
+                totalQuantity: data.reduce(
+                    (prevVal, curVal) =>
+                        prevVal + curVal.totalQuantity * curVal.manPower,
+                    0
+                ),
+            })
 
             setRecords(data.filter(d => 
                 d.productionQuantity.reduce((prevVal, curVal) => prevVal + curVal, 0) > 0)
