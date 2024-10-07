@@ -35,7 +35,7 @@ const log = fs.createWriteStream(
   );
   
 
-app.use(express.json({"limit": "50mb"}))
+app.use(express.json({limit: "50mb"}))
 app.use(
     cors({
         origin: '*',
@@ -44,7 +44,7 @@ app.use(
     })
 )
 app.use(cookierParser())
-app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }))
 morganBody(app, {
     timezone: "Asia/Kolkata"
 })
