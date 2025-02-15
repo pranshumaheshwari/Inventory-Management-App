@@ -164,6 +164,7 @@ const QualityCheck = () => {
                     params: {
                         where: JSON.stringify({
                             customerId,
+                            status: 'Open',
                         }),
                         select: JSON.stringify({
                             id: true,
