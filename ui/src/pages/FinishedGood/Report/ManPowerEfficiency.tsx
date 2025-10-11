@@ -27,7 +27,7 @@ interface BottomRecordInterface {
 }
 
 function ManPower() {
-    const TO_REDUCE_EFF = 12
+    const TO_REDUCE_EFF = 0
     const {
         token: { token, user },
     } = useAuth()
