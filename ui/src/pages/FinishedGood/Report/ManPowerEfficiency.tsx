@@ -27,7 +27,11 @@ interface BottomRecordInterface {
 }
 
 function ManPower() {
-    const TO_REDUCE_EFF = 0
+    const getEfficiencyReduction = (date: Date): number => {
+        const cutoffDate = dayjs('2026-03-01').startOf('day')
+        return dayjs(date).isAfter(cutoffDate) || dayjs(date).isSame(cutoffDate, 'day') ? 14 : 0
+    }
+
     const {
         token: { token, user },
     } = useAuth()
@@ -309,7 +313,7 @@ function ManPower() {
                     category: '',
                     description: '',
                     manPower: '',
-                    totalQuantity: 
+                    totalQuantity:
                         parseFloat(
                             (
                                 Math.max((data.reduce(
@@ -321,7 +325,7 @@ function ManPower() {
                                     parseFloat(
                                         attendace.totalQuantity as string
                                     )) *
-                                100 - TO_REDUCE_EFF, 0)
+                                100 - getEfficiencyReduction(dayjs(value).endOf('M').toDate()), 0)
                             ).toFixed(2)
                     ),
                     ...Object.fromEntries(
@@ -340,7 +344,7 @@ function ManPower() {
                                               (idx + 1).toString()
                                           ] as number)
                                         : 1)) *
-                                    100) - TO_REDUCE_EFF, 0)
+                                    100) - getEfficiencyReduction(dayjs(value).date(idx + 1).toDate()), 0)
                             ),
                         ])
                     ),
