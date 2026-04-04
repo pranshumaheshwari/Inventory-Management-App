@@ -29,7 +29,7 @@ interface BottomRecordInterface {
 function ManPower() {
     const getEfficiencyReduction = (date: Date): number => {
         const cutoffDate = dayjs('2026-03-01').startOf('day')
-        return dayjs(date).isAfter(cutoffDate) || dayjs(date).isSame(cutoffDate, 'day') ? 14 : 0
+        return dayjs(date).isAfter(cutoffDate) || dayjs(date).isSame(cutoffDate, 'day') ? 11 : 0
     }
 
     const {
